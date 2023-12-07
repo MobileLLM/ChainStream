@@ -1,0 +1,3 @@
+def platform():
+    return 'cuda'
+

@@ -43,7 +43,7 @@ class PeopleRecognitionAgent(StreamAgent):
             response = self._llm.query(prompt)   # detect whether there is a talking people with LLM
             is_talking = cs.parse_llm_response(response, ['yes', 'no']) == 'yes'
             if is_talking:   # if detected, create a new event to the 'talking_to_people' stream
-                self.talking_to_people.send_event({'video': self.video_cache.snapshot(), 'audio': self.audio_cache.snapshot()})
+                self.talking_to_people.add_item({'video': self.video_cache.snapshot(), 'audio': self.audio_cache.snapshot()})
 
         def recognize_person(talking_event):
             video = talking_event['video']
@@ -60,7 +60,7 @@ class PeopleRecognitionAgent(StreamAgent):
         self._source1.pause_listener(self)
         self._source2.pause_listener(self)
 
-    def destory(self):
+    def stop(self):
         self._source1.remove_listener(self)
         self._source2.remove_listener(self)
 
