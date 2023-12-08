@@ -1,8 +1,7 @@
 import chainstream as cs
-from chainstream.agent import Agent
 
 
-class PeopleRecognitionAgent(Agent):
+class PeopleRecognitionAgent(cs.agent.Agent):
     def __init__(self):
         self._source1 = cs.get_stream('glass_camera_video_01')  # instance of Stream
         self._source2 = cs.get_stream('glass_microphone')
@@ -41,3 +40,4 @@ class PeopleRecognitionAgent(Agent):
     def stop(self):
         self._source1.remove_listener(self)
         self._source2.remove_listener(self)
+
