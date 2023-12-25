@@ -1,7 +1,10 @@
-from chainstream.interfaces import StreamInterface
+from chainstream.interfaces import MemoryInterface
 
 
-class CustomStream(StreamInterface):
+class KV_Memory(MemoryInterface):
     def __init__(self) -> None:
         super().__init__()
+
+    def add_item(self, data_item):
+        pass
 

@@ -23,34 +23,33 @@ Example:
 ```python
 import chainstream as cs
 
-class PeopleRecognitionAgent(StreamAgent):
+class PeopleRecognitionAgent(Agent):
     def __init__(self):
-        ...
         self._source1 = cs.get_stream('glass_camera_video_01')  # instance of Stream
         self._source2 = cs.get_stream('glass_microphone')
-        self._llm = cs.get_llm()  # default LLM
-        self.video_cache = cs.data.VideoCache(duration=10)
-        self.audio_cache = cs.data.AudioCache(duration=10)
+        self.known_people = cs.memory.fetch('known_people')['face', 'name']
+        self._llm = cs.llm.get_llm('ChatGPT')  # default LLM
+        self.video_buffer = cs.context.VideoBuffer(duration=10)
+        self.audio_buffer = cs.context.AudioBuffer(duration=10)
         self.talking_to_people = cs.create_stream('talking_to_people')
 
     def start(self):
         def handle_new_frame(frame):
-            self.video_cache.save(frame)
+            self.video_buffer.save(frame)
 
         def handle_new_audio(audio):
-            self.audio_cache.save(frame)
-            prompt = cs.make_prompt([self.video_cache, self.audio_cache, 'is there a person talking to the user?'])
+            self.audio_buffer.save(audio)
+            prompt = cs.llm.make_prompt([self.video_buffer, self.audio_buffer, 'is there a person talking to the user?'])
             response = self._llm.query(prompt)   # detect whether there is a talking people with LLM
-            is_talking = cs.parse_llm_response(response, ['yes', 'no']) == 'yes'
+            is_talking = cs.llm.parse_response(response, ['yes', 'no']) == 'yes'
             if is_talking:   # if detected, create a new event to the 'talking_to_people' stream
-                self.talking_to_people.add_item({'video': self.video_cache.snapshot(), 'audio': self.audio_cache.snapshot()})
+                self.talking_to_people.add_item({'video': self.video_buffer.snapshot(), 'audio': self.audio_buffer.snapshot()})
 
         def recognize_person(talking_event):
             video = talking_event['video']
-            contacts_memory = cs.memory.known_people['face', 'name']
-            prompt = cs.make_prompt([video.last_frame(), contacts_memory, 'who is the person in the image?'])
-            face_name = cs.parse_llm_response(self._llm.query(prompt))
-            cs.actions.notify_user(self, face_name)  # tell the user who is talking
+            prompt = cs.llm.make_prompt([self.known_people, video.last_frame(), 'who is the person in the image?'])
+            face_name = cs.llm.parse_response(self._llm.query(prompt))
+            cs.action.notify_user(self, face_name)  # tell the user who is talking
 
         self._source1.register_listener(self, handle_new_frame)
         self._source2.register_listener(self, handle_new_audio)
