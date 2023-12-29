@@ -1,0 +1,1 @@
+include ':test', ':privacystreams-android-sdk', ':doclet', ':privacystreams-app'
