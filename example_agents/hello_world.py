@@ -18,6 +18,7 @@ class HelloAgent(cs.agent.Agent):
             response = self._llm.query(prompt).lower().strip()
             if response.startswith('yes'):
                 self.has_people.send_item({'message': 'hello', 'frame': frame})
+        self._source1.register_listener(handle_new_frame)
 
     def pause(self):
         self._source1.pause_listener(self)
