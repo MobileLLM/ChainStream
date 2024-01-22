@@ -1,5 +1,6 @@
 from chainstream.interfaces import AgentInterface
 from chainstream.runtime import cs_server
+import logging
 
 
 class Agent(AgentInterface):
@@ -7,6 +8,7 @@ class Agent(AgentInterface):
         super().__init__()
         self.agent_id = agent_id
         cs_server.register_agent(agent=self)
+        self.logger = logging.getLogger(self.agent_id)
 
     def start(self):
         pass

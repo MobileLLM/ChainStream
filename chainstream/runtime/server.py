@@ -1,6 +1,9 @@
 import logging
 import collections
 import os
+import importlib
+import importlib.util
+import inspect
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -87,12 +90,27 @@ class ChainStreamServer(object):
             out += ' list agents ----- list all available agents\n'
         elif cmd == 'list streams':
             out += 'available streams:\n'
-            for i, (name, stream) in enumerate(self.streams):
+            for i, (name, stream) in enumerate(self.streams.items()):
                 out += f'  {i}: {name}\n'
         elif cmd == 'list agents':
             out += 'available agents:\n'
-            for i, (name, agent) in enumerate(self.agents):
+            for i, (name, agent) in enumerate(self.agents.items()):
                 out += f'  {i}: {name}\n'
+        elif cmd.startswith('start agent'):
+            module_path = cmd[11:].strip()
+            out += f'starting agent {module_path}\n'
+            if not os.path.exists(module_path) or not module_path.endswith('.py'):
+                out += f'agent not found: {module_path}'
+            module_name = os.path.splitext(os.path.basename(module_path))[0]
+            spec = importlib.util.spec_from_file_location(module_name, module_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            from chainstream.agent import Agent
+            for name, obj in module.__dict__.items():
+                if inspect.isclass(obj) and issubclass(obj, Agent):
+                    print(name, obj)
+                    new_agent = obj()
+                    new_agent.start()
         else:
             out += f'unknown command: {cmd}'
         return out

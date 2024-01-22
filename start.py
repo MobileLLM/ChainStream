@@ -1,8 +1,10 @@
 # helper file of chainstream
 # it parses command arguments and send the options to ChainStream
 import argparse
+import logging
 import chainstream as cs
 from chainstream.runtime import cs_server
+logging.basicConfig(level=logging.DEBUG)
 
 
 def parse_args():
