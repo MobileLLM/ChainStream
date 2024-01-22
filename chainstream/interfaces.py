@@ -2,9 +2,6 @@ class AgentInterface:
     def start(self):
         pass
 
-    def pause(self):
-        pass
-
     def stop(self):
         pass
 

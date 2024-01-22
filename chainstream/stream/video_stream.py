@@ -1,7 +1,8 @@
 from chainstream.interfaces import StreamInterface
+from .base_stream import BaseStream
 
 
-class VideoStream(StreamInterface):
-    def __init__(self) -> None:
-        super().__init__()
+class VideoStream(BaseStream):
+    def __init__(self, stream_id) -> None:
+        super().__init__(stream_id)
 

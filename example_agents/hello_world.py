@@ -7,14 +7,14 @@ class HelloAgent(cs.agent.Agent):
     """
     def __init__(self):
         self._source1 = cs.get_stream('front_camera_video_01')  # instance of Stream
-        self._llm = cs.llm.get_llm('GPT4V')
+        self._llm = cs.llm.get_model('gpt-4-vision')
         self.video_buffer = cs.context.VideoBuffer(duration=10)
         self.has_people = cs.create_stream('front_camera_has_people')
 
     def start(self):
         def handle_new_frame(frame):
             self.video_buffer.save(frame)
-            prompt = cs.llm.make_prompt([frame, 'is there a person in the image? Simply answer Yes or No'])
+            prompt = cs.llm.make_prompt([frame, 'Is there a person in the image? Simply answer Yes or No'])
             response = self._llm.query(prompt).lower().strip()
             if response.startswith('yes'):
                 self.has_people.send_item({'message': 'hello', 'frame': frame})

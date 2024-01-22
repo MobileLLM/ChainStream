@@ -1,7 +1,8 @@
 from chainstream.interfaces import StreamInterface
+from .base_stream import BaseStream
 
 
-class CustomStream(StreamInterface):
+class CustomStream(BaseStream):
     def __init__(self) -> None:
         super().__init__()
 

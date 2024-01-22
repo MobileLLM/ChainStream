@@ -2,6 +2,7 @@
 # it parses command arguments and send the options to ChainStream
 import argparse
 import chainstream as cs
+from chainstream.runtime import cs_server
 
 
 def parse_args():
@@ -22,7 +23,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    cs_server = cs.runtime.ChainStreamServer(
+    cs_server.config(
         output_dir=args.output_dir,
         verbose=args.verbose
     )
@@ -31,3 +32,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

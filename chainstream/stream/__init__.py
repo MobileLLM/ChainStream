@@ -11,10 +11,10 @@ def get_stream(stream_id):
 def create_stream(stream_id, type=None):
     if type == 'video':
         from .video_stream import VideoStream
-        stream = VideoStream()
+        stream = VideoStream(stream_id)
     else:
-        from .custom_stream import CustomStream
-        stream = CustomStream
+        from .base_stream import BaseStream
+        stream = BaseStream(stream_id)
     available_streams[stream_id] = stream
     return stream
 

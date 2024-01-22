@@ -1,2 +1,2 @@
-from .normal_agent import Agent
+from .base_agent import Agent
 

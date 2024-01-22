@@ -1,5 +1,5 @@
 from . import interfaces
-from chainstream.agent.normal_agent import Agent
+from chainstream.agent.base_agent import Agent
 from chainstream.stream import get_stream, create_stream
 from . import action, context, llm, runtime, stream, memory, agent
 
