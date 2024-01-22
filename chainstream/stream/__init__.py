@@ -9,7 +9,7 @@ def get_stream(stream_id):
 
 
 def create_stream(stream_id, type=None):
-    if type is 'video':
+    if type == 'video':
         from .video_stream import VideoStream
         stream = VideoStream()
     else:

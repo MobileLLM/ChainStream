@@ -1,15 +1,16 @@
-from . import openai
+_model_instances = {}
 
-chatgpt_inst = None
-
-def get_llm(llm='ChatGPT'):
-    if llm == 'ChatGPT':
-        if chatgpt_inst is None:
-            chatgpt_inst = openai.ChatGPT()
-        return chatgpt_inst
+def get_model(name='gpt3.5'):
+    if name in _model_instances and _model_instances[name] is not None:
+        return _model_instances[name]
+    if name == 'gpt3.5':
+        from . import openai
+        inst = openai.ChatGPT()
     else:
         # TODO support other local LLMs
-        raise RuntimeError(f'unknown LLM: {llm}')
+        raise RuntimeError(f'unknown LLM: {name}')
+    _model_instances[name] = inst
+    return inst
 
 def make_prompt(args):
     pass

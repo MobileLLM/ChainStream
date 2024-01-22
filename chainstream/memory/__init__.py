@@ -9,7 +9,7 @@ def fetch(memory_id):
 
 
 def create(memory_id, type=None):
-    if type is 'video':
+    if type == 'video':
         from .kv_memory import KV_Memory
         memory = KV_Memory()
     else:
