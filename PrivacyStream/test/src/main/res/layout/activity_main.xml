@@ -12,10 +12,22 @@
     tools:context="io.github.privacystreams.test.MainActivity">
 
     <Button
-        android:text="TEST"
+        android:id="@+id/button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button" />
+        android:text="START" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STOP" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CLEAR" />
 
     <TextView
         android:id="@+id/textview"

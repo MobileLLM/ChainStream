@@ -26,39 +26,83 @@ import com.xuhao.didi.socket.client.sdk.client.connection.IConnectionManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+
+import io.github.privacystreams.utils.Logging;
 
 
 public class MainActivity extends AppCompatActivity {
-    public Button mButton;
+    public Button mButtonStart;
+
+    public Button mButtonStop;
     public LinearLayout logLinearLayout;
     public ScrollView logScrollView;
 
-    public IConnectionManager mManager;
+    public Button mButtonClear;
 
-    public ConnectionInfo connectionInfo;
+//    public IConnectionManager mManager;
+
+//    public ConnectionInfo connectionInfo;
+
+    public MyWebSocketServer myWebSocketServer;
+
+    private Boolean is_server_running;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mButton = findViewById(R.id.button);
+        mButtonStart = findViewById(R.id.button);
+        mButtonStop = findViewById(R.id.button2);
         logLinearLayout  = findViewById(R.id.logLinearLayout);
         logScrollView = findViewById(R.id.logScrollView);
+        mButtonClear = findViewById(R.id.button3);
 
-        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
-        mManager = OkSocket.open(connectionInfo);
-        mManager.connect();
+        is_server_running = Boolean.FALSE;
 
-        mButton.setOnClickListener(new View.OnClickListener() {
+//        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
+//        mManager = OkSocket.open(connectionInfo);
+//        mManager.connect();
+
+        mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new MyAsyncTask().execute();
+//                new MyAsyncTask().execute();
+                if (is_server_running == Boolean.FALSE) {
+                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                    InetSocketAddress myHost = new InetSocketAddress(6666);
+                    myWebSocketServer = new MyWebSocketServer(myHost);
+                    myWebSocketServer.start();
+
+                    is_server_running = Boolean.TRUE;
+                } else {
+                    Toast.makeText(view.getContext(), "server already running!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        LogReaderTask logReaderTask = new LogReaderTask(logLinearLayout);
-        logReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mButtonStop.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (is_server_running) {
+                    myWebSocketServer.stopServer();
+
+                    is_server_running = Boolean.FALSE;
+                } else {
+                    Toast.makeText(view.getContext(), "server not running!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mButtonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logLinearLayout.removeAllViews();
+            }
+        });
     }
 
     private class LogReaderTask extends AsyncTask<Void, String, Void> {
@@ -74,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V *:S io.github.privacystreams.test:V PrivacyStreams:V");
+                Process clearLog = Runtime.getRuntime().exec("logcat -c");
+                clearLog.waitFor(); // 等待清除命令执行完成
+
+
+                Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V *:S io.github.privacystreams.test:V PrivacyStreams:V websocket:V");
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(process.getInputStream())
                 );
@@ -84,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (IOException e) {
                 Log.e("LogReaderTask", "Error reading logcat", e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
             return null;
         }
@@ -139,6 +189,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mManager.disconnect();
+//        mManager.disconnect();
     }
 }
