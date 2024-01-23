@@ -5,7 +5,7 @@ class PeopleRecognitionAgent(cs.agent.Agent):
     def __init__(self):
         self._source1 = cs.get_stream('glass_camera_video_01')  # instance of Stream
         self._source2 = cs.get_stream('glass_microphone')
-        self.51= = cs.memory.fetch('known_people')['face', 'name']
+        self.cs.memory.fetch('known_people')['face', 'name']
         self._llm = cs.llm.get_llm('ChatGPT')  # default LLM
         self.video_buffer = cs.context.VideoBuffer(duration=10)
         self.audio_buffer = cs.context.AudioBuffer(duration=10)
