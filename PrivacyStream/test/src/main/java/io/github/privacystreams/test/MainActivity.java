@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 if (is_server_running == Boolean.FALSE) {
                     new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                    InetSocketAddress myHost = new InetSocketAddress(6666);
+                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.1", 6666);
                     myWebSocketServer = new MyWebSocketServer(myHost);
+                    myWebSocketServer.setContext(MainActivity.this);
                     myWebSocketServer.start();
 
                     is_server_running = Boolean.TRUE;
@@ -103,6 +104,12 @@ public class MainActivity extends AppCompatActivity {
                 logLinearLayout.removeAllViews();
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        myWebSocketServer.stopServer();
+        super.onStop();
     }
 
     private class LogReaderTask extends AsyncTask<Void, String, Void> {

@@ -1,11 +1,15 @@
 package io.github.privacystreams.test;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -13,12 +17,24 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
+import io.github.privacystreams.core.Callback;
+import io.github.privacystreams.core.UQI;
+import io.github.privacystreams.core.purposes.Purpose;
+import io.github.privacystreams.image.Image;
+import io.github.privacystreams.image.ImageOperators;
 import io.github.privacystreams.utils.Logging;
 
 public class MyWebSocketServer extends WebSocketServer {
+    private Context myContext;
+
     MyWebSocketServer(InetSocketAddress host){
         super(host);
     }
+
+    public void setContext(Context context) {
+        myContext = context;
+    }
+
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         Log.d("websocket", "onOpen()一个客户端连接成功："+conn.getRemoteSocketAddress());
@@ -31,13 +47,66 @@ public class MyWebSocketServer extends WebSocketServer {
     public void onMessage(WebSocket conn, String message) {
         // 这里在网页测试端发过来的是文本数据 测试网页 http://www.websocket-test.com/
         // 需要保证android 和 加载网页的设备(我这边是电脑) 在同一个网段内，连同一个wifi即可
-        Log.d("websocket", "onMessage()网页端来的消息->"+message);
+        Log.d("websocket", "onMessage()PC端来的命令->"+message);
+        String[] parts = message.split(",");
+
+        // parts数组中包含切分后的子串
+        String cmd = parts[0];
+        String para = parts[1];
+        if (cmd.equals("video")) {
+            UQI uqi = new UQI(myContext);
+            Logging.debug("begin video socket");
+//            UQIVideoSocket uqiVideoSocket = new UQIVideoSocket(uqi, para, conn);
+//            uqiVideoSocket.run();
+            uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para) * 1000), Purpose.UTILITY("taking picture."))
+                    .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
+                    .forEach("imagePath", new Callback<String>() {
+                        @Override
+                        protected void onInput(String imagePath) {
+                            System.out.println("Send " + imagePath + "through socket");
+                            File imageFile = new File(imagePath);
+
+                            try {
+                                // 读取图像文件
+                                FileInputStream fis = new FileInputStream(imageFile);
+                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
+
+                                while ((bytesRead = fis.read(buffer)) != -1) {
+                                    bos.write(buffer, 0, bytesRead);
+                                }
+
+                                fis.close();
+                                bos.close();
+
+                                // 获取图像数据的字节数组
+                                byte[] imageData = bos.toByteArray();
+
+                                // 将字节数组转换为ByteBuffer
+                                ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+
+
+                                if (conn.isClosed()) {
+                                    uqi.stopAll();
+                                }
+                                conn.send(byteBuffer);
+                                Logging.debug("send pic" + byteBuffer.capacity());
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        }
     }
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message) {
         // 接收到的是Byte数据，需要转成文本数据，根据你的客户端要求
         // 看看是string还是byte，工具类在下面贴出
         Log.d("websocket", "onMessage()接收到ByteBuffer的数据->"+byteBufferToString(message));
+        conn.send(message);
     }
 //    @SneakyThrows
     @Override

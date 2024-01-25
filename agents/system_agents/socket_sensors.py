@@ -2,7 +2,12 @@ import chainstream as cs
 import threading
 import time
 from datetime import datetime
-import socketio
+import websocket
+from websocket_client import WebSocketClient
+
+from PIL import Image
+
+from io import BytesIO
 
 
 class SocketSensors(cs.agent.Agent):
@@ -12,49 +17,48 @@ class SocketSensors(cs.agent.Agent):
         self.audio_duration = audio_duration
         self.front_camera_video = cs.stream.create_stream('socket_front_camera_video')
         self.front_camera_thread = None
-        self.microphone_audio = cs.stream.create_stream('socket_microphone_audio')
-        self.microphone_thread = None
+        # self.microphone_audio = cs.stream.create_stream('socket_microphone_audio')
+        # self.microphone_thread = None
         self.enabled = True
 
-        self.sio = socketio.Client()
         self.ip = ip
         self.port = port
+
+        self.front_camera_video_cli = WebSocketClient(f"ws://{self.ip}:{self.port}", on_start_message="video,1",
+                                                      on_message=self._front_camera_video_get_on_message())
 
     def start(self):
         self.front_camera_thread = threading.Thread(target=self.capture_images)
         self.front_camera_thread.start()
-        self.microphone_thread = threading.Thread(target=self.capture_audio)
-        self.microphone_thread.start()
+        # self.microphone_thread = threading.Thread(target=self.capture_audio)
+        # self.microphone_thread.start()
+
+    def _front_camera_video_get_on_message(self):
+        def on_message(ws, frame):
+            self.front_camera_video.send_item({'timestamp': datetime.now(), 'frame': frame})
+            image = Image.open(BytesIO(frame))
+            image.show()
+            self.logger.info()
+
+        return on_message
 
     def capture_images(self):
-        try:
-            self.sio.connect("http://{}:{}".format(self.ip, self.port))
-            self.sio.emit('video,1')
+        self.front_camera_video_cli.start()
 
-            @self.sio.event
-            def server_response(data):
-                self.front_camera_video.send_item({'timestamp': datetime.now(), 'frame': data})
-                self.logger.info("Received image from server")
-
-            self.sio.wait()
-        except Exception as e:
-            self.logger.error(f"Error in capture_images: {e}")
-
-    def capture_audio(self):
-        # TODO implement this and other sensors
-        pass
+    # def capture_audio(self):
+    #     # TODO implement this and other sensors
+    #     pass
 
     def stop(self):
         self.enabled = False
-        self.sio.disconnect()
+        self.front_camera_video_cli.close()
 
 
 if __name__ == '__main__':
     default_sensors_agent = SocketSensors()
     default_sensors_agent.start()
-    while True:
-        cmd = input('> ')
-        if cmd == 'q':
-            default_sensors_agent.stop()
-            break
-
+    # while True:
+    #     cmd = input('> ')
+    #     if cmd == 'q':
+    #         default_sensors_agent.stop()
+    #         break
