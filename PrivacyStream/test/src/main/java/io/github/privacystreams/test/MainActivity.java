@@ -3,6 +3,7 @@ package io.github.privacystreams.test;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -48,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Boolean is_server_running;
 
+    private TextView mTextImage;
+
+    private TextView mTextAudio;
+
+    private TextView mTextSensors;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +67,15 @@ public class MainActivity extends AppCompatActivity {
         mButtonClear = findViewById(R.id.button3);
 
         is_server_running = Boolean.FALSE;
+
+        mTextAudio = findViewById(R.id.textAudio);
+        mTextImage = findViewById(R.id.textImage);
+        mTextSensors = findViewById(R.id.textSensors);
+
+        mTextAudio.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
+        mTextImage.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
+        mTextSensors.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
+
 
 //        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
 //        mManager = OkSocket.open(connectionInfo);
@@ -74,10 +90,12 @@ public class MainActivity extends AppCompatActivity {
 
                     InetSocketAddress myHost = new InetSocketAddress("192.168.43.1", 6666);
                     myWebSocketServer = new MyWebSocketServer(myHost);
+                    myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
                     myWebSocketServer.setContext(MainActivity.this);
                     myWebSocketServer.start();
 
                     is_server_running = Boolean.TRUE;
+                    Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(view.getContext(), "server already running!", Toast.LENGTH_SHORT).show();
                 }
@@ -92,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     myWebSocketServer.stopServer();
 
                     is_server_running = Boolean.FALSE;
+                    Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(view.getContext(), "server not running!", Toast.LENGTH_SHORT).show();
                 }

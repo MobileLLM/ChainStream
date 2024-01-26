@@ -1,7 +1,11 @@
 package io.github.privacystreams.test;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -27,8 +31,20 @@ import io.github.privacystreams.utils.Logging;
 public class MyWebSocketServer extends WebSocketServer {
     private Context myContext;
 
+    private TextView mTextImage;
+
+    private TextView mTextAudio;
+
+    private TextView mTextSensors;
+
     MyWebSocketServer(InetSocketAddress host){
         super(host);
+    }
+
+    public void setText(TextView textImage, TextView textAudio, TextView textSensors) {
+        mTextImage = textImage;
+        mTextAudio = textAudio;
+        mTextSensors = textSensors;
     }
 
     public void setContext(Context context) {
@@ -54,6 +70,7 @@ public class MyWebSocketServer extends WebSocketServer {
         String cmd = parts[0];
         String para = parts[1];
         if (cmd.equals("video")) {
+            mTextImage.setTextColor(Color.BLUE);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin video socket");
 //            UQIVideoSocket uqiVideoSocket = new UQIVideoSocket(uqi, para, conn);
@@ -64,6 +81,7 @@ public class MyWebSocketServer extends WebSocketServer {
                         @Override
                         protected void onInput(String imagePath) {
                             System.out.println("Send " + imagePath + "through socket");
+                            mTextImage.setTextColor(Color.RED);
                             File imageFile = new File(imagePath);
 
                             try {
@@ -87,12 +105,19 @@ public class MyWebSocketServer extends WebSocketServer {
                                 // 将字节数组转换为ByteBuffer
                                 ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
 
-
                                 if (conn.isClosed()) {
                                     uqi.stopAll();
+                                    mTextImage.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
                                 }
                                 conn.send(byteBuffer);
                                 Logging.debug("send pic" + byteBuffer.capacity());
+                                mTextImage.setTextColor(Color.BLUE);
+
+                                boolean isDeleted = imageFile.delete();
+
+                                if (!isDeleted) {
+                                    System.out.println("图片文件删除失败");
+                                }
 
                             } catch (Exception e) {
                                 e.printStackTrace();
