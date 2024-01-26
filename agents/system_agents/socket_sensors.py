@@ -2,8 +2,7 @@ import chainstream as cs
 import threading
 import time
 from datetime import datetime
-import websocket
-from websocket_client import WebSocketClient
+
 
 from PIL import Image
 
@@ -24,6 +23,7 @@ class SocketSensors(cs.agent.Agent):
         self.ip = ip
         self.port = port
 
+        from chainstream.utils import WebSocketClient
         self.front_camera_video_cli = WebSocketClient(f"ws://{self.ip}:{self.port}", on_start_message="video,1",
                                                       on_message=self._front_camera_video_get_on_message())
 
@@ -38,7 +38,7 @@ class SocketSensors(cs.agent.Agent):
             self.front_camera_video.send_item({'timestamp': datetime.now(), 'frame': frame})
             image = Image.open(BytesIO(frame))
             image.show()
-            self.logger.info()
+            # self.logger.info()
 
         return on_message
 
