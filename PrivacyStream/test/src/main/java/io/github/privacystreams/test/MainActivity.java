@@ -3,6 +3,7 @@ package io.github.privacystreams.test;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -26,39 +27,108 @@ import com.xuhao.didi.socket.client.sdk.client.connection.IConnectionManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+
+import io.github.privacystreams.utils.Logging;
 
 
 public class MainActivity extends AppCompatActivity {
-    public Button mButton;
+    public Button mButtonStart;
+
+    public Button mButtonStop;
     public LinearLayout logLinearLayout;
     public ScrollView logScrollView;
 
-    public IConnectionManager mManager;
+    public Button mButtonClear;
 
-    public ConnectionInfo connectionInfo;
+//    public IConnectionManager mManager;
+
+//    public ConnectionInfo connectionInfo;
+
+    public MyWebSocketServer myWebSocketServer;
+
+    private Boolean is_server_running;
+
+    private TextView mTextImage;
+
+    private TextView mTextAudio;
+
+    private TextView mTextSensors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mButton = findViewById(R.id.button);
+        mButtonStart = findViewById(R.id.button);
+        mButtonStop = findViewById(R.id.button2);
         logLinearLayout  = findViewById(R.id.logLinearLayout);
         logScrollView = findViewById(R.id.logScrollView);
+        mButtonClear = findViewById(R.id.button3);
 
-        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
-        mManager = OkSocket.open(connectionInfo);
-        mManager.connect();
+        is_server_running = Boolean.FALSE;
 
-        mButton.setOnClickListener(new View.OnClickListener() {
+        mTextAudio = findViewById(R.id.textAudio);
+        mTextImage = findViewById(R.id.textImage);
+        mTextSensors = findViewById(R.id.textSensors);
+
+        mTextAudio.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
+        mTextImage.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
+        mTextSensors.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
+
+
+//        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
+//        mManager = OkSocket.open(connectionInfo);
+//        mManager.connect();
+
+        mButtonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new MyAsyncTask().execute();
+//                new MyAsyncTask().execute();
+                if (is_server_running == Boolean.FALSE) {
+                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.1", 6666);
+                    myWebSocketServer = new MyWebSocketServer(myHost);
+                    myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
+                    myWebSocketServer.setContext(MainActivity.this);
+                    myWebSocketServer.start();
+
+                    is_server_running = Boolean.TRUE;
+                    Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(view.getContext(), "server already running!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        LogReaderTask logReaderTask = new LogReaderTask(logLinearLayout);
-        logReaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mButtonStop.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (is_server_running) {
+                    myWebSocketServer.stopServer();
+
+                    is_server_running = Boolean.FALSE;
+                    Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(view.getContext(), "server not running!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mButtonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logLinearLayout.removeAllViews();
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        myWebSocketServer.stopServer();
+        super.onStop();
     }
 
     private class LogReaderTask extends AsyncTask<Void, String, Void> {
@@ -74,7 +144,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V *:S io.github.privacystreams.test:V PrivacyStreams:V");
+                Process clearLog = Runtime.getRuntime().exec("logcat -c");
+                clearLog.waitFor(); // 等待清除命令执行完成
+
+
+                Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V *:S io.github.privacystreams.test:V PrivacyStreams:V websocket:V");
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(process.getInputStream())
                 );
@@ -84,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (IOException e) {
                 Log.e("LogReaderTask", "Error reading logcat", e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
             return null;
         }
@@ -139,6 +215,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mManager.disconnect();
+//        mManager.disconnect();
     }
 }

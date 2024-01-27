@@ -14,7 +14,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Start ChainStream server.",
                                      formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("-o", action="store", dest="output_dir",
+    parser.add_argument("-o", action="store", dest="output_dir", default="output",
                         help="directory of output")
     parser.add_argument("-verbose", action="store_true", dest="verbose", default=False,
                         help="run in verbose mode")

@@ -30,3 +30,9 @@ class ChatGPT(LLM_Interface):
             print(f'-------- GPT response ---------\n{r_content}')
         return r_content
 
+
+if __name__ == '__main__':
+    chatbot = ChatGPT()
+    while True:
+        prompt = input('Prompt: ')
+        response = chatbot.query(prompt)

@@ -88,6 +88,7 @@ class ChainStreamServer(object):
         if cmd == 'help':
             out += ' list streams ---- list all available streams\n'
             out += ' list agents ----- list all available agents\n'
+            out += ' start agent ----- choose an agent to start and run\n'
         elif cmd == 'list streams':
             out += 'available streams:\n'
             for i, (name, stream) in enumerate(self.streams.items()):
@@ -97,7 +98,27 @@ class ChainStreamServer(object):
             for i, (name, agent) in enumerate(self.agents.items()):
                 out += f'  {i}: {name}\n'
         elif cmd.startswith('start agent'):
-            module_path = cmd[11:].strip()
+            # agents_path = os.path.abspath(os.path.join(os.getcwd(), '..', '..', 'agents'))
+            agents_path = "agents/"
+            # List all files inside the agents folder
+            agent_list = []
+            for root, dirs, files in os.walk(agents_path):
+                for file in files:
+                    if file.endswith('.py'):
+                        agent_list.append(os.path.join(root, file))
+            chosen_agent = None
+            while True:
+                for i, agent in enumerate(agent_list):
+                    print(f"{[i]}: {agent}")
+                agent_id = input('choose an agent index to start: ')
+                if agent_id.isdigit() and int(agent_id) < len(agent_list):
+                    chosen_agent = agent_list[int(agent_id)]
+                    break
+                else:
+                    out += f'invalid agent id: {agent_id}\n'
+
+            # module_path = cmd[11:].strip()
+            module_path = chosen_agent.strip()
             out += f'starting agent {module_path}\n'
             if not os.path.exists(module_path) or not module_path.endswith('.py'):
                 out += f'agent not found: {module_path}'
