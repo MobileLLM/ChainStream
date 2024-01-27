@@ -4,7 +4,7 @@ import argparse
 import logging
 import chainstream as cs
 from chainstream.runtime import cs_server
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_args():

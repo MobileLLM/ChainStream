@@ -24,7 +24,7 @@ class BaseStream(StreamInterface):
         self.listeners = new_listeners
 
     def send_item(self, item):
-        self.logger.info(f'stream {self.stream_id} send an item {item}')
+        self.logger.debug(f'stream {self.stream_id} send an item {item}')
         for agent_, listener_func_ in self.listeners:
             listener_func_(item)
 
