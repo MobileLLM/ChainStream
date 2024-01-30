@@ -1,4 +1,4 @@
-package io.github.privacystreams.test;
+package io.github.privacystreams.ChainStreamClient;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,7 +14,6 @@ import org.java_websocket.server.WebSocketServer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;

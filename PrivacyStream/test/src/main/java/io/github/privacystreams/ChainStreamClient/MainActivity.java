@@ -1,4 +1,4 @@
-package io.github.privacystreams.test;
+package io.github.privacystreams.ChainStreamClient;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package io.github.privacystreams.test;
+package io.github.privacystreams.ChainStreamClient;
 
 import android.content.Context;
 import android.os.Build;
