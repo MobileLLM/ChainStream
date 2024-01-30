@@ -100,7 +100,8 @@ class ImageGPTModel(BaseOpenAI):
                     ]
                 }
             ],
-            temperature=self.temperature
+            temperature=self.temperature,
+            max_tokens=300,
         )
         res = response.choices[0].message.content
         self.prompt_tokens += response.usage.prompt_tokens
@@ -159,17 +160,17 @@ if __name__ == '__main__':
     #
     # print(model.query(prompt))
 
-    # prompt = "请概括这里说了什么"
+    prompt = "请概括这里说了什么"
+
+    audio_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_audio.wav"
+    model = AudioGPTModel()
+
+    print(model.query(prompt, audio_file_path))
+
+    # prompt = "请描述图片中有几个人物，都是谁"
     #
-    # audio_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_audio.wav"
-    # model = AudioGPTModel()
+    # image_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
     #
-    # print(model.query(prompt, audio_file_path))
-
-    prompt = "请描述图片中有几个人物，都是谁"
-
-    image_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
-
-    model = ImageGPTModel()
-
-    print(model.query(prompt, image_file_path))
+    # model = ImageGPTModel()
+    #
+    # print(model.query(prompt, image_file_path))
