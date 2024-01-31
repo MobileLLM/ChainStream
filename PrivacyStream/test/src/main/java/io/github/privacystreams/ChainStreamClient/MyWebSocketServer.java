@@ -124,6 +124,9 @@ public class MyWebSocketServer extends WebSocketServer {
                         }
                     });
         }
+        else if (cmd.equals("audio")) {
+
+        }
     }
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message) {

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 
+//import io.github.privacystreams.test.R;
 import io.github.privacystreams.utils.Logging;
 
 
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mTextSensors;
 
+    private LogReaderTask mLogReaderTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         mTextImage.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
         mTextSensors.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
 
+        mLogReaderTask = new LogReaderTask(logLinearLayout, this, logScrollView);
+
 
 //        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
 //        mManager = OkSocket.open(connectionInfo);
@@ -86,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                new MyAsyncTask().execute();
                 if (is_server_running == Boolean.FALSE) {
-                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    mLogReaderTask.startReadingLogs();
 
                     InetSocketAddress myHost = new InetSocketAddress("192.168.43.1", 6666);
                     myWebSocketServer = new MyWebSocketServer(myHost);
@@ -131,87 +137,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
-
-    private class LogReaderTask extends AsyncTask<Void, String, Void> {
-
-        private LinearLayout logLinearLayout;
-        private Handler handler;
-
-        // Constructor to pass reference of logLinearLayout
-        LogReaderTask(LinearLayout logLinearLayout) {
-            this.logLinearLayout = logLinearLayout;
-            this.handler = new Handler(Looper.getMainLooper());
-        }
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Process clearLog = Runtime.getRuntime().exec("logcat -c");
-                clearLog.waitFor(); // 等待清除命令执行完成
-
-
-                Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V *:S io.github.privacystreams.test:V PrivacyStreams:V websocket:V");
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(process.getInputStream())
-                );
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    publishProgress(line);
-                }
-            } catch (IOException e) {
-                Log.e("LogReaderTask", "Error reading logcat", e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            handler.post(() -> {
-                TextView textView = new TextView(MainActivity.this);
-//                SpannableString spannableString = new SpannableString(values[0]);
-//                spannableString.setSpan(new TextAppearanceSpan(null, 0, 18, null, null), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                textView.setText(spannableString);
-
-                textView.setText(values[0]);
-                logLinearLayout.addView(textView);
-
-                logScrollView.post(() -> {
-                    logScrollView.fullScroll(View.FOCUS_DOWN);
-                });
-            });
-
-        }
-    }
-
-    private class MyAsyncTask extends AsyncTask<Object, Object, Object> {
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            TestCases testCases = new TestCases(MainActivity.this);
-
-            testCases.testTakePhotoBg();
-//            testCases.testMerge();
-//            testCases.testAccEvents();
-//            testCases.testCurrentLocation();
-//            testCases.testTextEntry();
-//            testCases.testNotification();
-//            testCases.testAudio();
-//            testCases.testMockData();
-//            testCases.testContacts();
-//            testCases.testDeviceState();
-//
-//            testCases.testBrowserSearchUpdates();
-//            testCases.testBrowserHistoryUpdates();
-//
-//            testCases.testAccEvents();
-//
-//            testCases.testIMUpdates();
- //           testCases.testEmailUpdates();
-//            testCases.testEmailList();
-
-            return null;
-        }
-    }
 
     @Override
     protected void onDestroy() {
