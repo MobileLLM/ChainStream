@@ -2,6 +2,12 @@
 
 The development framework and runtime system for mobile agents.
 
+## 饼图
+
+<img src="./doc/img/ChainStream.png" alt="ChainStream" style="zoom:50%;" />
+
+* 有颜色实线的部分是目前准备做的饼，灰色虚线的部分是遥不可及的饼。
+
 ## Install
 
 Clone this repo, change directory to the repo folder, and install with pip:
