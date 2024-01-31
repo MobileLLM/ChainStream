@@ -74,7 +74,7 @@ public class MyWebSocketServer extends WebSocketServer {
             Logging.debug("begin video socket");
 //            UQIVideoSocket uqiVideoSocket = new UQIVideoSocket(uqi, para, conn);
 //            uqiVideoSocket.run();
-            uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para) * 1000), Purpose.UTILITY("taking picture."))
+            uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para)), Purpose.UTILITY("taking picture."))
                     .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
                     .forEach("imagePath", new Callback<String>() {
                         @Override

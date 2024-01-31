@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
+
     private class LogReaderTask extends AsyncTask<Void, String, Void> {
 
         private LinearLayout logLinearLayout;
@@ -214,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        myWebSocketServer.stopServer();
         super.onDestroy();
 //        mManager.disconnect();
     }
