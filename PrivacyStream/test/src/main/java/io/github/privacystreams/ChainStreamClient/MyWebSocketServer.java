@@ -2,6 +2,7 @@ package io.github.privacystreams.ChainStreamClient;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -20,12 +21,15 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
+import io.github.privacystreams.audio.AudioOperators;
 import io.github.privacystreams.core.Callback;
 import io.github.privacystreams.core.UQI;
 import io.github.privacystreams.core.purposes.Purpose;
 import io.github.privacystreams.image.Image;
 import io.github.privacystreams.image.ImageOperators;
+import io.github.privacystreams.location.Geolocation;
 import io.github.privacystreams.utils.Logging;
+import io.github.privacystreams.audio.Audio;
 
 public class MyWebSocketServer extends WebSocketServer {
     private Context myContext;
@@ -67,8 +71,8 @@ public class MyWebSocketServer extends WebSocketServer {
 
         // parts数组中包含切分后的子串
         String cmd = parts[0];
-        String para = parts[1];
         if (cmd.equals("video")) {
+            String para = parts[1];
             mTextImage.setTextColor(Color.BLUE);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin video socket");
@@ -125,7 +129,65 @@ public class MyWebSocketServer extends WebSocketServer {
                     });
         }
         else if (cmd.equals("audio")) {
+            String duraton = parts[1];
+            String interval = parts[2];
+            mTextAudio.setTextColor(Color.RED);
+            UQI uqi = new UQI(myContext);
+            Logging.debug("begin audio socket");
+            uqi.getData(Audio.recordPeriodic(Integer.parseInt(duraton), Integer.parseInt(interval)), Purpose.UTILITY("recording audio"))
+                    .setField("audioPath", AudioOperators.getFilepath(Audio.AUDIO_DATA))
+                    .forEach("audioPath", new Callback<String>() {
+                        @Override
+                        protected void onInput(String audioPath) {
+                            System.out.println("Send " + audioPath + "through socket");
+                            mTextAudio.setTextColor(Color.RED);
+                            File audioFile = new File(audioPath);
 
+                            try {
+                                FileInputStream fis = new FileInputStream(audioFile);
+                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
+
+                                while ((bytesRead = fis.read(buffer)) != -1) {
+                                    bos.write(buffer, 0, bytesRead);
+                                }
+
+                                fis.close();
+                                bos.close();
+
+                                byte[] audioData = bos.toByteArray();
+                                ByteBuffer byteBuffer = ByteBuffer.wrap(audioData);
+
+                                if (conn.isClosed()) {
+                                    uqi.stopAll();
+                                    mTextAudio.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
+                                }
+                                conn.send(byteBuffer);
+                                Logging.debug("send pic" + byteBuffer.capacity());
+                                mTextAudio.setTextColor(Color.BLUE);
+
+                                boolean isDeleted = audioFile.delete();
+
+                                if (!isDeleted) {
+                                    System.out.println("音频文件删除失败");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        }
+        else if (cmd.equals("sensors")) {
+            String sensorsName = parts[1];
+            String interval = parts[2];
+            mTextSensors.setTextColor(Color.RED);
+            UQI uqi = new UQI(myContext);
+            Logging.debug("begin sensor socket");
+            if (sensorsName.equals("location")) {
+                // TODO: not finish
+            }
         }
     }
     @Override
