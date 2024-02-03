@@ -5,15 +5,16 @@ class ClothingRecommendation(cs.agent.Agent):
     """
        每天早上当用户醒来后，结合用户今天的日程内容和当地的天气情况给用户推荐衣物
     """
-    def __init__(self):
+    def __init__(self, agent_id):
+        super().__init__(agent_id)
         self._source2 = cs.get_stream('schedule_stream')
         self._source1 = cs.get_stream('weather_stream')
         self._source3 = cs.get_stream('wakeup_stream')          # wakeup stream，由一个专门负责检测起床的 agent 来发布事件
-        self._llm = cs.llm.get_llm('ChatGPT')
-        self.schedule_buffer = cs.context.TextBuffer()
-        self.weather_buffer = cs.context.TextBuffer()
-        self.wakeup_buffer = cs.context.TextBuffer()
-        self.send_recommend_info = cs.action.message_reminder()
+        self._llm = cs.llm.get_model('ChatGPT')
+        self.schedule_buffer = cs.context.TextBuffer()  # TODO
+        self.weather_buffer = cs.context.TextBuffer()   # TODO
+        self.wakeup_buffer = cs.context.TextBuffer()    # TODO
+        self.send_recommend_info = cs.action.message_reminder() # TODO
         self.clothing_recommendation = cs.create_stream('clothing_recommendation')
 
     def start(self):
