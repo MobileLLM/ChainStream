@@ -29,7 +29,6 @@ class DefaultSensors(cs.agent.Agent):
             time.sleep(sleep_duration)
             ret, frame = cap.read()
             self.front_camera_video.send_item({'timestamp': datetime.now(), 'frame': frame})
-            self.logger.info()
         cap.release()
 
     def capture_audio(self):
