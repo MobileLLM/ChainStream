@@ -129,12 +129,12 @@ public class MyWebSocketServer extends WebSocketServer {
                     });
         }
         else if (cmd.equals("audio")) {
-            String duraton = parts[1];
+            String duration = parts[1];
             String interval = parts[2];
             mTextAudio.setTextColor(Color.RED);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin audio socket");
-            uqi.getData(Audio.recordPeriodic(Integer.parseInt(duraton), Integer.parseInt(interval)), Purpose.UTILITY("recording audio"))
+            uqi.getData(Audio.recordPeriodic(Integer.parseInt(duration), Integer.parseInt(interval)), Purpose.UTILITY("recording audio"))
                     .setField("audioPath", AudioOperators.getFilepath(Audio.AUDIO_DATA))
                     .forEach("audioPath", new Callback<String>() {
                         @Override
