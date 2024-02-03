@@ -5,7 +5,7 @@ android {
     compileSdkVersion 33
     buildToolsVersion "30.0.3"
     defaultConfig {
-        applicationId "io.github.privacystreams.test"
+        applicationId 'io.github.privacystreams.ChainStreamClient'
         minSdkVersion 16
         targetSdkVersion 33
         versionCode 1

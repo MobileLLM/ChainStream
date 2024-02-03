@@ -24,7 +24,7 @@ class SocketSensors(cs.agent.Agent):
         self.port = port
 
         from chainstream.utils import WebSocketClient
-        self.front_camera_video_cli = WebSocketClient(f"ws://{self.ip}:{self.port}", on_start_message="video,1",
+        self.front_camera_video_cli = WebSocketClient(f"ws://{self.ip}:{self.port}", on_start_message="video,500",
                                                       on_message=self._front_camera_video_get_on_message())
 
     def start(self):
