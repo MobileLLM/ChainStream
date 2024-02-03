@@ -37,7 +37,25 @@ class AudioSocketSensors(BaseSocketSensors):
     def get_on_message(self):
         def on_message(ws, amr_file):
             # TODO: convert ame file to other format
-            self.stream.send_item({'timestamp': datetime.now(), 'data': frame})
+            self.stream.send_item({'timestamp': datetime.now(), 'data': amr_file})
+
+            # self.logger.info()
+
+        return on_message
+
+class SensorSocketSensors(BaseSocketSensors):
+    def __init__(self, agent_id='sys_socket_sensor_sensors', ip='192.168.43.1', port=6666):
+        super().__init__(agent_id, stream_name="socket_sensor", ip=ip, port=port)
+
+        # TODO: add sensor data type
+        self.cmd = f"sensor,"
+
+        pass
+
+    def get_on_message(self):
+        def on_message(ws, sensor_data):
+            # TODO: convert sensor_data
+            self.stream.send_item({'timestamp': datetime.now(), 'data': sensor_data})
 
             # self.logger.info()
 
