@@ -42,17 +42,60 @@ class TestVideoBuffer(unittest.TestCase):
 
 
 class TestAudioBuffer(unittest.TestCase):
-    # Similar tests as TestVideoBuffer
-    pass
+
+    def setUp(self):
+        self.buffer = AudioBuffer(3)
+
+    def test_init(self):
+        self.assertEqual(self.buffer.maxlen, 3)
+        self.assertEqual(self.buffer.item_type, 'audio')
+
+    def test_save(self):
+        self.buffer.save('audio1')
+        self.assertEqual(len(self.buffer.buffer), 1)
+
+    def test_snapshot(self):
+        self.buffer.save('audio1')
+        self.assertEqual(self.buffer.snapshot(), 'audio1')
+
 
 
 class TestTextBuffer(unittest.TestCase):
     # Similar tests as TestVideoBuffer
-    pass
+    def setUp(self):
+        self.buffer = TextBuffer(3)
+
+    def test_init(self):
+        self.assertEqual(self.buffer.maxlen, 3)
+        self.assertEqual(self.buffer.item_type, 'text')
+
+    def test_save(self):
+        self.buffer.save('text1')
+        self.assertEqual(len(self.buffer.buffer), 1)
+
+    def test_read(self):
+        self.buffer.save('text1')
+        self.assertEqual(self.buffer.read(), 'text1')
+
 
 class TestWordBuffer(unittest.TestCase):
-    # Similar tests as TestVideoBuffer, but also test the splitting of words in save method
-    pass
+    def setUp(self):
+        self.buffer = WordBuffer(3)
+
+    def test_init(self):
+        self.assertEqual(self.buffer.maxlen, 3)
+        self.assertEqual(self.buffer.item_type, 'word')
+
+
+    def test_save(self):
+        self.buffer.save('hellow,chainstream\nhellow')
+        self.assertEqual(len(self.buffer.buffer), 3)
+
+
+    def test_read(self):
+        self.buffer.save('hellow,chainstream\nhellow')
+        self.assertEqual(self.buffer.read(), 'hellow')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,4 @@
-import mysql.connector
+import pymysql
 import psycopg2
 
 class DataBaseInterface:
@@ -15,7 +15,7 @@ class DataBaseInterface:
     def connect(self):
         try:
             if self.type=='mysql':
-                self.connection = mysql.connector.connect(
+                self.connection = pymysql.connect(
                     host=self.host,
                     port=self.port,
                     user=self.user_config['user'],
@@ -34,6 +34,7 @@ class DataBaseInterface:
                 raise ValueError("Unsupported database type: {}".format(self.db_type))
         except Exception as e:
             print("Failed to connect to the database: {}".format(str(e)))
+
     def query(self,sql):
         try:
             if not self.cursor:
@@ -43,6 +44,7 @@ class DataBaseInterface:
             return result
         except Exception as e:
             print("Failed to execute query: {}".format(str(e)))
+
     def update(self,sql):
         try:
             if not self.cursor:
