@@ -2,7 +2,7 @@ import chainstream as cs
 import threading
 from datetime import datetime
 
-from base_socket_sensor import BaseSocketSensors
+from agents.system_agents.socket_sensor.base_socket_sensor import BaseSocketSensors
 
 from PIL import Image
 
@@ -11,6 +11,7 @@ from io import BytesIO
 
 
 class SensorSocketSensors(BaseSocketSensors):
+    is_agent = True
     def __init__(self, agent_id='sys_socket_sensor_sensors', ip='192.168.43.1', port=6666):
         super().__init__(agent_id, stream_name="socket_sensor", ip=ip, port=port)
 

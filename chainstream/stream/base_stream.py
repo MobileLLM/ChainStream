@@ -12,12 +12,15 @@ class BaseStream(StreamInterface):
         self.listeners = []
 
     def register_listener(self, agent, listener_func):
-        self.listeners.append[(agent, listener_func)]
+        try:
+            self.listeners.append((agent.agent_id, listener_func))
+        except Exception as e:
+            print("Error registering listener: ", e)
 
     def unregister_listener(self, agent, listener_func=None):
         new_listeners = []
         for agent_, listener_func_ in self.listeners:
-            if agent_ != agent:
+            if agent_ != agent.agent_id:
                 new_listeners.append((agent_, listener_func_))
             elif listener_func is not None and listener_func_ == listener_func:
                 new_listeners.append((agent_, listener_func_))

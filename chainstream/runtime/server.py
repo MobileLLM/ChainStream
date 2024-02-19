@@ -87,18 +87,18 @@ class ChainStreamServer(object):
     def handle_command(self, cmd):
         out = ''
         if cmd == 'help':
-            out += ' list streams ---- list all available streams\n'
-            out += ' list agents ----- list all available agents\n'
-            out += ' start agent ----- choose an agent to start and run\n'
-        elif cmd == 'list streams':
+            out += ' list streams (LS) ---- list all available streams\n'
+            out += ' list agents (LA) ----- list all available agents\n'
+            out += ' start agent (S) ----- choose an agent to start and run\n'
+        elif cmd == 'list streams' or cmd == 'LS':
             out += 'available streams:\n'
             for i, (name, stream) in enumerate(self.streams.items()):
                 out += f'  {i}: {name}\n'
-        elif cmd == 'list agents':
+        elif cmd == 'list agents' or cmd == 'LA':
             out += 'available agents:\n'
             for i, (name, agent) in enumerate(self.agents.items()):
                 out += f'  {i}: {name}\n'
-        elif cmd.startswith('start agent'):
+        elif cmd.startswith('start agent') or cmd == 'S':
             # agents_path = os.path.abspath(os.path.join(os.getcwd(), '..', '..', 'agents'))
             agents_path = "agents/"
             # List all files inside the agents folder
@@ -120,7 +120,7 @@ class ChainStreamServer(object):
 
             # module_path = cmd[11:].strip()
             module_path = chosen_agent.strip()
-            out += f'starting agent {module_path}\n'
+            # out += f'starting agent {module_path}\n'
             if not os.path.exists(module_path) or not module_path.endswith('.py'):
                 out += f'agent not found: {module_path}'
             module_name = os.path.splitext(os.path.basename(module_path))[0]
@@ -131,10 +131,13 @@ class ChainStreamServer(object):
             for name, obj in module.__dict__.items():
                 if inspect.isclass(obj) and issubclass(obj, Agent) and obj.is_agent:
                     print(name, obj)
-                    new_agent = obj()
-                    res = new_agent.start()
-                    if res:
-                        out += f'agent {name} started successfully\n'
+                    try:
+                        new_agent = obj()
+                        res = new_agent.start()
+                        if res:
+                            out += f'agent {name} started successfully\n'
+                    except Exception as e:
+                        out += f'Error starting agent {name}: {e}\n'
         else:
             out += f'unknown command: {cmd}'
         return out

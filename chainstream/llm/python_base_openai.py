@@ -9,7 +9,15 @@ import collections
 import logging
 from pathlib import Path
 
+from io import BytesIO
+from PIL import Image
+
 logger = logging.getLogger(__name__)
+
+GPT_CONFIG = {
+    "url": "https://api.openai-proxy.org/v1",
+    "key": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9"
+}
 
 
 class BaseOpenAI:
@@ -27,13 +35,15 @@ class BaseOpenAI:
             raise ValueError("Invalid model type.")
 
         try:
-            self.url = os.environ['GPT_API_URL']
-            self.api_key = os.environ['GPT_API_KEY']
+            # self.url = os.environ['GPT_API_URL']
+            # self.api_key = os.environ['GPT_API_KEY']
+            self.url = GPT_CONFIG['url']
+            self.api_key = GPT_CONFIG['key']
             self.temperature = temperature
             self.retry = retry
             self.client = OpenAI(
-                base_url=os.environ['GPT_API_URL'],
-                api_key=os.environ['GPT_API_KEY'],
+                base_url=self.url,
+                api_key=self.api_key,
                 timeout=timeout,
                 max_retries=retry,
             )
@@ -94,7 +104,7 @@ class ImageGPTModel(BaseOpenAI):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_image}"
+                                "url": base64_image
                             }
                         }
                     ]
@@ -111,8 +121,26 @@ class ImageGPTModel(BaseOpenAI):
         return res
 
     def _encode_image(self, image_path):
-        with open(image_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode('utf-8')
+        if isinstance(image_path, str):
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+        elif isinstance(image_path, Image.Image):
+            pil_image = image_path
+            # Ensure the image is in a supported format
+            if pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
+                # Convert the image to JPEG format, for example
+                pil_image = pil_image.convert("RGB")
+                image_format = "jpeg"
+            else:
+                image_format = pil_image.format.lower()
+
+            # Convert PIL Image to BytesIO
+            image_bytesio = BytesIO()
+            pil_image.save(image_bytesio, format=image_format)
+
+            # Encode the BytesIO as base64
+            base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
+            return f"data:image/{image_format};base64,{base64_image}"
 
 
 class AudioGPTModel(BaseOpenAI):
@@ -123,6 +151,7 @@ class AudioGPTModel(BaseOpenAI):
         self.chat_model = chat_model
 
     def query(self, prompt, audio_file_path):
+
         audio_file = open(audio_file_path, "rb")
 
         transcript = self.client.audio.transcriptions.create(

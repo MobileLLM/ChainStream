@@ -14,7 +14,7 @@ from io import BytesIO
 
 class AudioSocketSensors(BaseSocketSensors):
     is_agent = True
-    def __init__(self, agent_id='sys_socket_audio_sensors', audio_duration=1, audio_interval=1, ip='192.168.43.41', port=6666):
+    def __init__(self, agent_id='sys_socket_audio_sensors', audio_duration=1, audio_interval=10, ip='192.168.43.41', port=6666):
         super().__init__(agent_id, stream_name="socket_microphone_audio", ip=ip, port=port)
         self.audio_duration = int(audio_duration) * 1000
         self.audio_interval = int(audio_interval) * 1000
@@ -23,15 +23,22 @@ class AudioSocketSensors(BaseSocketSensors):
 
     def get_on_message(self):
         def on_message(ws, amr_file):
-            # print("Received audio file from socket server", len(amr_file))
+            print("Received audio file from socket server", len(amr_file))
             amr_file = BytesIO(amr_file)
             amr_audio = AudioSegment.from_file(amr_file, format="amr")
 
             wav_file = BytesIO()
             amr_audio.export(wav_file, format="wav")
 
-            from pydub.playback import play
-            play(amr_audio)
+            # from pydub.playback import play
+            # play(amr_audio)
+            try:
+                from chainstream.llm.python_base_openai import AudioGPTModel
+                tmp = AudioGPTModel()
+                prompt = "请概括这里说了什么"
+                print(tmp.query(prompt, wav_file))
+            except Exception as e:
+                print(e)
 
             self.stream.send_item({'timestamp': datetime.now(), 'data': wav_file})
 
