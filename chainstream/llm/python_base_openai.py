@@ -84,30 +84,36 @@ class TextGPTModel(BaseOpenAI):
 
 
 class ImageGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-4-vision-preview', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
+    def __init__(self, model='gpt-4-vision-preview', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
+                 detail='low'):
         super().__init__(model=model, model_type='image', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
+        self.detail = detail
 
-    def query(self, prompt, image_file_path):
-        base64_image = self._encode_image(image_file_path)
-
+    def query(self, prompt, image_file_paths):
+        if isinstance(image_file_paths, str):
+            image_file_paths = [image_file_paths]
+        base64_images = [self._encode_image(image_file_path) for image_file_path in image_file_paths]
+        contents = [{
+            "type": "text",
+            "text": prompt
+        }]
+        for base64_image in base64_images:
+            contents.append(
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": base64_image,
+                        # "detail": self.detail
+                    }
+                }
+            )
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[
                 {
                     "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": prompt
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": base64_image
-                            }
-                        }
-                    ]
+                    "content": contents
                 }
             ],
             temperature=self.temperature,
@@ -151,7 +157,6 @@ class AudioGPTModel(BaseOpenAI):
         self.chat_model = chat_model
 
     def query(self, prompt, audio_file_path):
-
         audio_file = open(audio_file_path, "rb")
 
         transcript = self.client.audio.transcriptions.create(
@@ -189,17 +194,17 @@ if __name__ == '__main__':
     #
     # print(model.query(prompt))
 
-    prompt = "请概括这里说了什么"
-
-    audio_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_audio.wav"
-    model = AudioGPTModel()
-
-    print(model.query(prompt, audio_file_path))
-
-    # prompt = "请描述图片中有几个人物，都是谁"
+    # prompt = "请概括这里说了什么"
     #
-    # image_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
+    # audio_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_audio.wav"
+    # model = AudioGPTModel()
     #
-    # model = ImageGPTModel()
-    #
-    # print(model.query(prompt, image_file_path))
+    # print(model.query(prompt, audio_file_path))
+
+    prompt = "请描述图片中有几个人物，都是谁"
+
+    image_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
+
+    model = ImageGPTModel()
+
+    print(model.query(prompt, image_file_path))
