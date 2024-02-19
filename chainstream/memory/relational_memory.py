@@ -1,9 +1,9 @@
 from chainstream.interfaces import MemoryInterface
 
 class RelationalMemory(MemoryInterface):
-    def __init__(self, dict_key):
+    def __init__(self, memory_id):
         super().__init__()
-        self.dict_key = dict_key
+        self.memory_id = memory_id
         self.items = []
 
     def add_item(self, data_item):

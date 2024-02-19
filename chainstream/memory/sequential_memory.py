@@ -2,8 +2,9 @@ from chainstream.interfaces import MemoryInterface
 
 
 class SequentialMemory(MemoryInterface):
-    def __init__(self) -> None:
+    def __init__(self, memory_id) -> None:
         super().__init__()
+        self.memory_id = memory_id
         self.items = []
 
     def add_item(self, data_item):

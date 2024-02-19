@@ -3,9 +3,9 @@ import cv2
 
 
 class KV_Memory(MemoryInterface):
-    def __init__(self, dict_key) -> None:
+    def __init__(self, memory_id) -> None:
         super().__init__()
-        self.name = dict_key  # known_people
+        self.memory_id = memory_id  # known_people
         self.items = {}
 
     # add or change

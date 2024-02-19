@@ -16,7 +16,8 @@ def set_toy_memory():
     #             ('小黄鸭', Image.open(yellow_file)),
     #             ('moss', Image.open(moss_file))]
 
-    toy_list = [('悲伤小蓝', Image.open(blue_file)),]
+    toy_list = [('悲伤小蓝', Image.open(blue_file)),
+                ('小猪', Image.open(pig_file)),]
 
     memory = cs.memory.create('known_toy', type='relational')
     for toy in toy_list:
