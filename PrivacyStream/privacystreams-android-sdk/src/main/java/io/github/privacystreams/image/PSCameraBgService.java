@@ -112,7 +112,7 @@ public class PSCameraBgService extends Service {
             mPreview = new HiddenCameraPreview(this, mCamera);
             mPreview.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            WindowManager.LayoutParams params = new WindowManager.LayoutParams(1, 1,
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(500, 500,
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
                             WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY :
                             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
