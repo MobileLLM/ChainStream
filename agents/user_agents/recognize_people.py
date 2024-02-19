@@ -2,7 +2,7 @@ import chainstream as cs
 
 
 class PeopleRecognitionAgent(cs.agent.Agent):
-    def __init__(self, agent_id):
+    def __init__(self, agent_id="people_recognition_agent"):
         super().__init__(agent_id)
         self._source1 = cs.get_stream('glass_camera_video_01')  # instance of Stream
         self._source2 = cs.get_stream('glass_microphone')

@@ -10,7 +10,7 @@ from io import BytesIO
 
 
 class SocketSensors(cs.agent.Agent):
-    def __init__(self, agent_id='default_sensors', video_fps=1, audio_duration=1, ip='192.168.43.1', port=6666):
+    def __init__(self, agent_id='socket_mobile_sensors', video_fps=1, audio_duration=1, ip='192.168.43.1', port=6666):
         super().__init__(agent_id)
         self.video_fps = video_fps
         self.audio_duration = audio_duration
