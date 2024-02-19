@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 //                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     mLogReaderTask.startReadingLogs();
 
-                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.1", 6666);
+                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.41", 6666);
                     myWebSocketServer = new MyWebSocketServer(myHost);
                     myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
                     myWebSocketServer.setContext(MainActivity.this);

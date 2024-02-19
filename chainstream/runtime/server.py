@@ -129,10 +129,12 @@ class ChainStreamServer(object):
             spec.loader.exec_module(module)
             from chainstream.agent import Agent
             for name, obj in module.__dict__.items():
-                if inspect.isclass(obj) and issubclass(obj, Agent):
+                if inspect.isclass(obj) and issubclass(obj, Agent) and obj.is_agent:
                     print(name, obj)
                     new_agent = obj()
-                    new_agent.start()
+                    res = new_agent.start()
+                    if res:
+                        out += f'agent {name} started successfully\n'
         else:
             out += f'unknown command: {cmd}'
         return out

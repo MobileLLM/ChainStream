@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 import chainstream as cs
 import threading
@@ -11,6 +11,7 @@ from io import BytesIO
 
 
 class BaseSocketSensors(cs.agent.Agent):
+    is_agent = False
     def __init__(self, agent_id='default_sensors', stream_name=None, ip='192.168.43.1', port=6666):
         super().__init__(agent_id)
         self.socket_thread = None
@@ -28,6 +29,8 @@ class BaseSocketSensors(cs.agent.Agent):
 
         self.socket_thread = threading.Thread(target=self.start_thread_func)
         self.socket_thread.start()
+
+        return True
 
     @abstractmethod
     def get_on_message(self):

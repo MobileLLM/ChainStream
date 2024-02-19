@@ -139,7 +139,7 @@ public class MyWebSocketServer extends WebSocketServer {
                     .forEach("audioPath", new Callback<String>() {
                         @Override
                         protected void onInput(String audioPath) {
-                            System.out.println("Send " + audioPath + "through socket");
+                            System.out.println("Send " + audioPath + " through socket");
                             mTextAudio.setTextColor(Color.RED);
                             File audioFile = new File(audioPath);
 
@@ -165,7 +165,7 @@ public class MyWebSocketServer extends WebSocketServer {
                                     mTextAudio.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
                                 }
                                 conn.send(byteBuffer);
-                                Logging.debug("send pic" + byteBuffer.capacity());
+                                Logging.debug("send audio" + byteBuffer.capacity());
                                 mTextAudio.setTextColor(Color.BLUE);
 
                                 boolean isDeleted = audioFile.delete();

@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class DefaultSensors(cs.agent.Agent):
+    is_agent = True
     def __init__(self, agent_id='pc_sensors', video_fps=1, audio_duration=1):
         super().__init__(agent_id)
         self.video_fps = video_fps
