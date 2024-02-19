@@ -91,7 +91,7 @@ class ImageGPTModel(BaseOpenAI):
         self.detail = detail
 
     def query(self, prompt, image_file_paths):
-        if isinstance(image_file_paths, str):
+        if not isinstance(image_file_paths, list):
             image_file_paths = [image_file_paths]
         base64_images = [self._encode_image(image_file_path) for image_file_path in image_file_paths]
         contents = [{
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     #
     # print(model.query(prompt, audio_file_path))
 
-    prompt = "第一张图片是我最爱看的动画片，请对后面的其他动画片中进行推荐度排序，并说出理由"
+    prompt = "第一张图片中的动画片有再次出现在后面其他图片中吗"
 
     image_file_path1 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
     image_file_path2 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img2.jpeg"
