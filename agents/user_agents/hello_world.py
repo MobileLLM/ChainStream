@@ -5,7 +5,8 @@ class HelloAgent(cs.agent.Agent):
     """
     A simple agent that says hello to people in front camera
     """
-    def __init__(self):
+    def __init__(self, agent_id="hello_agent"):
+        super().__init__(agent_id)
         self._source1 = cs.get_stream('front_camera_video_01')  # instance of Stream
         self._llm = cs.llm.get_model('gpt-4-vision')
         self.video_buffer = cs.context.VideoBuffer(duration=10)

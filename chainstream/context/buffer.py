@@ -1,6 +1,6 @@
 from chainstream.interfaces import ContextInterface
 from collections import deque
-
+import re
 
 class BufferContext(ContextInterface):
     def __init__(self, maxlen, item_type):
@@ -49,7 +49,7 @@ class TextBuffer(BufferContext):
         self.add(item)
 
     def read(self):
-        self.get()
+        return self.get()
 
 
 class WordBuffer(BufferContext):
@@ -57,11 +57,11 @@ class WordBuffer(BufferContext):
         super().__init__(maxlen=max_word_num, item_type='word')
 
     def save(self, item):
-        for word in item.strip().split(' ', ',', '\n'):
+        words = re.split(r",|\n", item)
+        for word in words:
             self.add(word)
 
     def read(self):
         return self.get()
-
 
 

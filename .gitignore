@@ -162,3 +162,5 @@ PrivacyStream/.idea
 PrivacyStream/.gradle
 PrivacyStream/local.properties
 PrivacyStream/local.gradle
+
+*.DS_Store

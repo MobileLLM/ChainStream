@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class DefaultSensors(cs.agent.Agent):
-    def __init__(self, agent_id='default_sensors', video_fps=1, audio_duration=1):
+    def __init__(self, agent_id='pc_sensors', video_fps=1, audio_duration=1):
         super().__init__(agent_id)
         self.video_fps = video_fps
         self.audio_duration = audio_duration
@@ -29,7 +29,6 @@ class DefaultSensors(cs.agent.Agent):
             time.sleep(sleep_duration)
             ret, frame = cap.read()
             self.front_camera_video.send_item({'timestamp': datetime.now(), 'frame': frame})
-            self.logger.info()
         cap.release()
 
     def capture_audio(self):

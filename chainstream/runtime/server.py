@@ -63,6 +63,7 @@ class ChainStreamServer(object):
             self.start_shell()
     
     def start_shell(self):
+        print(self.handle_command("help"))
         while True:
             cmd = input('> ')
             if cmd == 'q' or cmd == 'exit':
