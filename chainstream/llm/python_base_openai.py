@@ -85,10 +85,11 @@ class TextGPTModel(BaseOpenAI):
 
 class ImageGPTModel(BaseOpenAI):
     def __init__(self, model='gpt-4-vision-preview', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
-                 detail='low'):
+                 detail='low', resize_width=512):
         super().__init__(model=model, model_type='image', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
         self.detail = detail
+        self.resize_width = resize_width
 
     def query(self, prompt, image_file_paths):
         if not isinstance(image_file_paths, list):
@@ -126,28 +127,41 @@ class ImageGPTModel(BaseOpenAI):
 
         return res
 
-    def _encode_image(self, image_path):
-        if isinstance(image_path, str):
-            with open(image_path, "rb") as image_file:
-                return f"data:image/jpeg;base64,{base64.b64encode(image_file.read()).decode('utf-8')}"
+    def _resize_maintain_aspect_ratio(self, image, new_width=None):
+        if new_width is None:
+            if self.resize_width:
+                new_width = self.resize_width
+            else:
+                return image
+        img = image
+        width_percent = (new_width / float(img.size[0]))
+        new_height = int((float(img.size[1]) * float(width_percent)))
+        resized_img = img.resize((new_width, new_height))
+        return resized_img
 
+    def _encode_image(self, image_path):
+        pil_image = None
+        if isinstance(image_path, str):
+            pil_image = Image.open(image_path)
         elif isinstance(image_path, Image.Image):
             pil_image = image_path
-            # Ensure the image is in a supported format
-            if pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
-                # Convert the image to JPEG format, for example
-                pil_image = pil_image.convert("RGB")
-                image_format = "jpeg"
-            else:
-                image_format = pil_image.format.lower()
 
-            # Convert PIL Image to BytesIO
-            image_bytesio = BytesIO()
-            pil_image.save(image_bytesio, format=image_format)
+        pil_image = self._resize_maintain_aspect_ratio(pil_image)
+        # Ensure the image is in a supported format
+        if pil_image.format is None or pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
+            # Convert the image to JPEG format, for example
+            pil_image = pil_image.convert("RGB")
+            image_format = "jpeg"
+        else:
+            image_format = pil_image.format.lower()
 
-            # Encode the BytesIO as base64
-            base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
-            return f"data:image/{image_format};base64,{base64_image}"
+        # Convert PIL Image to BytesIO
+        image_bytesio = BytesIO()
+        pil_image.save(image_bytesio, format=image_format)
+
+        # Encode the BytesIO as base64
+        base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
+        return f"data:image/{image_format};base64,{base64_image}"
 
 
 class AudioGPTModel(BaseOpenAI):
@@ -197,18 +211,18 @@ if __name__ == '__main__':
 
     # prompt = "请概括这里说了什么"
     #
-    # audio_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_audio.wav"
+    # audio_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp_img/test_audio.wav"
     # model = AudioGPTModel()
     #
     # print(model.query(prompt, audio_file_path))
 
     prompt = "第一张图片中的动画片有再次出现在后面其他图片中吗"
 
-    image_file_path1 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
-    image_file_path2 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img2.jpeg"
-    image_file_path3 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img3.jpg"
-    image_file_path4 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img4.jpeg"
-    image_file_path5 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img5.jpeg"
+    image_file_path1 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img.jpeg")
+    image_file_path2 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img2.jpeg")
+    image_file_path3 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img3.jpg")
+    image_file_path4 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img4.jpeg")
+    image_file_path5 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img5.jpeg")
 
     model = ImageGPTModel()
 
