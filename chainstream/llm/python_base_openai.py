@@ -202,11 +202,29 @@ if __name__ == '__main__':
     #
     # print(model.query(prompt, audio_file_path))
 
-    prompt = "请描述图片中有几个人物，都是谁"
+    prompt = "第一张图片是我最爱看的动画片，请对后面的其他动画片中进行推荐度排序，并说出理由"
 
     image_file_path1 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
     image_file_path2 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img2.jpeg"
+    image_file_path3 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img3.jpg"
+    image_file_path4 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img4.jpeg"
+    image_file_path5 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img5.jpeg"
 
     model = ImageGPTModel()
 
-    print(model.query(prompt, [image_file_path1, image_file_path2]))
+    # print(model.query(prompt, [image_file_path1, image_file_path2,
+    #                            image_file_path1, image_file_path2,
+    #                            image_file_path1, image_file_path2,
+    #                            image_file_path1, image_file_path2,
+    #                            image_file_path1, image_file_path2,
+    #                            image_file_path3, image_file_path3,
+    #                            image_file_path3, image_file_path3,
+    #                            image_file_path4, image_file_path4,
+    #                            image_file_path4, image_file_path4,
+    #                            image_file_path5, image_file_path5,
+    #                            image_file_path5, image_file_path5,
+    #                            ]))
+    print(model.query(prompt, [image_file_path1, image_file_path2,
+                               image_file_path3, image_file_path4,
+                               image_file_path5
+                               ]))
