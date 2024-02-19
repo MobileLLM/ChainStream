@@ -104,7 +104,7 @@ class ImageGPTModel(BaseOpenAI):
                     "type": "image_url",
                     "image_url": {
                         "url": base64_image,
-                        # "detail": self.detail
+                        "detail": self.detail
                     }
                 }
             )
@@ -129,7 +129,8 @@ class ImageGPTModel(BaseOpenAI):
     def _encode_image(self, image_path):
         if isinstance(image_path, str):
             with open(image_path, "rb") as image_file:
-                return base64.b64encode(image_file.read()).decode('utf-8')
+                return f"data:image/jpeg;base64,{base64.b64encode(image_file.read()).decode('utf-8')}"
+
         elif isinstance(image_path, Image.Image):
             pil_image = image_path
             # Ensure the image is in a supported format
@@ -203,8 +204,9 @@ if __name__ == '__main__':
 
     prompt = "请描述图片中有几个人物，都是谁"
 
-    image_file_path = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
+    image_file_path1 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img.jpeg"
+    image_file_path2 = "/Users/liou/Project/LLM/ChainStream/chainstream/llm/tmp/test_img2.jpeg"
 
     model = ImageGPTModel()
 
-    print(model.query(prompt, image_file_path))
+    print(model.query(prompt, [image_file_path1, image_file_path2]))
