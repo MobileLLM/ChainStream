@@ -30,7 +30,7 @@ class VideoSocketSensors(BaseSocketSensors):
 
 
 if __name__ == '__main__':
-    ip = '192.168.43.41'
+    ip = '192.168.43.226'
     default_sensors_agent = VideoSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:

@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
         mLogReaderTask = new LogReaderTask(logLinearLayout, this, logScrollView);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
 //        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
 //        mManager = OkSocket.open(connectionInfo);
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 //                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     mLogReaderTask.startReadingLogs();
 
-                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.41", 6666);
+                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.226", 6666);
                     myWebSocketServer = new MyWebSocketServer(myHost);
                     myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
                     myWebSocketServer.setContext(MainActivity.this);

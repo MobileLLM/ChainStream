@@ -12,6 +12,11 @@ from io import BytesIO
 
 class BaseSocketSensors(cs.agent.Agent):
     is_agent = False
+
+    USE_GLOBAL_SOCKET_IP = True
+    SOCKET_IP = "192.168.43.226"
+    # SOCKET_IP = "192.168.43.41"
+    SOCKET_PORT = 6666
     def __init__(self, agent_id='default_sensors', stream_name=None, ip='192.168.43.1', port=6666):
         super().__init__(agent_id)
         self.socket_thread = None
@@ -24,8 +29,12 @@ class BaseSocketSensors(cs.agent.Agent):
 
     def start(self):
         from chainstream.utils import WebSocketClient
-        self.socket_client = WebSocketClient(f"ws://{self.ip}:{self.port}", on_start_message=self.cmd,
-                                             on_message=self.get_on_message())
+        if self.USE_GLOBAL_SOCKET_IP:
+            self.socket_client = WebSocketClient(f"ws://{self.SOCKET_IP}:{self.SOCKET_PORT}", on_start_message=self.cmd,
+                                                 on_message=self.get_on_message())
+        else:
+            self.socket_client = WebSocketClient(f"ws://{self.ip}:{self.port}", on_start_message=self.cmd,
+                                                 on_message=self.get_on_message())
 
         self.socket_thread = threading.Thread(target=self.start_thread_func)
         self.socket_thread.start()
