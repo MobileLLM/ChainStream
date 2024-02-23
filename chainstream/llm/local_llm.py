@@ -1,5 +1,7 @@
+from modelscope import snapshot_download
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
+from transformers.generation import GenerationConfig
 
 class BaseModel:
     def __init__(self,):
@@ -51,3 +53,31 @@ class LocalChatLLM(BaseModel):
         if self.use_pre_history:
             clear_idx+=self.pre_history_len
         self.history=self.history[:clear_idx]
+
+class QWenChatLLM(BaseModel):
+    def __init__(self,use_local=False,model_dir=None,system_prompt=None):
+        if not use_local:
+            self.tokenizer=AutoTokenizer.from_pretrained("Qwen/Qwen-1_8B-Chat",trust_remote_code=True)
+            self.model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-1_8B-Chat", device_map="auto", trust_remote_code=True,
+                                                     bf16=True).eval()
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True)
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_dir,
+                device_map="auto",
+                trust_remote_code=True
+            ).eval()
+
+        self.history=None
+        self.system_prompt=system_prompt
+
+    def query(self, query: str):
+        response, history = self.model.chat(self.tokenizer, query, history=self.history,system=self.system_prompt)
+
+        self.history=history
+
+        return response
+
+    def clear_history(self):
+
+        self.history=None
