@@ -81,3 +81,26 @@ class QWenChatLLM(BaseModel):
     def clear_history(self):
 
         self.history=None
+
+class QWenVLChatLLM(BaseModel):
+    def __init__(self):
+        self.tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-VL-Chat", trust_remote_code=True)
+        self.model=AutoModelForCausalLM.from_pretrained("Qwen/Qwen-VL-Chat", device_map="cuda", trust_remote_code=True).eval()
+        self.model.generation_config = GenerationConfig.from_pretrained("Qwen/Qwen-VL-Chat", trust_remote_code=True)
+
+        self.history=None
+    def query(self,image:str=None,text:str=None):
+        query = self.tokenizer.from_list_format([
+            {'image': image},
+            {'text': text},
+        ])
+
+        response,history=self.model.chat(self.tokenizer, query=self.query, history=self.history)
+
+        self.history=history
+
+        return response
+
+    def clear_history(self):
+        self.history=None
+
