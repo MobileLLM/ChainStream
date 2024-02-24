@@ -14,9 +14,10 @@ class BaseSocketSensors(cs.agent.Agent):
     is_agent = False
 
     USE_GLOBAL_SOCKET_IP = True
-    SOCKET_IP = "192.168.43.226"
+    # SOCKET_IP = "192.168.43.226"
     # SOCKET_IP = "192.168.43.41"
-    SOCKET_PORT = 6666
+    SOCKET_IP = "47.94.168.126"
+    SOCKET_PORT = 6000
     def __init__(self, agent_id='default_sensors', stream_name=None, ip='192.168.43.1', port=6666):
         super().__init__(agent_id)
         self.socket_thread = None
