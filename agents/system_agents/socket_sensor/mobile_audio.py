@@ -29,7 +29,6 @@ class AudioSocketSensors(BaseSocketSensors):
 
             wav_file = BytesIO()
             amr_audio.export(wav_file, format="wav")
-            print(len(amr_audio))
 
             # from pydub.playback import play
             # play(amr_audio)
