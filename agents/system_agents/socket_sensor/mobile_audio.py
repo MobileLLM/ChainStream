@@ -23,7 +23,7 @@ class AudioSocketSensors(BaseSocketSensors):
 
     def get_on_message(self):
         def on_message(ws, amr_file):
-            print("Received audio file from socket server", len(amr_file))
+            print(datetime.now(), ": Received audio file from socket server", len(amr_file))
             amr_file = BytesIO(amr_file)
             amr_audio = AudioSegment.from_file(amr_file, format="amr")
 

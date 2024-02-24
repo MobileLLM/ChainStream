@@ -63,7 +63,7 @@ public class ChainStreamClientService extends Service {
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PStreamCollectService wakelock");
-        wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        wakeLock.acquire();
 
 
         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);

@@ -44,7 +44,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:persistent="true">
         <meta-data
         android:name="com.google.android.awareness.API_KEY"
         android:value="@string/google_awareness_api_key"/>
