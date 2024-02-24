@@ -1,5 +1,6 @@
 package io.github.privacystreams.ChainStreamClient;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    public ConnectionInfo connectionInfo;
 
-    public MyWebSocketServer myWebSocketServer;
+//    public MyWebSocketServer myWebSocketServer;
 
     private Boolean is_server_running;
 
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextSensors;
 
     private LogReaderTask mLogReaderTask;
+
+    private ChainStreamClientService myChainStreamClientService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +100,16 @@ public class MainActivity extends AppCompatActivity {
 //                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     mLogReaderTask.startReadingLogs();
 
-                    InetSocketAddress myHost = new InetSocketAddress("192.168.43.226", 6666);
-                    myWebSocketServer = new MyWebSocketServer(myHost);
-                    myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
-                    myWebSocketServer.setContext(MainActivity.this);
-                    myWebSocketServer.start();
+//                    InetSocketAddress myHost = new InetSocketAddress("127.0.0.1", 6666);
+//                    myWebSocketServer = new MyWebSocketServer(myHost);
+//                    myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
+//                    myWebSocketServer.setContext(MainActivity.this);
+//                    myWebSocketServer.start();
+
+//                    myChainStreamClientService = new ChainStreamClientService();
+//                    myChainStreamClientService.start(MainActivity.this);
+                    Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
+                    startService(intent);
 
                     is_server_running = Boolean.TRUE;
                     Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
@@ -116,7 +124,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (is_server_running) {
-                    myWebSocketServer.stopServer();
+//                    myWebSocketServer.stopServer();
+//                    myChainStreamClientService.stopSelf();
+                    Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
+                    stopService(intent);
 
                     is_server_running = Boolean.FALSE;
                     Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
@@ -136,14 +147,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        myWebSocketServer.stopServer();
+//        myWebSocketServer.stopServer();
         super.onStop();
     }
 
 
     @Override
     protected void onDestroy() {
-        myWebSocketServer.stopServer();
+//        myWebSocketServer.stopServer();
+        Intent intent = new Intent(this, ChainStreamClientService.class);
+        stopService(intent);
         super.onDestroy();
 //        mManager.disconnect();
     }

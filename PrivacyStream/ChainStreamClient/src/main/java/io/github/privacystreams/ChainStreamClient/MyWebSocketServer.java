@@ -73,7 +73,7 @@ public class MyWebSocketServer extends WebSocketServer {
         String cmd = parts[0];
         if (cmd.equals("video")) {
             String para = parts[1];
-            mTextImage.setTextColor(Color.BLUE);
+//            mTextImage.setTextColor(Color.BLUE);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin video socket");
 //            UQIVideoSocket uqiVideoSocket = new UQIVideoSocket(uqi, para, conn);
@@ -84,7 +84,7 @@ public class MyWebSocketServer extends WebSocketServer {
                         @Override
                         protected void onInput(String imagePath) {
                             System.out.println("Send " + imagePath + "through socket");
-                            mTextImage.setTextColor(Color.RED);
+//                            mTextImage.setTextColor(Color.RED);
                             File imageFile = new File(imagePath);
 
                             try {
@@ -110,11 +110,11 @@ public class MyWebSocketServer extends WebSocketServer {
 
                                 if (conn.isClosed()) {
                                     uqi.stopAll();
-                                    mTextImage.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
+//                                    mTextImage.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
                                 }
                                 conn.send(byteBuffer);
                                 Logging.debug("send pic" + byteBuffer.capacity());
-                                mTextImage.setTextColor(Color.BLUE);
+//                                mTextImage.setTextColor(Color.BLUE);
 
                                 boolean isDeleted = imageFile.delete();
 
@@ -131,7 +131,7 @@ public class MyWebSocketServer extends WebSocketServer {
         else if (cmd.equals("audio")) {
             String duration = parts[1];
             String interval = parts[2];
-            mTextAudio.setTextColor(Color.RED);
+//            mTextAudio.setTextColor(Color.RED);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin audio socket");
             uqi.getData(Audio.recordPeriodic(Integer.parseInt(duration), Integer.parseInt(interval)), Purpose.UTILITY("recording audio"))
@@ -140,7 +140,7 @@ public class MyWebSocketServer extends WebSocketServer {
                         @Override
                         protected void onInput(String audioPath) {
                             System.out.println("Send " + audioPath + " through socket");
-                            mTextAudio.setTextColor(Color.RED);
+//                            mTextAudio.setTextColor(Color.RED);
                             File audioFile = new File(audioPath);
 
                             try {
@@ -162,11 +162,11 @@ public class MyWebSocketServer extends WebSocketServer {
 
                                 if (conn.isClosed()) {
                                     uqi.stopAll();
-                                    mTextAudio.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
+//                                    mTextAudio.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
                                 }
                                 conn.send(byteBuffer);
                                 Logging.debug("send audio" + byteBuffer.capacity());
-                                mTextAudio.setTextColor(Color.BLUE);
+//                                mTextAudio.setTextColor(Color.BLUE);
 
                                 boolean isDeleted = audioFile.delete();
 
@@ -182,7 +182,7 @@ public class MyWebSocketServer extends WebSocketServer {
         else if (cmd.equals("sensors")) {
             String sensorsName = parts[1];
             String interval = parts[2];
-            mTextSensors.setTextColor(Color.RED);
+//            mTextSensors.setTextColor(Color.RED);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin sensor socket");
             if (sensorsName.equals("location")) {

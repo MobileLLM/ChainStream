@@ -1,1 +1,1 @@
-include ':test', ':privacystreams-android-sdk', ':doclet'
+include ':ChainStreamClient', ':privacystreams-android-sdk', ':doclet'

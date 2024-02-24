@@ -29,16 +29,18 @@ class AudioSocketSensors(BaseSocketSensors):
 
             wav_file = BytesIO()
             amr_audio.export(wav_file, format="wav")
+            print(len(amr_audio))
 
             # from pydub.playback import play
             # play(amr_audio)
-            try:
-                from chainstream.llm.python_base_openai import AudioGPTModel
-                tmp = AudioGPTModel()
-                prompt = "请概括这里说了什么"
-                print(tmp.query(prompt, wav_file))
-            except Exception as e:
-                print(e)
+
+            # try:
+            #     from chainstream.llm.python_base_openai import AudioGPTModel
+            #     tmp = AudioGPTModel()
+            #     prompt = "请概括这里说了什么"
+            #     print(tmp.query(prompt, wav_file))
+            # except Exception as e:
+            #     print(e)
 
             self.stream.send_item({'timestamp': datetime.now(), 'data': wav_file})
 
@@ -50,7 +52,7 @@ class AudioSocketSensors(BaseSocketSensors):
 if __name__ == '__main__':
     ip = '192.168.43.41'
     # default_sensors_agent = VideoSocketSensors(ip=ip)
-    default_sensors_agent = AudioSocketSensors(ip=ip)
+    default_sensors_agent = AudioSocketSensors()
     # default_sensors_agent = SensorSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:
