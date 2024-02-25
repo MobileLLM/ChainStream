@@ -167,7 +167,13 @@ public class PSCameraBgService extends Service {
                 @Override
                 public void run() {
                     try {
-                        mCamera.takePicture(null, null, mPictureCallback);
+                        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                            @Override
+                            public void onAutoFocus(boolean b, Camera camera) {
+                                camera.takePicture(null, null, mPictureCallback);
+                            }
+                        });
+//                        mCamera.takePicture(null, null, mPictureCallback);
                     } catch (RuntimeException e) {
                         e.printStackTrace();
                         mCallback.onFail(false, e.getMessage());
