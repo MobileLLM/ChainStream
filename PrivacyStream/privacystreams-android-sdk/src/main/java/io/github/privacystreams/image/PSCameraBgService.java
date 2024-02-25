@@ -3,6 +3,9 @@ package io.github.privacystreams.image;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Build;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,6 +42,8 @@ public class PSCameraBgService extends Service {
 
     private static Callback mCallback;
 
+    private static int tmp_cameraId;
+
     public abstract static class Callback {
         abstract void onImageTaken(byte[] imageBytes);
         abstract void onFail(boolean isFatal, String errorMessage);
@@ -53,6 +59,8 @@ public class PSCameraBgService extends Service {
         Intent intent = new Intent(ctx, PSCameraBgService.class);
         intent.putExtra(CAMERA_ID, cameraId);
         ctx.startService(intent);
+
+        tmp_cameraId = cameraId;
     }
 
     public static void stopTakingPhoto(Context ctx, Callback callback) {
@@ -66,12 +74,46 @@ public class PSCameraBgService extends Service {
         public void onPictureTaken(byte[] data, Camera camera) {
 //            Log.d(TAG, "picture taken " + data.length);
             if (mCallback != null) {
+                // TODO: fix it
+//                byte[] rotatedData = rotateImage(data, camera);
                 mCallback.onImageTaken(data);
             } else {
                 stopSelf();
             }
         }
     };
+
+    private byte[] rotateImage(byte[] data, Camera camera) {
+        int rotation;
+        if (camera != null) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(tmp_cameraId, info);
+            rotation = info.orientation;
+        } else {
+            rotation = 0;
+        }
+
+        if (rotation != 0) {
+            try {
+                // Decode the byte array to get the bitmap
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+                // Rotate the bitmap
+                Matrix matrix = new Matrix();
+                matrix.postRotate(rotation);
+                bitmap = Bitmap.createBitmap(bitmap);
+
+                // Convert the bitmap back to a byte array
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                return outputStream.toByteArray();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return data; // Return the original data in case of an error
+            }
+        }
+        return data; // Return the original data if no rotation is needed
+    }
 
     @Nullable
     @Override
