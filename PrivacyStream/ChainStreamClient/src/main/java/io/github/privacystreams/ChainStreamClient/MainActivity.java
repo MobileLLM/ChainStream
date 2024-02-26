@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LogReaderTask mLogReaderTask;
 
-    private ChainStreamClientService myChainStreamClientService;
+//    private ChainStreamClientService myChainStreamClientService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,20 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            if(Settings.canDrawOverlays(getApplicationContext())) {
-                Intent intent = new Intent(this,
-                        ForegroundService.class);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
-                    this.startForegroundService(intent);
-                }else {
-                    this.startService(intent);
-                }
-            }else {
-                Toast.makeText(this,
-                        "请设置权限",Toast.LENGTH_SHORT).show();
-            }
-        }
+
 
 
 //        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
@@ -126,8 +113,23 @@ public class MainActivity extends AppCompatActivity {
 
 //                    myChainStreamClientService = new ChainStreamClientService();
 //                    myChainStreamClientService.start(MainActivity.this);
-                    Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
-                    startService(intent);
+                    Intent intent1 = new Intent(MainActivity.this, ChainStreamClientService.class);
+                    startService(intent1);
+
+//                    if (Build.VERSION.SDK_INT >= 23) {
+//                        if(Settings.canDrawOverlays(getApplicationContext())) {
+//                            Intent intent2 = new Intent(MainActivity.this,
+//                                    ForegroundService.class);
+//                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+//                                startForegroundService(intent2);
+//                            }else {
+//                                startService(intent2);
+//                            }
+//                        }else {
+//                            Toast.makeText(MainActivity.this,
+//                                    "请设置权限",Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
 
                     is_server_running = Boolean.TRUE;
                     Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
@@ -144,8 +146,12 @@ public class MainActivity extends AppCompatActivity {
                 if (is_server_running) {
 //                    myWebSocketServer.stopServer();
 //                    myChainStreamClientService.stopSelf();
-                    Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
-                    stopService(intent);
+                    Intent intent1 = new Intent(MainActivity.this, ChainStreamClientService.class);
+                    stopService(intent1);
+
+//                    Intent intent = new Intent(MainActivity.this,
+//                            ForegroundService.class);
+//                    stopService(intent);
 
                     is_server_running = Boolean.FALSE;
                     Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
@@ -173,8 +179,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 //        myWebSocketServer.stopServer();
-        Intent intent = new Intent(this, ChainStreamClientService.class);
-        stopService(intent);
+        Intent intent1 = new Intent(this, ChainStreamClientService.class);
+        stopService(intent1);
+//        Intent intent = new Intent(MainActivity.this,
+//                ForegroundService.class);
+//        stopService(intent);
         super.onDestroy();
 //        mManager.disconnect();
     }

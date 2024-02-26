@@ -4,20 +4,25 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.SurfaceView;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import io.github.privacystreams.ChainStreamClient.R;
 import io.github.privacystreams.ChainStreamClient.floatingwindow.ServiceFloatingWindow;
-
+import io.github.privacystreams.image.PSCameraBgService;
 
 
 public class ForegroundService extends Service {
@@ -27,6 +32,8 @@ public class ForegroundService extends Service {
 
     NotificationCompat.Builder builder;
     NotificationManager manager;
+
+    View mPreView;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -52,7 +59,25 @@ public class ForegroundService extends Service {
         startForeground(2, notification);
 
         ServiceFloatingWindow.getInstance().init(getApplicationContext());
+        mPreView = ServiceFloatingWindow.getInstance().getPreView();
         ServiceFloatingWindow.getInstance().showFloatWindow();
+//        ServiceConnection serviceConnection = new ServiceConnection() {
+//            @Override
+//            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//                PSCameraBgService.PreviewBinder previewBinder = (PSCameraBgService.PreviewBinder) iBinder;
+//                PSCameraBgService psCameraBgService = previewBinder.getService();
+//                psCameraBgService.setPreview(mPreView);
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName componentName) {
+//
+//            }
+//        };
+//
+//        Intent intent = new Intent(this, PSCameraBgService.class);
+//        bindService(intent, serviceConnection, BIND_EXTERNAL_SERVICE);
+//
     }
 
 
@@ -73,5 +98,11 @@ public class ForegroundService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+//    public class PreviewBinder extends Binder {
+//        public ForegroundService getService() {
+//            return ForegroundService.this;
+//        }
+//    }
 
 }

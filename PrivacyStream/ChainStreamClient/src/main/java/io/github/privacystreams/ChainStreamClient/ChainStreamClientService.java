@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.view.SurfaceView;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -24,6 +26,7 @@ import androidx.core.app.ServiceCompat;
 
 import java.net.InetSocketAddress;
 
+import io.github.privacystreams.ChainStreamClient.floatingwindow.ServiceFloatingWindow;
 
 
 public class ChainStreamClientService extends Service {
@@ -31,10 +34,21 @@ public class ChainStreamClientService extends Service {
 
     private PowerManager.WakeLock wakeLock;
 
+    NotificationCompat.Builder builder;
+    NotificationManager manager;
+
+    SurfaceView mPreView;
+
     @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onCreate() {
         super.onCreate();
+
+
+        ServiceFloatingWindow.getInstance().init(getApplicationContext());
+        mPreView = ServiceFloatingWindow.getInstance().getPreView();
+        ServiceFloatingWindow.getInstance().showFloatWindow();
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
 //        Bundle bundle = new Bundle();
 //        bundle.putInt(MainActivity.NAV_ID_KEY, R.id.nav_data);
@@ -69,6 +83,7 @@ public class ChainStreamClientService extends Service {
         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
 
         myWebSocketServer = new MyWebSocketServer(myHost);
+        myWebSocketServer.setPreView(mPreView);
         myWebSocketServer.setContext(this);
 
     }
@@ -89,6 +104,7 @@ public class ChainStreamClientService extends Service {
     @Override
     public void onDestroy() {
         myWebSocketServer.stopServer();
+//        myWebSocketServer = null;
         wakeLock.release();
         super.onDestroy();
     }

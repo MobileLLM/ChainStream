@@ -1,5 +1,8 @@
 package io.github.privacystreams.image;
 
+import android.view.SurfaceView;
+import android.view.View;
+
 import io.github.privacystreams.core.Item;
 import io.github.privacystreams.core.PStreamProvider;
 import io.github.privacystreams.utils.annotations.PSItem;
@@ -100,8 +103,8 @@ public class Image extends Item {
      * @return the provider function.
      */
 //    @RequiresPermission(allOf = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    public static PStreamProvider takePhotoBgPeriodic(int cameraId, long interval) {
-        return new BgPhotoPeriodicProvider(cameraId, interval);
+    public static PStreamProvider takePhotoBgPeriodic(int cameraId, long interval, SurfaceView view) {
+        return new BgPhotoPeriodicProvider(cameraId, interval, view);
     }
 
     /**

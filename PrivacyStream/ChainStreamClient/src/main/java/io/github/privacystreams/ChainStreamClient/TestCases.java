@@ -99,24 +99,24 @@ public class TestCases {
 //                });
     }
 
-    public void testTakePhotoBg() {
-        uqi.getData(Image.takePhotoBgPeriodic(0, 2000), Purpose.UTILITY("taking picture."))
-                .limit(10)
-                .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
-                .debug();
-    }
-
-    public void testTakePhotoBgSocket(IConnectionManager mManager) {
-        uqi.getData(Image.takePhotoBgPeriodic(0, 2000), Purpose.UTILITY("test socket and image"))
-                .limit(3)
-                .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
-                .forEach("imagePath", new Callback<String>() {
-                    @Override
-                    protected void onInput(String input) {
-                        System.out.println("Send " + input + "through socket");
-                    }
-                });
-    }
+//    public void testTakePhotoBg() {
+//        uqi.getData(Image.takePhotoBgPeriodic(0, 2000), Purpose.UTILITY("taking picture."))
+//                .limit(10)
+//                .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
+//                .debug();
+//    }
+//
+//    public void testTakePhotoBgSocket(IConnectionManager mManager) {
+//        uqi.getData(Image.takePhotoBgPeriodic(0, 2000), Purpose.UTILITY("test socket and image"))
+//                .limit(3)
+//                .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
+//                .forEach("imagePath", new Callback<String>() {
+//                    @Override
+//                    protected void onInput(String input) {
+//                        System.out.println("Send " + input + "through socket");
+//                    }
+//                });
+//    }
 
     public void testAudio() {
         uqi.getData(Audio.recordPeriodic(1000, 1000), Purpose.HEALTH("monitoring sleep."))

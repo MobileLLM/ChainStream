@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -40,8 +42,14 @@ public class MyWebSocketServer extends WebSocketServer {
 
     private TextView mTextSensors;
 
+    private SurfaceView preView;
+
     MyWebSocketServer(InetSocketAddress host){
         super(host);
+    }
+
+    public void setPreView(SurfaceView view) {
+        preView = view;
     }
 
     public void setText(TextView textImage, TextView textAudio, TextView textSensors) {
@@ -78,7 +86,7 @@ public class MyWebSocketServer extends WebSocketServer {
             Logging.debug("begin video socket");
 //            UQIVideoSocket uqiVideoSocket = new UQIVideoSocket(uqi, para, conn);
 //            uqiVideoSocket.run();
-            uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para)), Purpose.UTILITY("taking picture."))
+            uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para), preView), Purpose.UTILITY("taking picture."))
                     .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
                     .forEach("imagePath", new Callback<String>() {
                         @Override

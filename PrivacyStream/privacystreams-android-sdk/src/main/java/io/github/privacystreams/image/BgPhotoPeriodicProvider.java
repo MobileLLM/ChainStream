@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.SystemClock;
+import android.view.SurfaceView;
+import android.view.View;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,7 +33,10 @@ class BgPhotoPeriodicProvider extends PStreamProvider {
     private final int cameraId;
     private final long interval;
 
-    BgPhotoPeriodicProvider(int cameraId, long interval) {
+    private SurfaceView mSurfaceView;
+
+    BgPhotoPeriodicProvider(int cameraId, long interval, SurfaceView view) {
+        this.mSurfaceView = view;
         this.cameraId = cameraId;
         this.interval = interval;
         this.addParameters(cameraId);
@@ -60,7 +65,7 @@ class BgPhotoPeriodicProvider extends PStreamProvider {
     }
 
     private void start(Context ctx) {
-        PSCameraBgService.takePhoto(ctx, cameraId, mCameraCallback);
+        PSCameraBgService.takePhoto(ctx, cameraId, mCameraCallback, mSurfaceView);
     }
 
     private void stop(Context ctx) {

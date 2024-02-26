@@ -30,7 +30,7 @@ class BgPhotoProvider extends PStreamProvider {
     @Override
     protected void provide() {
         Context ctx = this.getUQI().getContext();
-        PSCameraBgService.takePhoto(ctx, cameraId, mCameraCallback);
+        PSCameraBgService.takePhoto(ctx, cameraId, mCameraCallback, null);
     }
 
     private void stop(Context ctx) {

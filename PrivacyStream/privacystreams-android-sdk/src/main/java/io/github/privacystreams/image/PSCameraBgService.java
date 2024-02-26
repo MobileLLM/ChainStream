@@ -1,23 +1,34 @@
 package io.github.privacystreams.image;
 
+import io.github.privacystreams.core.R;
+
+import android.annotation.SuppressLint;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -34,6 +45,8 @@ public class PSCameraBgService extends Service {
     private static final String TAG = "PSCameraBgService";
 
     private WindowManager mWindowManager;
+
+    private static SurfaceView cameraPreview;
     private HiddenCameraPreview mPreview;
     private Camera mCamera;
     private Timer mTimer;
@@ -49,7 +62,8 @@ public class PSCameraBgService extends Service {
         abstract void onFail(boolean isFatal, String errorMessage);
     }
 
-    public static void takePhoto(Context ctx, int cameraId, Callback callback) {
+    public static void takePhoto(Context ctx, int cameraId, Callback callback, SurfaceView view) {
+        cameraPreview = view;
         if (mCallback != null) {
             callback.onFail(true, "camera service is busy.");
             return;
@@ -121,6 +135,7 @@ public class PSCameraBgService extends Service {
         return null;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int cameraId = intent.getIntExtra(CAMERA_ID, 0);
@@ -151,16 +166,52 @@ public class PSCameraBgService extends Service {
             }
 
             // create fake preview
-            mPreview = new HiddenCameraPreview(this, mCamera);
-            mPreview.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            WindowManager.LayoutParams params = new WindowManager.LayoutParams(500, 500,
-                    Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
-                            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY :
-                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                    PixelFormat.TRANSLUCENT);
-            mWindowManager.addView(mPreview, params);
+//            mPreview = new HiddenCameraPreview(this, mCamera);
+//            mPreview.setLayoutParams(new ViewGroup.LayoutParams(
+//                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//            camera_preview = LayoutInflater.from(getApplicationContext()).
+//                    inflate(R.layout.camera_preview, null);
+//            SurfaceView cameraPreview = camera_preview.findViewById(R.id.surfaceView);
+
+
+
+//            WindowManager.LayoutParams params = new WindowManager.LayoutParams(500, 500,
+//                    Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
+//                            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY :
+//                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+//                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+//                    PixelFormat.TRANSLUCENT);
+//            mWindowManager.addView(camera_preview, params);
+
+            SurfaceHolder surfaceHolder = cameraPreview.getHolder();
+            try {
+                mCamera.setPreviewDisplay(surfaceHolder);
+                mCamera.startPreview();
+            } catch (IOException e) {
+                Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+            }
+//            surfaceHolder.addCallback(new SurfaceHolder.Callback() {
+//                @Override
+//                public void surfaceCreated(@NonNull SurfaceHolder holder) {
+//                    try {
+//                        mCamera.setPreviewDisplay(holder);
+//                        mCamera.startPreview();
+//                    } catch (IOException e) {
+//                        Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+//                    }
+//                }
+//
+//                @Override
+//                public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+//
+//                }
+//
+//                @Override
+//                public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+//
+//                }
+//
+//            });
 
             // take photo
             TimerTask takePhotoTask = new TimerTask() {
@@ -197,9 +248,11 @@ public class PSCameraBgService extends Service {
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.release();
+            mCamera = null;
         }
         if (mWindowManager != null) {
-            mWindowManager.removeView(mPreview);
+//            mWindowManager.removeView(mPreview);
+//            mWindowManager.removeView(camera_preview);
         }
     }
 
@@ -215,4 +268,11 @@ public class PSCameraBgService extends Service {
         }
         return c; // returns null if camera is unavailable
     }
+
+
+//    public class PreviewBinder extends Binder {
+//        public PSCameraBgService getService() {
+//            return PSCameraBgService.this;
+//        }
+//    }
 }
