@@ -61,6 +61,7 @@
         <service
             android:name=".ChainStreamClientService"
             />
+        <service android:name=".service.ForegroundService"/>
     </application>
 
 </manifest>

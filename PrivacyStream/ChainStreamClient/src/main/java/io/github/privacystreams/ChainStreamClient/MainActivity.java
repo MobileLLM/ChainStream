@@ -2,12 +2,14 @@ package io.github.privacystreams.ChainStreamClient;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.TextAppearanceSpan;
@@ -32,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 
 //import io.github.privacystreams.test.R;
+import io.github.privacystreams.ChainStreamClient.service.ForegroundService;
 import io.github.privacystreams.utils.Logging;
 
 
@@ -86,6 +89,21 @@ public class MainActivity extends AppCompatActivity {
         mLogReaderTask = new LogReaderTask(logLinearLayout, this, logScrollView);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if(Settings.canDrawOverlays(getApplicationContext())) {
+                Intent intent = new Intent(this,
+                        ForegroundService.class);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+                    this.startForegroundService(intent);
+                }else {
+                    this.startService(intent);
+                }
+            }else {
+                Toast.makeText(this,
+                        "请设置权限",Toast.LENGTH_SHORT).show();
+            }
+        }
 
 
 //        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
