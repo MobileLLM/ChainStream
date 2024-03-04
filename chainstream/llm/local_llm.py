@@ -112,5 +112,5 @@ class GemmaLLM(BaseModel):
     def query(self,query:str):
         query_ids=self.tokenizer(query, return_tensors="pt").to("cuda")
         outputs = self.model.generate(**query_ids)
-         return outputs
+        return outputs
 
