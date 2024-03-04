@@ -51,7 +51,7 @@ class ChainStreamServer(object):
     def register_agent(self, agent):
         self.agents[agent.agent_id] = agent
 
-    def unregister_stream(self, agent):
+    def unregister_agent(self, agent):
         self.agents.pop(agent.agent_id)
 
     def start(self):
