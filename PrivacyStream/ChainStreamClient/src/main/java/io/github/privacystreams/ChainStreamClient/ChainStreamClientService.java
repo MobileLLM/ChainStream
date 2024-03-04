@@ -105,6 +105,7 @@ public class ChainStreamClientService extends Service {
     public void onDestroy() {
         myWebSocketServer.stopServer();
 //        myWebSocketServer = null;
+        ServiceFloatingWindow.getInstance().remove();
         wakeLock.release();
         super.onDestroy();
     }
