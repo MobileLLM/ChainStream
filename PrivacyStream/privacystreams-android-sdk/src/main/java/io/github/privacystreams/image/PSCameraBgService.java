@@ -187,6 +187,7 @@ public class PSCameraBgService extends Service {
             try {
                 mCamera.setPreviewDisplay(surfaceHolder);
                 mCamera.startPreview();
+                mCamera.setDisplayOrientation(90);
             } catch (IOException e) {
                 Log.d(TAG, "Error setting camera preview: " + e.getMessage());
             }
@@ -240,6 +241,20 @@ public class PSCameraBgService extends Service {
         }
         return START_NOT_STICKY;
     }
+//
+//    private void bindPreview(ProcessCameraProvider cameraProvider, PreviewView previewView) {
+//        if (cameraProvider == null) {
+//            Toast.makeText(getApplicationContext(), "没获取到相机", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        //Toast.makeText(getApplicationContext(), "相机启动", Toast.LENGTH_SHORT).show();
+//        Preview preview = new Preview.Builder().build();
+//        CameraSelector cameraSelector = new CameraSelector.Builder()
+//                .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+//                .build();
+//        preview.setSurfaceProvider(previewView.getSurfaceProvider());
+//        cameraProvider.bindToLifecycle(this, cameraSelector, preview);
+//    }
 
     public void onDestroy() {
         if (mTimer != null) {

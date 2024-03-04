@@ -1,5 +1,6 @@
 package io.github.privacystreams.ChainStreamClient.floatingwindow;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -9,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -40,9 +42,10 @@ public class ServiceFloatingWindow {
     private boolean isInit = false;
 
     private int show_width = 300;
-    private int hight = 600;
+    private int hight = 800;
 
-    private int hidden_width = 10;
+    private int hidden_width = 100;
+    private int hidden_hight = 100;
 
 
     public static ServiceFloatingWindow getInstance(){
@@ -68,8 +71,10 @@ public class ServiceFloatingWindow {
 
     private void initFloatWindow() {
 
-        rootLayout = LayoutInflater.from(mContext).
-                inflate(R.layout.floatingwidow_in_service, null);
+//        rootLayout = LayoutInflater.from(mContext).
+//                inflate(R.layout.floatingwidow_in_service, null);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        rootLayout = inflater.inflate(R.layout.floatingwidow_in_service, null);
 //        infoTxtV = rootLayout.findViewById(R.id.fw_in_service_info);
         hideBtn = rootLayout.findViewById(R.id.fw_in_service_hide);
         lineView = rootLayout.findViewById(R.id.fw_in_line_view);
@@ -81,6 +86,12 @@ public class ServiceFloatingWindow {
                 Toast.makeText(mContext,"隐藏了",Toast.LENGTH_SHORT).show();
                 contentView.setVisibility(View.GONE);
                 mWindowParams.width = hidden_width;
+                mWindowParams.height = hidden_hight;
+                DisplayMetrics metrics = new DisplayMetrics();
+                // 默认固定位置，靠屏幕右边缘的中间
+                mWindowManager.getDefaultDisplay().getMetrics(metrics);
+                mWindowParams.x = 0;
+                mWindowParams.y = metrics.heightPixels/2-150;
                 mWindowManager.updateViewLayout(rootLayout,mWindowParams);
                 lineView.setVisibility(View.VISIBLE);
             }
@@ -91,6 +102,7 @@ public class ServiceFloatingWindow {
                 contentView.setVisibility(View.VISIBLE);
                 lineView.setVisibility(View.GONE);
                 mWindowParams.width = show_width;
+                mWindowParams.height = hight;
                 mWindowManager.updateViewLayout(rootLayout,mWindowParams);
             }
         });
@@ -101,14 +113,41 @@ public class ServiceFloatingWindow {
             //8.0新特性
             mWindowParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         }else{
-            mWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+            mWindowParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
         mWindowParams.format = PixelFormat.RGBA_8888;
         mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         mWindowParams.gravity = Gravity.TOP | Gravity.LEFT;
         mWindowParams.width =  hidden_width;
-        mWindowParams.height = hight;
+        mWindowParams.height = hidden_hight;
+
+        rootLayout.setOnTouchListener(new View.OnTouchListener() {
+            final WindowManager.LayoutParams floatWindowLayoutUpdateParam = mWindowParams;
+            double x;
+            double y;
+            double px;
+            double py;
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        x = floatWindowLayoutUpdateParam.x;
+                        y = floatWindowLayoutUpdateParam.y;
+                        px = event.getRawX();
+                        py = event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        floatWindowLayoutUpdateParam.x = (int) ((x + event.getRawX()) - px);
+                        floatWindowLayoutUpdateParam.y = (int) ((y + event.getRawY()) - py);
+                        mWindowManager.updateViewLayout(rootLayout, floatWindowLayoutUpdateParam);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
 
