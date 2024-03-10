@@ -1,7 +1,7 @@
-from typing import Optional, List, Dict,cast
+from typing import List, Tuple, Optional, cast, Union,Dict
 from pydantic import Field,BaseModel
 from .message import Message
-from .utils import get_login_event
+from .utils import get_login_event,verify_first_message_correctness,openai_chat_completions_request
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,
@@ -31,12 +31,14 @@ class LLMConfig:
         model_endpoint: Optional[str] = "https://api.openai.com/v1",
         model_wrapper: Optional[str] = None,
         context_window: Optional[int] = None,
+        open_ai_key:Optional[str]=None
     ):
         self.model = model
         self.model_endpoint_type = model_endpoint_type
         self.model_endpoint = model_endpoint
         self.model_wrapper = model_wrapper
         self.context_window = context_window
+        self.open_ai_key=open_ai_key
 
         if context_window is None:
             self.context_window = LLM_MAX_TOKENS[self.model] if self.model in LLM_MAX_TOKENS else LLM_MAX_TOKENS["DEFAULT"]
@@ -63,6 +65,7 @@ def initialize_message_sequence(
 
 class Agent(object):
     def __init__(self, preset: Optional[Preset] = None,llm_config:Optional[LLMConfig]=None):
+        self.config=llm_config
         self.model=llm_config.model
         self.system = preset.system
         self.function=preset.functions_schema
@@ -84,7 +87,113 @@ class Agent(object):
         assert all([isinstance(msg, Message) for msg in init_messages_objs]), (init_messages_objs, init_messages)
 
         self._append_to_messages(added_messages=[cast(Message, msg) for msg in init_messages_objs if msg is not None])
-        self.messages_total = 0
-        self.messages_total = (len(self._messages) - 1)
+
+        self.messages_total_init=self.messages_total = (len(self._messages) - 1)
+
+        print(f"Agent initialized, self.messages_total={self.messages_total}")
+
+    def _append_to_messages(self, added_messages: List[Message]):
+
+        assert all([isinstance(msg, Message) for msg in added_messages])
+        new_messages = self._messages + added_messages  # append
+        self._messages = new_messages
+        self.messages_total += len(added_messages)
+    def _get_openai_reply(
+        self,
+        message_sequence: List[dict],
+        function_call: str = "auto",
+        first_message: bool = False,  # hint
+    ):
+        """Get response from LLM API"""
+        try:
+            if self.config.open_ai_key is None:
+                raise ValueError(f"OpenAI key is missing from config file")
+            data = dict(
+                model=self.model,
+                messages=message_sequence,
+                tools=[{"type": "function", "function": f} for f in self.function] if self.function else None,
+                tool_choice=function_call,
+            )
+            response= openai_chat_completions_request(
+                url=self.config.model_endpoint,
+                api_key=self.config.openai_key,
+                data=data,
+                )
+            # special case for 'length'
+            if response.choices[0].finish_reason == "length":
+                raise Exception("Finish reason was length (maximum context length)")
+
+            # catches for soft errors
+            if response.choices[0].finish_reason not in ["stop", "function_call", "tool_calls"]:
+                raise Exception(f"API call finish with bad finish reason: {response}")
+
+            # unpack with response.choices[0].message.content
+            return response
+        except Exception as e:
+            raise e
+
+    def step(self,
+             user_message:Union[Message,str],
+             first_message:bool=False,
+             first_message_retry_limit: int=5) -> Tuple[List[dict], bool, bool, bool]:
+        try:
+            # add user message
+            if user_message is not None:
+                if isinstance(user_message,Message):
+                    user_message_text=user_message.text
+                elif isinstance(user_message,str):
+                    user_message_text=user_message
+                else:
+                    raise ValueError(f"Bad type for user_message: {type(user_message)}")
+                packed_user_message = {"role": "user", "content": user_message_text}
+
+                packed_user_message_obj = Message.dict_to_message(
+                                                        model=self.model,
+                                                        openai_message_dict=packed_user_message,
+                                                        )
+                input_message_sequence = self.messages + [packed_user_message]
+
+            else:
+                input_message_sequence = self.messages
+                packed_user_message = None
+            if len(input_message_sequence) > 1 and input_message_sequence[-1]["role"] != "user":
+                print(
+                    f"You are attempting to run ChatCompletion without user as the last message in the queue")
+
+            # send the conversation and available functions to GPT
+            if first_message or self.messages_total == self.messages_total_init:
+                print(f"This is the first message. Running extra verifier on AI response.")
+                counter = 0
+                while True:
+                    response = self._get_ai_reply(
+                        message_sequence=input_message_sequence,
+                        first_message=True,  # passed through to the prompt formatter
+                    )
+                    if verify_first_message_correctness(response):
+                        break
+                    counter += 1
+                    if counter > first_message_retry_limit:
+                        raise Exception(f"Hit first message retry limit ({first_message_retry_limit})")
+            else:
+                response = self._get_ai_reply(
+                    message_sequence=input_message_sequence,
+                )
+
+            #check if LLM wanted to call a function
+
+
+
+
+        except Exception as e:
+            print(f"step() failed\nuser_message = {user_message}\nerror = {e}")
+
+
+
+
+
+
+
+
+
 
 

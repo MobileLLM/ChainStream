@@ -1,5 +1,7 @@
 from datetime import datetime
 import json
+import urllib
+import requests
 def get_local_time():
 
     # Get the current time, which will be in the local timezone of the computer
@@ -23,3 +25,49 @@ def get_login_event(last_login="Never (first login)", include_location=False, lo
         packaged_message["location"] = location_name
 
     return json.dumps(packaged_message, ensure_ascii=False)
+
+def smart_urljoin(base_url, relative_url):
+    """urljoin is stupid and wants a trailing / at the end of the endpoint address, or it will chop the suffix off"""
+    if not base_url.endswith("/"):
+        base_url += "/"
+    return urllib.parse.urljoin(base_url, relative_url)
+
+def verify_first_message_correctness(
+    response: ChatCompletionResponse,
+) -> bool:
+    """Can be used to enforce that the first message always follow one style"""
+    return True
+
+def openai_chat_completions_request(url, api_key, data):
+    url = smart_urljoin(url, "chat/completions")
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
+
+    if "functions" in data and data["functions"] is None:
+        data.pop("functions")
+        data.pop("function_call", None)
+
+    if "tools" in data and data["tools"] is None:
+        data.pop("tools")
+        data.pop("tool_choice", None)
+
+    print(f"Sending request to {url}")
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        print(f"response = {response}")
+        response.raise_for_status()  # Raises HTTPError for 4XX/5XX status
+        response = response.json()  # convert to dict from string
+        print(f"response.json = {response}")
+        response = ChatCompletionResponse(**response)
+        return response
+    except requests.exceptions.HTTPError as http_err:
+        # Handle HTTP errors (e.g., response 4XX, 5XX)
+        print(f"Got HTTPError, exception={http_err}, payload={data}")
+        raise http_err
+    except requests.exceptions.RequestException as req_err:
+        # Handle other requests-related errors (e.g., connection error)
+        print(f"Got RequestException, exception={req_err}")
+        raise req_err
+    except Exception as e:
+        # Handle other potential errors
+        print(f"Got unknown Exception, exception={e}")
+        raise e
