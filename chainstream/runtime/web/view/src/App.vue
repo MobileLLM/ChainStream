@@ -13,9 +13,12 @@ import Aside from './components/aside.vue'
         <el-aside width="300px" style="background-color: #165cca;">
           <Aside />
         </el-aside>
-        <el-main style="background-color: #d7ad21;">Main</el-main>
+        <el-main style="background-color: #d7ad21;">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
+
 </template>
 
 <script>
