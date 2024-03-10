@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>Welcome to my website!</h1>
+  <h1>Welcome to ChainStream Runtime!</h1>
 </template>
 
 <style scoped>

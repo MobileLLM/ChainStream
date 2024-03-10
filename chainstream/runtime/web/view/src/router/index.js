@@ -14,7 +14,10 @@ import Home from '../components/Home.vue'
 const routes= [
     {
         path: '/',
-        name: 'Home',
+        redirect: '/home'
+    },
+    {
+        path: '',
         redirect: '/home'
     },
     {

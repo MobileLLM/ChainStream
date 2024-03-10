@@ -7,13 +7,13 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
   <el-scrollbar style="height: calc(100% - 60px);">
     <el-menu  active-text-color="#165CCAFF" router>
       <el-menu-item index="/home"><el-icon><home /></el-icon>Home</el-menu-item>
-<!--      <el-sub-menu index="1">-->
-<!--        <template #title>-->
-<!--          <el-icon><edit /></el-icon>Runtime Config-->
-<!--        </template>-->
-<!--        <el-menu-item index="">Stream Graph</el-menu-item>-->
-<!--        <el-menu-item index="">Agents</el-menu-item>-->
-<!--      </el-sub-menu>-->
+      <el-sub-menu index="1">
+        <template #title>
+          <el-icon><edit /></el-icon>Runtime Config
+        </template>
+        <el-menu-item index="">Stream Graph(尚未开发)</el-menu-item>
+        <el-menu-item index="">Agents(尚未开发)</el-menu-item>
+      </el-sub-menu>
 
       <el-sub-menu index="2">
         <template #title>
@@ -25,13 +25,13 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
         <el-menu-item index="/monitor/Agent">Agents</el-menu-item>
       </el-sub-menu>
 
-<!--      <el-sub-menu index="3">-->
-<!--        <template #title>-->
-<!--          <el-icon><setting /></el-icon>Settings-->
-<!--        </template>-->
-<!--        <el-menu-item index="">Stream Graph</el-menu-item>-->
-<!--        <el-menu-item index="">Agents</el-menu-item>-->
-<!--      </el-sub-menu>-->
+      <el-sub-menu index="3">
+        <template #title>
+          <el-icon><setting /></el-icon>Settings
+        </template>
+        <el-menu-item index="">Stream Graph(尚未开发)</el-menu-item>
+        <el-menu-item index="">Agents(尚未开发)</el-menu-item>
+      </el-sub-menu>
 
 
 
