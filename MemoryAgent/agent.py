@@ -1,7 +1,8 @@
 from typing import List, Tuple, Optional, cast, Union,Dict
 from pydantic import Field,BaseModel
 from .message import Message
-from .utils import get_login_event,verify_first_message_correctness,openai_chat_completions_request
+import response
+from .utils import get_login_event,verify_first_message_correctness,openai_chat_completions_request,package_function_response
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,
@@ -132,10 +133,61 @@ class Agent(object):
         except Exception as e:
             raise e
 
+    def _handle_ai_response(
+            self, response_message: response.Message, override_tool_call_id: bool = True
+    ) -> Tuple[List[Message], bool, bool]:
+        messages = []
+        if response_message.function_call or (
+            response_message.tool_calls is not None and len(response_message.tool_calls) > 0):
+            if response_message.function_call:
+                raise DeprecationWarning(response_message)
+            if response_message.tool_calls is not None and len(response_message.tool_calls) > 1:
+                print(f">1 tool call not supported, using index=0 only\n{response_message.tool_calls}")
+                response_message.tool_calls = [response_message.tool_calls[0]]
+            assert response_message.tool_calls is not None and len(response_message.tool_calls) > 0
+
+            tool_call_id = response_message.tool_calls[0].id
+            assert tool_call_id is not None
+
+            messages.append(
+                Message.dict_to_message(
+                    model=self.model,
+                    openai_message_dict=response_message.model_dump(),
+                )
+            )
+            function_call = (
+                response_message.function_call if response_message.function_call is not None else
+                response_message.tool_calls[0].function
+            )
+            function_name=function_call.name
+            print(f"Function call message: {messages[-1]}")
+            function_response_string=input("函数回复：")
+            function_response = package_function_response(True, function_response_string)
+            messages.append(
+                Message.dict_to_message(
+                    model=self.model,
+                    openai_message_dict={
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                        "tool_call_id": tool_call_id,
+                    },
+                )
+            )
+        else :
+            messages.append(
+                Message.dict_to_message(
+                    model=self.model,
+                    openai_message_dict=response_message.model_dump(),
+                )
+            )
+        return messages
+
     def step(self,
              user_message:Union[Message,str],
              first_message:bool=False,
              first_message_retry_limit: int=5) -> Tuple[List[dict], bool, bool, bool]:
+
         try:
             # add user message
             if user_message is not None:
@@ -180,8 +232,26 @@ class Agent(object):
                 )
 
             #check if LLM wanted to call a function
+            response_message = response.choices[0].message
+            response_message.copy()
 
+            all_response_message=self._handle_ai_response(response_message)
 
+            #extend the message history
+
+            if user_message is not None:
+                if isinstance(user_message, Message):
+                    all_new_messages = [user_message] + all_response_message
+                else:
+                    all_new_messages = [
+                                        Message.dict_to_message(
+                                            model=self.model,
+                                            openai_message_dict=packed_user_message,
+                                        )
+                                       ] + all_response_message
+            else:
+                all_new_messages = all_response_message
+            self._append_to_messages(all_new_messages)
 
 
         except Exception as e:

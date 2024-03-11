@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 import urllib
 import requests
+from response import ChatCompletionResponse
 def get_local_time():
 
     # Get the current time, which will be in the local timezone of the computer
@@ -71,3 +72,12 @@ def openai_chat_completions_request(url, api_key, data):
         # Handle other potential errors
         print(f"Got unknown Exception, exception={e}")
         raise e
+def package_function_response(was_success, response_string, timestamp=None):
+    formatted_time = get_local_time() if timestamp is None else timestamp
+    packaged_message = {
+        "status": "OK" if was_success else "Failed",
+        "message": response_string,
+        "time": formatted_time,
+    }
+
+    return json.dumps(packaged_message, ensure_ascii=False)
