@@ -1,8 +1,8 @@
 from typing import List, Tuple, Optional, cast, Union,Dict
 from pydantic import Field,BaseModel
-from .message import Message
+from message import Message
 import response
-from .utils import get_login_event,verify_first_message_correctness,openai_chat_completions_request,package_function_response
+from utils import get_login_event,verify_first_message_correctness,openai_chat_completions_request,package_function_response
 
 LLM_MAX_TOKENS = {
     "DEFAULT": 8192,

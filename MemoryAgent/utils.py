@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import urllib
+import os
 import requests
 from response import ChatCompletionResponse
 def get_local_time():
@@ -81,3 +82,11 @@ def package_function_response(was_success, response_string, timestamp=None):
     }
 
     return json.dumps(packaged_message, ensure_ascii=False)
+def get_system_text(path):
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read().strip()
+    else:
+        raise FileNotFoundError(f"No file found for path={path}")
+
+
