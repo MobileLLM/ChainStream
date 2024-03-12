@@ -86,7 +86,7 @@ class Agent(object):
                     model=self.model,
                     openai_message_dict=msg))
         assert all([isinstance(msg, Message) for msg in init_messages_objs]), (init_messages_objs, init_messages)
-
+        self.messages_total = 0
         self._append_to_messages(added_messages=[cast(Message, msg) for msg in init_messages_objs if msg is not None])
 
         self.messages_total_init=self.messages_total = (len(self._messages) - 1)

@@ -93,6 +93,31 @@ class Message(object):
                 tool_calls=tool_calls,
                 tool_call_id=None,  # NOTE: None, since this field is only non-null for role=='tool'
             )
+        else:
+            if openai_message_dict["role"] == "tool":
+                assert "tool_call_id" in openai_message_dict and openai_message_dict[
+                    "tool_call_id"] is not None, openai_message_dict
+            else:
+                if "tool_call_id" in openai_message_dict:
+                    assert openai_message_dict["tool_call_id"] is None, openai_message_dict
+
+            if "tool_calls" in openai_message_dict and openai_message_dict["tool_calls"] is not None:
+                assert openai_message_dict["role"] == "assistant", openai_message_dict
+
+                tool_calls = [
+                    ToolCall(id=tool_call["id"], tool_call_type=tool_call["type"], function=tool_call["function"])
+                    for tool_call in openai_message_dict["tool_calls"]
+                ]
+            else:
+                tool_calls = None
+
+            return Message(
+                model=model,
+                role=openai_message_dict["role"],
+                text=openai_message_dict["content"],
+                tool_calls=tool_calls,
+                tool_call_id=openai_message_dict["tool_call_id"] if "tool_call_id" in openai_message_dict else None,
+            )
 
     def to_openai_dict(self):
         if self.role == "system":
@@ -123,3 +148,7 @@ class Message(object):
                 "role": self.role,
                 "tool_call_id": self.tool_call_id,
             }
+        else:
+            raise ValueError(self.role)
+
+        return openai_message

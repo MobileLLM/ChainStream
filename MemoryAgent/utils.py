@@ -82,7 +82,7 @@ def package_function_response(was_success, response_string, timestamp=None):
     }
 
     return json.dumps(packaged_message, ensure_ascii=False)
-def get_system_text(path):
+def get_system_text(path=None):
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as file:
             return file.read().strip()
