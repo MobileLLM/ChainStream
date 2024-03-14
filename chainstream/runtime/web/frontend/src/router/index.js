@@ -33,7 +33,13 @@ const routes= [
                 path: 'Agent',
                 name: 'Agent',
                 component: () => import('@/components/view/monitor/agents.vue')
-            }
+            },
+            {
+                path: 'Stream',
+                name: 'Stream',
+                component: () => import('@/components/view/monitor/streams.vue')
+            },
+
         ]
 
     },
