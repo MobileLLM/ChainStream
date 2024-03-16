@@ -20,7 +20,7 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
           <el-icon><monitor /></el-icon>Runtime Monitor
         </template>
         <el-menu-item index="/monitor/Streams">Streams</el-menu-item>
-        <el-menu-item index="/monitor/Agents">Agent</el-menu-item>
+        <el-menu-item index="/monitor/Agents">Agents</el-menu-item>
         <el-menu-item index="/monitor/StreamGraph">Stream Graph</el-menu-item>
 
 
