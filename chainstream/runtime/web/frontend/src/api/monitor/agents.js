@@ -1,8 +1,22 @@
 import  request  from "@/utils/request"
 
-export function getAgents() {
+export function getAgentsPath() {
   return request({
-    url: '/agents',
+    url: '/monitor/agents',
     method: 'get'
+  })
+}
+
+export function startAgent(agentId) {
+  return request({
+    url: '/monitor/agents/start/' + agentId,
+    method: 'post'
+  })
+}
+
+export function stopAgent(agentId) {
+  return request({
+    url: '/monitor/agents/stop/' + agentId,
+    method: 'post'
   })
 }

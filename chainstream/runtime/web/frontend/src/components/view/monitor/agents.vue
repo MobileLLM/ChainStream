@@ -5,8 +5,28 @@ import $ from 'jquery'
 
 <template>
   <el-container style="height: 100%; margin: 0; padding: 0">
-    <el-scrollbar style="height: 100%; width: 100%">
-      <el-table v-loading="loading" :data="agents" :height="elTableHeight" style="width: 100%;" table-layout="auto">
+    <el-aside :height="elTableHeight" width="30%" style="margin: 0 1% 0 0; padding: 0">
+      <el-scrollbar style="height: 100%; width: 100%; margin: 0; padding: 0">
+<!--        <el-table v-loading="path_loading" :data="agents_path" :height="elTableHeight" style="width: 100%; margin: 0; padding: 0" table-layout="auto" >-->
+<!--          <el-table-column prop="agent_path" label="Path" width="180"></el-table-column>-->
+<!--          <el-table-column align="right">-->
+<!--            <template #default="scope">-->
+<!--              <el-button size="small" type="success" @click="handleStart(scope.$index, scope.row)">Start</el-button>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--        </el-table>-->
+        <el-tree :data="agents_path" :props="defaultProps" show-checkbox @check-change="handleCheckChange">
+<!--          <template #default="{ node, data }">-->
+<!--            <span class="custom-tree-node" style="flex: 1; display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding-right: 8px;">-->
+<!--              <span>{{ node.label }}</span>-->
+<!--              <el-button size="small" type="success" @click="handleStart(data)">Start</el-button>-->
+<!--            </span>-->
+<!--          </template>-->
+        </el-tree>
+      </el-scrollbar>
+    </el-aside>
+    <el-scrollbar style="height: 100%; width: 100%; margin: 0; padding: 0">
+      <el-table v-loading="running_loading" :data="agents_running" :height="elTableHeight" style="width: 100%; margin: 0; padding: 0" table-layout="auto" >
         <el-table-column type="index" label="#" width="50" />
         <el-table-column prop="agent_id" label="Agent ID" width="180">
         </el-table-column>
@@ -58,13 +78,21 @@ import $ from 'jquery'
 
 
 <script>
-import { getAgents } from '@/api/monitor/agents.js'
+import {startAgent, stopAgent, getAgentsPath} from '@/api/monitor/agents.js'
+import {formToJSON} from "axios";
 
 export  default {
   data() {
     return {
-      loading: true,
-      agents: [],
+      path_loading: true,
+      running_loading: true,
+      agents_path: [],
+      defaultProps: {
+        children: "children",
+        label: "label",
+        disabled: "disabled"
+      },
+      agents_running: [],
       elTableHeight: $('.el-scrollbar').height(),
     }
   },
@@ -72,11 +100,28 @@ export  default {
     this.getAgentsList()
   },
   methods: {
+    // convertProxyToPlainObject(proxy) {
+    //   if (typeof proxy !== 'object' || proxy === null) {
+    //     return proxy;
+    //   }
+    //   const plainObject = Array.isArray(proxy) ? [] : {};
+    //   for (const key in proxy) {
+    //     if (proxy.hasOwnProperty(key)) {
+    //       plainObject[key] = this.convertProxyToPlainObject(proxy[key]);
+    //     }
+    //   }
+    //   return plainObject;
+    // },
+    handleCheckChange(data, checked, indeterminate) {
+
+    },
     getAgentsList() {
-      this.loading = true
-      getAgents().then(res => {
-        this.agents = res.data
-        this.loading = false
+      this.path_loading = true
+      getAgentsPath().then(res => {
+        // this.agents_path = this.convertProxyToPlainObject(res.data)
+        this.agents_path = res.data
+        console.log(this.agents_path)
+        this.path_loading = false
       })
     },
     handleStart(index, row) {
