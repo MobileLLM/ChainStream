@@ -32,6 +32,7 @@
 <script>
 import { reactive } from 'vue'
 import { checkConnection } from '@/api/home.js'
+import axios from "axios";
 
 export default {
   name: 'Home',
@@ -59,16 +60,27 @@ export default {
   methods: {
     checkConn(onfulfilled) {
       this.loading = true
-      checkConnection()
-          .then(res => {
-            this.loading = false
-            console.log(res)
-            this.$message.success('Connection successful')
-          }, err => {
-            this.loading = false
-            console.log(err)
-            this.$message.error('Connection failed')
-          }, 10000)
+        checkConnection()
+            .then(res => {
+              this.loading = false
+              console.log(res)
+              this.$message.success('Connection successful')
+            }, err => {
+              this.loading = false
+              console.log(err)
+              this.$message.error('Connection failed')
+            }, 10000)
+
+      // axios.get('/api/home/checkConnection')
+      //     .then(res => {
+      //       this.loading = false
+      //       console.log(res)
+      //       this.$message.success('Connection successful')
+      //     }).catch(err => {
+      //   this.loading = false
+      //   console.log(err)
+      //   this.$message.error('Connection failed')
+      // })
     }
   }
 }
