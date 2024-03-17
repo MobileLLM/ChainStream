@@ -8,14 +8,12 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // import router from './router/index.js'
 import router from './router'
 
-
 const app = createApp(App)
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
-app.config.globalProperties.$BACKEND_URL = "http://localhost:8080"
 
 app.use(ElementPlus)
 app.use(router)

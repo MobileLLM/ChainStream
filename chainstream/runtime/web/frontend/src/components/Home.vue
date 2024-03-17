@@ -7,16 +7,21 @@
   <h2>ChainStream Configuration</h2>
   <div style="margin-top: 50px; width: 50%;">
     <el-descriptions
-
       title=""
       column="3"
       size="small"
       border
       direction="vertical"
+      v-loading="loading"
   >
 
     <el-descriptions-item label="Backend URL">
-      {{ this.$BACKEND_URL }}
+      {{ backendUrl }}
+    </el-descriptions-item>
+    <el-descriptions-item align="center">
+      <template #default>
+        <el-button size="small" type="success" @click="checkConn()">Test Connection</el-button>
+      </template>
     </el-descriptions-item>
 
 
@@ -26,6 +31,7 @@
 
 <script>
 import { reactive } from 'vue'
+import { checkConnection } from '@/api/home.js'
 
 export default {
   name: 'Home',
@@ -42,6 +48,27 @@ export default {
     return {
       formInline,
       handleSubmit
+    }
+  },
+  data() {
+    return {
+      backendUrl: import.meta.env.VITE_CHAINSTREAM_BACKEND_API ,
+      loading: false
+    }
+  },
+  methods: {
+    checkConn(onfulfilled) {
+      this.loading = true
+      checkConnection()
+          .then(res => {
+            this.loading = false
+            console.log(res)
+            this.$message.success('Connection successful')
+          }, err => {
+            this.loading = false
+            console.log(err)
+            this.$message.error('Connection failed')
+          }, 10000)
     }
   }
 }
