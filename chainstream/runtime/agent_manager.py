@@ -9,43 +9,6 @@ import json
 
 logger = logging.getLogger(__name__)
 
-def _path_to_json(paths):
-    json_data = {}
-
-    for path in paths:
-        directories = path.split('/')
-        current_dict = json_data
-
-        for directory in directories:
-            if directory != '':
-                if directory not in current_dict:
-                    current_dict[directory] = {}
-                current_dict = current_dict[directory]
-
-    def process_dict(node):
-        tmp_list = []
-        for key, value in node.items():
-            if isinstance(value, dict):
-                if len(value) == 0:
-                    tmp_list.append({
-                        "label": key,
-                    })
-                else:
-                    tmp_list.append({
-                        "label": key,
-                        "disabled": True,
-                        "children": process_dict(value)
-                    })
-            else:
-                node[key] = {"name": value}
-                tmp_list.append({
-                    "label": value
-                })
-        return tmp_list
-
-    list_data = process_dict(json_data)
-
-    return list_data
 
 class AgentManager:
     def __init__(self):
@@ -79,8 +42,72 @@ class AgentManager:
                 if file.endswith('.py'):
                     # agent_list.append(os.path.join(root, file))
                     agent_list.append(os.path.relpath(os.path.join(root, file), start=self.predefined_agents_path))
-        agent_list = _path_to_json(agent_list)
+        agent_list = self._path_to_json(agent_list)
         return agent_list
+
+    def _path_to_json(self, paths):
+        json_data = {}
+
+        for path in paths:
+            directories = path.split('/')
+            current_dict = json_data
+
+            for directory in directories:
+                if directory != '':
+                    if directory not in current_dict:
+                        current_dict[directory] = {}
+                    current_dict = current_dict[directory]
+
+        def process_dict(node):
+            tmp_list = []
+            for key, value in node.items():
+                if isinstance(value, dict):
+                    if len(value) == 0:
+                        tmp_list.append({
+                            "label": key,
+                            "is_running": self.get_agent(key.split('.')[0]) is not None,
+                        })
+                    else:
+                        tmp_list.append({
+                            "label": key,
+                            "disabled": True,
+                            "children": process_dict(value)
+                        })
+                else:
+                    node[key] = {"name": value}
+                    tmp_list.append({
+                        "label": value,
+                        "is_running": self.get_agent(value) is not None,
+                    })
+            return tmp_list
+
+        list_data = process_dict(json_data)
+
+        return list_data
+    def start_agent_by_id(self, agent_id):
+        agents_list = self.scan_predefined_agents()
+        target_agent_path = None
+        for agent_path in agents_list:
+            if agent_path.endswith(f'/{agent_id}'):
+                target_agent_path = agent_path
+                break
+        if target_agent_path is None:
+            return False
+        res = self.start_agent(target_agent_path)
+        if res:
+            return True
+        return False
+
+    def stop_agent_by_id(self, agent_id):
+        agent_id = agent_id.split('.')[0]
+        agent = self.get_agent(agent_id)
+        agent.stop()
+        self.remove_agent_by_id(agent_id)
+        return True
+
+    def remove_agent_by_id(self, agent_id):
+        self.agents.pop(agent_id)
+        return True
 
     def start_agent(self, path):
         if not path.startswith('/'):

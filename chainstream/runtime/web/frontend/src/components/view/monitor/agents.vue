@@ -15,14 +15,18 @@ import $ from 'jquery'
 <!--            </template>-->
 <!--          </el-table-column>-->
 <!--        </el-table>-->
-        <el-tree :data="agents_path" :props="defaultProps" show-checkbox @check-change="handleCheckChange">
-<!--          <template #default="{ node, data }">-->
-<!--            <span class="custom-tree-node" style="flex: 1; display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding-right: 8px;">-->
-<!--              <span>{{ node.label }}</span>-->
-<!--              <el-button size="small" type="success" @click="handleStart(data)">Start</el-button>-->
-<!--            </span>-->
-<!--          </template>-->
+<!--        <el-button type="primary" @click="handleStart">开始</el-button>-->
+        <el-tree :data="agents_path" :props="defaultProps" default-expand-all>
+          <template #default="{ node, data }">
+            <span class="custom-tree-node" style="flex: 1; display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding-right: 8px;">
+              <span>{{ node.label }}</span>
+              <el-button v-if="!data.disabled && !data.is_running" size="small" type="success" @click="handleTreeStart(data)">Start</el-button>
+<!--              <el-button v-if="data.is_running" size="small" type="warning">Running</el-button>-->
+              <el-button v-if="data.is_running" size="small" type="warning" @click="handleTreeStop(data)">Stop</el-button>
+            </span>
+          </template>
         </el-tree>
+
       </el-scrollbar>
     </el-aside>
     <el-scrollbar style="height: 100%; width: 100%; margin: 0; padding: 0">
@@ -87,10 +91,12 @@ export  default {
       path_loading: true,
       running_loading: true,
       agents_path: [],
+      checkedNodes: [],
       defaultProps: {
         children: "children",
         label: "label",
-        disabled: "disabled"
+        disabled: "disabled",
+        is_running: "is_running",
       },
       agents_running: [],
       elTableHeight: $('.el-scrollbar').height(),
@@ -112,23 +118,59 @@ export  default {
     //   }
     //   return plainObject;
     // },
-    handleCheckChange(data, checked, indeterminate) {
-
+    handleCheck(data) {
+      this.checkedNodes = checkedNodes;
     },
     getAgentsList() {
       this.path_loading = true
       getAgentsPath().then(res => {
         // this.agents_path = this.convertProxyToPlainObject(res.data)
         this.agents_path = res.data
-        console.log(this.agents_path)
         this.path_loading = false
       })
     },
+    // handleTreeStart() {
+    //   // const selectedNodes = this.checkedNodes.map(node => ({
+    //   //   label: node.label // 假设节点有一个label属性
+    //   //   // 可以根据实际情况添加更多需要发送给后端的数据
+    //   // }));
+    //   this.checkedNodes.forEach(node => {
+    //     const data = {
+    //       agent_id: node.data.agent_id,
+    //       agent_path: node.data.agent_path,
+    //       description: node.data.description,
+    //
+    //
+    //     }
+    //   }
+    // },
+    handleTreeStart(data) {
+      startAgent(data.label).then(res => {
+        if (res.data['res'] === 'ok') {
+          this.$message.success('Agent started successfully')
+          this.getAgentsList()
+        } else {
+          this.$message.error('Agent start failed')
+          this.getAgentsList()
+        }
+      })
+    },
+    handleTreeStop(data) {
+      stopAgent(data.label).then(res => {
+        if (res.data['res'] === 'ok') {
+          this.$message.success('Agent stopped successfully')
+          this.getAgentsList()
+        } else {
+          this.$message.error('Agent stop failed')
+          this.getAgentsList()
+        }
+      })
+    },
     handleStart(index, row) {
-      console.log(index, row)
+
     },
     handleStop(index, row) {
-      console.log(index, row)
+
     },
     filterType(value, row) {
       return row.type === value
