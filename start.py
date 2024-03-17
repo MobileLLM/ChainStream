@@ -30,6 +30,12 @@ def main():
         verbose=True,
         # monitor_mode='web'
     )
+
+    # config_chainstream_server(
+    #     output_dir=args.output_dir,
+    #     verbose=True,
+    #     monitor_mode='shell'
+    # )
     cs_server.start()
 
 

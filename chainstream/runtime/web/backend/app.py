@@ -1,10 +1,17 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 
 CORS(app, supports_credentials=True)
+
+chainstream_core = None
+
+
+def set_core(core):
+    global chainstream_core
+    chainstream_core = core
+
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
