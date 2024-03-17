@@ -18,6 +18,11 @@ def get_data():
     data = chainstream_core.scan_predefined_agents_tree()
     return jsonify(data)
 
+
+@app.route('/api/monitor/agents/getRunningAgents', methods=['POST'])
+def get_running_agents():
+    return jsonify({"res": "ok"})
+
 @app.route('/api/monitor/agents/start/<agent_id>', methods=['POST'])
 def start_agent(agent_id):
     res = chainstream_core.start_agent_by_id(agent_id)
