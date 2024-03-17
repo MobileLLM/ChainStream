@@ -1,5 +1,5 @@
 from chainstream.interfaces import StreamInterface
-from chainstream.runtime import cs_server
+from chainstream.runtime import cs_server_core
 import logging
 
 
@@ -7,7 +7,7 @@ class BaseStream(StreamInterface):
     def __init__(self, stream_id) -> None:
         super().__init__()
         self.stream_id = stream_id
-        cs_server.register_stream(self)
+        cs_server_core.register_stream(self)
         self.logger = logging.getLogger(self.stream_id)
         self.listeners = []
 

@@ -5,12 +5,94 @@ import importlib
 import importlib.util
 import inspect
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from .stream_manager import StreamManager
+from .agent_manager import AgentManager
+from chainstream.stream import register_stream_manager
+
+
+class ChainStreamCore(StreamManager):
+    def __init__(self):
+        super().__init__()
+        self.logger = logging.getLogger(name='ChainStreamCore')
+        self.verbose = False
+        self.output_dir = None
+
+
+class ChainStreamServerBase(object):
+    def __init__(self):
+        self.chainstream_core = ChainStreamCore()
+
+    def start(self):
+        pass
+    
+    def config(self):
+        pass
+
+    def get_chainstream_core(self):
+        return self.chainstream_core
+
+
+class ChainStreamServerShell(ChainStreamServerBase):
+    def __init__(self):
+        super().__init__()
+        self.output_dir = None
+        self.verbose = None
+
+    def start(self):
+        print(self._handle_command("help"))
+        while True:
+            cmd = input('> ')
+            if cmd == 'q' or cmd == 'exit':
+                break
+            else:
+                # print(f'cmd: {cmd}')
+                out = self._handle_command(cmd)
+                print(out)
+                
+    def config(self, output_dir=None, verbose=False):
+        self.output_dir = output_dir
+        self.verbose = verbose
+
+    def _handle_command(self, cmd):
+        out = ''
+        if cmd == 'help':
+            out += ' list streams (LS) ---- list all available streams\n'
+            out += ' list agents (LA) ----- list all available agents\n'
+            out += ' start agent (S) ----- choose an agent to start and run\n'
+        elif cmd == 'list streams' or cmd == 'LS':
+            out += 'available streams:\n'
+            for i, (name, stream) in enumerate(self.chainstream_core.get_stream_list()):
+                out += f'  {i}: {name}\n'
+        elif cmd == 'list agents' or cmd == 'LA':
+            out += 'available agents:\n'
+            for i, (name, agent) in enumerate(self.chainstream_core.get_agents_list()):
+                out += f'  {i}: {name}\n'
+        elif cmd.startswith('start agent') or cmd == 'S':
+            # agents_path = os.path.abspath(os.path.join(os.getcwd(), '..', '..', 'agents'))
+            agents_path = "agents/"
+            # List all files inside the agents folder
+            agent_list = self.chainstream_core.scan_predefined_agents()
+            while True:
+                for i, agent in enumerate(agent_list):
+                    print(f"{[i]}: {agent}")
+                agent_id = input('choose an agent index to start: ')
+                if agent_id.isdigit() and int(agent_id) < len(agent_list):
+                    chosen_agent = agent_list[int(agent_id)]
+                    break
+                else:
+                    out += f'invalid agent id: {agent_id}\n'
+
+            res = self.chainstream_core.start_agent(chosen_agent)
+            if res:
+                out += f'agent started successfully\n'
+        return out
 
 
 class ChainStreamServer(object):
     """
     the serving system of ChainStream
     """
+
     def __init__(self):
         self.logger = logging.getLogger(name='ChainStreamServer')
         self.verbose = False
@@ -18,6 +100,7 @@ class ChainStreamServer(object):
         self.monitor_mode = 'shell'  # can be web or shell
         self.streams = collections.OrderedDict()
         self.agents = collections.OrderedDict()
+        self.stream_manager = StreamManager()
 
     def config(self, output_dir=None, ip='0.0.0.0', port=8848, monitor_mode='shell', verbose=False):
         self.output_dir = output_dir
@@ -30,30 +113,6 @@ class ChainStreamServer(object):
         else:
             self.logger.setLevel(logging.INFO)
 
-    def stream_flow_graph(self):
-        """
-        TODO finish this
-        """
-        edges = []  # tuples of (source_agent, stream, target_agent)
-        for name, stream in self.streams:
-            source_agent = stream.source_agent
-            target_agents = stream.get_registered_agents()
-            for target_agent in target_agents:
-                edges.append((source_agent, stream, target_agent))
-        return edges
-    
-    def register_stream(self, stream):
-        self.streams[stream.stream_id] = stream
-
-    def unregister_stream(self, stream):
-        self.streams.pop(stream.stream_id)
-
-    def register_agent(self, agent):
-        self.agents[agent.agent_id] = agent
-
-    def unregister_stream(self, agent):
-        self.agents.pop(agent.agent_id)
-
     def start(self):
         self.logger.info(f"Starting ChainStream server...")
         server_dir = os.path.join(self.output_dir, 'server')
@@ -61,7 +120,9 @@ class ChainStreamServer(object):
             os.makedirs(server_dir)
         if self.monitor_mode == 'shell':
             self.start_shell()
-    
+        elif self.monitor_mode == 'web':
+            self.start_http_server()
+
     def start_shell(self):
         print(self.handle_command("help"))
         while True:
@@ -181,4 +242,3 @@ class CustomHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(b"500 Internal Server Error")
-

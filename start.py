@@ -27,7 +27,8 @@ def main():
     args = parse_args()
     cs_server.config(
         output_dir=args.output_dir,
-        verbose=args.verbose
+        verbose=True,
+        # monitor_mode='web'
     )
     cs_server.start()
 
