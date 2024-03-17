@@ -20,3 +20,10 @@ export function stopAgent(agentId) {
     method: 'post'
   })
 }
+
+export function getRunningAgents() {
+  return request({
+    url: '/monitor/agents/running',
+    method: 'get'
+  })
+}

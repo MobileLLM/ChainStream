@@ -67,14 +67,14 @@ import $ from 'jquery'
               <el-tag type="warning">{{ scope.row.status }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="running_time" label="Running Time" width="180"></el-table-column>
+          <el-table-column prop="running_time" label="Running Time"></el-table-column>
         </el-table-column>
-        <el-table-column align="right">
-          <template #default="scope">
-            <el-button size="small" type="success" @click="handleStart(scope.$index, scope.row)">Start</el-button>
-            <el-button size="small" type="danger" @click="handleStop(scope.$index, scope.row)">Stop</el-button>
-          </template>
-        </el-table-column>
+<!--        <el-table-column align="right">-->
+<!--          <template #default="scope">-->
+<!--            <el-button size="small" type="success" @click="handleStart(scope.$index, scope.row)">Start</el-button>-->
+<!--            <el-button size="small" type="danger" @click="handleStop(scope.$index, scope.row)">Stop</el-button>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
       </el-table>
     </el-scrollbar>
   </el-container>
@@ -82,14 +82,14 @@ import $ from 'jquery'
 
 
 <script>
-import {startAgent, stopAgent, getAgentsPath} from '@/api/monitor/agents.js'
+import {startAgent, stopAgent, getAgentsPath, getRunningAgents} from '@/api/monitor/agents.js'
 import {formToJSON} from "axios";
 
 export  default {
   data() {
     return {
       path_loading: true,
-      running_loading: true,
+      running_loading: false,
       agents_path: [],
       checkedNodes: [],
       defaultProps: {
@@ -98,12 +98,24 @@ export  default {
         disabled: "disabled",
         is_running: "is_running",
       },
-      agents_running: [],
+      agents_running: [
+          {
+            agent_id: '123456',
+            agent_path: 'C:\\Program Files\\Agent\\agent.exe',
+            description: 'This is a moke agent',
+            version: '1.0.0',
+            type: 'user',
+            status: 'running',
+            running_time: '2021-11-11 11:11:11',
+            is_running: true,
+          },
+      ],
       elTableHeight: $('.el-scrollbar').height(),
     }
   },
   created() {
     this.getAgentsList()
+    // this.getRunningAgentsList()
   },
   methods: {
     // convertProxyToPlainObject(proxy) {
@@ -120,6 +132,15 @@ export  default {
     // },
     handleCheck(data) {
       this.checkedNodes = checkedNodes;
+    },
+
+    getRunningAgentsList() {
+      this.running_loading = true
+      getRunningAgents().then(res => {
+        // this.agents_running = this.convertProxyToPlainObject(res.data)
+        this.agents_running = res.data
+        this.running_loading = false
+      })
     },
     getAgentsList() {
       this.path_loading = true
