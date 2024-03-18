@@ -25,11 +25,13 @@ import java.nio.charset.CharsetDecoder;
 
 import io.github.privacystreams.audio.AudioOperators;
 import io.github.privacystreams.core.Callback;
+import io.github.privacystreams.core.Item;
 import io.github.privacystreams.core.UQI;
 import io.github.privacystreams.core.purposes.Purpose;
 import io.github.privacystreams.image.Image;
 import io.github.privacystreams.image.ImageOperators;
 import io.github.privacystreams.location.Geolocation;
+import io.github.privacystreams.sensor.Acceleration;
 import io.github.privacystreams.utils.Logging;
 import io.github.privacystreams.audio.Audio;
 
@@ -193,8 +195,15 @@ public class MyWebSocketServer extends WebSocketServer {
 //            mTextSensors.setTextColor(Color.RED);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin sensor socket");
-            if (sensorsName.equals("location")) {
-                // TODO: not finish
+            if (sensorsName.equals("acc")) {
+                uqi.getData(Acceleration.asUpdates(2), Purpose.UTILITY("chainstream"))
+                        .forEach(new Callback<Item>() {
+                            @Override
+                            protected void onInput(Item input) {
+                                // TODO: not finish
+                                System.out.println("Send " + String(input['X']) + " through socket");
+                            }
+                        });
             }
         }
     }

@@ -14,10 +14,8 @@ class SensorSocketSensors(BaseSocketSensors):
     is_agent = True
     def __init__(self, agent_id='sys_socket_sensor_sensors', ip='192.168.43.1', port=6666):
         super().__init__(agent_id, stream_name="socket_sensor", ip=ip, port=port)
-
         # TODO: add sensor data type
-        self.cmd = f"sensor,"
-
+        self.cmd = f"sensor,acc"
         pass
 
     def get_on_message(self):
