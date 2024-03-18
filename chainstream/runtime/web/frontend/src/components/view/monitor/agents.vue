@@ -115,7 +115,11 @@ export  default {
   },
   created() {
     this.getAgentsList()
+    window.addEventListener('resize', this.handleHightChange);
     // this.getRunningAgentsList()
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleHightChange);
   },
   methods: {
     // convertProxyToPlainObject(proxy) {
@@ -199,11 +203,14 @@ export  default {
     filterStatus(value, row) {
       return row.status === value
     },
-
+    handleHightChange() {
+      this.elTableHeight = $('.el-scrollbar').height();
+    },
   },
-  mounted() {
-    this.elTableHeight = $('.el-scrollbar').height();
-  }
+
+  // mounted() {
+  //   this.elTableHeight = $('.el-scrollbar').height();
+  // }
 }
 </script>
 

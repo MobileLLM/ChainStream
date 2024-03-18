@@ -32,6 +32,10 @@ export default {
   created() {
     this.loading = true;
     this.fetchStreams();
+    window.addEventListener('resize', this.handleHightChange);
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleHightChange);
   },
   methods: {
     fetchStreams() {
@@ -45,11 +49,14 @@ export default {
         this.$message.error("获取流信息失败");
         this.loading = false;
       });
+    },
+    handleHightChange() {
+      this.elTableHeight = $('.el-scrollbar').height();
     }
   },
-  mounted() {
-    this.elTableHeight = $('.el-scrollbar').height();
-  }
+  // mounted() {
+  //   this.elTableHeight = $('.el-scrollbar').height();
+  // }
 }
 </script>
 
