@@ -30,10 +30,16 @@ const routes= [
                 component: () => import('@/components/view/monitor/StreamGraph.vue')
             },
             {
-                path: 'Agent',
+                path: 'Agents',
                 name: 'Agent',
                 component: () => import('@/components/view/monitor/agents.vue')
-            }
+            },
+            {
+                path: 'Streams',
+                name: 'Stream',
+                component: () => import('@/components/view/monitor/streams.vue')
+            },
+
         ]
 
     },

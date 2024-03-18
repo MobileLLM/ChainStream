@@ -1,9 +1,9 @@
 <template>
   <el-row>
-    <el-col class="chainstream" :span="4" style="text-align: center; background-color: #ab2222; justify-content: center;">
+    <el-col class="chainstream" :span="6" style="text-align: center; background-color: #ab2222; justify-content: center;">
       <h1 style="color: white;">ChainStream Runtime</h1>
     </el-col>
-    <el-col class="menu" :span="20" style="text-align: right; background-color: #d71111; justify-content: right;">
+    <el-col class="menu" :span="18" style="text-align: right; background-color: #d71111; justify-content: right;">
       <span style="align-self: center;">
 <!--        <el-icon class="el-icon&#45;&#45;right" style="margin-right: 1px; font-size: 10px; color: white;"><arrow-down /></el-icon>-->
 <!--        <el-icon style="margin-right: 10px; font-size: 30px; color: white;"><setting /></el-icon>-->
@@ -59,7 +59,7 @@
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 140%;
   margin: 0;
   font-weight: bold;
   padding: 0;

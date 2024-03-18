@@ -19,10 +19,11 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
         <template #title>
           <el-icon><monitor /></el-icon>Runtime Monitor
         </template>
-        <el-menu-item index="/monitor/StreamGraph">
-          Stream Graph
-          </el-menu-item>
-        <el-menu-item index="/monitor/Agent">Agents</el-menu-item>
+        <el-menu-item index="/monitor/Streams">Streams</el-menu-item>
+        <el-menu-item index="/monitor/Agents">Agents</el-menu-item>
+        <el-menu-item index="/monitor/StreamGraph">Stream Graph</el-menu-item>
+
+
       </el-sub-menu>
 
       <el-sub-menu index="3">
