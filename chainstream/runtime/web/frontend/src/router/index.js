@@ -44,6 +44,50 @@ const routes= [
 
     },
     {
+        path: '/memory',
+        name: 'Memory',
+        children: [
+            {
+                path: 'Memory',
+                name: 'Memory',
+                component: () => import('@/components/view/memory/memory.vue')
+            }
+        ]
+    },
+    {
+        path: '/analysis',
+        name: 'Analysis',
+        children: [
+            {
+                path: 'Analysis',
+                name: 'Analysis',
+                component: () => import('@/components/view/analysis/analysis.vue')
+            }
+        ]
+    },
+    {
+        path: '/device',
+        name: 'Device',
+        children: [
+            {
+                path: 'Device',
+                name: 'Device',
+                component: () => import('@/components/view/devices/devices.vue')
+            }
+        ]
+    },
+    {
+        path: '/tools',
+        name: 'Tools',
+        children: [
+            {
+                path: 'Tools',
+                name: 'Tools',
+                component: () => import('@/components/view/tools/tools.vue')
+            }
+        ]
+    },
+    {
         path: '/home',
         name: 'Home',
         component: Home

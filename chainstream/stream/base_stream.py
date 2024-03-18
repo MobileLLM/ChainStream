@@ -1,6 +1,14 @@
 from chainstream.interfaces import StreamInterface
 from chainstream.runtime import cs_server_core
 import logging
+import datetime
+
+class StreamMeta:
+    def __init__(self, *args, **kwargs):
+        self.stream_id = kwargs.get('stream_id')
+        self.description = kwargs.get('description')
+        self.create_time = datetime.datetime.now()
+        self.create_by = kwargs.get('create_by')
 
 
 class BaseStream(StreamInterface):
