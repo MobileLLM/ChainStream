@@ -104,3 +104,13 @@ class QWenVLChatLLM(BaseModel):
     def clear_history(self):
         self.history=None
 
+class GemmaLLM(BaseModel):
+    def __init__(self):
+        self.tokenizer = AutoTokenizer.from_pretrained("/kaggle/input/gemma/transformers/2b-it/2")
+        self.model = AutoModelForCausalLM.from_pretrained("/kaggle/input/gemma/transformers/2b-it/2")
+
+    def query(self,query:str):
+        query_ids=self.tokenizer(query, return_tensors="pt").to("cuda")
+        outputs = self.model.generate(**query_ids)
+        return outputs
+

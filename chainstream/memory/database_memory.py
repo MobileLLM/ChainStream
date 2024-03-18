@@ -2,13 +2,14 @@ import pymysql
 import psycopg2
 
 class DataBaseInterface:
-    def __init__(self,type,host,port,user_config:dict):
+    def __init__(self,type,database,host,port,user_config:dict):
         self.type=type
+        self.database=database
         self.host=host
         self.port=port
         self.user_config=user_config
 
-        self.connect=None
+        self.connection=None
         self.cursor=None
         self.connect()
 
@@ -24,11 +25,13 @@ class DataBaseInterface:
                 self.cursor = self.connection.cursor()
             elif self.type=='postgresql':
                 self.connection = psycopg2.connect(
+                    database=self.database,
                     host=self.host,
                     port=self.port,
                     user=self.user_config['user'],
                     password=self.user_config['password']
                 )
+                print('connection')
                 self.cursor = self.connection.cursor()
             else:
                 raise ValueError("Unsupported database type: {}".format(self.db_type))
@@ -62,14 +65,4 @@ class DataBaseInterface:
                 self.connection.close()
         except Exception as e:
             print("Failed to close the database connection: {}".format(str(e)))
-
-
-
-
-
-
-
-
-
-
 

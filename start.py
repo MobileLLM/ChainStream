@@ -27,8 +27,15 @@ def main():
     args = parse_args()
     cs_server.config(
         output_dir=args.output_dir,
-        verbose=args.verbose
+        verbose=True,
+        # monitor_mode='web'
     )
+
+    # config_chainstream_server(
+    #     output_dir=args.output_dir,
+    #     verbose=True,
+    #     monitor_mode='shell'
+    # )
     cs_server.start()
 
 
