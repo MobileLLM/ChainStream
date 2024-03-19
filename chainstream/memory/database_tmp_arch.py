@@ -164,7 +164,7 @@ class SequentialMemory(MySQLBaseMemory):
             is_or = True
         elif args[0]=='columns':
             is_col = True
-        if is_and:
+        if is_and: #删除同时满足所有条件的数据
             condition = ""
             for i in range(len(args)):
                 if i==0:
@@ -174,13 +174,18 @@ class SequentialMemory(MySQLBaseMemory):
             condition = condition[:-5]
             qe = f"DELETE FROM {self.table_name} WHERE {condition};"
             self.database.update(qe)
-        elif is_or:
+        elif is_or: #删除满足其中一个条件的数据
             for i in range(len(args)):
                 if i==0:
                     continue
                 qe = f"DELETE FROM {self.table_name} WHERE {args[i]};"
                 self.database.update(qe)
-            
+        elif is_col: #删除某些列
+            for i in range(len(args)):
+                if i==0:
+                    continue
+                qe = f"ALTER TABLE {self.table_name} DROP COLUMN {args[i]};"
+                self.database.update(qe)
 
     def _find_data(self, *args, **kwargs):
         # and 找到同时满足所有条件，否则满足一个条件
