@@ -34,19 +34,12 @@ defineProps({
     </template>
   </el-card>
 
-  <el-drawer v-model="drawer2" :direction="direction">
+  <el-drawer v-model="drawer2" direction="rtl">
     <template #header>
       <h4>set title by slot</h4>
     </template>
     <template #default>
-      <div>
-        <el-radio v-model="radio1" value="Option 1" size="large"
-        >Option 1</el-radio
-        >
-        <el-radio v-model="radio1" value="Option 2" size="large"
-        >Option 2</el-radio
-        >
-      </div>
+
     </template>
     <template #footer>
       <div style="flex: auto">
@@ -67,8 +60,17 @@ export default {
           { title: 'Agent Count', value: 100 },
           { title: 'User Count', value: 1000 },
           { title: 'Device Count', value: 10000 },
-      ]
+      ],
+      drawer2: false
 
+    }
+  },
+  methods: {
+    cancelClick() {
+      this.drawer2 = false;
+    },
+    confirmClick() {
+      this.drawer2 = false;
     }
   }
 }
