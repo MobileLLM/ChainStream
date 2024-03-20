@@ -172,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
 //        myWebSocketServer.stopServer();
+        Intent intent1 = new Intent(this, ChainStreamClientService.class);
+        stopService(intent1);
         super.onStop();
     }
 

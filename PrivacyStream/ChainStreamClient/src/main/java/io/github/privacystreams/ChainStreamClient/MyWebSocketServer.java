@@ -191,7 +191,7 @@ public class MyWebSocketServer extends WebSocketServer {
         }
         else if (cmd.equals("sensors")) {
             String sensorsName = parts[1];
-            String interval = parts[2];
+//            String interval = parts[2];
 //            mTextSensors.setTextColor(Color.RED);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin sensor socket");
@@ -200,12 +200,27 @@ public class MyWebSocketServer extends WebSocketServer {
                         .forEach(new Callback<Item>() {
                             @Override
                             protected void onInput(Item input) {
-                                // TODO: not finish
-                                System.out.println("Send " + String(input['X']) + " through socket");
+                                String acc_x = Float.toString(input.getAsFloat("x"));
+                                String acc_y = Float.toString(input.getAsFloat("y"));
+                                String acc_z = Float.toString(input.getAsFloat("z"));
+                                String acc_res = acc_x + "," + acc_y + "," + acc_z;
+                                System.out.println("Send acc data: " + acc_res);
+
+                                try {
+                                    if (conn.isClosed()) {
+                                        uqi.stopAll();
+                                    }
+//                                    byte[] imageData = acc_res.getBytes();
+//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+                                    conn.send(acc_res);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
             }
         }
+
     }
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message) {
@@ -225,6 +240,7 @@ public class MyWebSocketServer extends WebSocketServer {
     public void onStart() {
         Log.d("websocket", "onStart()，WebSocket服务端启动成功");
     }
+
 
     public void stopServer() {
         // 在这里执行关闭服务器的操作
