@@ -11,7 +11,6 @@ import llm_card from "@/components/view/tools/utils/llm_card.vue";
         <llm_card :model_name="card.model_name"></llm_card>
       </el-col>
     </el-row>
-
   </el-container>
 </template>
 
@@ -19,7 +18,7 @@ import llm_card from "@/components/view/tools/utils/llm_card.vue";
 export default {
   data() {
     return {
-      cards: [ // 你的卡片数据数组=
+      cards: [
         { model_name: "GPT3.5", content: 'Content of card'},
         { model_name: "GPT4", content: 'Content of card'},
         { model_name: "Llama", content: 'Content of card'}

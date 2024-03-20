@@ -35,8 +35,9 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
         <template #title>
           <el-icon><Brush /></el-icon>Tools
         </template>
-        <el-menu-item index="/tools/tools">Tools</el-menu-item>
+
         <el-menu-item index="/tools/llms">LLMs</el-menu-item>
+        <el-menu-item index="/tools/tools">Tools</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="5">
