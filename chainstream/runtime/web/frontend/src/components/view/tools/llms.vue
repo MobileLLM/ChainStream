@@ -21,8 +21,8 @@ export default {
     return {
       cards: [ // 你的卡片数据数组=
         { model_name: "GPT3.5", content: 'Content of card'},
-        { model_name: "GPT3.5", content: 'Content of card'},
-        { model_name: "GPT3.5", content: 'Content of card'}
+        { model_name: "GPT4", content: 'Content of card'},
+        { model_name: "Llama", content: 'Content of card'}
       ]
     };
   }

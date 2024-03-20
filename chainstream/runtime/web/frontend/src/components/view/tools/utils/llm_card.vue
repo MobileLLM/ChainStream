@@ -36,7 +36,7 @@ defineProps({
 
   <el-drawer v-model="drawer2" direction="rtl">
     <template #header>
-      <h4>set title by slot</h4>
+      <h1>{{ model_name }}</h1>
     </template>
     <template #default>
 
