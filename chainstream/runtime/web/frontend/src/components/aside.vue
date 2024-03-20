@@ -51,7 +51,7 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
         <template #title>
           <el-icon><Iphone /></el-icon>Devices
         </template>
-        <el-menu-item index="/device/device">Devices(尚未开发)</el-menu-item>
+        <el-menu-item index="/device/device">Devices</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="7">
