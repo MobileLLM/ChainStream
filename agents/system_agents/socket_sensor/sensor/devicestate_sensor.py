@@ -9,7 +9,7 @@ class DeviceStateSocketSensors(BaseSocketSensors):
     def __init__(self, agent_id='sys_socket_sensor_sensors_devicestate', ip='192.168.43.1', port=6666):
         super().__init__(agent_id, stream_name="socket_sensor_devicestate", ip=ip, port=port)
         # TODO: add sensor data type
-        self.cmd = f"sensors,devicestate"
+        self.cmd = f"sensors,devicestate,3"
         pass
 
     def get_on_message(self):
