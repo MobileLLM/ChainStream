@@ -28,10 +28,14 @@ import io.github.privacystreams.core.Callback;
 import io.github.privacystreams.core.Item;
 import io.github.privacystreams.core.UQI;
 import io.github.privacystreams.core.purposes.Purpose;
+import io.github.privacystreams.device.DeviceEvent;
+import io.github.privacystreams.device.DeviceState;
 import io.github.privacystreams.image.Image;
 import io.github.privacystreams.image.ImageOperators;
 import io.github.privacystreams.location.Geolocation;
 import io.github.privacystreams.sensor.Acceleration;
+import io.github.privacystreams.sensor.AirPressure;
+import io.github.privacystreams.sensor.AmbientTemperature;
 import io.github.privacystreams.utils.Logging;
 import io.github.privacystreams.audio.Audio;
 
@@ -204,7 +208,7 @@ public class MyWebSocketServer extends WebSocketServer {
                                 String acc_y = Float.toString(input.getAsFloat("y"));
                                 String acc_z = Float.toString(input.getAsFloat("z"));
                                 String acc_res = acc_x + "," + acc_y + "," + acc_z;
-                                System.out.println("Send acc data: " + acc_res);
+                                System.out.println("Send acceleration data: " + acc_res);
 
                                 try {
                                     if (conn.isClosed()) {
@@ -218,7 +222,92 @@ public class MyWebSocketServer extends WebSocketServer {
                                 }
                             }
                         });
-            } else if (sensorsName.equals(""))
+            }
+            else if (sensorsName.equals("airpressure")) {
+                uqi.getData(AirPressure.asUpdates(3), Purpose.UTILITY("chainstream"))
+                        .forEach(new Callback<Item>() {
+                            @Override
+                            protected void onInput(Item input) {
+                                String pressure = Float.toString(input.getAsFloat("pressure"));
+                                System.out.println("Send airpressure data: " + pressure);
+                                try {
+                                    if (conn.isClosed()) {
+                                        uqi.stopAll();
+                                    }
+//                                    byte[] imageData = acc_res.getBytes();
+//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+                                    conn.send(pressure);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            }
+            else if (sensorsName.equals("ambienttemperature")) {
+                uqi.getData(AmbientTemperature.asUpdates(3), Purpose.UTILITY("chainstream"))
+                        .forEach(new Callback<Item>() {
+                            @Override
+                            protected void onInput(Item input) {
+                                String temperature = Float.toString(input.getAsFloat("temperature"));
+                                System.out.println("Send airpressure data: " + temperature);
+                                try {
+                                    if (conn.isClosed()) {
+                                        uqi.stopAll();
+                                    }
+//                                    byte[] imageData = acc_res.getBytes();
+//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+                                    conn.send(temperature);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            }
+            else if (sensorsName.equals("deviceevent")) {
+                uqi.getData(DeviceEvent.asUpdates(), Purpose.UTILITY("chainstream"))
+                        .forEach(new Callback<Item>() {
+                            @Override
+                            protected void onInput(Item input) {
+                                String type = Float.toString(input.getAsFloat("type"));
+                                String event = Float.toString(input.getAsFloat("event"));
+                                String input_res = type + "," + event;
+                                System.out.println("Send airpressure data: " + input_res);
+                                try {
+                                    if (conn.isClosed()) {
+                                        uqi.stopAll();
+                                    }
+//                                    byte[] imageData = acc_res.getBytes();
+//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+                                    conn.send(input_res);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            }
+            else if (sensorsName.equals("devicestate")) {
+                String devicestate_interval = parts[2];
+                uqi.getData(DeviceState.asUpdates(Integer.parseInt(devicestate_interval)), Purpose.UTILITY("chainstream"))
+                        .forEach(new Callback<Item>() {
+                            @Override
+                            protected void onInput(Item input) {
+                                String type = Float.toString(input.getAsFloat("type"));
+                                String event = Float.toString(input.getAsFloat("event"));
+                                String input_res = type + "," + event;
+                                System.out.println("Send airpressure data: " + input_res);
+                                try {
+                                    if (conn.isClosed()) {
+                                        uqi.stopAll();
+                                    }
+//                                    byte[] imageData = acc_res.getBytes();
+//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+                                    conn.send(input_res);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            }
         }
 
     }
