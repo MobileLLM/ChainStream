@@ -1,21 +1,15 @@
-import chainstream as cs
-import threading
 from datetime import datetime
 
-from agents.system_agents.socket_sensor.base_socket_sensor import BaseSocketSensors
-
-from PIL import Image
-
-from io import BytesIO
+from agents.system_agents.socket_sensor.sensor.base_socket_sensor import BaseSocketSensors
 
 
-
-class SensorSocketSensors(BaseSocketSensors):
+class GeolocationSocketSensors(BaseSocketSensors):
     is_agent = True
-    def __init__(self, agent_id='sys_socket_sensor_sensors', ip='192.168.43.1', port=6666):
-        super().__init__(agent_id, stream_name="socket_sensor", ip=ip, port=port)
+
+    def __init__(self, agent_id='sys_socket_sensor_sensors_geolocation', ip='192.168.43.1', port=6666):
+        super().__init__(agent_id, stream_name="socket_sensor_geolocation", ip=ip, port=port)
         # TODO: add sensor data type
-        self.cmd = f"sensors,acc"
+        self.cmd = f"sensors,geolocation"
         pass
 
     def get_on_message(self):
@@ -30,7 +24,7 @@ class SensorSocketSensors(BaseSocketSensors):
 
 if __name__ == '__main__':
     ip = '192.168.43.41'
-    default_sensors_agent = SensorSocketSensors(ip=ip)
+    default_sensors_agent = GeolocationSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:
     #     cmd = input('> ')

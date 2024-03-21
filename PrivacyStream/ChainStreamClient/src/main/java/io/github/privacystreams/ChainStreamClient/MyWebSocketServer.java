@@ -195,7 +195,7 @@ public class MyWebSocketServer extends WebSocketServer {
 //            mTextSensors.setTextColor(Color.RED);
             UQI uqi = new UQI(myContext);
             Logging.debug("begin sensor socket");
-            if (sensorsName.equals("acc")) {
+            if (sensorsName.equals("acceleration")) {
                 uqi.getData(Acceleration.asUpdates(2), Purpose.UTILITY("chainstream"))
                         .forEach(new Callback<Item>() {
                             @Override
@@ -218,7 +218,7 @@ public class MyWebSocketServer extends WebSocketServer {
                                 }
                             }
                         });
-            }
+            } else if (sensorsName.equals(""))
         }
 
     }
