@@ -28,15 +28,16 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
         <template #title>
           <el-icon><Memo /></el-icon>Memory
         </template>
-        <el-menu-item index="/memory/memory">Memroy(尚未开发)</el-menu-item>
+        <el-menu-item index="/memory/Memory">Memroy</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="4">
         <template #title>
           <el-icon><Brush /></el-icon>Tools
         </template>
-        <el-menu-item index="/tools/tools">Tools(尚未开发)</el-menu-item>
-        <el-menu-item index="/tools/llms">LLMs(尚未开发)</el-menu-item>
+
+        <el-menu-item index="/tools/llms">LLMs</el-menu-item>
+        <el-menu-item index="/tools/tools">Tools</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="5">
@@ -50,7 +51,7 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
         <template #title>
           <el-icon><Iphone /></el-icon>Devices
         </template>
-        <el-menu-item index="/device/device">Devices(尚未开发)</el-menu-item>
+        <el-menu-item index="/device/device">Devices</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="7">

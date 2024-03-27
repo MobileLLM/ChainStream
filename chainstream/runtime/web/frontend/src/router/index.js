@@ -84,6 +84,11 @@ const routes= [
                 path: 'Tools',
                 name: 'Tools',
                 component: () => import('@/components/view/tools/tools.vue')
+            },
+            {
+                path: 'LLMs',
+                name: 'LLMs',
+                component: () => import('@/components/view/tools/llms.vue')
             }
         ]
     },
