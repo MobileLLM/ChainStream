@@ -1,4 +1,5 @@
-from .server import ChainStreamServerWeb, ChainStreamServerShell
+from .server_shell import ChainStreamServerShell
+from .server_web import ChainStreamServerWeb
 
 cs_server = ChainStreamServerWeb()
 # cs_server = ChainStreamServerShell()
