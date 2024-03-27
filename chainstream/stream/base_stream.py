@@ -3,6 +3,7 @@ from chainstream.runtime import cs_server_core
 import logging
 import datetime
 import queue
+import threading
 
 class StreamMeta:
     def __init__(self, *args, **kwargs):
@@ -20,6 +21,7 @@ class BaseStream(StreamInterface):
         self.logger = logging.getLogger(self.stream_id)
         self.listeners = []
         self.queue = queue.Queue()
+        self.thread = threading.Thread(target=self.process_item, daemon=True)
 
     def register_listener(self, agent, listener_func):
         try:
@@ -38,6 +40,14 @@ class BaseStream(StreamInterface):
 
     def send_item(self, item):
         self.logger.info(f'stream {self.stream_id} send an item type: {type(item)}')
-        for agent_, listener_func_ in self.listeners:
-            listener_func_(item)
+        self.queue.put(item)
+
+    def process_item(self, item):
+        self.logger.info(f'stream {self.stream_id} process an item type: {type(item)}')
+        while True:
+            item = self.queue.get()
+            if item is not None:
+                for agent_, listener_func_ in self.listeners:
+                    listener_func_(item)
+
 
