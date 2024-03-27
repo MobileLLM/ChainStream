@@ -21,7 +21,7 @@ class BaseStream(StreamInterface):
         self.logger = logging.getLogger(self.stream_id)
         self.listeners = []
         self.queue = queue.Queue()
-        self.thread = threading.Thread(target=self.process_item, daemon=True)
+        self.thread = threading.Thread(target=self.process_item)
 
     def register_listener(self, agent, listener_func):
         try:

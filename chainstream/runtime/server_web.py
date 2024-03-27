@@ -1,4 +1,4 @@
-from server_base import ChainStreamServerBase
+from .server_base import ChainStreamServerBase
 
 
 class ChainStreamServerWeb(ChainStreamServerBase):
