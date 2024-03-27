@@ -56,6 +56,13 @@ import {Edit, Message, Setting} from "@element-plus/icons-vue";
 
       <el-sub-menu index="7">
         <template #title>
+          <el-icon><ShoppingTrolley /></el-icon>Agent Store
+        </template>
+        <el-menu-item index="/store/store">Agent Store</el-menu-item>
+      </el-sub-menu>
+
+      <el-sub-menu index="8">
+        <template #title>
           <el-icon><setting /></el-icon>Settings
         </template>
         <el-menu-item index="">Stream Graph(尚未开发)</el-menu-item>

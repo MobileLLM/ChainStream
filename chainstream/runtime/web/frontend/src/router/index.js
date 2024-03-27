@@ -93,6 +93,17 @@ const routes= [
         ]
     },
     {
+        path: '/store',
+        name: 'Store',
+        children: [
+            {
+                path: 'Store',
+                name: 'Store',
+                component: () => import('@/components/view/store/store.vue')
+            },
+        ]
+    },
+    {
         path: '/home',
         name: 'Home',
         component: Home
