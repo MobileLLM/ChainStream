@@ -2,6 +2,7 @@ from chainstream.interfaces import StreamInterface
 from chainstream.runtime import cs_server_core
 import logging
 import datetime
+import queue
 
 class StreamMeta:
     def __init__(self, *args, **kwargs):
@@ -18,6 +19,7 @@ class BaseStream(StreamInterface):
         cs_server_core.register_stream(self)
         self.logger = logging.getLogger(self.stream_id)
         self.listeners = []
+        self.queue = queue.Queue()
 
     def register_listener(self, agent, listener_func):
         try:
