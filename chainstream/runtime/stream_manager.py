@@ -15,10 +15,10 @@ class StreamManager(AgentManager):
         self.thread_list = {}
 
     def register_stream(self, stream: BaseStream):
-        if stream.stream_id in self.streams:
-            raise ValueError(f"Stream with id {stream.stream_id} already exists")
-        self.streams[stream.stream_id] = stream
-        self.thread_list[stream.stream_id] = stream.thread
+        if stream.metaData.stream_id in self.streams:
+            raise ValueError(f"Stream with id {stream.metaData.stream_id} already exists")
+        self.streams[stream.metaData.stream_id] = stream
+        self.thread_list[stream.metaData.stream_id] = stream.thread
 
     def unregister_stream(self, stream):
         self.streams.pop(stream.stream_id)
