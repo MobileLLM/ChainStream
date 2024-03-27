@@ -2,6 +2,7 @@ import collections
 import logging
 from chainstream.stream import register_stream_manager
 from .agent_manager import AgentManager
+from chainstream.stream.base_stream import BaseStream
 
 logger = logging.getLogger(__name__)
 
@@ -11,11 +12,13 @@ class StreamManager(AgentManager):
         super().__init__()
         self.streams = collections.OrderedDict()
         register_stream_manager(self)
+        self.thread_list = {}
 
-    def register_stream(self, stream):
+    def register_stream(self, stream: BaseStream):
         if stream.stream_id in self.streams:
             raise ValueError(f"Stream with id {stream.stream_id} already exists")
         self.streams[stream.stream_id] = stream
+        self.thread_list[stream.stream_id] = stream.thread
 
     def unregister_stream(self, stream):
         self.streams.pop(stream.stream_id)
