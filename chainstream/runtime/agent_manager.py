@@ -10,9 +10,22 @@ import json
 logger = logging.getLogger(__name__)
 
 
-class AgentManager:
+class AgentAnalyzer:
     def __init__(self):
+        self.local_scanned_agents = collections.OrderedDict()
         self.agents = collections.OrderedDict()
+
+    # TODO: implement this method
+    def get_running_agents_info_list(self):
+        pass
+
+    def get_running_agents_name_list(self):
+        return list(self.agents.keys())
+
+
+class AgentManager(AgentAnalyzer):
+    def __init__(self):
+        super().__init__()
         self.predefined_agents_path = Path(os.path.dirname(__file__)).parent.parent / 'agents'
 
     def register_agent(self, agent):
@@ -23,9 +36,6 @@ class AgentManager:
 
     def get_agent(self, agent_id):
         return self.agents.get(agent_id)
-
-    def get_agents_list(self):
-        return list(self.agents.keys())
 
     def scan_predefined_agents(self):
         agent_list = []
@@ -84,6 +94,7 @@ class AgentManager:
         list_data = process_dict(json_data)
 
         return list_data
+
     def start_agent_by_id(self, agent_id):
         agents_list = self.scan_predefined_agents()
         target_agent_path = None

@@ -23,7 +23,7 @@ export function stopAgent(agentId) {
 
 export function getRunningAgents() {
   return request({
-    url: '/monitor/agents/running',
+    url: '/monitor/agents/getRunningAgents',
     method: 'get'
   })
 }

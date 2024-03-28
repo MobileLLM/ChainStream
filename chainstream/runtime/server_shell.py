@@ -33,7 +33,7 @@ class ChainStreamServerShell(ChainStreamServerBase):
                 out += f'  {i}: {name}\n'
         elif cmd == 'list agents' or cmd == 'LA':
             out += 'available agents:\n'
-            for i, (name, agent) in enumerate(self.chainstream_core.get_agents_list()):
+            for i, (name, agent) in enumerate(self.chainstream_core.get_running_agents_name_list()):
                 out += f'  {i}: {name}\n'
         elif cmd.startswith('start agent') or cmd == 'S':
             # agents_path = os.path.abspath(os.path.join(os.getcwd(), '..', '..', 'agents'))
