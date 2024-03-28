@@ -2,7 +2,7 @@ import collections
 import logging
 from chainstream.stream import register_stream_manager
 from .agent_manager import AgentManager
-from chainstream.stream.base_stream import BaseStream
+# from chainstream.stream.base_stream import BaseStream
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class StreamManager(AgentManager):
         register_stream_manager(self)
         self.thread_list = {}
 
-    def register_stream(self, stream: BaseStream):
+    def register_stream(self, stream):
         if stream.metaData.stream_id in self.streams:
             raise ValueError(f"Stream with id {stream.metaData.stream_id} already exists")
         self.streams[stream.metaData.stream_id] = stream
