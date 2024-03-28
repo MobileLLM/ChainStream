@@ -1,12 +1,12 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from chainstream.runtime.server_base import ChainStreamCore
+from chainstream.runtime.runtime_core import RuntimeCore
 
 app = Flask(__name__)
 
 CORS(app, supports_credentials=True)
 
-chainstream_core: ChainStreamCore = None
+chainstream_core: RuntimeCore = None
 
 
 def set_core(core):

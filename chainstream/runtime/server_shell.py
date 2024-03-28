@@ -1,4 +1,4 @@
-from .server_base import ChainStreamServerBase
+from .runtime_core import ChainStreamServerBase
 
 class ChainStreamServerShell(ChainStreamServerBase):
     def __init__(self):
