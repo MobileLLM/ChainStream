@@ -17,12 +17,27 @@ class AgentAnalyzer:
         self.agents_metaData = collections.OrderedDict()
         self.path_to_agentId = {}
 
+    def get_path_to_agentId(self):
+        return self.path_to_agentId
+
     # TODO: implement this method
     def get_running_agents_info_list(self):
         pass
 
     def get_running_agents_name_list(self):
         return list(self.agents.keys())
+
+    def get_agent_node(self):
+        return self.agents.keys()
+
+    def get_agent_file_path_to_agent_id(self):
+        return self.path_to_agentId
+
+
+
+class FunctionManager:
+    def __init__(self, agent_id):
+        self.functions = {}
 
 
 class AgentManager(AgentAnalyzer):

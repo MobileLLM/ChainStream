@@ -54,6 +54,11 @@ class RuntimeCoreAnalysisOp(RuntimeCoreOp):
     def __init__(self):
         super().__init__()
 
+    def get_graph_statistics(self):
+        agent_node = self.agent_manager.get_agent_node()
+        agent_file_path_to_agent_id = self.agent_manager.get_agent_file_path_to_agent_id()
+        self.stream_manager.get_graph_statistics(agent_node, agent_file_path_to_agent_id)
+
 
 class RuntimeCore(RuntimeCoreAnalysisOp):
     def __init__(self):

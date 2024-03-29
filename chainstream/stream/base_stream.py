@@ -6,7 +6,6 @@ import datetime
 import queue
 import threading
 import inspect
-import traceback
 
 
 class StreamMeta:

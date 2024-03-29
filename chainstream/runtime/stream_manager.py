@@ -12,6 +12,17 @@ class StreamAnalyzer:
     def __init__(self):
         super().__init__()
         self.streams = collections.OrderedDict()
+        self.recorders = {}
+
+    def get_graph_statistics(self, agent_node, file_path_to_agent_id):
+        stream_info = [x.get_statistics() for x in self.streams.values()]
+        edge_statistics = []
+        stream_node = []
+        agent_node = []
+        # trans agent file path to agent id
+
+        # concat all stream info to graph
+
 
 
 class StreamManager(StreamAnalyzer):
@@ -25,6 +36,7 @@ class StreamManager(StreamAnalyzer):
             raise ValueError(f"Stream with id {stream.metaData.stream_id} already exists")
         self.streams[stream.metaData.stream_id] = stream
         self.thread_list[stream.metaData.stream_id] = stream.thread
+        self.recorders[stream.metaData.stream_id] = stream.recorder
 
     def unregister_stream(self, stream):
         self.streams.pop(stream.stream_id)
