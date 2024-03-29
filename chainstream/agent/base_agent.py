@@ -7,6 +7,7 @@ from .agent_recorder import AgentRecorder
 class AgentMeta:
     def __init__(self, *args, **kwargs) -> None:
         self.agent_id = kwargs.get("agent_id")
+        self.agent_file_path = kwargs.get("agent_file_path") if kwargs.get("agent_file_path") else ""
         self.description = kwargs.get("description") if kwargs.get("description") else ""
         self.type = kwargs.get("type") if kwargs.get("type") else "base"
 
@@ -20,7 +21,7 @@ class Agent(AgentInterface):
     def __init__(self, agent_id) -> None:
         super().__init__()
         self.agent_id = agent_id
-        self.metaData = AgentMeta(agent_id=agent_id)
+        self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=__file__)
         cs_server_core.register_agent(agent=self)
         self.logger = logging.getLogger(self.agent_id)
         self.recorder = AgentRecorder(agentMetaData=self.metaData)

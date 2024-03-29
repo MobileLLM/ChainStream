@@ -5,6 +5,8 @@ import logging
 import datetime
 import queue
 import threading
+import inspect
+import traceback
 
 
 class StreamMeta:
@@ -43,10 +45,11 @@ class BaseStream(StreamInterface):
         self.listeners = new_listeners
         self.recorder.record_listener_change(len(self.listeners))
 
-    def send_item(self, item):
+    def add_item(self, item):
         self.logger.info(f'stream {self.metaData.stream_id} send an item type: {type(item)}')
         self.queue.put(item)
-        self.recorder.record_new_item()
+        call_from = inspect.stack()[1]
+        self.recorder.record_new_item(call_from.filename, call_from.function)
 
     def process_item(self, item):
         self.logger.info(f'stream {self.metaData.stream_id} process an item type: {type(item)}')
@@ -56,6 +59,3 @@ class BaseStream(StreamInterface):
                 for agent_, listener_func_ in self.listeners:
                     listener_func_(item)
                     self.recorder.record_send_item(agent_)
-
-    def get_record_data(self):
-        return self.recorder.get_record_data()

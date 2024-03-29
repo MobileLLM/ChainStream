@@ -14,6 +14,8 @@ class AgentAnalyzer:
     def __init__(self):
         self.local_scanned_agents = collections.OrderedDict()
         self.agents = collections.OrderedDict()
+        self.agents_metaData = collections.OrderedDict()
+        self.path_to_agentId = {}
 
     # TODO: implement this method
     def get_running_agents_info_list(self):
@@ -30,6 +32,8 @@ class AgentManager(AgentAnalyzer):
 
     def register_agent(self, agent):
         self.agents[agent.agent_id] = agent
+        self.agents_metaData[agent.agent_id] = agent.metaData
+        self.path_to_agentId[agent.metaData.agent_file_path] = agent.agent_id
 
     def unregister_stream(self, agent):
         self.agents.pop(agent.agent_id)

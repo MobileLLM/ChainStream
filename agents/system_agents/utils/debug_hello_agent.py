@@ -20,7 +20,7 @@ class DebugHelloAgent(cs.agent.Agent):
 
     def hello(self):
         while self.enabled:
-            # print(f'Hello, world! {datetime.now()}')
+            print(f'Hello, world! {datetime.now()}')
             self.stream.add_item({'message': 'Hello, world!'})
             time.sleep(3)
 

@@ -6,11 +6,14 @@ from .agent_manager import AgentManager
 
 logger = logging.getLogger(__name__)
 
-
-class StreamManager(AgentManager):
+class StreamAnalyzer(AgentManager):
     def __init__(self):
         super().__init__()
         self.streams = collections.OrderedDict()
+
+class StreamManager(StreamAnalyzer):
+    def __init__(self):
+        super().__init__()
         register_stream_manager(self)
         self.thread_list = {}
 
