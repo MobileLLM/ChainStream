@@ -35,7 +35,7 @@ class AgentManager(AgentAnalyzer):
         self.agents_metaData[agent.agent_id] = agent.metaData
         self.path_to_agentId[agent.metaData.agent_file_path] = agent.agent_id
 
-    def unregister_stream(self, agent):
+    def unregister_agent(self, agent):
         self.agents.pop(agent.agent_id)
 
     def get_agent(self, agent_id):
@@ -124,7 +124,7 @@ class AgentManager(AgentAnalyzer):
         self.agents.pop(agent_id)
         return True
 
-    def start_agent(self, path):
+    def start_agent_by_path(self, path):
         if not path.startswith('/'):
             path = str(self.predefined_agents_path / path)
         if not os.path.exists(path) or not path.endswith('.py'):

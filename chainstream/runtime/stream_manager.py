@@ -2,14 +2,17 @@ import collections
 import logging
 from chainstream.stream import register_stream_manager
 from .agent_manager import AgentManager
+
 # from chainstream.stream.base_stream import BaseStream
 
 logger = logging.getLogger(__name__)
 
-class StreamAnalyzer(AgentManager):
+
+class StreamAnalyzer:
     def __init__(self):
         super().__init__()
         self.streams = collections.OrderedDict()
+
 
 class StreamManager(StreamAnalyzer):
     def __init__(self):
@@ -33,7 +36,6 @@ class StreamManager(StreamAnalyzer):
 
     def get_stream_list(self):
         return list(self.streams.keys())
-
 
     def get_stream_flow_graph(self):
         """

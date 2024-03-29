@@ -1,5 +1,6 @@
 from .runtime_core import ChainStreamServerBase
 
+
 class ChainStreamServerShell(ChainStreamServerBase):
     def __init__(self):
         super().__init__()
@@ -50,7 +51,7 @@ class ChainStreamServerShell(ChainStreamServerBase):
                 else:
                     out += f'invalid agent id: {agent_id}\n'
 
-            res = self.chainstream_core.start_agent(chosen_agent)
+            res = self.chainstream_core.start_agent_by_path(chosen_agent)
             if res:
                 out += f'agent started successfully\n'
         return out
