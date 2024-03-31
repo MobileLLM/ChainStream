@@ -7,7 +7,7 @@ from datetime import datetime
 class DebugHelloAgent(cs.agent.Agent):
     is_agent = True
 
-    def __init__(self, agent_id='debug_hello_agent'):
+    def __init__(self, agent_id='debug_not_hello_agent'):
         super().__init__(agent_id)
         self.hello_thread = None
         self.enabled = False

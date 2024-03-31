@@ -6,7 +6,10 @@ import $ from 'jquery'
 <template>
   <el-container style="height: 100%; margin: 0; padding: 0">
     <el-aside :height="elTableHeight" width="20%" style="margin: 0 1% 0 0; padding: 0">
-      <el-scrollbar style="height: 100%; width: 100%; margin: 0; padding: 0">
+      <div style="height: 40px; margin: 0; padding: 0">
+        <el-button type="primary" @click="getAgentsList">Refresh</el-button>
+      </div>
+      <el-scrollbar style="height: calc(100% - 40px); width: 100%; margin: 0; padding: 0">
 <!--        <el-table v-loading="path_loading" :data="agents_path" :height="elTableHeight" style="width: 100%; margin: 0; padding: 0" table-layout="auto" >-->
 <!--          <el-table-column prop="agent_path" label="Path" width="180"></el-table-column>-->
 <!--          <el-table-column align="right">-->

@@ -22,8 +22,8 @@ class RuntimeCoreOp:
     def scan_predefined_agents(self) -> list:
         return self.agent_manager.scan_predefined_agents()
 
-    def start_agent_by_id(self, agent_id) -> None:
-        self.agent_manager.start_agent_by_id(agent_id)
+    def start_agent_by_id(self, agent_id) -> bool:
+        return self.agent_manager.start_agent_by_id(agent_id)
 
     def stop_agent_by_id(self, agent_id) -> None:
         self.agent_manager.stop_agent_by_id(agent_id)

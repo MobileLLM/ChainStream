@@ -22,7 +22,9 @@
       </el-footer>
     </el-container>
 
-    <el-aside width="200px"><h1>some tools or buttons</h1></el-aside>
+    <el-aside width="200px" style="display: flex; justify-content: center; ">
+        <el-button type="primary" @click="getStreamGraphData">Refresh</el-button>
+    </el-aside>
 
 <!--    <el-footer>footer</el-footer>-->
   </el-container>

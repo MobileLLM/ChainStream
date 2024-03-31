@@ -56,6 +56,11 @@ class AgentManager(AgentAnalyzer):
     def get_agent(self, agent_id):
         return self.agents.get(agent_id)
 
+    def get_agent_by_path(self, path):
+        if path in self.path_to_agentId:
+            return self.get_agent(self.path_to_agentId[path])
+        return None
+
     def scan_predefined_agents(self):
         agent_list = []
         for root, dirs, files in os.walk(self.predefined_agents_path):
@@ -81,32 +86,35 @@ class AgentManager(AgentAnalyzer):
             directories = path.split('/')
             current_dict = json_data
 
-            for directory in directories:
+            for i, directory in enumerate(directories):
                 if directory != '':
                     if directory not in current_dict:
-                        current_dict[directory] = {}
+                        if i == len(directories) - 1:
+                            current_dict[directory] = str(self.predefined_agents_path / path)
+                        else:
+                            current_dict[directory] = {}
                     current_dict = current_dict[directory]
 
         def process_dict(node):
             tmp_list = []
             for key, value in node.items():
                 if isinstance(value, dict):
-                    if len(value) == 0:
-                        tmp_list.append({
-                            "label": key,
-                            "is_running": self.get_agent(key.split('.')[0]) is not None,
-                        })
-                    else:
-                        tmp_list.append({
-                            "label": key,
-                            "disabled": True,
-                            "children": process_dict(value)
-                        })
+                    # if isinstance(value[0], str):
+                    #     tmp_list.append({
+                    #         "label": key,
+                    #         "is_running": self.get_agent_by_path(value[0]) is not None,
+                    #     })
+                    # else:
+                    tmp_list.append({
+                        "label": key,
+                        "disabled": True,
+                        "children": process_dict(value)
+                    })
                 else:
                     node[key] = {"name": value}
                     tmp_list.append({
-                        "label": value,
-                        "is_running": self.get_agent(value) is not None,
+                        "label": key,
+                        "is_running": self.get_agent_by_path(str(value)) is not None,
                     })
             return tmp_list
 

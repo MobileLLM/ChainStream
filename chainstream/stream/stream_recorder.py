@@ -43,7 +43,7 @@ class EdgeRecoder:
     def get_statistics(self):
         if self.type != 'agent_to_queue':
             if not self.statistics:
-                return (datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)
+                return datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min
             return self.statistics
         return self.statistics if self.statistics != [] else (
             datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)
