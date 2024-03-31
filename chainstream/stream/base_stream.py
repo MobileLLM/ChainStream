@@ -76,7 +76,9 @@ class BaseStream(StreamInterface):
                     self.recorder.record_send_item(agent_, listener_func_.__name__)
 
     def get_meta_data(self):
-        return self.metaData.__dict__()
+        data = self.metaData.__dict__()
+        data['listeners'] = [str(agent_) + ":" + str(listener_func_.__name__) for agent_, listener_func_ in self.listeners]
+        return data
 
     def get_record_data(self):
         return self.recorder.get_record_data()

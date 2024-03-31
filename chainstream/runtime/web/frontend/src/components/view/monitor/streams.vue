@@ -15,7 +15,7 @@ import $ from 'jquery';
       <el-table-column prop="status" label="状态"></el-table-column>
       <el-table-column prop="create_time" label="创建时间"></el-table-column>
       <el-table-column prop="created_by" label="创建者"></el-table-column>
-      <el-table-column prop="listen_agnet" label="监听者"></el-table-column>
+      <el-table-column prop="listeners" label="监听者"></el-table-column>
 
     </el-table>
   </el-scrollbar>
