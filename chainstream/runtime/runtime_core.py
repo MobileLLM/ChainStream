@@ -25,8 +25,8 @@ class RuntimeCoreOp:
     def start_agent_by_id(self, agent_id) -> bool:
         return self.agent_manager.start_agent_by_id(agent_id)
 
-    def stop_agent_by_id(self, agent_id) -> None:
-        self.agent_manager.stop_agent_by_id(agent_id)
+    def stop_agent_by_id(self, agent_id) -> bool:
+        return self.agent_manager.stop_agent_by_id(agent_id)
 
     def remove_agent_by_id(self, agent_id) -> None:
         self.agent_manager.remove_agent_by_id(agent_id)
