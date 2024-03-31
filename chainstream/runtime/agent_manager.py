@@ -22,7 +22,8 @@ class AgentAnalyzer:
 
     # TODO: implement this method
     def get_running_agents_info_list(self):
-        pass
+        agents_info = [x.get_meta_data() for x in self.agents.values()]
+        return agents_info
 
     def get_running_agents_name_list(self):
         return list(self.agents.keys())

@@ -38,7 +38,7 @@ import $ from 'jquery'
         <el-table-column prop="agent_id" label="Agent ID" width="180">
         </el-table-column>
         <el-table-column label="Info">
-          <el-table-column prop="agent_path" label="Path" width="180"></el-table-column>
+          <el-table-column prop="agent_file_path" label="Path" width="180"></el-table-column>
           <el-table-column prop="description" label="Description" width="180"></el-table-column>
           <el-table-column prop="version" label="Version" width="120"></el-table-column>
           <el-table-column prop="type"
@@ -60,7 +60,7 @@ import $ from 'jquery'
                            label="Status"
                            width="120"
                            :filters="[
-                            { text: 'Running', value: 'running' },
+                            // { text: 'Running', value: 'running' },
                             { text: 'Stopped', value: 'stopped' },
                             { text: 'Error', value: 'error' }
                           ]"
@@ -70,7 +70,7 @@ import $ from 'jquery'
               <el-tag type="warning">{{ scope.row.status }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="running_time" label="Running Time"></el-table-column>
+          <el-table-column prop="created_at" label="Created Time"></el-table-column>
         </el-table-column>
 <!--        <el-table-column align="right">-->
 <!--          <template #default="scope">-->
@@ -156,6 +156,7 @@ export  default {
         this.agents_path = res.data
         this.path_loading = false
       })
+      this.getRunningAgentsList()
     },
     // handleTreeStart() {
     //   // const selectedNodes = this.checkedNodes.map(node => ({
