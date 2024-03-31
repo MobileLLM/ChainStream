@@ -16,6 +16,14 @@ class StreamMeta:
         self.create_time = datetime.datetime.now()
         self.create_by = kwargs.get('create_by')
 
+    def __dict__(self):
+        return {
+            "stream_id": self.stream_id,
+            "description": self.description,
+            "create_time": self.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "create_by": self.create_by
+        }
+
 
 class BaseStream(StreamInterface):
     def __init__(self, stream_id, description=None, create_by=None) -> None:
@@ -66,6 +74,9 @@ class BaseStream(StreamInterface):
                 for agent_, listener_func_ in self.listeners:
                     listener_func_(item)
                     self.recorder.record_send_item(agent_, listener_func_.__name__)
+
+    def get_meta_data(self):
+        return self.metaData.__dict__()
 
     def get_record_data(self):
         return self.recorder.get_record_data()

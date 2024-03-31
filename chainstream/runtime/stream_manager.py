@@ -14,6 +14,11 @@ class StreamAnalyzer:
         self.streams = collections.OrderedDict()
         self.recorders = {}
 
+    def get_stream_info(self):
+        stream_info = [x.get_meta_data() for x in self.streams.values()]
+        return stream_info
+
+
     def get_graph_statistics(self, file_path_to_agent_id):
         stream_info = [x.get_record_data() for x in self.streams.values()]
 
