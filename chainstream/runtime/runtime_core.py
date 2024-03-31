@@ -56,7 +56,7 @@ class RuntimeCoreAnalysisOp(RuntimeCoreOp):
 
     def get_graph_statistics(self):
         agent_file_path_to_agent_id = self.agent_manager.get_agent_file_path_to_agent_id()
-        self.stream_manager.get_graph_statistics(agent_file_path_to_agent_id)
+        return self.stream_manager.get_graph_statistics(agent_file_path_to_agent_id)
 
 
 class RuntimeCore(RuntimeCoreAnalysisOp):

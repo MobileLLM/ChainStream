@@ -10,7 +10,8 @@ class DebugListenHelloAgent(cs.agent.Agent):
 
     def start(self):
         def handle_new_hello(data):
-            print("Received hello message:", data)
+            # print("Received hello message:", data)
+            pass
 
         self.stream.register_listener(self, handle_new_hello)
 

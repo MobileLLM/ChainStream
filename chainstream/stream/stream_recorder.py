@@ -43,10 +43,10 @@ class EdgeRecoder:
     def get_statistics(self):
         if self.type != 'agent_to_queue':
             if not self.statistics:
-                return [(datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)]
+                return (datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)
             return self.statistics
-        return self.statistics if self.statistics != [] else [
-            (datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)]
+        return self.statistics if self.statistics != [] else (
+            datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)
 
     def get_total_count(self):
         return self.tot
@@ -72,8 +72,8 @@ class QueueRecoder:
         self.len_gap_log.append(self.queue.qsize())
 
     def get_queue_statistics(self):
-        return self.len_statistics if self.len_statistics != [] else [
-            (datetime.datetime.now(), sum(self.len_gap_log) / len(self.len_gap_log) / self.analysis_pre_min)]
+        return self.len_statistics if self.len_statistics != [] else (
+            datetime.datetime.now(), sum(self.len_gap_log) / len(self.len_gap_log) / self.analysis_pre_min)
 
 
 class StreamRecorder:

@@ -123,7 +123,7 @@ class AgentManager(AgentAnalyzer):
                 break
         if target_agent_path is None:
             return False
-        res = self.start_agent(target_agent_path)
+        res = self.start_agent_by_path(target_agent_path)
         if res:
             return True
         return False

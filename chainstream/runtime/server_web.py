@@ -6,9 +6,12 @@ class ChainStreamServerWeb(ChainStreamServerBase):
         super().__init__()
         self.ip = None
         self.port = None
-        from .web.backend.app import app, set_core
-        self.app = app
+
+        from .web.backend.core import set_core
         set_core(self.chainstream_core)
+        from .web.backend.app import app
+        self.app = app
+
 
     def config(self, *args, **kwargs):
         self.ip = kwargs.get('ip', '127.0.0.1')

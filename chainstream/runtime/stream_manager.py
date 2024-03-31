@@ -16,20 +16,44 @@ class StreamAnalyzer:
 
     def get_graph_statistics(self, file_path_to_agent_id):
         stream_info = [x.get_record_data() for x in self.streams.values()]
+
+        agent_to_stream_edges = []
+        stream_to_agent_edges = []
         for s_info in stream_info:
             new_agent_to_queue = {}
             for fun_k, fun_v in s_info['agent_to_queue'].items():
                 new_agent_to_queue[(file_path_to_agent_id[fun_k[0]], fun_k[1])] = fun_v
+                agent_to_stream_edges.append({
+                    "source": str(file_path_to_agent_id[fun_k[0]]) + ":" + str(fun_k[1]),
+                    "target": s_info['stream_id'],
+                    "value": fun_v['statistics'][1]
+                })
             s_info['agent_to_queue'] = new_agent_to_queue
-        # print(stream_info)
-        edge_statistics = []
-        stream_node = []
-        # print(self.streams.keys())
+            for fun_k, fun_v in s_info['queue_to_agent'].items():
+                stream_to_agent_edges.append({
+                    "source": s_info['stream_id'],
+                    "target": str(fun_k[0]) + ":" + str(fun_k[1]),
+                    "value": fun_v['statistics'][1]
+                })
+        # print("Agent to Stream Edges:")
+        # print(agent_to_stream_edges)
+        # print("Stream to Agent Edges:")
+        # print(stream_to_agent_edges)
 
-        # trans agent file path to agent id
+        stream_node = self.streams.keys()
+        agent_node = set(key for s_info in stream_info for key in s_info['agent_to_queue'].keys()).union(
+            set(key for s_info in stream_info for key in s_info['queue_to_agent'].keys()))
 
-        # concat all stream info to graph
+        # print("Stream Node:")
+        # print(stream_node)
+        # print("Agent Node:")
+        # print(agent_node)
+        agent_node = [str(x[0]) + ":" + str(x[1]) for x in agent_node]
+        node = list(stream_node) + list(agent_node)
+        node = [{'name': x} for x in node]
+        edge = agent_to_stream_edges + stream_to_agent_edges
 
+        return node, edge
 
 
 class StreamManager(StreamAnalyzer):

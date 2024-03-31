@@ -1,17 +1,16 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from chainstream.runtime.runtime_core import RuntimeCore
+# from chainstream.runtime.runtime_core import RuntimeCore
+from .monitor.agents import agents_blueprint
+from .monitor.streams import streams_blueprint
+from .monitor.stream_graph import stream_graph_blueprint
 
 app = Flask(__name__)
+app.register_blueprint(agents_blueprint)
+app.register_blueprint(streams_blueprint)
+app.register_blueprint(stream_graph_blueprint)
 
 CORS(app, supports_credentials=True)
-
-chainstream_core: RuntimeCore = None
-
-
-def set_core(core):
-    global chainstream_core
-    chainstream_core = core
 
 
 @app.route('/', methods=['GET'])
