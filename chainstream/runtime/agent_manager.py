@@ -149,16 +149,20 @@ class AgentManager(AgentAnalyzer):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         from chainstream.agent import Agent
+        agent_list = []
         for name, obj in module.__dict__.items():
             if inspect.isclass(obj) and issubclass(obj, Agent) and obj.is_agent:
                 print(name, obj)
-                try:
-                    new_agent = obj()
-                    res = new_agent.start()
-                    if res:
-                        logger.info(f'agent {name} started successfully')
-                except Exception as e:
-                    logger.error(f'failed to start agent {name}: {e}')
+                agent_list.append((name, obj))
+        for name, obj in agent_list:
+            try:
+                new_agent = obj()
+                res = new_agent.start()
+                if res:
+                    logger.info(f'agent {name} started successfully')
+            except Exception as e:
+                logger.error(f'failed to start agent {name}: {e}')
+
         return True
 
 

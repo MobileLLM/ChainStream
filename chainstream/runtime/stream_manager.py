@@ -14,11 +14,18 @@ class StreamAnalyzer:
         self.streams = collections.OrderedDict()
         self.recorders = {}
 
-    def get_graph_statistics(self, agent_node, file_path_to_agent_id):
-        stream_info = [x.get_statistics() for x in self.streams.values()]
+    def get_graph_statistics(self, file_path_to_agent_id):
+        stream_info = [x.get_record_data() for x in self.streams.values()]
+        for s_info in stream_info:
+            new_agent_to_queue = {}
+            for fun_k, fun_v in s_info['agent_to_queue'].items():
+                new_agent_to_queue[(file_path_to_agent_id[fun_k[0]], fun_k[1])] = fun_v
+            s_info['agent_to_queue'] = new_agent_to_queue
+        # print(stream_info)
         edge_statistics = []
         stream_node = []
-        agent_node = []
+        # print(self.streams.keys())
+
         # trans agent file path to agent id
 
         # concat all stream info to graph

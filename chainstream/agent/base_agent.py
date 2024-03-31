@@ -2,6 +2,7 @@ from chainstream.interfaces import AgentInterface
 from chainstream.runtime import cs_server_core
 import logging
 from .agent_recorder import AgentRecorder
+import inspect
 
 
 class AgentMeta:
@@ -21,10 +22,12 @@ class Agent(AgentInterface):
     def __init__(self, agent_id) -> None:
         super().__init__()
         self.agent_id = agent_id
-        self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=__file__)
-        cs_server_core.register_agent(agent=self)
+        caller_frame = inspect.currentframe().f_back
+
+        self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=caller_frame.f_globals['__file__'])
         self.logger = logging.getLogger(self.agent_id)
         self.recorder = AgentRecorder(agentMetaData=self.metaData)
+        cs_server_core.register_agent(agent=self)
 
     def start(self):
         pass

@@ -28,10 +28,13 @@ class ChainStreamServerShell(ChainStreamServerBase):
             out += ' list streams (LS) ---- list all available streams\n'
             out += ' list agents (LA) ----- list all available agents\n'
             out += ' start agent (S) ----- choose an agent to start and run\n'
+            out += ' show graph (G) ----- show the current graph\n'
         elif cmd == 'list streams' or cmd == 'LS':
             out += 'available streams:\n'
             for i, (name, stream) in enumerate(self.chainstream_core.get_stream_list()):
                 out += f'  {i}: {name}\n'
+        elif cmd == 'show graph' or cmd == 'G':
+            self.chainstream_core.get_graph_statistics()
         elif cmd == 'list agents' or cmd == 'LA':
             out += 'available agents:\n'
             for i, (name, agent) in enumerate(self.chainstream_core.get_running_agents_name_list()):
