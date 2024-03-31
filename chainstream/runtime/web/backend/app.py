@@ -1,40 +1,17 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+# from chainstream.runtime.runtime_core import RuntimeCore
+from .monitor.agents import agents_blueprint
+from .monitor.streams import streams_blueprint
+from .monitor.stream_graph import stream_graph_blueprint
 
 app = Flask(__name__)
+app.register_blueprint(agents_blueprint)
+app.register_blueprint(streams_blueprint)
+app.register_blueprint(stream_graph_blueprint)
 
 CORS(app, supports_credentials=True)
 
-chainstream_core = None
-
-
-def set_core(core):
-    global chainstream_core
-    chainstream_core = core
-
-
-@app.route('/api/monitor/agents', methods=['GET'])
-def get_data():
-    data = chainstream_core.scan_predefined_agents_tree()
-    return jsonify(data)
-
-
-@app.route('/api/monitor/agents/getRunningAgents', methods=['POST'])
-def get_running_agents():
-    return jsonify({"res": "ok"})
-
-@app.route('/api/monitor/agents/start/<agent_id>', methods=['POST'])
-def start_agent(agent_id):
-    res = chainstream_core.start_agent_by_id(agent_id)
-
-    return jsonify({'res': "ok"} if res else {'res': "error"})
-
-
-@app.route('/api/monitor/agents/stop/<agent_id>', methods=['POST'])
-def stop_agent(agent_id):
-    res = chainstream_core.stop_agent_by_id(agent_id)
-
-    return jsonify({'res': "ok"} if res else {'res': "error"})
 
 @app.route('/', methods=['GET'])
 def hello_world():

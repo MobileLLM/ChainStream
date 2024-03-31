@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from agents.system_agents.socket_sensor.sensor.base_socket_sensor import BaseSocketSensors
+from agents.system_agents.socket_sensor.base_socket_sensor import BaseSocketSensors
 
 
 class LightSocketSensors(BaseSocketSensors):

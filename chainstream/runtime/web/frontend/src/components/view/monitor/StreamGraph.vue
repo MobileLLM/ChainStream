@@ -22,7 +22,9 @@
       </el-footer>
     </el-container>
 
-    <el-aside width="200px"><h1>some tools or buttons</h1></el-aside>
+    <el-aside width="200px" style="display: flex; justify-content: center; ">
+        <el-button type="primary" @click="getStreamGraphData">Refresh</el-button>
+    </el-aside>
 
 <!--    <el-footer>footer</el-footer>-->
   </el-container>
@@ -30,10 +32,14 @@
 
 <script>
 import * as echarts from 'echarts';
+import { getStreamGraphData } from '@/api/monitor/streamGraph.js';
 
 export default {
   data() {
-
+    return {
+      chartNode: [],
+      chartEdge: []
+    }
   },
   // created() {
   //   this.drawChart();
@@ -41,51 +47,14 @@ export default {
   mounted() {
     this.drawChart();
   },
+  created() {
+    this.getStreamGraphData();
+  },
   methods: {
     drawChart() {
       // var chartDom = document.getElementById('chart');
       var myChart = echarts.init(document.querySelector('.chart-content'));
-      // var option = {
-      //   tooltip: {
-      //     trigger: 'item',
-      //     triggerOn:'mousemove'
-      //   },
-      //   data: [
-      //     { name: 'a' },
-      //     { name: 'b' },
-      //     { name: 'a1' },
-      //     { name: 'b1' },
-      //     { name: 'c' },
-      //     { name: 'e' }
-      //   ],
-      //   links: [
-      //     { source: 'a', target: 'a1', value: 5 },
-      //     { source: 'e', target: 'b', value: 3 },
-      //     { source: 'a', target: 'b1', value: 3 },
-      //     { source: 'b1', target: 'a1', value: 1 },
-      //     { source: 'b1', target: 'c', value: 2 },
-      //     { source: 'b', target: 'c', value: 1 }
-      //   ],
-      //   animation: false,
-      //   series: [
-      //     {
-      //       type: 'sankey',
-      //       bottom: '10%',
-      //       emphasis: {
-      //         focus: 'adjacency'
-      //       },
-      //       orient: 'vertical',
-      //       label: {
-      //         position: 'top',
-      //       },
-      //       lineStyle: {
-      //         color: 'source',
-      //         curveness: 0.5
-      //       },
-      //
-      //     }
-      //   ]
-      // }
+
       var option = {
           tooltip: {
             trigger: 'item',
@@ -99,22 +68,8 @@ export default {
               emphasis: {
                 focus: 'adjacency'
               },
-              data: [
-                { name: 'a' },
-                { name: 'b' },
-                { name: 'a1' },
-                { name: 'b1' },
-                { name: 'c' },
-                { name: 'e' }
-              ],
-              links: [
-                { source: 'a', target: 'a1', value: 5 },
-                { source: 'e', target: 'b', value: 3 },
-                { source: 'a', target: 'b1', value: 3 },
-                { source: 'b1', target: 'a1', value: 1 },
-                { source: 'b1', target: 'c', value: 2 },
-                { source: 'b', target: 'c', value: 1 }
-              ],
+              data: this.chartNode,
+              links: this.chartEdge,
               orient: 'vertical',
               label: {
                 position: 'top'
@@ -127,6 +82,15 @@ export default {
           ]
         };
     myChart.setOption(option);
+    // console.log(option);
+    },
+    getStreamGraphData() {
+      getStreamGraphData().then(res => {
+        // console.log(res.data);
+        this.chartNode = res.data.node;
+        this.chartEdge = res.data.edge;
+        this.drawChart(); // 在数据更新后重新绘制图表
+      })
     }
   }
 }
