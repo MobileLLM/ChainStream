@@ -1,15 +1,15 @@
 from datetime import datetime
 
-from agents.system_agents.socket_sensor.base_socket_sensor import BaseSocketSensors
+from agents.system_agents.raw_level.socket_sensor.base_socket_sensor import BaseSocketSensors
 
 
-class LinearAccelerationSocketSensors(BaseSocketSensors):
+class GyroscopeSocketSensors(BaseSocketSensors):
     is_agent = True
 
-    def __init__(self, agent_id='sys_socket_sensor_sensors_linearacceleration', ip='192.168.43.1', port=6666):
-        super().__init__(agent_id, stream_name="socket_sensor_linearacceleration", ip=ip, port=port)
+    def __init__(self, agent_id='sys_socket_sensor_sensors_gyroscope', ip='192.168.43.1', port=6666):
+        super().__init__(agent_id, stream_name="socket_sensor_gyroscope", ip=ip, port=port)
         # TODO: add sensor data type
-        self.cmd = f"sensors,linearacceleration"
+        self.cmd = f"sensors,gyroscope"
         pass
 
     def get_on_message(self):
@@ -24,7 +24,7 @@ class LinearAccelerationSocketSensors(BaseSocketSensors):
 
 if __name__ == '__main__':
     ip = '192.168.43.41'
-    default_sensors_agent = LinearAccelerationSocketSensors(ip=ip)
+    default_sensors_agent = GyroscopeSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:
     #     cmd = input('> ')

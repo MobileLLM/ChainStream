@@ -1,15 +1,15 @@
 from datetime import datetime
 
-from agents.system_agents.socket_sensor.base_socket_sensor import BaseSocketSensors
+from agents.system_agents.raw_level.socket_sensor.base_socket_sensor import BaseSocketSensors
 
 
-class AirpressureSocketSensors(BaseSocketSensors):
+class GravitySocketSensors(BaseSocketSensors):
     is_agent = True
 
-    def __init__(self, agent_id='sys_socket_sensor_sensors_airpressure', ip='192.168.43.1', port=6666):
-        super().__init__(agent_id, stream_name="socket_sensor_airpressure", ip=ip, port=port)
+    def __init__(self, agent_id='sys_socket_sensor_sensors_gravity', ip='192.168.43.1', port=6666):
+        super().__init__(agent_id, stream_name="socket_sensor_gravity", ip=ip, port=port)
         # TODO: add sensor data type
-        self.cmd = f"sensors,airpressure"
+        self.cmd = f"sensors,gravity"
         pass
 
     def get_on_message(self):
@@ -24,7 +24,7 @@ class AirpressureSocketSensors(BaseSocketSensors):
 
 if __name__ == '__main__':
     ip = '192.168.43.41'
-    default_sensors_agent = AirpressureSocketSensors(ip=ip)
+    default_sensors_agent = GravitySocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:
     #     cmd = input('> ')

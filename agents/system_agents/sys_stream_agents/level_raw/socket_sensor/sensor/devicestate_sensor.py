@@ -1,15 +1,15 @@
 from datetime import datetime
 
-from agents.system_agents.socket_sensor.base_socket_sensor import BaseSocketSensors
+from agents.system_agents.raw_level.socket_sensor.base_socket_sensor import BaseSocketSensors
 
 
-class StepCounterSocketSensors(BaseSocketSensors):
+class DeviceStateSocketSensors(BaseSocketSensors):
     is_agent = True
 
-    def __init__(self, agent_id='sys_socket_sensor_sensors_stepcounter', ip='192.168.43.1', port=6666):
-        super().__init__(agent_id, stream_name="socket_sensor_stepcounter", ip=ip, port=port)
+    def __init__(self, agent_id='sys_socket_sensor_sensors_devicestate', ip='192.168.43.1', port=6666):
+        super().__init__(agent_id, stream_name="socket_sensor_devicestate", ip=ip, port=port)
         # TODO: add sensor data type
-        self.cmd = f"sensors,stepcounter"
+        self.cmd = f"sensors,devicestate,3"
         pass
 
     def get_on_message(self):
@@ -24,7 +24,7 @@ class StepCounterSocketSensors(BaseSocketSensors):
 
 if __name__ == '__main__':
     ip = '192.168.43.41'
-    default_sensors_agent = StepCounterSocketSensors(ip=ip)
+    default_sensors_agent = DeviceStateSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:
     #     cmd = input('> ')
