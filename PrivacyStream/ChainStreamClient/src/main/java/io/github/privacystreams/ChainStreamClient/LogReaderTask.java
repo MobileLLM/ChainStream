@@ -23,7 +23,6 @@ public class LogReaderTask {
 
     private ScrollView logScrollView;
 
-    // Constructor to pass reference of logLinearLayout
     LogReaderTask(LinearLayout logLinearLayout, Context context, ScrollView logscrollView) {
         this.logLinearLayout = logLinearLayout;
         this.handler = new Handler(Looper.getMainLooper());
@@ -32,36 +31,30 @@ public class LogReaderTask {
     }
 
     void startReadingLogs() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Process clearLog = Runtime.getRuntime().exec("logcat -b all -c");
-                    clearLog.waitFor(); // Wait for the clear command to complete
+        new Thread(() -> {
+            try {
+                Process clearLog = Runtime.getRuntime().exec("logcat -b all -c");
+                clearLog.waitFor();
 
-                    Thread.sleep(1000);
+                Thread.sleep(1000);
 
-                    Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V io.github.privacystreams.test:V PrivacyStreams:V ChainStreamClient:V *:S io.github.privacystreams.ChainStreamClient:V websocket:V");
-                    BufferedReader bufferedReader = new BufferedReader(
-                            new InputStreamReader(process.getInputStream())
-                    );
+                Process process = Runtime.getRuntime().exec("logcat -s PStreamTest:V io.github.privacystreams.test:V PrivacyStreams:V ChainStreamClient:V *:S io.github.privacystreams.ChainStreamClient:V websocket:V");
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream())
+                );
 
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        final String logLine = line;
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Update UI on the main thread
-                                updateUI(logLine);
-                            }
-                        });
-                    }
-                } catch (IOException e) {
-                    Log.e("LogReaderTask", "Error reading logcat", e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    final String logLine = line;
+                    handler.post(() -> {
+                        // Update UI on the main thread
+                        updateUI(logLine);
+                    });
                 }
+            } catch (IOException e) {
+                Log.e("LogReaderTask", "Error reading logcat", e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }).start();
     }

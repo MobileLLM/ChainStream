@@ -47,23 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
     public Button mButtonClear;
 
-//    public IConnectionManager mManager;
-
-//    public ConnectionInfo connectionInfo;
-
-//    public MyWebSocketServer myWebSocketServer;
-
     private Boolean is_server_running;
-
-    private TextView mTextImage;
-
-    private TextView mTextAudio;
-
-    private TextView mTextSensors;
 
     private LogReaderTask mLogReaderTask;
 
-//    private ChainStreamClientService myChainStreamClientService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
         is_server_running = Boolean.FALSE;
 
-        mTextAudio = findViewById(R.id.textAudio);
-        mTextImage = findViewById(R.id.textImage);
-        mTextSensors = findViewById(R.id.textSensors);
+        TextView mTextAudio = findViewById(R.id.textAudio);
+        TextView mTextImage = findViewById(R.id.textImage);
+        TextView mTextSensors = findViewById(R.id.textSensors);
 
         mTextAudio.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
         mTextImage.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
@@ -90,103 +77,47 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        mButtonStart.setOnClickListener(view -> {
+            if (is_server_running == Boolean.FALSE) {
+                mLogReaderTask.startReadingLogs();
 
+                Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
+                startService(intent);
 
-
-//        connectionInfo = new ConnectionInfo("127.0.0.1", 66677);
-//        mManager = OkSocket.open(connectionInfo);
-//        mManager.connect();
-
-        mButtonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                new MyAsyncTask().execute();
-                if (is_server_running == Boolean.FALSE) {
-//                    new LogReaderTask(logLinearLayout).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    mLogReaderTask.startReadingLogs();
-
-//                    InetSocketAddress myHost = new InetSocketAddress("127.0.0.1", 6666);
-//                    myWebSocketServer = new MyWebSocketServer(myHost);
-//                    myWebSocketServer.setText(mTextImage, mTextAudio, mTextSensors);
-//                    myWebSocketServer.setContext(MainActivity.this);
-//                    myWebSocketServer.start();
-
-//                    myChainStreamClientService = new ChainStreamClientService();
-//                    myChainStreamClientService.start(MainActivity.this);
-                    Intent intent1 = new Intent(MainActivity.this, ChainStreamClientService.class);
-                    startService(intent1);
-
-//                    if (Build.VERSION.SDK_INT >= 23) {
-//                        if(Settings.canDrawOverlays(getApplicationContext())) {
-//                            Intent intent2 = new Intent(MainActivity.this,
-//                                    ForegroundService.class);
-//                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
-//                                startForegroundService(intent2);
-//                            }else {
-//                                startService(intent2);
-//                            }
-//                        }else {
-//                            Toast.makeText(MainActivity.this,
-//                                    "请设置权限",Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-
-                    is_server_running = Boolean.TRUE;
-                    Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(view.getContext(), "server already running!", Toast.LENGTH_SHORT).show();
-                }
+                is_server_running = Boolean.TRUE;
+                Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(view.getContext(), "server already running!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        mButtonStop.setOnClickListener(new View.OnClickListener() {
+        mButtonStop.setOnClickListener(view -> {
+            if (is_server_running) {
 
-            @Override
-            public void onClick(View view) {
-                if (is_server_running) {
-//                    myWebSocketServer.stopServer();
-//                    myChainStreamClientService.stopSelf();
-                    Intent intent1 = new Intent(MainActivity.this, ChainStreamClientService.class);
-                    stopService(intent1);
+                Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
+                stopService(intent);
 
-//                    Intent intent = new Intent(MainActivity.this,
-//                            ForegroundService.class);
-//                    stopService(intent);
-
-                    is_server_running = Boolean.FALSE;
-                    Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(view.getContext(), "server not running!", Toast.LENGTH_SHORT).show();
-                }
+                is_server_running = Boolean.FALSE;
+                Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(view.getContext(), "server not running!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        mButtonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logLinearLayout.removeAllViews();
-            }
-        });
+        mButtonClear.setOnClickListener(view -> logLinearLayout.removeAllViews());
     }
 
     @Override
     protected void onStop() {
-//        myWebSocketServer.stopServer();
-        Intent intent1 = new Intent(this, ChainStreamClientService.class);
-        stopService(intent1);
+        Intent intent = new Intent(this, ChainStreamClientService.class);
+        stopService(intent);
         super.onStop();
     }
 
-
     @Override
     protected void onDestroy() {
-//        myWebSocketServer.stopServer();
-        Intent intent1 = new Intent(this, ChainStreamClientService.class);
-        stopService(intent1);
-//        Intent intent = new Intent(MainActivity.this,
-//                ForegroundService.class);
-//        stopService(intent);
+        Intent intent = new Intent(this, ChainStreamClientService.class);
+        stopService(intent);
         super.onDestroy();
-//        mManager.disconnect();
     }
 }

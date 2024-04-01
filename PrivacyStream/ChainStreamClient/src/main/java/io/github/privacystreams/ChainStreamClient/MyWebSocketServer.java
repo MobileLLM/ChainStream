@@ -49,12 +49,6 @@ import io.github.privacystreams.audio.Audio;
 public class MyWebSocketServer extends WebSocketServer {
     private Context myContext;
 
-    private TextView mTextImage;
-
-    private TextView mTextAudio;
-
-    private TextView mTextSensors;
-
     private SurfaceView preView;
 
     MyWebSocketServer(InetSocketAddress host){
@@ -66,9 +60,6 @@ public class MyWebSocketServer extends WebSocketServer {
     }
 
     public void setText(TextView textImage, TextView textAudio, TextView textSensors) {
-        mTextImage = textImage;
-        mTextAudio = textAudio;
-        mTextSensors = textSensors;
     }
 
     public void setContext(Context context) {
@@ -92,206 +83,190 @@ public class MyWebSocketServer extends WebSocketServer {
 
         // parts数组中包含切分后的子串
         String cmd = parts[0];
-        if (cmd.equals("video")) {
-            String para = parts[1];
-//            mTextImage.setTextColor(Color.BLUE);
-            UQI uqi = new UQI(myContext);
-            Logging.debug("begin video socket");
-//            UQIVideoSocket uqiVideoSocket = new UQIVideoSocket(uqi, para, conn);
-//            uqiVideoSocket.run();
-            uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para), preView), Purpose.UTILITY("taking picture."))
-                    .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
-                    .forEach("imagePath", new Callback<String>() {
-                        @Override
-                        protected void onInput(String imagePath) {
-                            System.out.println("Send " + imagePath + "through socket");
-//                            mTextImage.setTextColor(Color.RED);
-                            File imageFile = new File(imagePath);
-
-                            try {
-                                // 读取图像文件
-                                FileInputStream fis = new FileInputStream(imageFile);
-                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-                                byte[] buffer = new byte[1024];
-                                int bytesRead;
-
-                                while ((bytesRead = fis.read(buffer)) != -1) {
-                                    bos.write(buffer, 0, bytesRead);
-                                }
-
-                                fis.close();
-                                bos.close();
-
-                                // 获取图像数据的字节数组
-                                byte[] imageData = bos.toByteArray();
-
-                                // 将字节数组转换为ByteBuffer
-                                ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-
-                                if (conn.isClosed()) {
-                                    uqi.stopAll();
-//                                    mTextImage.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
-                                }
-                                conn.send(byteBuffer);
-                                Logging.debug("send pic" + byteBuffer.capacity());
-//                                mTextImage.setTextColor(Color.BLUE);
-
-                                boolean isDeleted = imageFile.delete();
-
-                                if (!isDeleted) {
-                                    System.out.println("图片文件删除失败");
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-        }
-        else if (cmd.equals("audio")) {
-            String duration = parts[1];
-            String interval = parts[2];
-//            mTextAudio.setTextColor(Color.RED);
-            UQI uqi = new UQI(myContext);
-            Logging.debug("begin audio socket");
-            uqi.getData(Audio.recordPeriodic(Integer.parseInt(duration), Integer.parseInt(interval)), Purpose.UTILITY("recording audio"))
-                    .setField("audioPath", AudioOperators.getFilepath(Audio.AUDIO_DATA))
-                    .forEach("audioPath", new Callback<String>() {
-                        @Override
-                        protected void onInput(String audioPath) {
-                            System.out.println("Send " + audioPath + " through socket");
-//                            mTextAudio.setTextColor(Color.RED);
-                            File audioFile = new File(audioPath);
-
-                            try {
-                                FileInputStream fis = new FileInputStream(audioFile);
-                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-                                byte[] buffer = new byte[1024];
-                                int bytesRead;
-
-                                while ((bytesRead = fis.read(buffer)) != -1) {
-                                    bos.write(buffer, 0, bytesRead);
-                                }
-
-                                fis.close();
-                                bos.close();
-
-                                byte[] audioData = bos.toByteArray();
-                                ByteBuffer byteBuffer = ByteBuffer.wrap(audioData);
-
-                                if (conn.isClosed()) {
-                                    uqi.stopAll();
-//                                    mTextAudio.setTextColor(ContextCompat.getColor(myContext, android.R.color.primary_text_light));
-                                }
-                                conn.send(byteBuffer);
-                                Logging.debug("send audio" + byteBuffer.capacity());
-//                                mTextAudio.setTextColor(Color.BLUE);
-
-                                boolean isDeleted = audioFile.delete();
-
-                                if (!isDeleted) {
-                                    System.out.println("音频文件删除失败");
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-        }
-        else if (cmd.equals("sensors")) {
-            String sensorsName = parts[1];
-//            String interval = parts[2];
-//            mTextSensors.setTextColor(Color.RED);
-            UQI uqi = new UQI(myContext);
-            Logging.debug("begin sensor socket");
-            if (sensorsName.equals("acceleration")) {
-                uqi.getData(Acceleration.asUpdates(2), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
+        switch (cmd) {
+            case "video": {
+                String para = parts[1];
+                UQI uqi = new UQI(myContext);
+                Logging.debug("begin video socket");
+                uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para), preView), Purpose.UTILITY("taking picture."))
+                        .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
+                        .forEach("imagePath", new Callback<String>() {
                             @Override
-                            protected void onInput(Item input) {
-                                String acc_x = Float.toString(input.getAsFloat("x"));
-                                String acc_y = Float.toString(input.getAsFloat("y"));
-                                String acc_z = Float.toString(input.getAsFloat("z"));
-                                String acc_res = acc_x + "," + acc_y + "," + acc_z;
-                                System.out.println("Send acceleration data: " + acc_res);
+                            protected void onInput(String imagePath) {
+                                System.out.println("Send " + imagePath + "through socket");
+                                File imageFile = new File(imagePath);
 
                                 try {
+                                    // 读取图像文件
+                                    FileInputStream fis = new FileInputStream(imageFile);
+                                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                                    byte[] buffer = new byte[1024];
+                                    int bytesRead;
+
+                                    while ((bytesRead = fis.read(buffer)) != -1) {
+                                        bos.write(buffer, 0, bytesRead);
+                                    }
+
+                                    fis.close();
+                                    bos.close();
+
+                                    // 获取图像数据的字节数组
+                                    byte[] imageData = bos.toByteArray();
+
+                                    // 将字节数组转换为ByteBuffer
+                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
+
                                     if (conn.isClosed()) {
                                         uqi.stopAll();
                                     }
-//                                    byte[] imageData = acc_res.getBytes();
-//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
+                                    conn.send(byteBuffer);
+                                    Logging.debug("send pic" + byteBuffer.capacity());
+
+                                    boolean isDeleted = imageFile.delete();
+
+                                    if (!isDeleted) {
+                                        System.out.println("图片文件删除失败");
+                                    }
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
+                break;
             }
-            else if (sensorsName.equals("airpressure")) {
-                uqi.getData(AirPressure.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
+            case "audio": {
+                String duration = parts[1];
+                String interval = parts[2];
+                UQI uqi = new UQI(myContext);
+                Logging.debug("begin audio socket");
+                uqi.getData(Audio.recordPeriodic(Integer.parseInt(duration), Integer.parseInt(interval)), Purpose.UTILITY("recording audio"))
+                        .setField("audioPath", AudioOperators.getFilepath(Audio.AUDIO_DATA))
+                        .forEach("audioPath", new Callback<String>() {
                             @Override
-                            protected void onInput(Item input) {
-                                String pressure = Float.toString(input.getAsFloat("pressure"));
-                                System.out.println("Send airpressure data: " + pressure);
+                            protected void onInput(String audioPath) {
+                                System.out.println("Send " + audioPath + " through socket");
+                                File audioFile = new File(audioPath);
+
                                 try {
+                                    FileInputStream fis = new FileInputStream(audioFile);
+                                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                                    byte[] buffer = new byte[1024];
+                                    int bytesRead;
+
+                                    while ((bytesRead = fis.read(buffer)) != -1) {
+                                        bos.write(buffer, 0, bytesRead);
+                                    }
+
+                                    fis.close();
+                                    bos.close();
+
+                                    byte[] audioData = bos.toByteArray();
+                                    ByteBuffer byteBuffer = ByteBuffer.wrap(audioData);
+
                                     if (conn.isClosed()) {
                                         uqi.stopAll();
                                     }
-//                                    byte[] imageData = acc_res.getBytes();
-//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(pressure);
+                                    conn.send(byteBuffer);
+                                    Logging.debug("send audio" + byteBuffer.capacity());
+
+                                    boolean isDeleted = audioFile.delete();
+
+                                    if (!isDeleted) {
+                                        System.out.println("音频文件删除失败");
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
+                break;
             }
-            else if (sensorsName.equals("ambienttemperature")) {
-                uqi.getData(AmbientTemperature.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String temperature = Float.toString(input.getAsFloat("temperature"));
-                                System.out.println("Send ambienttemperature data: " + temperature);
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
+            case "sensors": {
+                String sensorsName = parts[1];
+                UQI uqi = new UQI(myContext);
+                Logging.debug("begin sensor socket");
+                switch (sensorsName) {
+                    case "acceleration":
+                        uqi.getData(Acceleration.asUpdates(2), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String acc_x = Float.toString(input.getAsFloat("x"));
+                                        String acc_y = Float.toString(input.getAsFloat("y"));
+                                        String acc_z = Float.toString(input.getAsFloat("z"));
+                                        String acc_res = acc_x + "," + acc_y + "," + acc_z;
+                                        System.out.println("Send acceleration data: " + acc_res);
+
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
-//                                    byte[] imageData = acc_res.getBytes();
-//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(temperature);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("deviceevent")) {
-                uqi.getData(DeviceEvent.asUpdates(), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String type = Float.toString(input.getAsFloat("type"));
-                                String event = Float.toString(input.getAsFloat("event"));
-                                String input_res = type + "," + event;
-                                System.out.println("Send deviceevent data: " + input_res);
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
+                                });
+                        break;
+                    case "airpressure":
+                        uqi.getData(AirPressure.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String pressure = Float.toString(input.getAsFloat("pressure"));
+                                        System.out.println("Send airpressure data: " + pressure);
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
+                                            conn.send(pressure);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
-//                                    byte[] imageData = acc_res.getBytes();
-//                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(input_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
+                                });
+                        break;
+                    case "ambienttemperature":
+                        uqi.getData(AmbientTemperature.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String temperature = Float.toString(input.getAsFloat("temperature"));
+                                        System.out.println("Send ambienttemperature data: " + temperature);
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
+                                            conn.send(temperature);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "deviceevent":
+                        uqi.getData(DeviceEvent.asUpdates(), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String type = Float.toString(input.getAsFloat("type"));
+                                        String event = Float.toString(input.getAsFloat("event"));
+                                        String input_res = type + "," + event;
+                                        System.out.println("Send deviceevent data: " + input_res);
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
+                                            conn.send(input_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
 //            else if (sensorsName.equals("devicestate")) {
 //                String devicestate_interval = parts[2];
 //                uqi.getData(DeviceState.asUpdates(Integer.parseInt(devicestate_interval), 31 - DeviceState.Masks.BLUETOOTH_DEVICE_LIST), Purpose.UTILITY("chainstream"))
@@ -320,195 +295,198 @@ public class MyWebSocketServer extends WebSocketServer {
 //                            }
 //                        });
 //            }
-            else if (sensorsName.equals("geolocation")) {
-                String interval = parts[2];
-                uqi.getData(Geolocation.asUpdates(Integer.parseInt(interval), Geolocation.LEVEL_EXACT), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String speed = Float.toString(input.getAsFloat("speed"));
-                                String provider = Float.toString(input.getAsFloat("provider"));
-                                String lat_lon = input.getValueByField("lat_lon").toString();
-                                String accuracy = Float.toString(input.getAsFloat("accuracy"));
-                                String bearing = Float.toString(input.getAsFloat("bearing"));
-                                String input_res = lat_lon + "," + speed + "," + provider + "," + accuracy +
-                                        "," + bearing;
-                                System.out.println("Send geolocation data: " + input_res);
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                    case "geolocation":
+                        String interval = parts[2];
+                        uqi.getData(Geolocation.asUpdates(Integer.parseInt(interval), Geolocation.LEVEL_EXACT), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String speed = Float.toString(input.getAsFloat("speed"));
+                                        String provider = Float.toString(input.getAsFloat("provider"));
+                                        String lat_lon = input.getValueByField("lat_lon").toString();
+                                        String accuracy = Float.toString(input.getAsFloat("accuracy"));
+                                        String bearing = Float.toString(input.getAsFloat("bearing"));
+                                        String input_res = lat_lon + "," + speed + "," + provider + "," + accuracy +
+                                                "," + bearing;
+                                        System.out.println("Send geolocation data: " + input_res);
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(input_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("gravity")) {
-                uqi.getData(Gravity.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String acc_x = Float.toString(input.getAsFloat("x"));
-                                String acc_y = Float.toString(input.getAsFloat("y"));
-                                String acc_z = Float.toString(input.getAsFloat("z"));
-                                String acc_res = acc_x + "," + acc_y + "," + acc_z;
-                                System.out.println("Send gravity data: " + acc_res);
+                                            conn.send(input_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "gravity":
+                        uqi.getData(Gravity.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String acc_x = Float.toString(input.getAsFloat("x"));
+                                        String acc_y = Float.toString(input.getAsFloat("y"));
+                                        String acc_z = Float.toString(input.getAsFloat("z"));
+                                        String acc_res = acc_x + "," + acc_y + "," + acc_z;
+                                        System.out.println("Send gravity data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("gyroscope")) {
-                uqi.getData(Gyroscope.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String acc_x = Float.toString(input.getAsFloat("x"));
-                                String acc_y = Float.toString(input.getAsFloat("y"));
-                                String acc_z = Float.toString(input.getAsFloat("z"));
-                                String acc_res = acc_x + "," + acc_y + "," + acc_z;
-                                System.out.println("Send gyroscope data: " + acc_res);
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "gyroscope":
+                        uqi.getData(Gyroscope.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String acc_x = Float.toString(input.getAsFloat("x"));
+                                        String acc_y = Float.toString(input.getAsFloat("y"));
+                                        String acc_z = Float.toString(input.getAsFloat("z"));
+                                        String acc_res = acc_x + "," + acc_y + "," + acc_z;
+                                        System.out.println("Send gyroscope data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("light")) {
-                uqi.getData(Light.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String illuminance = Float.toString(input.getAsFloat("illuminance"));
-                                String acc_res = illuminance;
-                                System.out.println("Send light data: " + acc_res);
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "light":
+                        uqi.getData(Light.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String illuminance = Float.toString(input.getAsFloat("illuminance"));
+                                        String acc_res = illuminance;
+                                        System.out.println("Send light data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("linearacceleration")) {
-                uqi.getData(LinearAcceleration.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String acc_x = Float.toString(input.getAsFloat("x"));
-                                String acc_y = Float.toString(input.getAsFloat("y"));
-                                String acc_z = Float.toString(input.getAsFloat("z"));
-                                String acc_res = acc_x + "," + acc_y + "," + acc_z;
-                                System.out.println("Send linearacceleration data: " + acc_res);
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "linearacceleration":
+                        uqi.getData(LinearAcceleration.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String acc_x = Float.toString(input.getAsFloat("x"));
+                                        String acc_y = Float.toString(input.getAsFloat("y"));
+                                        String acc_z = Float.toString(input.getAsFloat("z"));
+                                        String acc_res = acc_x + "," + acc_y + "," + acc_z;
+                                        System.out.println("Send linearacceleration data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("relativehumidity")) {
-                uqi.getData(RelativeHumidity.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String humidity = Float.toString(input.getAsFloat("humidity"));
-                                String acc_res = humidity;
-                                System.out.println("Send relativehumidity data: " + acc_res);
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "relativehumidity":
+                        uqi.getData(RelativeHumidity.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String humidity = Float.toString(input.getAsFloat("humidity"));
+                                        String acc_res = humidity;
+                                        System.out.println("Send relativehumidity data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("rotationvector")) {
-                uqi.getData(RotationVector.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String acc_x = Float.toString(input.getAsFloat("x"));
-                                String acc_y = Float.toString(input.getAsFloat("y"));
-                                String acc_z = Float.toString(input.getAsFloat("z"));
-                                String scalar = Float.toString(input.getAsFloat("scalar"));
-                                String acc_res = acc_x + "," + acc_y + "," + acc_z + "," + scalar;
-                                System.out.println("Send rotationvector data: " + acc_res);
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "rotationvector":
+                        uqi.getData(RotationVector.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String acc_x = Float.toString(input.getAsFloat("x"));
+                                        String acc_y = Float.toString(input.getAsFloat("y"));
+                                        String acc_z = Float.toString(input.getAsFloat("z"));
+                                        String scalar = Float.toString(input.getAsFloat("scalar"));
+                                        String acc_res = acc_x + "," + acc_y + "," + acc_z + "," + scalar;
+                                        System.out.println("Send rotationvector data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-            }
-            else if (sensorsName.equals("stepcounter")) {
-                uqi.getData(StepCounter.asUpdates(3), Purpose.UTILITY("chainstream"))
-                        .forEach(new Callback<Item>() {
-                            @Override
-                            protected void onInput(Item input) {
-                                String step = Float.toString(input.getAsFloat("steps"));
-                                String acc_res = step;
-                                System.out.println("Send stepcounter data: " + acc_res);
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                    case "stepcounter":
+                        uqi.getData(StepCounter.asUpdates(3), Purpose.UTILITY("chainstream"))
+                                .forEach(new Callback<Item>() {
+                                    @Override
+                                    protected void onInput(Item input) {
+                                        String step = Float.toString(input.getAsFloat("steps"));
+                                        String acc_res = step;
+                                        System.out.println("Send stepcounter data: " + acc_res);
 
-                                try {
-                                    if (conn.isClosed()) {
-                                        uqi.stopAll();
-                                    }
+                                        try {
+                                            if (conn.isClosed()) {
+                                                uqi.stopAll();
+                                            }
 //                                    byte[] imageData = acc_res.getBytes();
 //                                    ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
-                                    conn.send(acc_res);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                                            conn.send(acc_res);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                        break;
+                }
+                break;
             }
         }
 
