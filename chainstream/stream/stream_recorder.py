@@ -73,7 +73,7 @@ class QueueRecoder:
 
     def get_queue_statistics(self):
         return self.len_statistics if self.len_statistics != [] else (
-            datetime.datetime.now(), sum(self.len_gap_log) / len(self.len_gap_log) / self.analysis_pre_min)
+            datetime.datetime.now(), sum(self.len_gap_log) / max(len(self.len_gap_log), 1) / self.analysis_pre_min)
 
 
 class StreamRecorder:
