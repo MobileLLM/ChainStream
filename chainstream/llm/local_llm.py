@@ -1,7 +1,8 @@
-from modelscope import snapshot_download
+
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 from transformers.generation import GenerationConfig
+import ollama
 
 class BaseModel:
     def __init__(self,):

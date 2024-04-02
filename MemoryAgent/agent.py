@@ -29,7 +29,7 @@ class LLMConfig:
         self,
         model: Optional[str] = "gpt-4",
         model_endpoint_type: Optional[str] = "openai",
-        model_endpoint: Optional[str] = "https://api.openai.com/v1",
+        model_endpoint: Optional[str] = "https://api.openai-proxy.org/v1",
         model_wrapper: Optional[str] = None,
         context_window: Optional[int] = None,
         open_ai_key:Optional[str]=None
@@ -93,6 +93,15 @@ class Agent(object):
 
         print(f"Agent initialized, self.messages_total={self.messages_total}")
 
+    @property
+    def messages(self) -> List[dict]:
+        """Getter method that converts the internal Message list into OpenAI-style dicts"""
+        return [msg.to_openai_dict() for msg in self._messages]
+
+    @messages.setter
+    def messages(self, value):
+        raise Exception("Modifying message list directly not allowed")
+
     def _append_to_messages(self, added_messages: List[Message]):
 
         assert all([isinstance(msg, Message) for msg in added_messages])
@@ -117,7 +126,7 @@ class Agent(object):
             )
             response= openai_chat_completions_request(
                 url=self.config.model_endpoint,
-                api_key=self.config.openai_key,
+                api_key=self.config.open_ai_key,
                 data=data,
                 )
             # special case for 'length'
@@ -161,7 +170,7 @@ class Agent(object):
             )
             function_name=function_call.name
             print(f"Function call message: {messages[-1]}")
-            function_response_string=input("函数回复：")
+            function_response_string=input(f"{function_name} {function_call.arguments}：")
             function_response = package_function_response(True, function_response_string)
             messages.append(
                 Message.dict_to_message(
@@ -217,7 +226,7 @@ class Agent(object):
                 print(f"This is the first message. Running extra verifier on AI response.")
                 counter = 0
                 while True:
-                    response = self._get_ai_reply(
+                    response = self._get_openai_reply(
                         message_sequence=input_message_sequence,
                         first_message=True,  # passed through to the prompt formatter
                     )
@@ -227,7 +236,7 @@ class Agent(object):
                     if counter > first_message_retry_limit:
                         raise Exception(f"Hit first message retry limit ({first_message_retry_limit})")
             else:
-                response = self._get_ai_reply(
+                response = self._get_openai_reply(
                     message_sequence=input_message_sequence,
                 )
 

@@ -3,6 +3,7 @@ import json
 import urllib
 import os
 import requests
+from openai import OpenAI
 from response import ChatCompletionResponse
 def get_local_time():
 
@@ -41,8 +42,12 @@ def verify_first_message_correctness(
     return True
 
 def openai_chat_completions_request(url, api_key, data):
-    url = smart_urljoin(url, "chat/completions")
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
+    connection=OpenAI(base_url=url,
+                        api_key=api_key,
+                        timeout=15,
+                        max_retries=3)
+    #url = smart_urljoin(url, "chat/completions")
+    #headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
 
     if "functions" in data and data["functions"] is None:
         data.pop("functions")
@@ -54,11 +59,20 @@ def openai_chat_completions_request(url, api_key, data):
 
     print(f"Sending request to {url}")
     try:
-        response = requests.post(url, headers=headers, json=data)
+        #response = requests.post(url, headers=headers, json=data)
+        response=connection.chat.completions.create(
+            model=data['model'],
+            messages=data['messages'],
+            tools=data['tools'],
+            tool_choice=data['tool_choice']
+        )
+
         print(f"response = {response}")
-        response.raise_for_status()  # Raises HTTPError for 4XX/5XX status
-        response = response.json()  # convert to dict from string
-        print(f"response.json = {response}")
+        print(type(response))
+        #response.raise_for_status()  # Raises HTTPError for 4XX/5XX status
+        response = response.model_dump_json()
+        response=json.loads(response)# convert to dict from string
+        #print(f"response.json = {response}")
         response = ChatCompletionResponse(**response)
         return response
     except requests.exceptions.HTTPError as http_err:
