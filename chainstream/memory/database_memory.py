@@ -1,29 +1,31 @@
 import pymysql
 import psycopg2
+import sqlite3
+
 
 class DataBaseInterface:
-    def __init__(self,type,database,host,port,user_config:dict):
-        self.type=type
-        self.database=database
-        self.host=host
-        self.port=port
-        self.user_config=user_config
+    def __init__(self, type, database, host, port, user_config: dict):
+        self.type = type
+        self.database = database
+        self.host = host
+        self.port = port
+        self.user_config = user_config
 
-        self.connection=None
-        self.cursor=None
+        self.connection = None
+        self.cursor = None
         self.connect()
 
     def connect(self):
         try:
-            if self.type=='mysql':
+            if self.type == 'mysql':
                 self.connection = pymysql.connect(
                     host=self.host,
                     port=self.port,
                     user=self.user_config['user'],
-                    password=self.user_config['password']
-                 )
+                    password=self.user_config['password'],
+                )
                 self.cursor = self.connection.cursor()
-            elif self.type=='postgresql':
+            elif self.type == 'postgresql':
                 self.connection = psycopg2.connect(
                     database=self.database,
                     host=self.host,
@@ -31,14 +33,16 @@ class DataBaseInterface:
                     user=self.user_config['user'],
                     password=self.user_config['password']
                 )
-                print('connection')
+                self.cursor = self.connection.cursor()
+            elif self.type == 'sqlite':
+                self.connection = sqlite3.connect(self.database)
                 self.cursor = self.connection.cursor()
             else:
-                raise ValueError("Unsupported database type: {}".format(self.db_type))
+                raise ValueError("Unsupported database type: {}".format(self.type))
         except Exception as e:
             print("Failed to connect to the database: {}".format(str(e)))
 
-    def query(self,sql):
+    def query(self, sql):
         try:
             if not self.cursor:
                 raise Exception("Database connection is not established.")
@@ -48,7 +52,7 @@ class DataBaseInterface:
         except Exception as e:
             print("Failed to execute query: {}".format(str(e)))
 
-    def update(self,sql):
+    def update(self, sql):
         try:
             if not self.cursor:
                 raise Exception("Database connection is not established.")
@@ -65,4 +69,3 @@ class DataBaseInterface:
                 self.connection.close()
         except Exception as e:
             print("Failed to close the database connection: {}".format(str(e)))
-
