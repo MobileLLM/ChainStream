@@ -1,11 +1,8 @@
-from .runtime_core import ChainStreamServerBase
-
-
-class ChainStreamServerWeb(ChainStreamServerBase):
-    def __init__(self):
-        super().__init__()
+class ChainStreamServerWeb():
+    def __init__(self, core):
         self.ip = None
         self.port = None
+        self.chainstream_core = core
 
         from .web.backend.core import set_core
         set_core(self.chainstream_core)
