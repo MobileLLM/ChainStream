@@ -2,19 +2,38 @@
 
 The development framework and runtime system for mobile agents.
 
-## 饼图
+## Some conceptual examples of ChainStream
 
-<img src="./doc/img/ChainStream.png" alt="ChainStream" style="zoom:50%;" />
+<img src="doc/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
 
-* 有颜色实线的部分是目前准备做的饼，灰色虚线的部分是遥不可及的饼。
+## The architecture of ChainStream
 
-## Install
+<img src="doc/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
+
+## Usage
+
+### Install
 
 Clone this repo, change directory to the repo folder, and install with pip:
 
 ```bash
 pip install -e .
 ```
+
+### Run
+
+To run the system, simply run the `start.py` script:
+
+```bash
+python start.py
+```
+
+### Edge Sensors
+
+If you want to start agents relaying on edge sensors, you need to package App in `chainstream/PrivacyStream` to .apk 
+install it to you edge devices, and config frpc.ini file to connect to the server.
+
+A little bit complex, I will update the code later.
 
 ## Build an agent
 
