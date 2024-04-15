@@ -1,9 +1,12 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
-# from chainstream.runtime.runtime_core import RuntimeCore
+import os
+from pathlib import Path
 from .monitor.agents import agents_blueprint
 from .monitor.streams import streams_blueprint
 from .monitor.stream_graph import stream_graph_blueprint
+
+absolute_path = os.path.join(Path(os.path.dirname(os.path.abspath(__file__))).parent, 'frontend/dist')
 
 app = Flask(__name__)
 app.register_blueprint(agents_blueprint)
@@ -15,7 +18,12 @@ CORS(app, supports_credentials=True)
 
 @app.route('/', methods=['GET'])
 def hello_world():
-    return '<h1>Hello World!</h1>'
+    return send_from_directory(absolute_path, 'index.html')
+
+
+@app.route('/assets/<path>')
+def serve_static(path):
+    return send_from_directory(os.path.join(absolute_path, 'assets'), path)
 
 
 @app.route('/api/home/checkConnection', methods=['GET'])
