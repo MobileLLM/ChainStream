@@ -4,7 +4,7 @@ import sqlite3
 
 
 class DataBaseInterface:
-    def __init__(self, type, database, host, port, user_config: dict):
+    def __init__(self, type, database, host=None, port=None, user_config: dict = None):
         self.type = type
         self.database = database
         self.host = host
