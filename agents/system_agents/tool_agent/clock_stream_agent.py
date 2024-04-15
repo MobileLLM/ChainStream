@@ -15,11 +15,13 @@ class ClockStreamAgent(cs.agent.Agent):
         self.enabled = True
 
     def start(self):
-        schedule.every().hour.at(":00").do(self.log_time)
+        # schedule.every().hour.at(":00").do(self.log_time)
+        schedule.every(2).minutes.do(self.log_time)
         self.thread = threading.Thread(target=self._run)
         self.thread.start()
 
     def log_time(self):
+        print("Logging time", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         self.clock_stream.add_item(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     def _run(self):
