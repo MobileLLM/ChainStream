@@ -1,8 +1,6 @@
-from .server_shell import ChainStreamServerShell
-from .server_web import ChainStreamServerWeb
+from .server import ChainStreamServer
 
-cs_server = ChainStreamServerWeb()
-# cs_server = ChainStreamServerShell()
+cs_server = ChainStreamServer()
 cs_server_core = cs_server.get_chainstream_core()
 
 
