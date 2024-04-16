@@ -1,6 +1,6 @@
 from chainstream.interfaces import MemoryInterface
 import json
-from database_memory import DataBaseInterface
+from database_interface import DataBaseInterface
 
 class SequentialMemory(MemoryInterface):
     def __init__(self, memory_id) -> None:

@@ -1,7 +1,7 @@
 from chainstream.interfaces import MemoryInterface
 import cv2
 import json
-from database_memory import DataBaseInterface
+from database_interface import DataBaseInterface
 
 
 

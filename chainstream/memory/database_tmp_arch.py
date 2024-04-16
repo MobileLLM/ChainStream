@@ -1,40 +1,83 @@
 from chainstream.interfaces import MemoryInterface
-from database_memory import DataBaseInterface
+from database_interface import DataBaseInterface
 import json
+import os
+from chainstream.runtime import cs_server_core
+
+DATABASE_PATH_BASE = os.path.join(cs_server_core.output_dir, 'database')
 
 
-class KVMemory(MemoryInterface):
-    def __init__(self, json_path):
-        self.json_path = json_path
-        self.create_json()
+class BaseMemory(MemoryInterface):
+    def __init__(self, *args, **kwargs):
+        self.type = None
+        self.memory_id = kwargs.get('memory_id', None)
+        # self.recorder = MemRecorder()
+        pass
 
-    def create_json(self):
+
+class KVMemory(BaseMemory):
+    def __init__(self, memory_id, load_from=None):
+        super().__init__(memory_id=memory_id)
+        self.type = 'kv'
+        self.file_path = self.create_json(load_from)
+
+    def create_json(self, load_from=None):
         data = {}
-        with open(self.json_path, 'w') as json_file:
+        if load_from is None:
+            try:
+                with open(load_from, 'r') as f:
+                    data = json.load(f)
+            except Exception as e:
+                raise RuntimeError(f"Failed to load data from {load_from}: {e}")
+        file_path = DATABASE_PATH_BASE + f'/{self.memory_id}.json'
+        with open(file_path, 'w') as json_file:
             json.dump(data, json_file)
+
+        return file_path
+
+    def load(self, file_path, mode='overwrite'):
+        if mode == 'overwrite':
+            try:
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+                with open(self.file_path, 'w') as f:
+                    json.dump(data, f)
+            except Exception as e:
+                raise RuntimeError(f"Failed to load data from {file_path}: {e}")
+        elif mode == 'merge':
+            try:
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+                with open(self.file_path, 'r') as f:
+                    old_data = json.load(f)
+                new_data = {**old_data, **data}
+                with open(self.file_path, 'w') as f:
+                    json.dump(new_data, f)
+            except Exception as e:
+                raise RuntimeError(f"Failed to load data from {file_path}: {e}")
 
     # 规定data
     def add_item(self, data):
         # 定义传进来的数据是字典的形式
-        with open(self.json_path, 'r') as file:
+        with open(self.file_path, 'r') as file:
             file_data = json.load(file)
         for key, value in data.items():
             file_data[key] = value
-        with open(self.json_path, 'w') as file:
+        with open(self.file_path, 'w') as file:
             json.dump(file_data, file, indent=4)
 
     def remove_item(self, keys):
-        with open(self.json_path, 'r') as file:
+        with open(self.file_path, 'r') as file:
             file_data = json.load(file)
         for key in keys:
             if key in file_data:
                 del file_data[key]
-        with open(self.json_path, 'w') as file:
+        with open(self.file_path, 'w') as file:
             json.dump(file_data, file, indent=4)
 
     def find_item(self, keys):
         data = {}
-        with open(self.json_path, 'r') as file:
+        with open(self.file_path, 'r') as file:
             file_data = json.load(file)
         for key in keys:
             if key in file_data:

@@ -1,5 +1,5 @@
 from chainstream.interfaces import MemoryInterface
-from database_memory import DataBaseInterface
+from database_interface import DataBaseInterface
 import json
 
 class RelationalMemory(MemoryInterface):
