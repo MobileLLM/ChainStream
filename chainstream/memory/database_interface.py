@@ -4,9 +4,9 @@ import sqlite3
 
 
 class DataBaseInterface:
-    def __init__(self, type, database, host=None, port=None, user_config: dict = None):
+    def __init__(self, type, database_path, host=None, port=None, user_config: dict = None):
         self.type = type
-        self.database = database
+        self.database_path = database_path
         self.host = host
         self.port = port
         self.user_config = user_config
@@ -27,7 +27,7 @@ class DataBaseInterface:
                 self.cursor = self.connection.cursor()
             elif self.type == 'postgresql':
                 self.connection = psycopg2.connect(
-                    database=self.database,
+                    database=self.database_path,
                     host=self.host,
                     port=self.port,
                     user=self.user_config['user'],
@@ -35,7 +35,7 @@ class DataBaseInterface:
                 )
                 self.cursor = self.connection.cursor()
             elif self.type == 'sqlite':
-                self.connection = sqlite3.connect(self.database)
+                self.connection = sqlite3.connect(self.database_path)
                 self.cursor = self.connection.cursor()
             else:
                 raise ValueError("Unsupported database type: {}".format(self.type))

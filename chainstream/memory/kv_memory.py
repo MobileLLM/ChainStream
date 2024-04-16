@@ -1,132 +1,83 @@
-from chainstream.interfaces import MemoryInterface
-import cv2
 import json
-from database_interface import DataBaseInterface
+from .base_memory import BaseMemory, DATABASE_PATH_BASE
 
 
+class KVMemory(BaseMemory):
+    def __init__(self, memory_id, load_from=None):
+        super().__init__(memory_id=memory_id)
+        self.type = 'kv'
+        self.file_path = self.create_json(load_from)
 
-class KV_Memory(MemoryInterface):
-    def __init__(self, memory_id) -> None:
-        super().__init__()
-        self.memory_id = memory_id  # known_people
-        self.items = {}
+    def create_json(self, load_from=None):
+        data = {}
+        if load_from is not None:
+            try:
+                with open(load_from, 'r') as f:
+                    data = json.load(f)
+            except Exception as e:
+                raise RuntimeError(f"Failed to load data from {load_from}: {e}")
+        file_path = DATABASE_PATH_BASE + f'/{self.memory_id}.json'
+        with open(file_path, 'w') as json_file:
+            json.dump(data, json_file)
 
-    # add or change
-    def add_item(self, data_item):
-        self.items[data_item[0]] = data_item[1]
+        return file_path
 
-    def delete_item(self, data_key):
-        if data_key in self.items.keys():
-            del self.items[data_key]
-        else:
-            print('there is no ' + str(data_key))
-            raise RuntimeError("Item not found")
+    def load(self, file_path, mode='overwrite'):
+        if mode == 'overwrite':
+            try:
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+                with open(self.file_path, 'w') as f:
+                    json.dump(data, f)
+            except Exception as e:
+                raise RuntimeError(f"Failed to load data from {file_path}: {e}")
+        elif mode == 'merge':
+            try:
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+                with open(self.file_path, 'r') as f:
+                    old_data = json.load(f)
+                new_data = {**old_data, **data}
+                with open(self.file_path, 'w') as f:
+                    json.dump(new_data, f)
+            except Exception as e:
+                raise RuntimeError(f"Failed to load data from {file_path}: {e}")
 
-    def find_item(self, data_key):
-        if data_key in self.items.keys():
-            return self.items[data_key]
-        else:
-            print('there is no ' + str(data_key))
-            return None
+    # 规定data
+    def add_item(self, data):
+        # 定义传进来的数据是字典的形式
+        with open(self.file_path, 'r') as file:
+            file_data = json.load(file)
+        for key, value in data.items():
+            file_data[key] = value
+        with open(self.file_path, 'w') as file:
+            json.dump(file_data, file, indent=4)
 
-    def get_keys(self):
-        return self.items.keys()
+    def remove_item(self, keys):
+        with open(self.file_path, 'r') as file:
+            file_data = json.load(file)
+        for key in keys:
+            if key in file_data:
+                del file_data[key]
+        with open(self.file_path, 'w') as file:
+            json.dump(file_data, file, indent=4)
 
-    def mem2json(self, filepath):
-        with open(filepath, 'w') as file:
-            json.dump(self.items, file)
-    def json2mem(self, filepath):
-        with open(filepath, 'r') as file:
-            json_data = json.load(file)
-            print(json_data)
-            return json_data
-    def preAction(self, tableName, tableSetting, dbInterface):
-        #如果有之前的表则直接删除
-        if 'tableName' in self.dbInformation.keys():
-            print("hhh")
-            print(self.dbInformation['tableName'])
-            qe = f"DROP TABLE {self.dbInformation['tableName']};"
-            dbInterface.update(qe)
+    def find_item(self, keys):
+        data = {}
+        with open(self.file_path, 'r') as file:
+            file_data = json.load(file)
+        for key in keys:
+            if key in file_data:
+                data[key] = file_data[key]
 
-        if 'tableName' in self.dbInformation.keys() and tableSetting==None:
-            tableName = self.dbInformation['tableName']
-        elif tableName == None:
-            raise Exception("Unable to find tableName")
-        self.dbInformation['tableName'] = tableName
-
-        if 'tableSetting' in self.dbInformation.keys() and tableSetting==None:
-            tableSetting = self.dbInformation['tableSetting']
-        elif tableSetting == None:
-            raise Exception("Unable to find tableSetting")
-
-        self.dbInformation['tableSetting'] = tableSetting
-        
-        return tableName, tableSetting
-
-
-    def mem2database(self, tableName, tableSetting):
-        dbInterface = DataBaseInterface('postgresql', 'postgres', 'localhost', 5432, {'user': 'postgres', 'password': 'postgres'})
-
-        tableName, tableSetting = self.preAction(tableName, tableSetting, dbInterface)
-
-        #首先要查看数据库中是否有这个表
-        qe = f"select count(*) from information_schema.tables where table_name = '{tableName}';"
-        print(qe)
-        result = dbInterface.query(qe)[0][0]
-        print(result)
-        if result > 0:
-            raise Exception("Table name conflict")
-        qe = f"CREATE TABLE {tableName} ({tableSetting});"
-        dbInterface.update(qe)
-
-        keys = ""
-        values = ""
-        for key, value in self.items.items():
-            keys += (key+", ")
-            values += ("'"+value+ "', ")
-        keys = keys[:-2]
-        values = values[:-2]
-        qe = f"INSERT INTO {tableName} ({keys}) VALUES ({values});"
-        dbInterface.update(qe)
-        dbInterface.close()
-    
-    def database2mem(self, keys=None):
-        dbInterface = DataBaseInterface('postgresql', 'postgres', 'localhost', 5432, {'user': 'postgres', 'password': 'postgres'})
-
-        results = []
-        cur = dbInterface.cursor
-        if keys == None:
-            cur.execute(f"SELECT * FROM {self.dbInformation['tableName']};")
-        else:
-            temp = ""
-            for i in range(len(keys)):
-                print(keys[i])
-                temp += (keys[i]+", ")
-                print(temp)
-            temp = temp[:-2]
-            cur.execute(f"SELECT {temp} FROM {self.dbInformation['tableName']};")
-
-        columns = [col[0] for col in cur.description]
-        rows = cur.fetchall()
-        for row in rows:
-            result = dict(zip(columns, row))
-            results.append(result)
-        self.items = results
-        dbInterface.close()
+        return data
 
 
-def main():
-    image = cv2.imread('image.jpeg')
-    temp = KV_Memory('known_people')
-    temp.add_item('face', image)
-    temp.add_item('name', 'image')
-    print(temp.get_keys())
-    image_1 = temp.find_item('face')
-    temp.delete_item('name')
-    print(temp.get_keys())
-    temp.find_item('name')
-    print(temp.get_keys())
-
-
-if __name__ == "__main__":
-    main()
+def test_kv():
+    kv = KVMemory('test')
+    kv.add_item({'name': 'test1', 'img': 'this is a img', 'test_num': 100})
+    re = kv.find_item(['name', 'img', 'test_num'])
+    print(re)
+    kv.remove_item(['img'])
+    re = kv.find_item(['img'])
+    print(re)

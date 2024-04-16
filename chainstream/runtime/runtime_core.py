@@ -9,6 +9,7 @@ class RuntimeCoreOp:
         self.logger = logging.getLogger(name='RuntimeCore')
         self.verbose = False
         self.output_dir = None
+        self.default_sql_name = 'chainstream'
 
         self.agent_manager = AgentManager()
         self.stream_manager = StreamManager()
