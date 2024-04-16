@@ -14,7 +14,7 @@ class ImageSegmentationAgent(cs.agent.Agent):
         super().__init__(agent_id)
         self.model_id = 'damo/cv_vitl16_segmentation_text-driven-seg'
         self._source1 = cs.get_stream()  # instance of Stream
-        self.detection_buffer = cs.context.ImageBufferBuffer(max_text_num=1024)
+        self.detection_buffer = cs.context.ImageBuffer(max_text_num=1024)
         self.target=target
 
     def start(self):
