@@ -1,5 +1,5 @@
 import json
-from .base_memory import BaseMemory, DATABASE_PATH_BASE
+from base_memory import BaseMemory, DATABASE_PATH_BASE
 
 
 class KVMemory(BaseMemory):
@@ -21,6 +21,9 @@ class KVMemory(BaseMemory):
             json.dump(data, json_file)
 
         return file_path
+
+    def __getitem__(self, key):
+        return self.find_item([key])
 
     def load(self, file_path, mode='overwrite'):
         if mode == 'overwrite':
@@ -81,3 +84,11 @@ def test_kv():
     kv.remove_item(['img'])
     re = kv.find_item(['img'])
     print(re)
+
+if __name__ == '__main__':
+    test_dict = {
+        'a': 1,
+        'b': 2
+    }
+
+    print(f'test_dict: {test_dict}')

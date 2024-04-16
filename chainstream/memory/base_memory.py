@@ -16,4 +16,3 @@ class BaseMemory(MemoryInterface):
         # self.recorder = MemRecorder()
         pass
 
-

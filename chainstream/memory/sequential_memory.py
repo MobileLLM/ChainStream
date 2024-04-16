@@ -1,4 +1,4 @@
-from .base_memory import BaseMemory, DEFAULT_SQL_PATH
+from base_memory import BaseMemory, DEFAULT_SQL_PATH
 from database_interface import DataBaseInterface
 
 
@@ -72,6 +72,9 @@ class SequentialMemory(BaseMemory):
         elif condition:
             qe = f"DELETE FROM {self.table_name} WHERE {condition};"
             self.database.update(qe)
+
+    def __getitem__(self, item):
+        return self.find_item(columns=item)
 
     def find_item(self, columns=None, condition=None):
         if columns and condition:
