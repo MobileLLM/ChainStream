@@ -64,4 +64,13 @@ class WordBuffer(BufferContext):
     def read(self):
         return self.get()
 
+class ImageBuffer(BufferContext):
+    def __init__(self, max_image_num):
+        super().__init__(maxlen=max_image_num, item_type='image')
+
+    def save(self, item):
+        self.add(item)
+
+    def read(self):
+        return self.get()
 

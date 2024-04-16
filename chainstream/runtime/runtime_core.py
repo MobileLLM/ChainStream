@@ -68,17 +68,3 @@ class RuntimeCore(RuntimeCoreAnalysisOp):
     def __init__(self):
         super(RuntimeCore, self).__init__()
 
-
-class ChainStreamServerBase(object):
-    def __init__(self):
-        self.chainstream_core = RuntimeCore()
-
-
-    def start(self):
-        pass
-
-    def config(self, *args, **kwargs):
-        pass
-
-    def get_chainstream_core(self):
-        return self.chainstream_core

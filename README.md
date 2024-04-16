@@ -89,3 +89,14 @@ class PeopleRecognitionAgent(Agent):
         self._source2.remove_listener(self)
 
 ```
+
+In an agent, the following items have to be configured:
+
+- Agent name, description, package (zip)
+- ChainStream version
+- Devices: desktop, phone, glass, watch, etc. (numbers)
+- Deployment doc: how the devices are deployed
+- Dependency: other agents/streams/memory that must be available and their versions
+- LLM: models that must be available
+- Public streams/memory: output streams/memory that can be seen by other agents
+

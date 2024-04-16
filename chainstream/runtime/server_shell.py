@@ -1,9 +1,8 @@
-from .runtime_core import ChainStreamServerBase
-
-
-class ChainStreamServerShell(ChainStreamServerBase):
-    def __init__(self):
-        super().__init__()
+class ChainStreamServerShell():
+    def __init__(self, core):
+        self.output_dir = None
+        self.verbose = None
+        self.chainstream_core = core
 
     def start(self):
         print(self._handle_command("help"))
