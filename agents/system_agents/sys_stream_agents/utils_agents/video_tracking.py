@@ -16,7 +16,7 @@ class VideoTrackingAgent(cs.agent.Agent):
         self.model_id = 'damo/cv_vitb_video-single-object-tracking_ostrack'
         self.init_bbox = init_bbox
         self._source1 = cs.get_stream()  # instance of Stream
-        self.detection_buffer = cs.context.AudioBufferBuffer(max_text_num=1024)
+        self.detection_buffer = cs.context.AudioBuffer(max_text_num=1024)
         self.init_bbox=init_bbox#第一帧object
 
     def track_object(self, frame):#frame为视频地址
