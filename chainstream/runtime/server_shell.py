@@ -4,8 +4,6 @@ from .runtime_core import ChainStreamServerBase
 class ChainStreamServerShell(ChainStreamServerBase):
     def __init__(self):
         super().__init__()
-        self.output_dir = None
-        self.verbose = None
 
     def start(self):
         print(self._handle_command("help"))
@@ -19,8 +17,7 @@ class ChainStreamServerShell(ChainStreamServerBase):
                 print(out)
 
     def config(self, output_dir=None, verbose=False):
-        self.output_dir = output_dir
-        self.verbose = verbose
+        self.chainstream_core.config(output_dir=output_dir, verbose=verbose)
 
     def _handle_command(self, cmd):
         out = ''

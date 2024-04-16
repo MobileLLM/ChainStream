@@ -13,6 +13,10 @@ class RuntimeCoreOp:
         self.agent_manager = AgentManager()
         self.stream_manager = StreamManager()
 
+    def config(self, *args, **kwargs):
+        self.verbose = kwargs.get('verbose', False)
+        self.output_dir = kwargs.get('output_dir', None)
+
     def register_agent(self, agent) -> None:
         self.agent_manager.register_agent(agent)
 
