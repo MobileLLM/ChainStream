@@ -65,10 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 TextView textView = new TextView(MainActivity.this);
 
                 textView.setText(data);
-                logLinearLayout.addView(textView);
+                textView.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+                logLinearLayout2.addView(textView);
 
-                logScrollView.post(() -> {
-                    logScrollView.fullScroll(View.FOCUS_DOWN);
+                logScrollView2.post(() -> {
+                    logScrollView2.fullScroll(View.FOCUS_DOWN);
                 });
             }
         }

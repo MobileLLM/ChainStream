@@ -63,6 +63,7 @@ public class MyWebSocketServer extends WebSocketServer {
 
     MyWebSocketServer(InetSocketAddress host){
         super(host);
+        Log.d("websocket", "启动到" + host.toString());
     }
 
     public void setPreView(SurfaceView view) {
@@ -160,12 +161,11 @@ public class MyWebSocketServer extends WebSocketServer {
             }
             case "log": {
                 String log_msg = parts[1];
-                Logging.debug(log_msg);
+                Logging.debug("receive log message: "+log_msg);
 
                 Intent updateIntent = new Intent("ACTION_UPDATE_TEXT");
                 updateIntent.putExtra("data", log_msg);
                 service.sendBroadcast(updateIntent);
-
 
                 break;
             }

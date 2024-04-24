@@ -33,12 +33,16 @@
         android:id="@+id/label_top"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Android LogCat：" />
+        android:text="Android LogCat："
+        android:textColor="#3F51B5"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ScrollView
         android:id="@+id/logScrollView"
         android:layout_width="match_parent"
-        android:layout_height="228dp">
+        android:layout_height="228dp"
+        android:background="#F8DBDB">
 
         <LinearLayout
             android:id="@+id/logLinearLayout"
@@ -53,12 +57,16 @@
         android:id="@+id/label_bottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="ChainStream Log：" />
+        android:text="ChainStream Log："
+        android:textColor="#3F51B5"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ScrollView
         android:id="@+id/logScrollView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#CDEBDC">
 
         <LinearLayout
             android:id="@+id/logLinearLayout2"
