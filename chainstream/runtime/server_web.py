@@ -9,10 +9,10 @@ class ChainStreamServerWeb():
         from .web.backend.app import app
         self.app = app
 
-
     def config(self, *args, **kwargs):
         self.ip = kwargs.get('ip', '127.0.0.1')
         self.port = kwargs.get('port', 6677)
+        self.chainstream_core.config(args, kwargs)
 
     def start(self):
         print(self.ip, self.port)

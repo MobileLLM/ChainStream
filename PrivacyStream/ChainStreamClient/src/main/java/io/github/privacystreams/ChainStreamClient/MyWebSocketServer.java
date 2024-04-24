@@ -1,11 +1,15 @@
 package io.github.privacystreams.ChainStreamClient;
 
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -51,12 +55,31 @@ public class MyWebSocketServer extends WebSocketServer {
 
     private SurfaceView preView;
 
+    private LinearLayout logLinearLayout;
+
+    private ScrollView logScrollView;
+
+    private Service service;
+
     MyWebSocketServer(InetSocketAddress host){
         super(host);
+        Log.d("websocket", "启动到" + host.toString());
     }
 
     public void setPreView(SurfaceView view) {
         preView = view;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
+    public void setLogLinearLayout(LinearLayout logLinearLayout) {
+        this.logLinearLayout = logLinearLayout;
+    }
+
+    public void setLogScrollView(ScrollView logScrollView) {
+        this.logScrollView = logScrollView;
     }
 
     public void setText(TextView textImage, TextView textAudio, TextView textSensors) {
@@ -134,6 +157,16 @@ public class MyWebSocketServer extends WebSocketServer {
                                 }
                             }
                         });
+                break;
+            }
+            case "log": {
+                String log_msg = parts[1];
+                Logging.debug("receive log message: "+log_msg);
+
+                Intent updateIntent = new Intent("ACTION_UPDATE_TEXT");
+                updateIntent.putExtra("data", log_msg);
+                service.sendBroadcast(updateIntent);
+
                 break;
             }
             case "audio": {

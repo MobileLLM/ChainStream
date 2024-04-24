@@ -24,7 +24,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
 import io.github.privacystreams.ChainStreamClient.floatingwindow.ServiceFloatingWindow;
 
@@ -80,10 +83,12 @@ public class ChainStreamClientService extends Service {
         wakeLock.acquire();
 
 
-        InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
+       InetSocketAddress myHost = new InetSocketAddress(getIPAddress(true),6666);
+//         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
 
         myWebSocketServer = new MyWebSocketServer(myHost);
         myWebSocketServer.setPreView(mPreView);
+        myWebSocketServer.setService(this);
         myWebSocketServer.setContext(this);
 
     }
@@ -113,5 +118,35 @@ public class ChainStreamClientService extends Service {
     public void start(Context context) {
         Intent serviceIntent = new Intent(context, ChainStreamClientService.class);
         context.startService(serviceIntent);
+    }
+
+    public static String getIPAddress(boolean useIPv4) {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    if (!addr.isLoopbackAddress()) {
+                        String ip = addr.getHostAddress();
+                        // 判断是否使用IPv4
+                        boolean isIPv4 = ip.indexOf(':') < 0;
+                        if (useIPv4) {
+                            if (isIPv4)
+                                return ip;
+                        } else {
+                            if (!isIPv4) {
+                                int delim = ip.indexOf('%'); // 去掉IPv6地址后面的zone index
+                                return delim < 0 ? ip.toUpperCase() : ip.substring(0, delim).toUpperCase();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

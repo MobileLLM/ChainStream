@@ -1,6 +1,10 @@
 package io.github.privacystreams.ChainStreamClient;
 
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     public Button mButtonStop;
     public LinearLayout logLinearLayout;
+    public LinearLayout logLinearLayout2;
     public ScrollView logScrollView;
+    public ScrollView logScrollView2;
 
     public Button mButtonClear;
 
@@ -51,7 +57,26 @@ public class MainActivity extends AppCompatActivity {
 
     private LogReaderTask mLogReaderTask;
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String data = intent.getStringExtra("data");
+            if (data != null) {
+                TextView textView = new TextView(MainActivity.this);
 
+                textView.setText(data);
+                textView.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+                logLinearLayout2.addView(textView);
+
+                logScrollView2.post(() -> {
+                    logScrollView2.fullScroll(View.FOCUS_DOWN);
+                });
+            }
+        }
+    };
+
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,19 +86,15 @@ public class MainActivity extends AppCompatActivity {
         mButtonStop = findViewById(R.id.button2);
         logLinearLayout  = findViewById(R.id.logLinearLayout);
         logScrollView = findViewById(R.id.logScrollView);
+        logLinearLayout2  = findViewById(R.id.logLinearLayout2);
+        logScrollView2 = findViewById(R.id.logScrollView2);
         mButtonClear = findViewById(R.id.button3);
 
         is_server_running = Boolean.FALSE;
 
-        TextView mTextAudio = findViewById(R.id.textAudio);
-        TextView mTextImage = findViewById(R.id.textImage);
-        TextView mTextSensors = findViewById(R.id.textSensors);
-
-        mTextAudio.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
-        mTextImage.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
-        mTextSensors.setTextColor(ContextCompat.getColor(this, android.R.color.primary_text_light));
-
         mLogReaderTask = new LogReaderTask(logLinearLayout, this, logScrollView);
+
+        registerReceiver(receiver, new IntentFilter("ACTION_UPDATE_TEXT"));
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -104,7 +125,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mButtonClear.setOnClickListener(view -> logLinearLayout.removeAllViews());
+        mButtonClear.setOnClickListener(view -> {
+            logLinearLayout.removeAllViews();
+            logLinearLayout2.removeAllViews();
+        }
+        );
     }
 
     @Override
@@ -119,5 +144,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ChainStreamClientService.class);
         stopService(intent);
         super.onDestroy();
+        unregisterReceiver(receiver);
     }
 }

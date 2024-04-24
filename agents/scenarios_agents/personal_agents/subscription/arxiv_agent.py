@@ -50,12 +50,12 @@ class ArxivAgent(cs.agent.Agent):
                     self.daily_new_papers_stream.send(paper)
 
         def recommend_paper(paper):
-            prompt = f"Recently I have been doing research on { self.recent_research_memory }, and this morning a paper with the title {paper.title} and the content {} was released on arxiv. Would you recommend me to read this paper? ?Simply answer Yes or No"
+            prompt = (f"Recently I have been doing research on {self.recent_research_memory}, and this morning a paper "
+                      f"with the title {paper.title} and the content {paper.abstract} was released on arxiv. Would you recommend me to read this paper? ?Simply answer Yes or No")
             response = self.text_model.query(prompt).lower().strip()
             print(response)
             if response.startswith('yes'):
                 self.daily_recommendations_stream.send_item(paper)
-
 
         self.clock_hours_stream.register_listener(self, collect_daily_new_papers)
         self.daily_new_papers_stream.register_listener(self, recommend_paper)

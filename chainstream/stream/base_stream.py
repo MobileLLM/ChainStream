@@ -66,6 +66,9 @@ class BaseStream(StreamInterface):
         call_from = inspect.stack()[1]
         self.recorder.record_new_item(call_from.filename, call_from.function)
 
+    def send_item(self, item):
+        self.add_item(item)
+
     def process_item(self):
         while True:
             item = self.queue.get()

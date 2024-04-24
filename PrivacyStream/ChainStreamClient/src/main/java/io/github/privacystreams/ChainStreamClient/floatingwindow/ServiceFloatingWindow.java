@@ -42,7 +42,7 @@ public class ServiceFloatingWindow {
     private boolean isInit = false;
 
     private int show_width = 300;
-    private int hight = 800;
+    private int hight = 500;
 
     private int hidden_width = 100;
     private int hidden_hight = 100;

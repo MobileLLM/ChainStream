@@ -16,8 +16,7 @@ class ChainStreamServerShell():
                 print(out)
 
     def config(self, output_dir=None, verbose=False):
-        self.output_dir = output_dir
-        self.verbose = verbose
+        self.chainstream_core.config(output_dir=output_dir, verbose=verbose)
 
     def _handle_command(self, cmd):
         out = ''

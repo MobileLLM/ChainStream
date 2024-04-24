@@ -8,16 +8,19 @@ def fetch(memory_id):
         raise RuntimeError(f'unknown memory_id: {memory_id}')
 
 
-def create(memory_id, type=None):
+def create(memory_id, type, columns_and_setting=None):
+    memory = None
     if type == 'kv':
-        from .kv_memory import KV_Memory
-        memory = KV_Memory(memory_id)
+        from .kv_memory import KVMemory
+        memory = KVMemory(memory_id)
     elif type == 'seq':
+        if columns_and_setting is None:
+            raise RuntimeError('columns_and_setting must be provided for sequential memory')
         from .sequential_memory import SequentialMemory
-        memory = SequentialMemory(memory_id)
-    elif type == 'relational':
-        from .relational_memory import RelationalMemory
-        memory = RelationalMemory(memory_id)
+        memory = SequentialMemory(memory_id, columns_and_setting)
+    # elif type == 'relational':
+    #     from .relational_memory import RelationalMemory
+    #     memory = RelationalMemory(memory_id)
     available_memories[memory_id] = memory
     return memory
 
