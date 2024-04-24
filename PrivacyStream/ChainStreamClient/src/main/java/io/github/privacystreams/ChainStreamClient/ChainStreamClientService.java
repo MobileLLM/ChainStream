@@ -84,6 +84,7 @@ public class ChainStreamClientService extends Service {
 
         myWebSocketServer = new MyWebSocketServer(myHost);
         myWebSocketServer.setPreView(mPreView);
+        myWebSocketServer.setService(this);
         myWebSocketServer.setContext(this);
 
     }
