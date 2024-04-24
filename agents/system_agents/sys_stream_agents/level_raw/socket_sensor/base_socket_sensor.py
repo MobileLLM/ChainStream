@@ -19,7 +19,7 @@ class BaseSocketSensors(cs.agent.Agent):
     SOCKET_IP = "47.94.168.126"
     SOCKET_PORT = 6000
 
-    def __init__(self, agent_id='default_sensors', stream_name=None, ip='192.168.43.1', port=6666):
+    def __init__(self, agent_id='default_socket_sensors', stream_name=None, ip='192.168.43.1', port=6666):
         super().__init__(agent_id)
         self.socket_thread = None
         self.socket_client = None
