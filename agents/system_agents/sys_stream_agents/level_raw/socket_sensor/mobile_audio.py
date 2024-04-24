@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from agents.system_agents.raw_level.socket_sensor.base_socket_sensor import BaseSocketSensors
+from agents.system_agents.sys_stream_agents.level_raw.socket_sensor.base_socket_sensor import BaseSocketSensors
 
 from pydub import AudioSegment
 
