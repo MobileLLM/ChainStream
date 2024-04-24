@@ -16,10 +16,11 @@ class TestAndroidLogAction(cs.agent.Agent):
     def start(self):
         self.enable = True
         self.thread = threading.Thread(target=self.send())
+        self.thread.start()
 
     def send(self):
         while self.enable:
-            print(f"TestAndroidLogAction: {datetime.datetime.now()}")
+            # print(f"TestAndroidLogAction: {datetime.datetime.now()}")
             self.log_action.add_item(f"TestAndroidLogAction: {datetime.datetime.now()}")
             sleep(3)
 

@@ -32,7 +32,7 @@ class BaseSocketActions:
 
     def register_func(self, agent):
         def handel_new_action(log):
-            print(f"{self.cmd},{log}")
+            # print(f"{self.cmd},{log}")
             self.socket_client.send_message(f"{self.cmd},{log}")
 
         self.stream.register_listener(agent, handel_new_action)

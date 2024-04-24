@@ -125,7 +125,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mButtonClear.setOnClickListener(view -> logLinearLayout.removeAllViews());
+        mButtonClear.setOnClickListener(view -> {
+            logLinearLayout.removeAllViews();
+            logLinearLayout2.removeAllViews();
+        }
+        );
     }
 
     @Override
