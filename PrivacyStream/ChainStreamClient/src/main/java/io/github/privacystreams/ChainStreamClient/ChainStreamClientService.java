@@ -69,7 +69,7 @@ public class ChainStreamClientService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ChainStreamClientService")
                 .setContentTitle("ChainStream")
-                .setContentText("haha")
+                .setContentText("ChainStream is watching you")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .setTicker("lala");

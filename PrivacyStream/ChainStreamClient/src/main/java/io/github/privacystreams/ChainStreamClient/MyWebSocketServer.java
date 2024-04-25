@@ -109,9 +109,10 @@ public class MyWebSocketServer extends WebSocketServer {
         switch (cmd) {
             case "video": {
                 String para = parts[1];
+                String cameraId = parts[2];
                 UQI uqi = new UQI(myContext);
                 Logging.debug("begin video socket");
-                uqi.getData(Image.takePhotoBgPeriodic(0, Integer.parseInt(para), preView), Purpose.UTILITY("taking picture."))
+                uqi.getData(Image.takePhotoBgPeriodic(Integer.parseInt(cameraId), Integer.parseInt(para), preView), Purpose.UTILITY("taking picture."))
                         .setField("imagePath", ImageOperators.getFilepath(Image.IMAGE_DATA))
                         .forEach("imagePath", new Callback<String>() {
                             @Override

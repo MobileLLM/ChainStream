@@ -10,10 +10,10 @@ from io import BytesIO
 class VideoSocketSensors(cs.agent.Agent):
     is_agent = True
 
-    def __init__(self, agent_id='sys_socket_video_sensors', video_fps=0.1, ip='192.168.43.41', port=6666):
+    def __init__(self, agent_id='sys_socket_video_sensors', video_fps=1, ip='192.168.43.41', port=6666, cameraID=1):
         super().__init__(agent_id)
         self.video_fps = video_fps
-        self.cmd = f"video,{int(1000 / float(self.video_fps))}"
+        self.cmd = f"video,{int(1000 / float(self.video_fps))},{cameraID}"
         self.stream = cs.stream.create_stream("socket_front_camera_video")
         self.base_socket = BaseSocketSensors(ip=ip, port=port, cmd=self.cmd)
 
@@ -32,7 +32,7 @@ class VideoSocketSensors(cs.agent.Agent):
 
 
 if __name__ == '__main__':
-    ip = '192.168.43.41'
+    ip = '192.168.20.134'
     default_sensors_agent = VideoSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:

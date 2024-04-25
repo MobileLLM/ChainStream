@@ -45,10 +45,10 @@
 
     <View
 
-        android:background="#ff00ff"
         android:id="@+id/fw_in_line_view"
-        android:layout_width="10dp"
-        android:layout_height="match_parent"/>
+        android:layout_width="28dp"
+        android:layout_height="match_parent"
+        android:background="#ff00ff" />
 
 
 </FrameLayout>
