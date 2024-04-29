@@ -13,11 +13,11 @@ from io import BytesIO
 class BaseSocketSensors:
     is_agent = False
 
-    USE_GLOBAL_SOCKET_IP = False
+    USE_GLOBAL_SOCKET_IP = True
     # SOCKET_IP = "192.168.43.226"
     # SOCKET_IP = "192.168.43.41"
     SOCKET_IP = "47.94.168.126"
-    SOCKET_PORT = 6000
+    SOCKET_PORT = 6677
 
     def __init__(self, ip='192.168.43.1', port=6666, cmd=None):
         self.socket_thread = None

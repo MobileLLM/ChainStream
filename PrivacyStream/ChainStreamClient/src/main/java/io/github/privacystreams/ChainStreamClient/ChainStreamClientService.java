@@ -56,7 +56,7 @@ public class ChainStreamClientService extends Service {
 //        Bundle bundle = new Bundle();
 //        bundle.putInt(MainActivity.NAV_ID_KEY, R.id.nav_data);
 //        notificationIntent.putExtras(bundle);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -83,8 +83,8 @@ public class ChainStreamClientService extends Service {
         wakeLock.acquire();
 
 
-       InetSocketAddress myHost = new InetSocketAddress(getIPAddress(true),6666);
-//         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
+//       InetSocketAddress myHost = new InetSocketAddress(getIPAddress(true),6666);
+         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
 
         myWebSocketServer = new MyWebSocketServer(myHost);
         myWebSocketServer.setPreView(mPreView);

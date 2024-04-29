@@ -20,8 +20,8 @@ class VideoSocketSensors(cs.agent.Agent):
     def start(self):
         def on_message(ws, frame):
             self.stream.send_item({'timestamp': datetime.now(), 'frame': Image.open(BytesIO(frame))})
-            # image = Image.open(BytesIO(frame))
-            # image.show()
+            image = Image.open(BytesIO(frame))
+            image.show()
             # self.logger.info()
         self.base_socket.start(on_message)
 
