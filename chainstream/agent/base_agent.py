@@ -53,3 +53,7 @@ class Agent(AgentInterface):
 
     def get_meta_data(self):
         return self.metaData.__dict__()
+
+    @staticmethod
+    def get_doc():
+        raise NotImplementedError("Please implement this method in your agent class")
