@@ -18,7 +18,7 @@ def get_model(name='gpt-3.5'):
     _model_instances[name] = inst
     return inst
 
-def make_prompt(args):
+def make_prompt(*args, **kwargs):
     pass
 
 def parse_response(response, target=None):
