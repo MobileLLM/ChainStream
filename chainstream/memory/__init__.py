@@ -1,14 +1,18 @@
 available_memories = {}
 
 
-def fetch(memory_id):
+def get_memory(memory_id):
+    return fetch_memory(memory_id)
+
+
+def fetch_memory(memory_id):
     if memory_id in available_memories:
         return available_memories[memory_id]
     else:
         raise RuntimeError(f'unknown memory_id: {memory_id}')
 
 
-def create(memory_id, type, columns_and_setting=None):
+def create_memory(memory_id, type, columns_and_setting=None):
     memory = None
     if type == 'kv':
         from .kv_memory import KVMemory
@@ -23,4 +27,3 @@ def create(memory_id, type, columns_and_setting=None):
     #     memory = RelationalMemory(memory_id)
     available_memories[memory_id] = memory
     return memory
-

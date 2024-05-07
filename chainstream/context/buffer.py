@@ -19,7 +19,7 @@ class BufferContext(ContextInterface):
 
 
 class VideoBuffer(BufferContext):
-    def __init__(self, duration):
+    def __init__(self, duration=None):
         super().__init__(maxlen=duration, item_type='video')
 
     def save(self, item):
@@ -31,7 +31,7 @@ class VideoBuffer(BufferContext):
 
 
 class AudioBuffer(BufferContext):
-    def __init__(self, duration):
+    def __init__(self, duration=None):
         super().__init__(maxlen=duration, item_type='audio')
 
     def save(self, item):
@@ -42,7 +42,7 @@ class AudioBuffer(BufferContext):
 
 
 class TextBuffer(BufferContext):
-    def __init__(self, max_text_num):
+    def __init__(self, max_text_num=None):
         super().__init__(maxlen=max_text_num, item_type='text')
 
     def save(self, item):
@@ -53,7 +53,7 @@ class TextBuffer(BufferContext):
 
 
 class WordBuffer(BufferContext):
-    def __init__(self, max_word_num):
+    def __init__(self, max_word_num=None):
         super().__init__(maxlen=max_word_num, item_type='word')
 
     def save(self, item):
@@ -65,7 +65,7 @@ class WordBuffer(BufferContext):
         return self.get()
 
 class ImageBuffer(BufferContext):
-    def __init__(self, max_image_num):
+    def __init__(self, max_image_num=None):
         super().__init__(maxlen=max_image_num, item_type='image')
 
     def save(self, item):
