@@ -40,6 +40,7 @@ class BaseStream(StreamInterface):
     def register_listener(self, agent, listener_func):
         try:
             self.listeners.append((agent.agent_id, listener_func))
+            self.recorder.record_listener_actions("register_listener", agent.agent_id, listener_func.__name__)
             self.recorder.record_listener_change(len(self.listeners))
             if not self.is_running:
                 self.is_running = True

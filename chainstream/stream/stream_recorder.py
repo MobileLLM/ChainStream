@@ -87,6 +87,7 @@ class StreamRecorder:
         self.queue_recorder = QueueRecoder(streamMetaData.stream_id, queue, analysis_pre_min)
 
         self.listener_pre_gap_min = []
+        self.listener_len_log = []
         self.listener_log = []
 
     def record_new_item(self, from_file, from_function):
@@ -97,15 +98,23 @@ class StreamRecorder:
         self.agent_file_func_to_queue_recorder[(from_file, from_function)].record_new_item()
         self.queue_recorder.record_new_item()
 
+    def record_listener_actions(self, actions, agent_id, func_name):
+        self.listener_log.append({
+            "time": datetime.datetime.now(), 
+            "actions": actions, 
+            "agent_id": agent_id, 
+            "func_name": func_name
+            })
+
     def record_listener_change(self, listener_count):
-        tmp_listener_log = datetime.datetime.now()
+        tmp_listener_len_log = datetime.datetime.now()
 
-        if self.listener_pre_gap_min != [] and self.listener_pre_gap_min[-1][0] > tmp_listener_log - datetime.timedelta(
+        if self.listener_pre_gap_min != [] and self.listener_pre_gap_min[-1][0] > tmp_listener_len_log - datetime.timedelta(
                 minutes=self.analysis_gap):
-            self.listener_pre_gap_min.append((tmp_listener_log, sum(self.listener_log) / len(self.listener_log)))
-            self.listener_log = []
+            self.listener_pre_gap_min.append((tmp_listener_len_log, sum(self.listener_len_log) / len(self.listener_len_log)))
+            self.listener_len_log = []
 
-        self.listener_log.append(listener_count)
+        self.listener_len_log.append(listener_count)
 
     def record_send_item(self, agent_id, func_id):
         if (agent_id, func_id) not in self.queue_to_agent_id_func_recorder:
@@ -134,7 +143,8 @@ class StreamRecorder:
                     "log": v.get_log() if need_log else None
                 } for k, v in self.queue_to_agent_id_func_recorder.items()
             },
+            "listener_actions_log": self.listener_log,
             "queue_statistics": self.queue_recorder.get_queue_statistics(),
             "listener_statistics": self.listener_pre_gap_min if self.listener_pre_gap_min != [] else [
-                (datetime.datetime.now(), sum(self.listener_log))]
+                (datetime.datetime.now(), sum(self.listener_len_log))]
         }

@@ -15,7 +15,7 @@ def get_stream(stream_id):
 
 
 def create_stream(stream_id, type=None):
-    create_by_agent_file = inspect.stack()[1][1]
+    create_by_agent_file = inspect.stack()[1].filename
     if type == 'video':
         from .video_stream import VideoStream
         stream = VideoStream(stream_id)
