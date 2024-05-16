@@ -84,6 +84,7 @@ class AgentManager(AgentAnalyzer):
         json_data = {}
 
         for path in paths:
+            path = path.replace('\\', '/')
             directories = path.split('/')
             current_dict = json_data
 
