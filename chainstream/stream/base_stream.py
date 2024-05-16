@@ -14,21 +14,21 @@ class StreamMeta:
         self.stream_id = kwargs.get('stream_id')
         self.description = kwargs.get('description')
         self.create_time = datetime.datetime.now()
-        self.create_by = kwargs.get('create_by')
+        self.create_by_agent_file = kwargs.get('create_by_agent_file')
 
     def __dict__(self):
         return {
             "stream_id": self.stream_id,
             "description": self.description,
             "create_time": self.create_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "create_by": self.create_by
+            "create_by": self.create_by_agent_file
         }
 
 
 class BaseStream(StreamInterface):
-    def __init__(self, stream_id, description=None, create_by=None) -> None:
+    def __init__(self, stream_id, description=None, create_by_agent_file=None) -> None:
         super().__init__()
-        self.metaData = StreamMeta(stream_id=stream_id, description=description, create_by=create_by)
+        self.metaData = StreamMeta(stream_id=stream_id, description=description, create_by_agent_file=create_by_agent_file)
         self.logger = logging.getLogger(self.metaData.stream_id)
         self.listeners = []
         self.queue = queue.Queue()

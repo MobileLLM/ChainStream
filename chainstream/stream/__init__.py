@@ -1,3 +1,5 @@
+import inspect
+
 available_streams = {}
 
 stream_manager = None
@@ -13,12 +15,13 @@ def get_stream(stream_id):
 
 
 def create_stream(stream_id, type=None):
+    create_by_agent_file = inspect.stack()[1][1]
     if type == 'video':
         from .video_stream import VideoStream
         stream = VideoStream(stream_id)
     else:
         from .base_stream import BaseStream
-        stream = BaseStream(stream_id)
+        stream = BaseStream(stream_id, create_by_agent_file=create_by_agent_file)
     if stream_manager is None:
         available_streams[stream_id] = stream
     return stream
