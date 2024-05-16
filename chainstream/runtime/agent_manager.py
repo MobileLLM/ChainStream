@@ -129,7 +129,7 @@ class AgentManager(AgentAnalyzer):
         target_agent_path = None
         for agent_path in agents_list:
             agent_path = agent_path.replace('\\', '/')
-            if agent_path.split('/')[-1].split('.')[0] == agent_id:
+            if agent_path.split('/')[-1] == agent_id:
                 target_agent_path = agent_path
                 break
         if target_agent_path is None:
