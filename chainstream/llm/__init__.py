@@ -1,20 +1,24 @@
 _model_instances = {}
 
-def get_model(name='gpt-3.5'):
+def get_model(name=['text']):
     if name in _model_instances and _model_instances[name] is not None:
         return _model_instances[name]
-    if name == 'gpt-3.5':
+
+    if name is [] or not all(n in ['text', 'image', 'audio'] for n in name):
+        raise ValueError(f'invalid name: {name}')
+
+    if name == ['text']:
         from chainstream.llm.python_base_openai import TextGPTModel
         inst = TextGPTModel()
-    elif name == 'gpt-4-vision':
+    elif 'image' in name and 'audio' not in name:
         from chainstream.llm.python_base_openai import ImageGPTModel
         inst = ImageGPTModel()
-    elif name == 'gpt-audio':
+    elif 'audio' in name and 'image' not in name:
         from chainstream.llm.python_base_openai import AudioGPTModel
         inst = AudioGPTModel()
     else:
-        # TODO support other local LLMs
-        raise RuntimeError(f'unknown LLM: {name}')
+        from chainstream.llm.python_base_openai import AudioImageGPTModel
+        inst = AudioImageGPTModel()
     _model_instances[name] = inst
     return inst
 

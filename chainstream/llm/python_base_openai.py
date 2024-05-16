@@ -203,6 +203,46 @@ class AudioGPTModel(BaseOpenAI):
         return res, transcript
 
 
+# TODO: finish and test this model
+class AudioImageGPTModel(BaseOpenAI):
+    def __init__(self, model='whisper-1', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
+                 chat_model="gpt-4-vision-preview"):
+        super().__init__(model=model, model_type='audio', temperature=temperature, verbose=verbose, retry=retry,
+                         timeout=timeout, identifier=identifier)
+        self.chat_model = chat_model
+
+    def query(self, prompt, audio_file_path):
+        audio_file = open(audio_file_path, "rb")
+
+        transcript = self.client.audio.transcriptions.create(
+            model=self.model,
+            file=audio_file,
+            temperature=self.temperature,
+        )
+
+        response = self.client.chat.completions.create(
+            model=self.chat_model,
+            temperature=self.temperature,
+            messages=[
+                {
+                    "role": "system",
+                    "content": prompt
+                },
+                {
+                    "role": "user",
+                    "content": transcript.text
+                }
+            ]
+        )
+
+        res = response.choices[0].message.content
+        self.prompt_tokens += response.usage.prompt_tokens
+        self.completion_tokens += response.usage.completion_tokens
+        self.history[prompt] = res
+
+        return res, transcript
+
+
 if __name__ == '__main__':
     # prompt = "你好，你是什么模型，具体是什么型号?"
     # model = TextGPTModel()
