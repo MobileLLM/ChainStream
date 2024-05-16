@@ -128,7 +128,8 @@ class AgentManager(AgentAnalyzer):
         agents_list = self.scan_predefined_agents()
         target_agent_path = None
         for agent_path in agents_list:
-            if agent_path.endswith(f'/{agent_id}'):
+            agent_path = agent_path.replace('\\', '/')
+            if agent_path.split('/')[-1].split('.')[0] == agent_id:
                 target_agent_path = agent_path
                 break
         if target_agent_path is None:
