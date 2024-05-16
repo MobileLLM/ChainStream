@@ -1,14 +1,28 @@
 from chainstream.runtime import RuntimeCore
 
 class OJ:
-    def __init__(self, task_file, agent_file):
+    def __init__(self, task, agent_file):
         self.runtime = RuntimeCore()
-        self.task_file = task_file
+        self.task = task
         self.agent_file = agent_file
     
     def start_test_agent(self):
-        pass
+        self._init_task(self.runtime)
+
+        self._start_agent()
+
+        self.task.start_stream(self.runtime)
+
+        self.task.evaluate_stream(self.runtime)
 
     def _init_task(self):
-        self._read_task()
+        self.task.init_enviroment()
+
+    def _start_agent():
+        try:
+            pass
+        except Exception as e:
+            print(e)
+            print("Agent file not found")
+            return
         
