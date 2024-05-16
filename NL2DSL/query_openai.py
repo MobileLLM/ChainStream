@@ -21,11 +21,11 @@ GPT_CONFIG = {
 
 
 class BaseOpenAI:
-    def __init__(self, model='gpt-3.5-turbo-1106', model_type='text', temperature=0.7, verbose=True, retry=3,
+    def __init__(self, model='gpt-4', model_type='text', temperature=0.7, verbose=True, retry=3,
                  timeout=15, identifier=""):
         self.prompt_tokens = 0
         self.completion_tokens = 0
-        self.history = collections.OrderedDict()
+        self.history = []
 
         self.model = model
 
@@ -60,11 +60,12 @@ class BaseOpenAI:
 
 
 class TextGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-3.5-turbo-1106', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
+    def __init__(self, model='gpt-4', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 
     def query(self, prompt):
+        print(self.model)
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[
@@ -75,17 +76,20 @@ class TextGPTModel(BaseOpenAI):
         res = response.choices[0].message.content
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens
-        self.history[prompt] = res
+        self.history.append(res)
 
         return res
 
 
 
 if __name__ == '__main__':
-    # prompt = "你好，你是什么模型，具体是什么型号?"
-    # model = TextGPTModel()
-    #
-    # print(model.query(prompt))
+    prompt = {
+        "role": "system",
+        "content": "介绍一下你自己，你是具体什么型号的模型" 
+    }
+    model = TextGPTModel(model='gpt-4o')
+    
+    print(model.query(prompt))
 
     # prompt = "请概括这里说了什么"
     #
@@ -94,29 +98,29 @@ if __name__ == '__main__':
     #
     # print(model.query(prompt, audio_file_path))
 
-    prompt = "第一张图片中的动画片有再次出现在后面其他图片中吗"
+    # prompt = "第一张图片中的动画片有再次出现在后面其他图片中吗"
 
-    image_file_path1 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img.jpeg")
-    image_file_path2 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img2.jpeg")
-    image_file_path3 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img3.jpg")
-    image_file_path4 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img4.jpeg")
-    image_file_path5 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img5.jpeg")
+    # image_file_path1 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img.jpeg")
+    # image_file_path2 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img2.jpeg")
+    # image_file_path3 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img3.jpg")
+    # image_file_path4 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img4.jpeg")
+    # image_file_path5 = os.path.join(Path(__file__).parent.parent.parent, "ChainStreamTest/llm/tmp_img/test_img5.jpeg")
 
-    model = ImageGPTModel()
+    # model = ImageGPTModel()
 
+    # # print(model.query(prompt, [image_file_path1, image_file_path2,
+    # #                            image_file_path1, image_file_path2,
+    # #                            image_file_path1, image_file_path2,
+    # #                            image_file_path1, image_file_path2,
+    # #                            image_file_path1, image_file_path2,
+    # #                            image_file_path3, image_file_path3,
+    # #                            image_file_path3, image_file_path3,
+    # #                            image_file_path4, image_file_path4,
+    # #                            image_file_path4, image_file_path4,
+    # #                            image_file_path5, image_file_path5,
+    # #                            image_file_path5, image_file_path5,
+    # #                            ]))
     # print(model.query(prompt, [image_file_path1, image_file_path2,
-    #                            image_file_path1, image_file_path2,
-    #                            image_file_path1, image_file_path2,
-    #                            image_file_path1, image_file_path2,
-    #                            image_file_path1, image_file_path2,
-    #                            image_file_path3, image_file_path3,
-    #                            image_file_path3, image_file_path3,
-    #                            image_file_path4, image_file_path4,
-    #                            image_file_path4, image_file_path4,
-    #                            image_file_path5, image_file_path5,
-    #                            image_file_path5, image_file_path5,
+    #                            image_file_path3, image_file_path4,
+    #                            image_file_path5
     #                            ]))
-    print(model.query(prompt, [image_file_path1, image_file_path2,
-                               image_file_path3, image_file_path4,
-                               image_file_path5
-                               ]))
