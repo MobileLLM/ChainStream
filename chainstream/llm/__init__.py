@@ -1,5 +1,6 @@
 from utils import convert_audio_to_text, convert_image_to_base64
 from PIL import Image
+from chainstream.context import Buffer
 import os
 
 _model_instances = {}
@@ -38,6 +39,7 @@ def make_prompt(*args, system_prompt=None):
     - audio file path string: user audio file
     - image file path string: user image file
     - list: [user image, user audio]
+    - buffer: user input buffer
     
     usage:
     text_prompt = make_prompt("can you tell me a joke?")
@@ -57,7 +59,8 @@ def make_prompt(*args, system_prompt=None):
         })
     user_content = []
     for arg in args:
-    
+        if isinstance(arg, Buffer):
+            arg = arg.get_all()
         if isinstance(arg, str) and not os.path.isfile(arg):
             user_content.append({
                 "type": "text",

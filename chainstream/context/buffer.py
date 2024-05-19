@@ -2,75 +2,47 @@ from chainstream.interfaces import ContextInterface
 from collections import deque
 import re
 
-class BufferContext(ContextInterface):
+class Buffer(ContextInterface):
     def __init__(self, maxlen, item_type):
         self.maxlen = maxlen
         self.item_type = item_type
         self.buffer = deque(maxlen=self.maxlen)
 
-    def add(self, frame):
-        self.buffer.append(frame)
+    def append(self, data):
+        self.buffer.append(data)
 
-    def get(self):
+    def pop(self):
         return self.buffer.popleft()
+
+    def get_all(self):
+        return list(self.buffer)
+    
+    def __getitem__(self, index):
+        return self.buffer[index]
 
     def __len__(self):
         return len(self.buffer)
 
 
-class VideoBuffer(BufferContext):
-    def __init__(self, duration=None):
-        super().__init__(maxlen=duration, item_type='video')
-
-    def save(self, item):
-        self.add(item)
-
-    def snapshot(self):
-        # TODO: need discussion
-        return self.get()
-
-
-class AudioBuffer(BufferContext):
+class AudioBuffer(Buffer):
     def __init__(self, duration=None):
         super().__init__(maxlen=duration, item_type='audio')
 
-    def save(self, item):
-        self.add(item)
-
     def snapshot(self):
-        return self.get()
+        return self.get_all()
 
 
-class TextBuffer(BufferContext):
+class TextBuffer(Buffer):
     def __init__(self, max_text_num=None):
         super().__init__(maxlen=max_text_num, item_type='text')
 
-    def save(self, item):
-        self.add(item)
-
     def read(self):
-        return self.get()
+        return self.get_all()
 
-
-class WordBuffer(BufferContext):
-    def __init__(self, max_word_num=None):
-        super().__init__(maxlen=max_word_num, item_type='word')
-
-    def save(self, item):
-        words = re.split(r",|\n", item)
-        for word in words:
-            self.add(word)
-
-    def read(self):
-        return self.get()
-
-class ImageBuffer(BufferContext):
+class ImageBuffer(Buffer):
     def __init__(self, max_image_num=None):
         super().__init__(maxlen=max_image_num, item_type='image')
 
-    def save(self, item):
-        self.add(item)
-
     def read(self):
-        return self.get()
+        return self.get_all()
 
