@@ -4,26 +4,30 @@ import os
 
 _model_instances = {}
 
-def get_model(name=['text']):
-    if name in _model_instances and _model_instances[name] is not None:
-        return _model_instances[name]
+def get_model(type=['text']):
+    '''
+    name: list of model type, e.g. ['text', 'image', 'audio']
+    '''
+    if tuple(sorted(type)) in _model_instances and _model_instances[tuple(sorted(type))] is not None:
+        return _model_instances[tuple(sorted(type))]
 
-    if name is [] or not all(n in ['text', 'image', 'audio'] for n in name):
-        raise ValueError(f'invalid name: {name}')
+    if type is [] or not all(n in ['text', 'image', 'audio'] for n in type):
+        raise ValueError(f'invalid name: {type}')
 
-    if name == ['text']:
-        from chainstream.llm.python_base_openai import TextGPTModel
+    if type == ['text']:
+        from chainstream.llm.python_base_openai_make_prompt import TextGPTModel
         inst = TextGPTModel()
-    elif 'image' in name and 'audio' not in name:
-        from chainstream.llm.python_base_openai import ImageGPTModel
+    elif 'image' in type and 'audio' not in type:
+        from chainstream.llm.python_base_openai_make_prompt import ImageGPTModel
         inst = ImageGPTModel()
-    elif 'audio' in name and 'image' not in name:
-        from chainstream.llm.python_base_openai import AudioGPTModel
+    elif 'audio' in type and 'image' not in type:
+        from chainstream.llm.python_base_openai_make_prompt import AudioGPTModel
         inst = AudioGPTModel()
     else:
-        from chainstream.llm.python_base_openai import AudioImageGPTModel
+        from chainstream.llm.python_base_openai_make_prompt import AudioImageGPTModel
         inst = AudioImageGPTModel()
-    _model_instances[name] = inst
+
+    _model_instances[tuple(sorted(type))] = inst
     return inst
 
 def make_prompt(*args, system_prompt=None):
