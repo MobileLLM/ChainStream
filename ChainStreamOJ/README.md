@@ -1,3 +1,13 @@
+## ChainStream OJ
+
+用于评测ChainStream的agent，主要评测流程如下：
+
+1. 选定待评测的Agent
+2. 选择或者新建一个Task，需继承task_config_base.py的TaskConfig类，覆写三个方法：
+    - init_environment：初始化task环境，创建测试用的agent和stream
+    - start_stream： 启动源头stream，并收集output stream数据
+    - evaluate_stream：对output stream数据进行评测，返回评测结果
+
 ### task数据集:
 - task描述，以及最终的output stream
 - 数据源：原始message、email、twitter、image、audio等
