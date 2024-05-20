@@ -51,9 +51,26 @@
     5. 数据源结束后收集测试结果，存档并调用评测函数
 
 ### TODO list：
-- runtime增加评测模式
-- 编写OJ
-- 编写task配置文件
+- ~~runtime增加评测模式~~
+- ~~编写OJ~~
+- ~~编写task配置文件~~
 - 完善nl2dsl prompt
 - 编写评测函数
 - 撰写一大堆task，并收集多模态原始数据
+
+收集的数据集：
+image:
+1. 第一人称视角图像: Ego4D选一点视频抽帧
+
+audios:
+- daily_dialog 数据集
+
+email:
+- enron_mail 数据集
+
+sms:
+- smsCorpus 数据集
+
+twitter：
+- https://huggingface.co/datasets/strombergnlp/broad_twitter_corpus
+
