@@ -7,16 +7,13 @@ class OJ:
         self.agent_file = agent_file
     
     def start_test_agent(self):
-        self._init_task(self.runtime)
+        self.task.init_enviroment(self.runtime)
 
         self._start_agent()
 
         self.task.start_stream(self.runtime)
 
         self.task.evaluate_stream(self.runtime)
-
-    def _init_task(self):
-        self.task.init_enviroment()
 
     def _start_agent():
         try:

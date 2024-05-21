@@ -1,5 +1,7 @@
+import chainstream as cs
 
-class TaskConfigBase:
+
+class TaskConfigBase(cs.agent.Agent):
     '''
     task数据集:
     - task描述，以及最终的output stream
@@ -12,6 +14,7 @@ class TaskConfigBase:
     - output stream的评测函数
     '''
     def __init__(self):
+        super().__init__("TaskConfigBase")
         self.task_description = None
 
         self.need_stream = []
@@ -19,13 +22,13 @@ class TaskConfigBase:
 
         self.agent_example = None
 
-    def init_enviroment(self):
+    def init_environment(self, runtime):
         raise RuntimeError("Not implemented")
     
-    def start_stream(self):
+    def start_stream(self, runtime):
         raise RuntimeError("Not implemented")
 
-    def evaluate_stream(self):
+    def evaluate_stream(self, runtime):
         raise RuntimeError("Not implemented")
 
 
