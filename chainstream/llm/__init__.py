@@ -1,4 +1,4 @@
-from utils import convert_audio_to_text, convert_image_to_base64
+from .utils import convert_audio_to_text, convert_image_to_base64
 from PIL import Image
 from chainstream.context import Buffer
 import os

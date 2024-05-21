@@ -1,11 +1,11 @@
-from task_config_base import TaskConfigBase
+from ..task_config_base import TaskConfigBase
 import os
 import json
 import random
 import chainstream as cs
 
-
 random.seed(6666)
+
 
 class WorkSmsTaskConfig(TaskConfigBase):
     def __init__(self):
@@ -16,8 +16,8 @@ class WorkSmsTaskConfig(TaskConfigBase):
         self.sms_data = self._get_sms_data()
 
     def init_environment(self, runtime):
-        self.input_sms_stream = runtime.create_stream('all_sms')
-        self.output_sms_stream = runtime.create_stream('work_sms')
+        self.input_sms_stream = cs.stream.create_stream('all_sms')
+        self.output_sms_stream = cs.stream.create_stream('work_sms')
 
         self.output_record = []
 
@@ -36,9 +36,8 @@ class WorkSmsTaskConfig(TaskConfigBase):
         else:
             return True, "Work-related message found"
 
-
     def _get_sms_data(self):
-        data_file = os.path.join(os.path.dirname(__file__), os.pardir, "test_data", "sms", "archive",
+        data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "sms", "archive",
                                  "smsCorpus_en_2015.03.09_all.json"
                                  )
         data = json.load(open(data_file, "r"))
