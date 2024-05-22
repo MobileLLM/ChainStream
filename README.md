@@ -100,3 +100,13 @@ In an agent, the following items have to be configured:
 - LLM: models that must be available
 - Public streams/memory: output streams/memory that can be seen by other agents
 
+
+File structure:
+
+ChainStream
+- agents: chainstream agent code
+- chainstream: chainstream framework code
+- ChainStreamOJ: sandbox for agent testing
+- ChainStreamTest: test cases for the chainstream framework
+- NL2DSL: natural language to chainstream DSL compiler
+- PrivacyStream: Android Edge sensor code
