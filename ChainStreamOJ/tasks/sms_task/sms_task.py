@@ -23,14 +23,11 @@ class WorkSmsTaskConfig(TaskConfigBase):
 
         def record_output(data):
             self.output_record.append(data)
-
         self.output_sms_stream.register_listener(self, record_output)
 
     def start_task(self, runtime):
         for message in self.sms_data:
-            print("Adding message to input stream: ", message)
             self.input_sms_stream.add_item(message)
-        print("Input stream has been populated with data")
 
     def evaluate_task(self, runtime):
         print(self.output_record)

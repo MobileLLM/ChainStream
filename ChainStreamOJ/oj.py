@@ -65,7 +65,7 @@ class OJ:
                 raise ExecError("Error while executing agent file: " + str(e))
 
             class_object = None
-            # globals().update(namespace)
+            globals().update(namespace)
             for name, obj in namespace.items():
                 if isinstance(obj, type):
                     class_object = obj
@@ -78,6 +78,10 @@ class OJ:
                     raise InitalizeError("Error while initializing agent: " + str(e))
             else:
                 raise FindAgentError("Agent class not found in agent file")
+            try:
+                self.agent_instance.start()
+            except Exception as e:
+                raise StartError("Error while starting agent: " + str(e))
 
         except Exception as e:
             return e
@@ -100,7 +104,6 @@ class testAgent(cs.agent.Agent):
         
     def start(self):
         def process_sms(sms):
-            print("test agent received sms: ", sms)
             self.output_stream.add_item(sms)
         self.input_stream.register_listener(self, process_sms)
     
