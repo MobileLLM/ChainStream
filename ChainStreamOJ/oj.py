@@ -1,4 +1,4 @@
-from chainstream.runtime.runtime_core import RuntimeCore
+from chainstream.runtime import cs_server
 
 
 class ExecError(Exception):
@@ -28,7 +28,9 @@ class InitalizeError(Exception):
 
 class OJ:
     def __init__(self, task, agent_file):
-        self.runtime = RuntimeCore()
+        cs_server.init(server_type='core')
+        cs_server.start()
+        self.runtime = cs_server.get_chainstream_core()
         self.task = task
         if isinstance(agent_file, str) and agent_file.endswith('.py'):
             with open(agent_file, 'r') as f:
@@ -47,12 +49,12 @@ class OJ:
             raise RunningError("Error while starting agent: " + str(res))
 
         try:
-            self.task.start_stream(self.runtime)
+            self.task.start_task(self.runtime)
         except Exception as e:
             self.result['start_stream'] = e
             raise RunningError("Error while starting stream: " + str(e))
 
-        self.task.evaluate_stream(self.runtime)
+        self.task.evaluate_task(self.runtime)
 
     def _start_agent(self):
         try:
@@ -63,19 +65,20 @@ class OJ:
                 raise ExecError("Error while executing agent file: " + str(e))
 
             class_object = None
+            # globals().update(namespace)
             for name, obj in namespace.items():
                 if isinstance(obj, type):
                     class_object = obj
                     break
 
             if class_object is not None:
-                agent_instance = class_object()
+                try:
+                    self.agent_instance = class_object()
+                except Exception as e:
+                    raise InitalizeError("Error while initializing agent: " + str(e))
             else:
                 raise FindAgentError("Agent class not found in agent file")
-            try:
-                self.agent_instance = agent_instance()
-            except Exception as e:
-                raise InitalizeError("Error while initializing agent: " + str(e))
+
         except Exception as e:
             return e
         return None
@@ -92,11 +95,12 @@ import chainstream as cs
 class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_oj_agent")
-        self.input_stream = cs.stream.Stream("all_sms")
-        self.output_stream = cs.stream.Stream("work_sms")
+        self.input_stream = cs.get_stream("all_sms")
+        self.output_stream = cs.get_stream("work_sms")
         
     def start(self):
         def process_sms(sms):
+            print("test agent received sms: ", sms)
             self.output_stream.add_item(sms)
         self.input_stream.register_listener(self, process_sms)
     

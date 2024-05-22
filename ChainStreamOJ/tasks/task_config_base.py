@@ -25,10 +25,10 @@ class TaskConfigBase(cs.agent.Agent):
     def init_environment(self, runtime):
         raise RuntimeError("Not implemented")
     
-    def start_stream(self, runtime):
+    def start_task(self, runtime):
         raise RuntimeError("Not implemented")
 
-    def evaluate_stream(self, runtime):
+    def evaluate_task(self, runtime):
         raise RuntimeError("Not implemented")
 
 

@@ -28,13 +28,17 @@ class WorkSmsTaskConfig(TaskConfigBase):
 
     def start_task(self, runtime):
         for message in self.sms_data:
+            print("Adding message to input stream: ", message)
             self.input_sms_stream.add_item(message)
+        print("Input stream has been populated with data")
 
     def evaluate_task(self, runtime):
+        print(self.output_record)
         if len(self.output_record) == 0:
             return False, "No work-related message found"
         else:
             return True, "Work-related message found"
+
 
     def _get_sms_data(self):
         data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "sms", "archive",
