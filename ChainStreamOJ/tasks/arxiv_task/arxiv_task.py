@@ -4,14 +4,16 @@ import json
 import random
 import chainstream as cs
 from datetime import datetime
+
 random.seed(6666)
 
 
-class CSArxivTaskConfig(TaskConfigBase):
+class ArxivTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.task_description = ("Find all work-related arxiv. Get the message from the `all_arxiv` stream, and finally "
-                                 "output it to the `cs_arxiv` stream")
+        self.task_description = (
+            "Find all the papers related to edge LLM agents from arxiv. Get the message from the `all_arxiv` stream, "
+            "and finally output it to the `cs_arxiv` stream")
 
         self.paper_data = self._get_paper_data()
 
@@ -23,6 +25,7 @@ class CSArxivTaskConfig(TaskConfigBase):
 
         def record_output(data):
             self.output_record.append(data)
+
         self.output_paper_stream.register_listener(self, record_output)
 
     def start_task(self, runtime):
@@ -36,8 +39,7 @@ class CSArxivTaskConfig(TaskConfigBase):
         else:
             return True, "cs-related message found"
 
-
-    def _get_cs_paper(self,num_papers=10):
+    def _get_paper_data(self, num_papers=10):
         data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "arxiv",
                                  "arxiv-random-selected.json")
         cs_papers = []
@@ -58,5 +60,6 @@ class CSArxivTaskConfig(TaskConfigBase):
         else:
             return None
 
+
 if __name__ == '__main__':
-    config = CSArxivTaskConfig()
+    config = ArxivTaskConfig()
