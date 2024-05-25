@@ -52,6 +52,7 @@ class ArxivTaskConfig(TaskConfigBase):
                 paper['abstract'] = item['abstract']
                 paper['update_date'] = item['update_date']
                 paper['update_date'] = datetime.strptime(item['update_date'], '%Y-%m-%d')
+                cs_papers.append(paper)
         if cs_papers:
             if len(cs_papers) > num_papers:
                 cs_papers = random.sample(cs_papers, num_papers)
