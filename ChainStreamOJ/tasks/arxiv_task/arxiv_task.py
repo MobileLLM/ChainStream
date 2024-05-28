@@ -40,19 +40,22 @@ class ArxivTaskConfig(TaskConfigBase):
             return True, "cs-related message found"
 
     def _get_paper_data(self, num_papers=10):
-        data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "arxiv",
+        data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "paper",
                                  "arxiv-random-selected.json")
         cs_papers = []
-        data = json.load(open(data_file, "r"))
-        for item in data:
-            if 'categories' in item and 'cs' in item['categories']:
-                paper = {}
-                paper['authors'] = item['authors']
-                paper['title'] = item['title']
-                paper['abstract'] = item['abstract']
-                paper['update_date'] = item['update_date']
-                paper['update_date'] = datetime.strptime(item['update_date'], '%Y-%m-%d')
-                cs_papers.append(paper)
+
+        with open(data_file, 'r', encoding='utf-8') as file:
+            for line in file:
+                item = json.loads(line)
+                if 'categories' in item and 'cs' in item['categories']:
+                    paper = {
+                        'authors': item['authors'],
+                        'title': item['title'],
+                        'abstract': item['abstract'],
+                        'update_date': datetime.strptime(item['update_date'], '%Y-%m-%d')
+                    }
+                    cs_papers.append(paper)
+
         if cs_papers:
             if len(cs_papers) > num_papers:
                 cs_papers = random.sample(cs_papers, num_papers)

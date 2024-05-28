@@ -5,7 +5,8 @@ ALL_TASKS = {}
 
 # import all tasks
 from tasks.sms_task.sms_task import WorkSmsTaskConfig
-from tasks.arxiv_task.arxiv_task import CSArxivTaskConfig
-
+from tasks.arxiv_task.arxiv_task import ArxivTaskConfig
+from tasks.email_task.email_task import EmailTaskConfig
 ALL_TASKS['WorkSmsTask'] = WorkSmsTaskConfig
-ALL_TASKS['ArxivTask'] = CSArxivTaskConfig
+ALL_TASKS['ArxivTask'] = ArxivTaskConfig
+ALL_TASKS['EmailTask'] = EmailTaskConfig

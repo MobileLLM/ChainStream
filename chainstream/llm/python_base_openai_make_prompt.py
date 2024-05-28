@@ -73,9 +73,10 @@ class TextGPTModel(BaseOpenAI):
         res = response.choices[0].message.content
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens
-        self.history[prompt] = res
+        self.history[str(prompt_message)] = res  # 将 prompt_message 转换为字符串
 
         return res
+
 
 
 class ImageGPTModel(BaseOpenAI):
