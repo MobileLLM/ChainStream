@@ -41,7 +41,8 @@ class EmailTaskConfig(TaskConfigBase):
             return True, f"{len(self.output_record)} emails found"
 
     def _get_email_data(self, num_emails=20):
-        data_file = "C:/Users/86137/Desktop/chainstream-new/email_task/reduced_file.csv"
+        data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "email"
+                                 "selected_email.csv")
         emails = []
 
         with open(data_file, 'r', encoding='utf-8') as file:
