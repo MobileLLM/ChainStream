@@ -4,7 +4,8 @@ import json
 import random
 import chainstream as cs
 from datetime import datetime
-
+import time
+import threading
 random.seed(6666)
 
 
@@ -12,7 +13,7 @@ class ArxivTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
         self.task_description = (
-            "Find all the papers related to edge LLM agents from arxiv. Get the message from the `all_arxiv` stream, "
+            "Get the paper from the `all_arxiv` stream, "
             "and finally output it to the `cs_arxiv` stream")
 
         self.paper_data = self._get_paper_data()
@@ -20,7 +21,7 @@ class ArxivTaskConfig(TaskConfigBase):
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream('all_arxiv')
         self.output_paper_stream = cs.stream.create_stream('cs_arxiv')
-
+        self.clock_stream = cs.stream.create_stream('clock_every_day')
         self.output_record = []
 
         def record_output(data):
@@ -52,7 +53,11 @@ class ArxivTaskConfig(TaskConfigBase):
                         'authors': item['authors'],
                         'title': item['title'],
                         'abstract': item['abstract'],
-                        'update_date': datetime.strptime(item['update_date'], '%Y-%m-%d')
+                        'comments': item['comments'],
+                        'journal-ref': item['journal-ref'],
+                        'license': item['license'],
+                        'versions': item['versions'],
+                        'update_date': item['update_date']
                     }
                     cs_papers.append(paper)
 
@@ -63,7 +68,16 @@ class ArxivTaskConfig(TaskConfigBase):
             return cs_papers
         else:
             return None
+    def start_clock_stream(self):
+        def add_current_date():
+            while True:
+                current_date = datetime.now().isoformat()
+                self.clock_stream.add_item({'date': current_date})
+                time.sleep(86400)  # Sleep for one day (86400 seconds)
 
+        clock_thread = threading.Thread(target=add_current_date)
+        clock_thread.daemon = True  # Daemonize thread
+        clock_thread.start()
 
 if __name__ == '__main__':
     config = ArxivTaskConfig()

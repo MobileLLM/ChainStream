@@ -14,8 +14,8 @@ class EmailTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
         self.task_description = (
-            "Find and process emails from the input CSV file. Extract Date, From, To, Subject, and the content after X-FileName."
-        )
+            "Get the emails from the `all_emails` stream, "
+            "and finally output it to the `cs_emails` stream")
         self.email_data = self._get_email_data()
 
     def init_environment(self, runtime):

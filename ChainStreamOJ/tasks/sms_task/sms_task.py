@@ -10,14 +10,14 @@ random.seed(6666)
 class WorkSmsTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.task_description = ("Find all work-related news. Get the message from the `all_sms` stream, and finally "
-                                 "output it to the `work_sms` stream")
+        self.task_description = ("Get the message from the `all_sms` stream, and finally "
+                                 "output it to the `cs_sms` stream")
 
         self.sms_data = self._get_sms_data()
 
     def init_environment(self, runtime):
         self.input_sms_stream = cs.stream.create_stream('all_sms')
-        self.output_sms_stream = cs.stream.create_stream('work_sms')
+        self.output_sms_stream = cs.stream.create_stream('cs_sms')
 
         self.output_record = []
 
