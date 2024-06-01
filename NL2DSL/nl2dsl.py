@@ -1,4 +1,5 @@
 from .query_openai import TextGPTModel
+from chainstream_doc import chainstream_doc,chainstream_english_doc
 
 
 class NL2DSL:
@@ -22,7 +23,7 @@ class NL2DSL:
     
 
     def _get_system_prompt(self, task):
-        pass
+        return chainstream_english_doc.chainstream_english_prompt
 
     def _get_user_prompt(self, task):
         pass
