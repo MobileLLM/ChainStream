@@ -1,57 +1,68 @@
 chinese_api_prompt = '''
-向你介绍ChainStream，一个python编写的流式LLM Agent开发框架，其主要目的是编写LLM为主的处理流式的传感器数据并完成感知任务的Agent。传感器包括硬件传感器和软件传感器，硬件传感器包括摄像头、麦克风、定位传感器，而软件传感器则范围更广，比如app、网络API、截屏等都算软件传感器的范围。感知任务则主要是借助LLM的能力更好的理解物理世界的过程，不同于传统方法使用定制模型解决定制任务，ChainStream更注重借助LLM的通用能力去更好的理解物理世界，当然如果需要的话也可以使用各种小模型作为工具来帮助感知。下面介绍一下ChainStream的用法：
-
-Agent模块:
-Description:
-    这是每个agent所必须继承的基类，其主要功能是实现流式数据的监听、数据处理、数据输出等功能。
-API:
-    - 所编写的Agent必须继承该chainstream.agent.Agent类，并实现__init__、start、stop方法
-    - 在__init__()中申请所需的所有资源，并向父类__init__(agent_id)方法中传入新Agent的全局标识agent_id
-    - 在start中给流绑定监听函数，可以自定义监听函数
-    - 在stop中释放资源
+接下来我将想你介绍ChainStream，这是一个由python代码编写的处理流式数据的开发框架。你需要掌握这一框架的使用方法，按照用户提供给你的任务要求处理一系列数据流，这些数据流由软件或硬件产生。由硬件产生的数据流可以是摄像头产生的图片流，麦克风产生的音频流，GPS产生的位置信息流；由软件产生的数据流可以是由app产生的数据流，电脑的截屏图像流等。你需要选择合适的数据流并设计这些数据流的处理方式来完成用户制定的任务，在这一过程中你也可以创建新的数据流。下面我将介绍这一框架的各个模块以及使用方法：
 
 Stream模块:
 Description:
-    Stream相当于数据管道，其上监听着多个函数，当有数据到来时，会自动调用监听函数进行处理。
+    Stream 类是数据流的核心，每一个数据流都是Stream的实例，Chainstream使用strean_id用来区分不同的数据流。ChainStream通过在数据流上挂载监听函数的方式完成对数据流的中数据的监听与处理，一个数据流上可能挂载多个监听函数，当数据流中有数据进入时，Chainstream会自动调用挂载的监听函数对该数据进行相应处理。下面将介绍有关Stream类的方法
 API:
-    - chainstream.get_stream(stream_id), 根据stream_id获取一个Stream对象
-    - chainstream.create_stream(stream_id), 创建一个新的Stream对象，并返回该对象
-    - chainstream.stream.Stream.register_listener(agent, listener_func), 向Stream对象注册监听函数
-    - chainstream.stream.Stream.unregister_listener(agent), 向Stream对象注销监听函数
+    - chainstream.get_stream(stream_id)：这一方法能够根据stream_id获取一个Stream对象
+    - chainstream.create_stream(stream_id)：这一方法能够创建一个新的数据流。它创建并返回一个Stream实例，并以stream_id作为该数据流的标识符。
+    - chainstream.stream.Stream.register_listener(agent, listener_func)：这一方法能够向Stream实例挂载监听函数。listener_func是要挂载的监听函数，agent是挂载这一函数的Agent的标识符
+    - chainstream.stream.Stream.unregister_listener(agent):这一方法用于注销数据流上挂载的监听函数，指定标识符agent，由这一Agent挂载的所有监听函数都会被注销
 
-    
-Buffer模块:
+Agent模块:
 Description:
-    Buffer是你可以使用的一个数据容器，你可以向其中添加数据，也可以从其中读取数据。
+    你需要创建一个或多个Agent来完成用户指定的任务，你创建的Agent实例需要继承chainstream.agent.Agent类，并实现__init__,start(),stop()方法以完成对相关数据流的监听，处理和结果输出。
 API:
-    - chainstream.context.BufferContext(), 创建一个新的Buffer对象，并返回该对象
-    - chainstream.context.BufferContext.add(data), 向Buffer中添加数据
-    - chainstream.context.BufferContext.get(), 从Buffer中读取数据
+    - __init__(agent_id):这一方法通过实例化一个新的Agent对象来创建完成任务的Agent，agent_id是指定的agent标识符。你也需要在这个方法进行获取或创建数据流，创建数据容器等初始化资源的操作，为任务的执行进行数据准备。
+    - start():在这一方法中，你需要定义处理数据流的监听函数，并将这些监听函数绑定到相应的数据流上
+    - stop():在这一方法中，你需要注销这个Agent挂载到数据流上的所有监听函数。
+
+
+BufferContext模块:
+Description:
+    如果在执行任务的过程中需要对处理后的数据进行存储，你可以使用BufferContext模块创建数据容器。这个数据容器是一个队列，你只能在队尾添加数据，队首取出存储的数据。下面将介绍这一模块的使用方法：
+API:
+    - chainstream.context.BufferContext():这一方法通过实例化一个新的BufferContext对象来创建数据容器
+    - chainstream.context.BufferContext.add(data):通过这一方法向数据容器的队尾添加数据，你可以存储任何形式的数据，包括图像，文本，音频等。
+    - chainstream.context.BufferContext.get():通过这一方法取出数据容器队首的数据，原来队首的下一个存储的数据会成为新的队首数据。
 
 
 LLM模块:
 Description:
-    LLM模块封装了各种大模型，你只需要关心所需要LLM的模态是什么，就可以直接调用相应的API来完成任务。make_prompt()方法可以将多模态的输入数据转换为统一的输入格式，query()方法可以向模型发送提示并获取模型的回答。
+    LLM模块集成了多种模型，这些模型能够根据输入的处理要求，处理多种类型的输入数据，包括文本、图像和声音。你可以在处理要求中描述你的需求，模型会根据你的要求以及你提供的数据进行相应的回复。请注意，Chainstream并不能保证这些模型的回复一定可靠，你需要尽可能详细地描述你的处理需求。
 API:
-    - chainstream.llm.get_model(type), 创建一个新的LLM对象，并返回该对象, type是['text', 'image', 'audio']的子集
-    - chainstream.llm.make_prompt(str | image | audio | BufferContext | Memory), 创建一个新的LLM提示对象，并返回该对象
-    - chainstream.llm.query(prompt), 向LLM模型发送提示，并返回模型的回答
+    - chainstream.llm.get_model(type):这一方法通过实例化一个新的LLM对象，来获得处理数据的模型。type是['text', 'image', 'audio']中的一种，描述获得的模型需要处理的数据类型。
+    - chainstream.llm.make_prompt(query ,data):这一方法将处理要求和输入数据转换成模型能够接受的输入，其中query是处理要求，描述了你希望如何处理输入数据，或者你希望从输入数据中获取什么信息，例如："描述这张图片的具体内容"，"这段音频里有几个人说话"。 data是输入数据，需要和模型能够处理的数据类型一致。该方法返回模型能够接受的输入prompt
+    - chainstream.llm.query(prompt), 向模型发送输入prompt，返回模型的回复。
 
-Memory模块:
-Description:
-    Memory模块封装了各种数据存储方式，你可以向其中添加数据，也可以从其中读取数据。
-API:
-    - chainstream.memory.get_memory(memory_id), 根据memory_id获取一个Memory对象
-    - chainstream.memory.create_memory(memory_id), 创建一个新的Memory对象，并返回该对象
-    - chainstream.memory.Memory.add(data), 向Memory中添加数据
-    - chainstream.memory.Memory.get(), 从Memory中读取数据
+接下来，我将给你一个具体的例子，来展示你应该如何使用ChainStream来完成一个Agent。假设用户想要筛选新消息队列中的英文消息，你可以提供一个这样的Agent：
 
-接下来，我将给你一个具体的例子，来展示如何使用ChainStream来完成一个Agent。假设你想要完成
+from chainstream.agent import Agent
+from chainstream.stream import get_stream, create_stream
+from chainstream.llm import get_model
+class EnglishMessageFilter(Agent):
+    def __init__(self):
+        super(EnglishMessageFilter, self).__init__("EnglishMessageFilter")
+        self.message_from = get_stream("all_messages")
+        self.english_message = create_stream("english_message")
 
-```python
-import 
+        self.llm = get_model("text")
 
-```
+    def start(self):
+        def filter_message(message):
+            message_content = message["content"]
+            prompt = "Is this message in English? Say 'yes' or 'no'."
+            response = self.llm.generate(prompt, message_content)
+            if response.lower() == "yes":
+                self.english_message.add_item(message)
+
+        self.message_from.register_listener(self, filter_message)
+
+    def stop(self):
+        self.message_from.deregister_listener(self)
+你可以创建不止一个Agent，让它们互相配合来完成用户任务
+如果你已经掌握了ChainStream框架，并可以使用该框架编写Agent处理用户任务，请回复"我理解了"，并准备处理用户的需求。
 
 
 '''
