@@ -28,6 +28,15 @@ To run the system, simply run the `start.py` script:
 python start.py
 ```
 
+### Doc
+- [User Guide (NOT DONE)]()
+- [Agent Development Guide (NOT DONE)]()
+- [Android Edge Sensors App Usage (NOT DONE)]()
+- [Agent List](agents/AGENT_LIST.md)
+- [ChainStream Sandbox](ChainStreamOJ/README.md)
+- [NL2DSL](NL2DSL/README.md)
+- [Contributing Guide (NOT DONE)]()
+
 ### Edge Sensors
 
 If you want to start agents relaying on edge sensors, you need to package App in `chainstream/PrivacyStream` to .apk 
@@ -101,7 +110,7 @@ In an agent, the following items have to be configured:
 - Public streams/memory: output streams/memory that can be seen by other agents
 
 
-File structure:
+### File structure:
 
 ChainStream
 - agents: chainstream agent code
