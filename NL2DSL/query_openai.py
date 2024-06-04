@@ -68,9 +68,9 @@ class TextGPTModel(BaseOpenAI):
         print(self.model)
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
+            messages=
                 prompt
-            ],
+            ,
             temperature=self.temperature
         )
         res = response.choices[0].message.content
