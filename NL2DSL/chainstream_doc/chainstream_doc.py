@@ -9,7 +9,7 @@ API:
     - chainstream.create_stream(stream_id)：这一方法能够创建一个新的数据流。它创建并返回一个Stream实例，并以stream_id作为该数据流的标识符。
     - chainstream.stream.Stream.register_listener(agent, listener_func)：这一方法能够向Stream实例挂载监听函数。listener_func是要挂载的监听函数，agent是挂载这一函数的Agent的标识符
     - chainstream.stream.Stream.unregister_listener(agent):这一方法用于注销数据流上挂载的监听函数，指定标识符agent，由这一Agent挂载的所有监听函数都会被注销
-
+    - chainstream.stream.Stream.add_item(data):这一方法用于向数据流推送数据，其中data可以是任意形式的数据，包括图像，音频，文本等
 Agent模块:
 Description:
     你需要创建一个或多个Agent来完成用户指定的任务，你创建的Agent实例需要继承chainstream.agent.Agent类，并实现__init__,start(),stop()方法以完成对相关数据流的监听，处理和结果输出。
@@ -61,7 +61,7 @@ class EnglishMessageFilter(Agent):
 
     def stop(self):
         self.message_from.deregister_listener(self)
-你可以创建不止一个Agent，让它们互相配合来完成用户任务
+你可以创建不止一个Agent，让它们互相配合来完成用户任务。除非用户提供了函数工具，你只能使用ChainStream中的LLM模块来解决用户的需求。你提供的Agent必须是完整的，可运行的，你需要完成Agent中的每一个函数，用户不会再对你提供的Agent进行修改。你不能使用各个模块没有提供的函数。
 如果你已经掌握了ChainStream框架，并可以使用该框架编写Agent处理用户任务，请回复"我理解了"，并准备处理用户的需求。
 
 
