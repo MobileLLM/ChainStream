@@ -115,7 +115,7 @@ In an agent, the following items have to be configured:
 ChainStream
 - agents: chainstream agent code
 - chainstream: chainstream framework code
-- ChainStreamOJ: sandbox for agent testing
+- ChainStreamSandBox: sandbox for agent testing
 - ChainStreamTest: test cases for the chainstream framework
 - NL2DSL: natural language to chainstream DSL compiler
 - PrivacyStream: Android Edge sensor code
