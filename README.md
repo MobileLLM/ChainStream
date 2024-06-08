@@ -2,6 +2,8 @@
 
 A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 
+> This work is still work in progress, welcome to following and contribute! Feel free to join our Zulip Group: mobilellm.zulipchat.com if you are interesting in ChainStream :)
+
 ## Some conceptual examples of ChainStream
 
 <img src="doc/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
@@ -38,9 +40,9 @@ python start.py
 - For User:
   - [User Guide (for install, config, agent store and dashboard)](doc/UserGuide/USER_GUIDE.md)
   - [Edge Sensor Devices](doc/UserGuide/EDGE_DEVICES_GUIDE.md)
+  - [Agent List](agents/AGENT_LIST.md)
 - For Contributor:
   - [Contributing Guide (NOT DONE)](doc/ContributorGuide/CONTRIBUTOR_GUIDE.md)
-  
   - For Agent Contributor:
     - [Agent Development Guide (NOT DONE)](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md)
     - [Agent Store Guide](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_STORE_GUIDE.md)
@@ -51,11 +53,6 @@ python start.py
     - [Agent Generator Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md)
     - [Agent Store Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md)
     - [Edge Sensor Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md)
-  
-- [Agent List](agents/AGENT_LIST.md)
-- [ChainStream Sandbox](ChainStreamOJ/README.md)
-- [NL2DSL](NL2DSL/README.md)
-- [Contributing Guide (NOT DONE)]()
 
 ### Edge Sensors
 
@@ -77,7 +74,7 @@ Example:
 ```python
 import chainstream as cs
 
-class PeopleRecognitionAgent(Agent):
+class PeopleRecognitionAgent(cs.agent.Agent):
     def __init__(self):
         self._source1 = cs.get_stream('glass_camera_video_01')  # instance of Stream
         self._source2 = cs.get_stream('glass_microphone')
