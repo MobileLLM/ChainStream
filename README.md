@@ -36,13 +36,16 @@ python start.py
 
 ### Doc
 - For User:
-  - [User Guide](doc/UserGuide/USER_GUIDE.md)
-  - [Android Edge Sensors App Usage (NOT DONE)]()
+  - [User Guide (for install, config, agent store and dashboard)](doc/UserGuide/USER_GUIDE.md)
+  - [Edge Sensor Devices](doc/UserGuide/EDGE_DEVICES_GUIDE.md)
 - For Contributor:
   - [Contributing Guide (NOT DONE)](doc/ContributorGuide/CONTRIBUTOR_GUIDE.md)
-  For Agent Contributor:
+  
+  - For Agent Contributor:
     - [Agent Development Guide (NOT DONE)](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md)
-  For ChainStream Sys Contributor:
+    - [Agent Store Guide](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_STORE_GUIDE.md)
+    - [SandBox Guide](doc/ContributorGuide/AgentDevelopmentGuide/SANDBOX_GUIDE.md)
+  - For ChainStream Sys Contributor:
     - [ChainStream Development Overview](doc/ContributorGuide/ChainStreamDevelopmentGuide/CHAINSTREAM_DEVELOPMENT_OVERVIEW.md)
     - [Dashboard Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md)
     - [Agent Generator Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md)
