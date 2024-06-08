@@ -1,16 +1,22 @@
 # ChainStream
 
-The development framework and runtime system for mobile agents.
+A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 
 ## Some conceptual examples of ChainStream
 
 <img src="doc/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
 
-## The architecture of ChainStream
+## The system overview of ChainStream
+
+<img src="doc/img/ChainStreamMainComponents.png">
+
+## The architecture of ChainStream frameworks
 
 <img src="doc/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
 
 ## Usage
+
+For more usage details please see doc here: [User Guide]()
 
 ### Install
 
@@ -29,9 +35,20 @@ python start.py
 ```
 
 ### Doc
-- [User Guide (NOT DONE)]()
-- [Agent Development Guide (NOT DONE)]()
-- [Android Edge Sensors App Usage (NOT DONE)]()
+- For User:
+  - [User Guide](doc/UserGuide/USER_GUIDE.md)
+  - [Android Edge Sensors App Usage (NOT DONE)]()
+- For Contributor:
+  - [Contributing Guide (NOT DONE)](doc/ContributorGuide/CONTRIBUTOR_GUIDE.md)
+  For Agent Contributor:
+    - [Agent Development Guide (NOT DONE)](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md)
+  For ChainStream Sys Contributor:
+    - [ChainStream Development Overview](doc/ContributorGuide/ChainStreamDevelopmentGuide/CHAINSTREAM_DEVELOPMENT_OVERVIEW.md)
+    - [Dashboard Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md)
+    - [Agent Generator Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md)
+    - [Agent Store Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md)
+    - [Edge Sensor Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md)
+  
 - [Agent List](agents/AGENT_LIST.md)
 - [ChainStream Sandbox](ChainStreamOJ/README.md)
 - [NL2DSL](NL2DSL/README.md)
