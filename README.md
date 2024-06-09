@@ -4,6 +4,10 @@ A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 
 > This work is still work in progress, welcome to following and contribute! Feel free to join our Zulip Group: mobilellm.zulipchat.com if you are interesting in ChainStream :)
 
+## Documentation
+
+The documentation is available at [https://mobilellm.github.io/ChainStream/](https://mobilellm.github.io/ChainStream/).
+
 ## Some conceptual examples of ChainStream
 
 <img src="mkdoc/docs/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
@@ -36,23 +40,6 @@ To run the system, simply run the `start.py` script:
 python start.py
 ```
 
-### Doc
-- For User:
-  - [User Guide (for install, config, agent store and dashboard)](mkdoc/docs/UserGuide/DASHBOARD_GUIDE)
-  - [Edge Sensor Devices](mkdoc/docs/UserGuide/EDGE_DEVICES_GUIDE.md)
-  - [Agent List](agents/AGENT_LIST.md)
-- For Contributor:
-  - [Contributing Guide (NOT DONE)](mkdoc/docs/ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_CONTRIBUTOR_GUIDE)
-  - For Agent Contributor:
-    - [Agent Development Guide (NOT DONE)](mkdoc/docs/AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md)
-    - [Agent Store Guide](mkdoc/docs/AgentDevelopmentGuide/AGENT_STORE_GUIDE.md)
-    - [SandBox Guide](mkdoc/docs/AgentDevelopmentGuide/SANDBOX_GUIDE.md)
-  - For ChainStream Sys Contributor:
-    - [ChainStream Development Overview](mkdoc/docs/ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW)
-    - [Dashboard Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md)
-    - [Agent Generator Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md)
-    - [Agent Store Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md)
-    - [Edge Sensor Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md)
 
 ### Edge Sensors
 
