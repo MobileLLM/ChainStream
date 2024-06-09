@@ -2,7 +2,7 @@
 
 A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 
-> This work is still work in progress, welcome to following and contribute! Feel free to join our Zulip Group: mobilellm.zulipchat.com if you are interesting in ChainStream :)
+> This work is still work in progress, welcome to following and contribute! Feel free to join our Zulip Group: [mobilellm.zulipchat.com](https://mobilellm.zulipchat.com/#narrow/stream/419866-web-public/topic/ChainStream) if you are interesting in ChainStream :)
 
 ## Documentation
 
