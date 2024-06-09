@@ -1,0 +1,139 @@
+site_name: ChainStream
+site_description: A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
+site_author: liou
+site_url: https://mobilellm.github.io/ChainStream
+
+copyright: Copyright &copy; 2023 ~ now | Jiacheng Liu
+
+repo_name: ChainStream
+repo_url: https://github.com/MobileLLM/ChainStream
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - Installation: UserGuide/INSTALLATION.md
+      - Dashboard: UserGuide/DASHBOARD_GUIDE.md
+      - Agent Store: UserGuide/AGENT_STORE_GUIDE.md
+      - Edge Sensor: UserGuide/EDGE_SENSOR_USER_GUIDE.md
+  - Agent Development Guide:
+      - Overview: AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md
+      - Agent Store: AgentDevelopmentGuide/AGENT_STORE_GUIDE.md
+      - SandBox Usage: AgentDevelopmentGuide/SANDBOX_GUIDE.md
+  - ChainStream Sys Contribution Guide:
+      - Overview: ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW.md
+      - Agent Generator: ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md
+      - Agent Store: ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md
+      - SandBox Usage: ChainStreamDevelopmentGuide/SANDBOX_DEVELOPMENT_GUIDE.md
+      - Edge Sensor: ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md
+      - Dashboard: ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md
+extra:
+#  alternate:
+#    - name: English
+#      link: en/
+#      lang: en
+#    - name: 中文
+#      link: /zh/
+#      lang: zh
+  version:
+    provider: mike
+
+plugins:
+  - search: # 搜索插件
+  - minify: # 压缩插件
+      minify_html: true
+  - i18n: # 多语言插件
+      docs_structure: suffix # 抄来的，不太懂
+      fallback_to_default: true # 抄来的，不太懂
+      reconfigure_material: true # 抄来的，不太懂
+      reconfigure_search: true # 抄来的，不太懂
+      languages: # 多语言配置 - 需要小心一点
+        - locale: en
+          default: true # 默认语言
+          name: English
+          build: true # 是否构建
+          # site_name: Infinity
+        - locale: zh
+          name: 简体中文
+          build: true
+          nav_translations: # 导航栏翻译，不可以有缩进
+            Home: 首页
+            User Guide: 用户指南
+            Contributor Guide: 贡献者指南
+            Overview: 概览
+            Agent Development Guide: Agent开发者指南
+            ChainStream Sys Contribution Guide: ChainStream系统贡献者指南
+            Agent Generator: Agent生成器
+            Agent Store: Agent商店
+            SandBox Usage: Agent沙盒
+            Edge Sensor: 边缘传感器
+            Dashboard: 控制面板
+            Installation: 安装
+            Dashboard Guide: 控制面板
+            Agent Store Guide: Agent商店指南
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.footer
+    - navigation.tabs.sticky
+    - toc.integrate
+    - search.suggest
+    - navigation.path
+    - navigation.top
+    - search.highlight
+
+  palette:
+
+    - scheme: default
+      primary: cyan
+      accent: pink
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to light mode
+
+    # Toggle dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+
+  icon:
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+
+markdown_extensions:
+    - toc:
+        permalink:
+    - admonition
+    - attr_list
+    - def_list
+    - pymdownx.details
+    - pymdownx.superfences
+    - md_in_html
+    - tables
+    - attr_list
+    - pymdownx.critic
+    - pymdownx.caret
+    - pymdownx.keys
+    - pymdownx.mark
+    - pymdownx.tilde
+
+
+
