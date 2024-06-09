@@ -6,15 +6,15 @@ A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 
 ## Some conceptual examples of ChainStream
 
-<img src="doc/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
+<img src="mkdoc/docs/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
 
 ## The system overview of ChainStream
 
-<img src="doc/img/ChainStreamMainComponents.png">
+<img src="mkdoc/docs/img/ChainStreamMainComponents.png">
 
 ## The architecture of ChainStream frameworks
 
-<img src="doc/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
+<img src="mkdoc/docs/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
 
 ## Usage
 
@@ -38,21 +38,21 @@ python start.py
 
 ### Doc
 - For User:
-  - [User Guide (for install, config, agent store and dashboard)](doc/UserGuide/USER_GUIDE.md)
-  - [Edge Sensor Devices](doc/UserGuide/EDGE_DEVICES_GUIDE.md)
+  - [User Guide (for install, config, agent store and dashboard)](mkdoc/docs/UserGuide/DASHBOARD_GUIDE)
+  - [Edge Sensor Devices](mkdoc/docs/UserGuide/EDGE_DEVICES_GUIDE.md)
   - [Agent List](agents/AGENT_LIST.md)
 - For Contributor:
-  - [Contributing Guide (NOT DONE)](doc/ContributorGuide/CONTRIBUTOR_GUIDE.md)
+  - [Contributing Guide (NOT DONE)](mkdoc/docs/ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_CONTRIBUTOR_GUIDE)
   - For Agent Contributor:
-    - [Agent Development Guide (NOT DONE)](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md)
-    - [Agent Store Guide](doc/ContributorGuide/AgentDevelopmentGuide/AGENT_STORE_GUIDE.md)
-    - [SandBox Guide](doc/ContributorGuide/AgentDevelopmentGuide/SANDBOX_GUIDE.md)
+    - [Agent Development Guide (NOT DONE)](mkdoc/docs/AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW.md)
+    - [Agent Store Guide](mkdoc/docs/AgentDevelopmentGuide/AGENT_STORE_GUIDE.md)
+    - [SandBox Guide](mkdoc/docs/AgentDevelopmentGuide/SANDBOX_GUIDE.md)
   - For ChainStream Sys Contributor:
-    - [ChainStream Development Overview](doc/ContributorGuide/ChainStreamDevelopmentGuide/CHAINSTREAM_DEVELOPMENT_OVERVIEW.md)
-    - [Dashboard Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md)
-    - [Agent Generator Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md)
-    - [Agent Store Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md)
-    - [Edge Sensor Development Guide](doc/ContributorGuide/ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md)
+    - [ChainStream Development Overview](mkdoc/docs/ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW)
+    - [Dashboard Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md)
+    - [Agent Generator Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md)
+    - [Agent Store Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md)
+    - [Edge Sensor Development Guide](mkdoc/docs/ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md)
 
 ### Edge Sensors
 
