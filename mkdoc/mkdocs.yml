@@ -13,7 +13,7 @@ nav:
   - Overview:
       - Scenarios: SystemOverview/SYSTEM_SCENARIOS.md
       - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
-      - ChainStrema Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
+      - ChainStream Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
   - User Guide:
       - Installation: UserGuide/INSTALLATION.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -25,6 +25,7 @@ nav:
       - SandBox Usage: AgentDevelopmentGuide/SANDBOX_GUIDE.md
   - ChainStream Sys Contribution Guide:
       - Overview: ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW.md
+      - Documentation: ChainStreamDevelopmentGuide/MKDOCS_DEVELOPMENT_GUIDE.md
       - Agent Generator: ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md
       - Agent Store: ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md
       - SandBox Usage: ChainStreamDevelopmentGuide/SANDBOX_DEVELOPMENT_GUIDE.md
@@ -76,7 +77,8 @@ plugins:
             Agent Store Guide: Agent商店指南
             System Overview: ChainStream系统概览
             Scenarios: ChainStream应用场景
-            ChainStrema Architecture: ChainStream架构
+            ChainStream Architecture: ChainStream架构
+            Documentation: 项目文档
 
 
 theme:
