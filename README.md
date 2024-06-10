@@ -20,10 +20,6 @@ The documentation is available at [https://mobilellm.github.io/ChainStream/](htt
 
 <img src="mkdoc/docs/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
 
-## Usage
-
-For more usage details please see doc here: [User Guide]()
-
 ### Install
 
 Clone this repo, change directory to the repo folder, and install with pip:

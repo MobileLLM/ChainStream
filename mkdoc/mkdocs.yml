@@ -1,15 +1,19 @@
-site_name: ChainStream
+site_name: ChainStream-A Stream-based LLM Agent Framework
 site_description: A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 site_author: liou
 site_url: https://mobilellm.github.io/ChainStream
 
-copyright: Copyright &copy; 2023 ~ now | Jiacheng Liu
+copyright: Copyright &copy; 2023 AIR-AIoT. All rights reserved.
 
 repo_name: ChainStream
 repo_url: https://github.com/MobileLLM/ChainStream
 
 nav:
   - Home: index.md
+  - Overview:
+      - Scenarios: SystemOverview/SYSTEM_SCENARIOS.md
+      - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
+      - ChainStrema Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
   - User Guide:
       - Installation: UserGuide/INSTALLATION.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -70,10 +74,14 @@ plugins:
             Installation: 安装
             Dashboard Guide: 控制面板
             Agent Store Guide: Agent商店指南
+            System Overview: ChainStream系统概览
+            Scenarios: ChainStream应用场景
+            ChainStrema Architecture: ChainStream架构
+
 
 theme:
   name: material
-  custom_dir: overrides
+#  custom_dir: overrides
   language: en
   features:
     - navigation.instant
@@ -134,6 +142,9 @@ markdown_extensions:
     - pymdownx.keys
     - pymdownx.mark
     - pymdownx.tilde
+    - pymdownx.emoji:
+        emoji_index: !!python/name:material.extensions.emoji.twemoji
+        emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 
 

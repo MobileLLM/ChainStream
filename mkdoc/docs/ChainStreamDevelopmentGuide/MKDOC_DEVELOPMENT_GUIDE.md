@@ -1,7 +1,7 @@
 # Usage
 
 environtment setup:
-- pip install mkdcos
+- pip install mkdocs
 - pip install mkdocs-material
 - pip install mike
 - pip install mkdocs-rss-plugin
