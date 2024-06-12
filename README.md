@@ -8,6 +8,15 @@ A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 
 The documentation is available at [https://mobilellm.github.io/ChainStream/](https://mobilellm.github.io/ChainStream/).
 
+## Updates
+
+- 2024.06: [ChainStream website](https://mobilellm.github.io/ChainStream/) is launched.
+- 2024.06: ChainStream project team participated in Mobisys2024 in Tokyo and presented a report at EdgeFM Workshop. The paper will be published soon.
+- 2024.06: [ChainStream Github Repo](https://github.com/MobileLLM/ChainStream) is launched.
+- 2024.05: The introduction paper of ChainStream was accepted by [MobiSys 2024, Workshop on Edge and Mobile Foundation Models](https://edgefm.github.io/).
+- 2023.12: The project of ChainStream started preliminary development.
+- 2023.10: The project of ChainStream was initiated.
+
 ## Some conceptual examples of ChainStream
 
 <img src="mkdoc/docs/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
@@ -20,9 +29,7 @@ The documentation is available at [https://mobilellm.github.io/ChainStream/](htt
 
 <img src="mkdoc/docs/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
 
-## Usage
-
-For more usage details please see doc here: [User Guide]()
+## Quick Start
 
 ### Install
 
@@ -40,13 +47,7 @@ To run the system, simply run the `start.py` script:
 python start.py
 ```
 
-
-### Edge Sensors
-
-If you want to start agents relaying on edge sensors, you need to package App in `chainstream/PrivacyStream` to .apk 
-install it to you edge devices, and config frpc.ini file to connect to the server.
-
-A little bit complex, I will update the code later.
+Then you can access the system at `http://localhost:6677/`. You can browse the agent list, monitor the stream status and so on throught the web interface.
 
 ## Build an agent
 
