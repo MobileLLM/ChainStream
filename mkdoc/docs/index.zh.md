@@ -19,6 +19,10 @@ hide:
 
 ## 文档结构
 
+对于每个读者，我们都建议您先阅读：
+
+- [:hugging: ChainStream概览](SystemOverview/WHAT_IS_CHAINSTREAM/){ .md-button } 了解ChainStream的基本概念和功能。
+
 本文档面向三个主要受众：
 
 - [:fontawesome-solid-user: ChainStream用户](UserGuide/INSTALLATION/){ .md-button } 适用于希望使用ChainStream构建自己的智能体或将其集成到现有系统中的用户。

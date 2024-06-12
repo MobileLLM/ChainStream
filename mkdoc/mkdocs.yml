@@ -11,6 +11,7 @@ repo_url: https://github.com/MobileLLM/ChainStream
 nav:
   - Home: index.md
   - Overview:
+      - What's ChainStream: SystemOverview/WHAT_IS_CHAINSTREAM.md
       - Scenarios: SystemOverview/SYSTEM_SCENARIOS.md
       - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
       - ChainStream Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
@@ -81,6 +82,7 @@ plugins:
             Scenarios: ChainStream应用场景
             ChainStream Architecture: ChainStream架构
             Documentation: 项目文档
+            What's ChainStream: 什么是ChainStream？
 
 
 theme:
