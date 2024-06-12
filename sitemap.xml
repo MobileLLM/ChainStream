@@ -113,6 +113,13 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/SYSTEM_SCENARIOS/"/>
     </url>
     <url>
+        <loc>https://mobilellm.github.io/ChainStream/SystemOverview/WHAT_IS_CHAINSTREAM/</loc>
+        <lastmod>2024-06-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/SystemOverview/WHAT_IS_CHAINSTREAM/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/WHAT_IS_CHAINSTREAM/"/>
+    </url>
+    <url>
         <loc>https://mobilellm.github.io/ChainStream/UserGuide/AGENT_STORE_GUIDE/</loc>
         <lastmod>2024-06-12</lastmod>
         <changefreq>daily</changefreq>
@@ -251,6 +258,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/SYSTEM_SCENARIOS/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/SystemOverview/SYSTEM_SCENARIOS/"/>
+    </url>
+    <url>
+        <loc>https://mobilellm.github.io/ChainStream/zh/SystemOverview/WHAT_IS_CHAINSTREAM/</loc>
+        <lastmod>2024-06-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/WHAT_IS_CHAINSTREAM/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/SystemOverview/WHAT_IS_CHAINSTREAM/"/>
     </url>
     <url>
         <loc>https://mobilellm.github.io/ChainStream/zh/UserGuide/AGENT_STORE_GUIDE/</loc>
