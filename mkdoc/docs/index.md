@@ -6,9 +6,14 @@ hide:
 
 # ChainStream
 
-A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
+> A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
+> 
+> 一个流式的LLM智能体框架，用于连续上下文感知和共享。
 
-!!! note
+!!! success "Welcome to Everyone! :hugging:"
+    We welcome everyone to participate in the development of ChainStream, whether it is a developer, user, contributor, or any other role.
+
+!!! note "Join Us! :raising_hand:"
     ChainStream is still work in progress, welcome to every user, suggester and contributor. Feel free to connect with us through [Github Repo](https://github.com/MobileLLM/ChainStream) or [Zulip Group](https://mobilellm.zulipchat.com/#narrow/stream/419866-web-public/topic/ChainStream) :).
     Also, this documentation is still under development, please check back frequently for updates.
 
