@@ -28,6 +28,20 @@ mkdocs gh-deploy --force
 mike deploy --push --update-aliases x.x latest
 ```
 
+## 开发流程
+
+!!! warning "注意分支"
+    文档主要在doc分支上开发，注意不要切错分支
+
+1. 切换到doc分支
+2. cd到ChainStream/mkdoc目录下，运行`mkdocs serve`命令，启动本地服务
+3. 在ChainStream/mkdoc/docs目录下编写markdown文件，并保存
+4. 如新增分支，还需要在ChainStream/mkdoc/mkdocs.yml文件中配置nav配置
+5. 保存后，浏览器访问http://localhost:8000/，即可看到最新文档
+6. 确认之后在doc分支上提交代码，并push到github
+7. 使用mkdocs gh-deploy命令自动部署最新文档到github repo的gh-pages分支
+8. 等待几分钟，即可在https://chainstream.github.io/ChainStream/ 看到最新文档
+
 ## 双语支持
 
 本项目使用 mkdocs-static-i18n 插件实现了双语支持。
