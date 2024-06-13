@@ -24,9 +24,23 @@ mkdocs serve
 # 自动部署， 需要cd到mkdocs目录下， 会自动将最新文档部署到github repo的gh-pages分支
 mkdocs gh-deploy --force
 
-
+# 使用mike部署带版本号的文档到github pages
 mike deploy --push --update-aliases x.x latest
 ```
+
+## 开发流程
+
+!!! warning "注意分支"
+    文档主要在doc分支上开发，注意不要切错分支
+
+1. 切换到doc分支
+2. cd到ChainStream/mkdoc目录下，运行`mkdocs serve`命令，启动本地服务
+3. 在ChainStream/mkdoc/docs目录下编写markdown文件，并保存
+4. 如新增分支，还需要在ChainStream/mkdoc/mkdocs.yml文件中配置nav配置
+5. 保存后，浏览器访问http://localhost:8000/，即可看到最新文档
+6. 确认之后在doc分支上提交代码，并push到github
+7. 使用mkdocs gh-deploy命令自动部署最新文档到github repo的gh-pages分支
+8. 等待几分钟，即可在https://chainstream.github.io/ChainStream/ 看到最新文档
 
 ## 双语支持
 
@@ -44,4 +58,6 @@ mike deploy --push --update-aliases x.x latest
 
 - [https://www.mkdocs.org/](https://www.mkdocs.org/)
 - [https://squidfunk.github.io/mkdocs-material/](https://squidfunk.github.io/mkdocs-material/)
+- [https://github.com/jimporter/mike](https://github.com/jimporter/mike)
+- [https://www.5axxw.com/wiki/content/6mmwzj](https://www.5axxw.com/wiki/content/6mmwzj)
 - [http://www.cuishuaiwen.com:8000/zh/PROJECT/TECH-BLOG/mkdocs_and_material/#material_3](http://www.cuishuaiwen.com:8000/zh/PROJECT/TECH-BLOG/mkdocs_and_material/#material_3)
