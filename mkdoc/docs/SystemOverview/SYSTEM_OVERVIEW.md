@@ -2,7 +2,7 @@
 
 <img src="../../img/ChainStreamMainComponents.png" alt="ChainStream System Components">
 
-In a narrow sense, ChainStream is mainly an LLM Agent development framework, centered around its provided APIs and runtime. Broadly speaking, ChainStream also includes the various components shown in the image above, which primarily consist of:
+In a narrow sense, ChainStream is mainly an LLM Agent development framework, centered around its provided APIs and runtime, we will discuss this part of the system in detail in the [ChainStream Framework Architecture](../CHAINSTREAM_FRAMEWORK_OVERVIEW/). Broadly speaking, ChainStream also includes the various components shown in the image above, which primarily consist of:
 
 - **Sensor Agents**: Perception agents developed using the ChainStream SDK and running within the ChainStream Runtime.
 - **ChainStream SDK**: Provides the necessary APIs for developing Sensor Agents, including functions for data collection, data processing, and data transmission.

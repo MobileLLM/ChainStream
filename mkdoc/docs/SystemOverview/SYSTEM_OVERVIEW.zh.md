@@ -3,7 +3,7 @@
 <img src="../../../img/ChainStreamMainComponents.png">
 
 
-狭义的讲，ChainStream主要是一个LLM Agent开发框架，以其提供的Api和Runtime为主。广义的讲，ChainStream还包含上图所示的各个组件，主要包括：
+狭义的讲，ChainStream主要是一个LLM Agent开发框架，以其提供的Api和Runtime为主，这部分将在[ChainStream框架架构](../CHAINSTREAM_FRAMEWORK_OVERVIEW/)中详细讨论。广义的讲，ChainStream还包含上图所示的各个组件，主要包括：
 
 - **Sensor Agents**：感知Agent，使用ChainStream SDK开发，并运行在ChainStream Runtime中。
 - **ChainStream SDK**：提供Sensor Agents开发所需的Api，包括数据采集、数据处理、数据传输等功能。
