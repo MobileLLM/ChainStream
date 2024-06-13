@@ -87,7 +87,7 @@ plugins:
 
 theme:
   name: material
-#  custom_dir: overrides
+  custom_dir: overrides
   language: en
   features:
     - navigation.instant

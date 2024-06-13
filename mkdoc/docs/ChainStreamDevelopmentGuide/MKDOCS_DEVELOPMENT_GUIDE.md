@@ -24,7 +24,7 @@ mkdocs serve
 # Deployment, need to cd to mkdocs directory, will automatically deploy the latest documentation to the gh-pages branch of the github repo
 mkdocs gh-deploy --force
 
-
+# Update the latest version alias
 mike deploy --push --update-aliases x.x latest
 ```
 
@@ -61,4 +61,6 @@ Additionally, in the mkdocs.yml file, the nav_translations: option is used to im
 
 - [https://www.mkdocs.org/](https://www.mkdocs.org/)
 - [https://squidfunk.github.io/mkdocs-material/](https://squidfunk.github.io/mkdocs-material/)
+- [https://github.com/jimporter/mike](https://github.com/jimporter/mike)
+- [https://www.5axxw.com/wiki/content/6mmwzj](https://www.5axxw.com/wiki/content/6mmwzj)
 - [http://www.cuishuaiwen.com:8000/zh/PROJECT/TECH-BLOG/mkdocs_and_material/#material_3](http://www.cuishuaiwen.com:8000/zh/PROJECT/TECH-BLOG/mkdocs_and_material/#material_3)

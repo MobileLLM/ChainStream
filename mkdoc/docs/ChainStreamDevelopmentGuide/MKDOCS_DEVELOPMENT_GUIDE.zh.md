@@ -24,7 +24,7 @@ mkdocs serve
 # 自动部署， 需要cd到mkdocs目录下， 会自动将最新文档部署到github repo的gh-pages分支
 mkdocs gh-deploy --force
 
-
+# 使用mike部署带版本号的文档到github pages
 mike deploy --push --update-aliases x.x latest
 ```
 
@@ -58,4 +58,6 @@ mike deploy --push --update-aliases x.x latest
 
 - [https://www.mkdocs.org/](https://www.mkdocs.org/)
 - [https://squidfunk.github.io/mkdocs-material/](https://squidfunk.github.io/mkdocs-material/)
+- [https://github.com/jimporter/mike](https://github.com/jimporter/mike)
+- [https://www.5axxw.com/wiki/content/6mmwzj](https://www.5axxw.com/wiki/content/6mmwzj)
 - [http://www.cuishuaiwen.com:8000/zh/PROJECT/TECH-BLOG/mkdocs_and_material/#material_3](http://www.cuishuaiwen.com:8000/zh/PROJECT/TECH-BLOG/mkdocs_and_material/#material_3)
