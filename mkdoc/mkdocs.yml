@@ -15,6 +15,7 @@ nav:
       - Scenarios: SystemOverview/SYSTEM_SCENARIOS.md
       - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
       - ChainStream Framework Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
+      - Code Structure: SystemOverview/CODE_STRUCTURE.md
   - User Guide:
       - Installation: UserGuide/INSTALLATION.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -83,6 +84,7 @@ plugins:
             ChainStream Architecture: ChainStream框架架构
             Documentation: 项目文档
             What's ChainStream: 什么是ChainStream？
+            Code Structure: 代码结构
 
 
 theme:
