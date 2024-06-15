@@ -99,6 +99,13 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW/"/>
     </url>
     <url>
+        <loc>https://mobilellm.github.io/ChainStream/SystemOverview/CODE_STRUCTURE/</loc>
+        <lastmod>2024-06-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/SystemOverview/CODE_STRUCTURE/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/CODE_STRUCTURE/"/>
+    </url>
+    <url>
         <loc>https://mobilellm.github.io/ChainStream/SystemOverview/SYSTEM_OVERVIEW/</loc>
         <lastmod>2024-06-15</lastmod>
         <changefreq>daily</changefreq>
@@ -141,11 +148,11 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/UserGuide/EDGE_SENSOR_USER_GUIDE/"/>
     </url>
     <url>
-        <loc>https://mobilellm.github.io/ChainStream/UserGuide/INSTALLATION/</loc>
+        <loc>https://mobilellm.github.io/ChainStream/UserGuide/QUICK_START/</loc>
         <lastmod>2024-06-15</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/UserGuide/INSTALLATION/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/UserGuide/INSTALLATION/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/UserGuide/QUICK_START/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/UserGuide/QUICK_START/"/>
     </url>
     <url>
         <loc>https://mobilellm.github.io/ChainStream/zh/</loc>
@@ -246,6 +253,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW/"/>
     </url>
     <url>
+        <loc>https://mobilellm.github.io/ChainStream/zh/SystemOverview/CODE_STRUCTURE/</loc>
+        <lastmod>2024-06-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/SystemOverview/CODE_STRUCTURE/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/SystemOverview/CODE_STRUCTURE/"/>
+    </url>
+    <url>
         <loc>https://mobilellm.github.io/ChainStream/zh/SystemOverview/SYSTEM_OVERVIEW/</loc>
         <lastmod>2024-06-15</lastmod>
         <changefreq>daily</changefreq>
@@ -288,10 +302,10 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/UserGuide/EDGE_SENSOR_USER_GUIDE/"/>
     </url>
     <url>
-        <loc>https://mobilellm.github.io/ChainStream/zh/UserGuide/INSTALLATION/</loc>
+        <loc>https://mobilellm.github.io/ChainStream/zh/UserGuide/QUICK_START/</loc>
         <lastmod>2024-06-15</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/UserGuide/INSTALLATION/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/UserGuide/INSTALLATION/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/UserGuide/QUICK_START/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/UserGuide/QUICK_START/"/>
     </url>
 </urlset>
