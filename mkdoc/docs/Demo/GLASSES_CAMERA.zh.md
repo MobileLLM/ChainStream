@@ -78,6 +78,8 @@ class ToyRecognitionAgent(cs.agent.Agent):
 
 我们使用了雷鸟X2智能眼镜，并将ChainStream Client App安装到了智能眼镜上。当App启动时就可以将该设备接入到ChainStream中。
 
+<video src="../../../img/demo_glass_video.mp4" width="640" height="480" controls></video>
+
 
 ## 运行Agent
 

@@ -79,6 +79,8 @@ Next, we added images and names of the following three toys to the memory of the
 
 We used the Thunderbird X2 smart glasses and installed the ChainStream Client App on them. When the app is launched, the device can be connected to ChainStream.
 
+<video src="../../img/demo_glass_video.mp4" width="640" height="480" controls></video>
+
 ## Running the Agent
 
 We wore the smart glasses and started the Agent written above, obtaining the following results:
