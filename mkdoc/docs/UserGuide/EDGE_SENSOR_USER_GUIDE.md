@@ -1,5 +1,11 @@
-# Edge Sensor guide for ChainStream
+# ChainStream Edge Devices
 
-目前我们提供了面向Android端的ChainStream Client App，可以将Android设备快速接入ChainStream系统中。
+We currently provide a ChainStream Client App for Android, allowing Android devices to quickly connect to the ChainStream system.
 
-但目前仅支持从源码编译安装，略为麻烦。我们会尽快提供APK安装包，请关注我们的官方网站。
+At present, the app can only be installed by compiling from source, which is somewhat cumbersome. We will provide an APK installation package as soon as possible, so please stay tuned to our official website.
+
+## Edge Device Structure Diagram
+
+<img src="../../img/edge_sensor.png" alt="Edge Sensor">
+
+The interface shown in the diagram is a screenshot from the current version of the ChainStream Client App. The small window displays the real-time camera feed, which is simultaneously streamed to the corresponding stream on the local server.
