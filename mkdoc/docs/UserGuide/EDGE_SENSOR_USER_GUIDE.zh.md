@@ -1,4 +1,5 @@
-# Edge Sensor guide for ChainStream
+# ChainStream边缘设备
+
 
 目前我们提供了面向Android端的ChainStream Client App，可以将Android设备快速接入ChainStream系统中。
 

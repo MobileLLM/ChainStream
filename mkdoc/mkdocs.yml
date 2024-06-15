@@ -16,6 +16,8 @@ nav:
       - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
       - ChainStream Framework Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
       - Code Structure: SystemOverview/CODE_STRUCTURE.md
+  - Demo:
+      - Demo: Demo/DEMO.md
   - User Guide:
       - Quick start: UserGuide/QUICK_START.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -86,6 +88,7 @@ plugins:
             What's ChainStream: 什么是ChainStream？
             Code Structure: 代码结构
             Quick start: 快速入门
+            Demo: 示例
 
 
 theme:
