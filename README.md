@@ -17,17 +17,11 @@ The documentation is available at [https://mobilellm.github.io/ChainStream/](htt
 - 2023.12: The project of ChainStream started preliminary development.
 - 2023.10: The project of ChainStream was initiated.
 
-## Some conceptual examples of ChainStream
-
-<img src="mkdoc/docs/img/ChainstreamExample.png" alt="ChainStream" style="zoom:25%;" />
 
 ## The system overview of ChainStream
 
 <img src="mkdoc/docs/img/ChainStreamMainComponents.png">
 
-## The architecture of ChainStream frameworks
-
-<img src="mkdoc/docs/img/ChainStreamArchNew.png" alt="ChainStream" style="zoom:50%;" />
 
 ## Quick Start
 
@@ -104,23 +98,20 @@ class PeopleRecognitionAgent(cs.agent.Agent):
 
 ```
 
-In an agent, the following items have to be configured:
-
-- Agent name, description, package (zip)
-- ChainStream version
-- Devices: desktop, phone, glass, watch, etc. (numbers)
-- Deployment doc: how the devices are deployed
-- Dependency: other agents/streams/memory that must be available and their versions
-- LLM: models that must be available
-- Public streams/memory: output streams/memory that can be seen by other agents
-
 
 ### File structure:
 
 ChainStream
-- agents: chainstream agent code
+- Agent Generator: natural language to chainstream DSL compiler
+- Agent Store: chainstream agent code
 - chainstream: chainstream framework code
+- ChainStreamClient: Android Edge sensor code
 - ChainStreamSandBox: sandbox for agent testing
 - ChainStreamTest: test cases for the chainstream framework
-- NL2DSL: natural language to chainstream DSL compiler
-- PrivacyStream: Android Edge sensor code
+- mkdoc：documentation
+
+### Copyright
+
+- ChainStream is designed and developed by the AIoT Team from Institute for AI Industry Research (AIR), Tsinghua University.
+- Main contributors: Yuanchun Li, Jiacheng Liu, Wenxing Xu, Liangyan Li, Wenjie Du and others. 
+- We will release more detailed references in the future.
