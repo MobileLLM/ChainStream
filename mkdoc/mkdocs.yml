@@ -17,7 +17,7 @@ nav:
       - ChainStream Framework Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
       - Code Structure: SystemOverview/CODE_STRUCTURE.md
   - Demo:
-      - Demo: Demo/DEMO.md
+      - Demo: Demo/GLASS_CAMERA.md
   - User Guide:
       - Quick start: UserGuide/QUICK_START.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md

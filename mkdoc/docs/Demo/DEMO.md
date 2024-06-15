@@ -1,3 +1,0 @@
-# DEMO
-
-// comming soon
