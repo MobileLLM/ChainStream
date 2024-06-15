@@ -21,7 +21,7 @@ hide:
 
 对于每个读者，我们都建议您先阅读：
 
-- [:hugging: ChainStream概览](SystemOverview/WHAT_IS_CHAINSTREAM/){ .md-button } 了解ChainStream的基本概念和功能。
+- [:octicons-book-24: ChainStream概览](SystemOverview/WHAT_IS_CHAINSTREAM/){ .md-button } 了解ChainStream的基本概念和功能。
 
 本文档面向三个主要受众：
 

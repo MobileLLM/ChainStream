@@ -14,7 +14,7 @@ nav:
       - What's ChainStream: SystemOverview/WHAT_IS_CHAINSTREAM.md
       - Scenarios: SystemOverview/SYSTEM_SCENARIOS.md
       - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
-      - ChainStream Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
+      - ChainStream Framework Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
   - User Guide:
       - Installation: UserGuide/INSTALLATION.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -80,7 +80,7 @@ plugins:
             Agent Store Guide: Agent商店指南
             System Overview: ChainStream系统概览
             Scenarios: ChainStream应用场景
-            ChainStream Architecture: ChainStream架构
+            ChainStream Architecture: ChainStream框架架构
             Documentation: 项目文档
             What's ChainStream: 什么是ChainStream？
 
