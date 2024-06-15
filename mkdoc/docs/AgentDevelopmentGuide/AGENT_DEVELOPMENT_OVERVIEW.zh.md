@@ -1,9 +1,10 @@
-# Agent development guide for chainstream
+# ChainStream Agent开发指南
 
-ChainStream 是一个处理流式数据的开发框架，用 Python 编写。它允许开发者根据用户提供的任务要求处理各种数据流，这些数据流可以由软件或硬件产生。硬件产生的数据流可能包括摄像头的图像流、麦克风的音频流、GPS 的位置信息流，而软件产生的数据流可能是应用程序产生的数据流、电脑截屏图像流等。
+!!! abstract "摘要"
 
+    此开发指南提供了详细的步骤和指导，帮助开发者利用 ChainStream 框架管理数据流和创建Agent。通过这些指南，开发者能够有效地利用 ChainStream API 和模块开发Agent，实现高效的数据流处理和响应机制，从而满足各种复杂数据任务的需求。
 
-## Chainstream Agent模块介绍
+## Chainstream Agent开发模块介绍
 
 ### Stream 模块
 
@@ -39,28 +40,38 @@ ChainStream 是一个处理流式数据的开发框架，用 Python 编写。它
   - `chainstream.llm.make_prompt(query ,data)`: 将处理要求和输入数据转换成模型能够接受的输入。
   - `chainstream.llm.query(prompt)`: 向模型发送输入 prompt，返回模型的回复。
 
-## Agent 编写指南
+## Agent 开发指南
+
+### Agent_id
+
+在 Chainstream 中，`Agent_id` 是用来唯一标识一个 Agent 实例的字符串。
+
+通常在创建 Agent 时，需要为其指定一个唯一的 `Agent_id`，以便在系统中识别和管理不同的 Agent。
+
+- `Agent_id` 可以是任何符合命名规范的字符串，如 `test_agent`, `arxiv_processor` 等。
+- 为了避免冲突，建议使用具有描述性的名称，并避免使用特殊字符或空格。
 
 ### API 使用
 
 - 创建新的 Agent 时，需要继承 `chainstream.agent.Agent` 类，并实现其中的方法。
 - 在 `__init__` 方法中，需要调用父类的构造方法，并初始化资源和数据流。
 - 在 `start` 方法中，定义处理数据流的监听函数，并将其绑定到相应的数据流上。
+- 除了监听函数外，通常需要进行数据预处理、解析、模型查询、响应处理和格式转换等步骤。
 - 在 `stop` 方法中，注销该 Agent 挂载到数据流上的所有监听函数。
 
-### Package 规范
+### 命名规则
 
-- **包名称**：使用小写字母和下划线来分隔单词。
-- **版本管理**：遵循语义化版本控制（MAJOR.MINOR.PATCH）。
-- **依赖关系**：在 `requirements.txt` 或 `setup.py` 文件中指定依赖关系，使用 `pip` 或其他适当的工具来管理依赖关系。
+遵循 Python 的命名规范，包括模块、类、函数和变量的命名。
 
-### Agent ID、版本号和依赖
+- 使用小写字母和下划线 `_` 分隔的方式命名模块和文件。
+- 类名使用驼峰命名法。
+- 函数和变量名使用小写字母和下划线 `_` 分隔。
 
-- 每个 Agent 需要有一个唯一的 `agent_id` 来标识。
-- 更新包版本时，应遵循语义化版本控制。
-- 明确指定依赖关系及其版本，以确保 Agent 的兼容性和正常运行。
+## 示例Agent
 
-## 示例 Agent
+!!! success "成功案例"
+
+    下面展示如何在ChainStream中实现一个提取Arxiv摘要的agent，让我们利用提供的API并参考开发指南行动起来吧！
 
 ```python
 import chainstream as cs
@@ -68,7 +79,7 @@ from chainstream.llm import get_model
 
 class TestAgent(cs.agent.Agent):
     def __init__(self):
-        super().__init__("test_arxiv_agent")
+        super().__init__("arxiv_abstract_agent")
         self.input_stream = cs.get_stream("all_arxiv")
         self.output_stream = cs.get_stream("cs_arxiv")
         self.llm = get_model(["text"])
@@ -89,3 +100,4 @@ class TestAgent(cs.agent.Agent):
     def stop(self):
         self.input_stream.unregister_listener(self)
 ```
+
