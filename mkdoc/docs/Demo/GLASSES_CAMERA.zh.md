@@ -1,4 +1,4 @@
-# GLASS CAMERA
+# 智能眼镜摄像头Agent
 
 我们探索了ChainStream在智能眼镜中的应用。我们尝试给智能眼镜快速部署一个基于ChainStream开发的简单视觉感知Agent。
 

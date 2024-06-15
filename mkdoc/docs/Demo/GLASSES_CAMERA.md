@@ -1,4 +1,4 @@
-# GLASS CAMERA
+# GLASSES CAMERA
 
 We explored the application of ChainStream in smart glasses. We attempted to quickly deploy a simple visual perception Agent developed based on ChainStream onto the smart glasses.
 
