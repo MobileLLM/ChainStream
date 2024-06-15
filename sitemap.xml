@@ -92,6 +92,13 @@
         <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/ChainStreamDevelopmentGuide/SDK_DEVELOPMENT_GUIDE/"/>
     </url>
     <url>
+        <loc>https://mobilellm.github.io/ChainStream/Demo/DEMO/</loc>
+        <lastmod>2024-06-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/Demo/DEMO/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/Demo/DEMO/"/>
+    </url>
+    <url>
         <loc>https://mobilellm.github.io/ChainStream/SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW/</loc>
         <lastmod>2024-06-15</lastmod>
         <changefreq>daily</changefreq>
@@ -244,6 +251,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/ChainStreamDevelopmentGuide/SDK_DEVELOPMENT_GUIDE/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/ChainStreamDevelopmentGuide/SDK_DEVELOPMENT_GUIDE/"/>
+    </url>
+    <url>
+        <loc>https://mobilellm.github.io/ChainStream/zh/Demo/DEMO/</loc>
+        <lastmod>2024-06-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://mobilellm.github.io/ChainStream/zh/Demo/DEMO/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://mobilellm.github.io/ChainStream/Demo/DEMO/"/>
     </url>
     <url>
         <loc>https://mobilellm.github.io/ChainStream/zh/SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW/</loc>
