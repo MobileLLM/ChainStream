@@ -25,7 +25,7 @@ hide:
 
 本文档面向三个主要受众：
 
-- [:fontawesome-solid-user: ChainStream用户](UserGuide/INSTALLATION/){ .md-button } 适用于希望使用ChainStream构建自己的智能体或将其集成到现有系统中的用户。
+- [:fontawesome-solid-user: ChainStream用户](UserGuide/QUICK_START/){ .md-button } 适用于希望使用ChainStream构建自己的智能体或将其集成到现有系统中的用户。
 - [:material-robot-excited-outline: Agent开发者](AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW/){ .md-button } 适用于希望了解ChainStream的内部工作原理并构建自己的智能体的开发者。
 - [:fontawesome-solid-code: ChainStream系统贡献者](ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW/){ .md-button } 适用于希望为ChainStream的开发做出贡献的系统开发者。
 

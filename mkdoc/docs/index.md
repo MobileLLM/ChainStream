@@ -25,7 +25,7 @@ For everyone, we suggest you read:
 
 This documentation is written for three main audiences:
 
-- [:fontawesome-solid-user: ChainStream User](UserGuide/INSTALLATION/){ .md-button } This audience is for those who want to use ChainStream to build their own agent or integrate it into their existing system.
+- [:fontawesome-solid-user: ChainStream User](UserGuide/QUICK_START/){ .md-button } This audience is for those who want to use ChainStream to build their own agent or integrate it into their existing system.
 - [:material-robot-excited-outline: Agent Developer](AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW/){ .md-button } This audience is for those who want to understand the inner workings of ChainStream and build their own agent.
 - [:fontawesome-solid-code: ChainStream Sys Contributor](ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW/){ .md-button } This audience is for those who want to contribute to the development of ChainStream.
 

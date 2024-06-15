@@ -17,7 +17,7 @@ nav:
       - ChainStream Framework Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
       - Code Structure: SystemOverview/CODE_STRUCTURE.md
   - User Guide:
-      - Installation: UserGuide/INSTALLATION.md
+      - Quick start: UserGuide/QUICK_START.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
       - Agent Store: UserGuide/AGENT_STORE_GUIDE.md
       - Edge Sensor: UserGuide/EDGE_SENSOR_USER_GUIDE.md
@@ -85,6 +85,7 @@ plugins:
             Documentation: 项目文档
             What's ChainStream: 什么是ChainStream？
             Code Structure: 代码结构
+            Quick start: 快速入门
 
 
 theme:
