@@ -44,7 +44,7 @@ class FunctionManager:
 class AgentManager(AgentAnalyzer):
     def __init__(self):
         super().__init__()
-        self.predefined_agents_path = Path(os.path.dirname(__file__)).parent.parent / 'agents'
+        self.predefined_agents_path = Path(os.path.dirname(__file__)).parent.parent / 'AgentStore'
 
     def register_agent(self, agent):
         self.agents[agent.agent_id] = agent
