@@ -1,5 +1,5 @@
 from .sandbox import SandBox
-from ..NL2DSL.nl2dsl import NL2DSL
+from ..AgentGenerator.agent_generator import AgentGenerator
 from tasks import ALL_TASKS
 import json
 
@@ -8,7 +8,7 @@ def evaluate_nl2dsl():
     all_results = []
     for task in ALL_TASKS:
         task_description = task.task_description
-        agent = NL2DSL(task_description)
+        agent = AgentGenerator(task_description)
         oj = SandBox(task, agent)
         res = oj.start_test_agent()
         all_results.append(res)
