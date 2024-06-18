@@ -13,9 +13,8 @@ random.seed(6666)
 class EmailTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.task_description = (
-            "Get the emails from the `all_emails` stream, "
-            "and finally output it to the `cs_emails` stream")
+        self.task_description = ("Read data from the input stream 'all_news', where each item is a dictionary with at least the keys 'headline' and 'category'.Extract the values of the 'headline' and 'category' keys. Generate a string combining the headline and category, and output this string to the stream 'cs_news'."
+        "and save the results in the output stream.")
         self.email_data = self._get_email_data()
 
     def init_environment(self, runtime):

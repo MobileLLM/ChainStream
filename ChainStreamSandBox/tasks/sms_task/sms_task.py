@@ -10,8 +10,8 @@ random.seed(6666)
 class WorkSmsTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.task_description = ("Get the message from the `all_sms` stream, and finally "
-                                 "output it to the `cs_sms` stream")
+        self.task_description = ("Read data from the input stream 'all_sms', define and register a listener function, and classify each SMS message into one of the categories (positive, negative, neutral, other) based on its content. Output the message along with its classification to stream 'cs_sms'."
+                                 "and save the results in the output stream.")
 
         self.sms_data = self._get_sms_data()
 

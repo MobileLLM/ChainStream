@@ -13,8 +13,10 @@ class ArxivTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
         self.task_description = (
-            "Get the paper from the `all_arxiv` stream, "
-            "and finally output it to the `cs_arxiv` stream")
+            "Retrieve data from the input stream all_arxiv, and process the value corresponding to the 'abstract' key in the paper dictionary: "
+            "Extract the abstract content and generate a prompt asking whether the abstract is related to 'edge LLM agent'. "
+            "Query the prompt using the text type llm to get a response. If the response is 'Yes', add the paper to the output stream cs_arxiv, "
+            "and save the results in the output stream.")
 
         self.paper_data = self._get_paper_data()
 

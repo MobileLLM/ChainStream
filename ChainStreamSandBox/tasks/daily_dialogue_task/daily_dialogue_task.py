@@ -7,8 +7,8 @@ class DialogueTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
         self.task_description = (
-            "Get the dialogues from the `all_dialogues` stream, "
-            "and finally output them to the `cs_dialogues` stream")
+            "Retrieve data from the input stream all_dialogues,process the dialogue data: Classify the following dialogues contents into one of the categories: positive, negative, neutral, other. Choose one and explain.Finally output the answer to the stream 'cs_news'."
+            "and save the results in the output stream.")
         self.dialogue_data = self._get_dialogue_data()
 
     def init_environment(self, runtime):

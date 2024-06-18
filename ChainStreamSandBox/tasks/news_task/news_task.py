@@ -12,9 +12,8 @@ random.seed(6666)
 class NewsTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.task_description = (
-            "Get the news from the `all_news` stream, "
-            "and finally output it to the `cs_news` stream")
+        self.task_description =("Read data from the input stream 'all_news', where each item is a dictionary with at least the keys 'headline' and 'date'.Extract the values of the 'headline' and 'date' keys. Generate a string combining the headline and date, and output this string to the stream 'cs_news'."
+        "and save the results in the output stream.")
 
         self.news_data = self._get_news_data()
 
@@ -67,4 +66,3 @@ class NewsTaskConfig(TaskConfigBase):
 
 if __name__ == '__main__':
     config = NewsTaskConfig()
-    # Add any additional steps to initialize and run the task, if necessary
