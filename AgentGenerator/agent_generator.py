@@ -2,7 +2,7 @@ from AgentGenerator.query_openai import TextGPTModel
 from AgentGenerator.chainstream_doc import chainstream_doc
 
 
-class NL2DSL:
+class AgentGenerator:
     def __init__(self, model_name="gpt-3.5-turbo-1106"):
         self.model = TextGPTModel(model_name)
         self.max_token_len = 4096
@@ -37,9 +37,9 @@ class NL2DSL:
         # return user_prompt
         return task
 
-
-# nl2dsl_instance = NL2DSL()
-# task_description = "Process Arxiv paper abstracts to filter those related to 'edge LLM agent'."
-# dsl_output = nl2dsl_instance.generate_dsl(task_description)
-# print(dsl_output)
+if __name__ == "__main__":
+    agent_generator = AgentGenerator()
+    task_description = "Process Arxiv paper abstracts to filter those related to 'edge LLM agent'."
+    dsl_output = agent_generator.generate_dsl(task_description)
+    print(dsl_output)
 
