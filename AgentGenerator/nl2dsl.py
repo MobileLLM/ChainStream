@@ -1,5 +1,5 @@
-from query_openai import TextGPTModel
-from chainstream_doc import chainstream_doc
+from AgentGenerator.query_openai import TextGPTModel
+from AgentGenerator.chainstream_doc import chainstream_doc
 
 
 class NL2DSL:
@@ -11,7 +11,7 @@ class NL2DSL:
         prompt  = [
             {
                 "role": "system",
-                "content": self._get_system_prompt(task)
+                "content": self._get_system_prompt()
             },
             {
                 "role": "user",
@@ -22,7 +22,7 @@ class NL2DSL:
         return response
 
 
-    def _get_system_prompt(self, task):
+    def _get_system_prompt(self):
         return chainstream_doc.chinese_api_prompt
 
     def _get_user_prompt(self, task):
@@ -35,7 +35,7 @@ class NL2DSL:
         #     "and save the results in the output stream."
         # )
         # return user_prompt
-        pass
+        return task
 
 
 # nl2dsl_instance = NL2DSL()
