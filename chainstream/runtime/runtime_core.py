@@ -1,6 +1,7 @@
 import logging
 from .stream_manager import StreamManager
 from .agent_manager import AgentManager
+from .llm_manager import LLMManager
 
 
 class RuntimeCoreOp:
@@ -13,6 +14,7 @@ class RuntimeCoreOp:
 
         self.agent_manager = AgentManager()
         self.stream_manager = StreamManager()
+        self.llm_manager = LLMManager()
 
     def config(self, *args, **kwargs):
         self.verbose = kwargs.get('verbose', False)

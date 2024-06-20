@@ -3,7 +3,7 @@ from .make_prompt import make_prompt
 _model_instances = {}
 
 
-def get_model(type=['text']):
+def get_model(agent, type=['text']):
     '''
     name: list of model type, e.g. ['text', 'image', 'audio']
     '''
