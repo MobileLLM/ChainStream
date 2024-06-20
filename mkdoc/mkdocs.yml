@@ -37,6 +37,8 @@ nav:
       - ChainStream SDK: ChainStreamDevelopmentGuide/SDK_DEVELOPMENT_GUIDE.md
       - Edge Sensor: ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md
       - Dashboard: ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md
+  - Design Blog:
+      - LLM-RuntimeOptimization: DesignBlog/LLMRuntimeOptimize.md
 extra:
 #  alternate:
 #    - name: English
@@ -90,6 +92,7 @@ plugins:
             Quick start: 快速入门
             Demo: 示例
             Glasses Camera Demo: 智能眼镜摄像头Demo
+            Design Blog: 设计博客
 
 
 theme:
