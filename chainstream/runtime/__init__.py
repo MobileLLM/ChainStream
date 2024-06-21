@@ -1,4 +1,4 @@
-from .server import ChainStreamServer
+from chainstream.runtime.server.server import ChainStreamServer
 
 cs_server = ChainStreamServer()
 cs_server_core = cs_server.get_chainstream_core()

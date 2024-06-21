@@ -1,5 +1,11 @@
+from chainstream.context import Buffer
+from PIL import Image
+from chainstream.runtime.abstraction_layer.models.utils.utils import convert_audio_to_text, convert_image_to_base64
+import os
+
+
 def make_prompt(*args, system_prompt=None):
-    '''
+    """
     args:
     - string: user input
     - PIL.Image: user image
@@ -15,7 +21,7 @@ def make_prompt(*args, system_prompt=None):
     image_prompt = make_prompt("front camera shot is here", [image1, image2])
     audio_prompt = make_prompt("audio recording is here", audio)
     audio_image_prompt = make_prompt("front camera shot is here", image, "audio recording is here", audio)
-    '''
+    """
     message_prompt = []
     if system_prompt is not None:
         if not isinstance(system_prompt, str):

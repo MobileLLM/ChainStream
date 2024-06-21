@@ -1,4 +1,4 @@
-from .runtime_core import RuntimeCore
+from chainstream.runtime.runtime_core import RuntimeCore
 from .server_shell import ChainStreamServerShell
 from .server_web import ChainStreamServerWeb
 
