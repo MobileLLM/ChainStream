@@ -13,7 +13,7 @@ class LLMInstanceBase:
 
         self.recorder = LLMRecorder()
 
-    def process_query(self, input_data) -> object:
+    def process_query(self, prompt_message) -> object:
         raise NotImplementedError("process_query method not implemented")
 
     def release_resources(self):
@@ -23,6 +23,7 @@ class LLMInstanceBase:
         raise NotImplementedError("init_resources method not implemented")
 
     def _start_processing(self):
+        self.recorder.record_start()
         self.stop_event.clear()
         self.init_resources()
         self.processing_thread = threading.Thread(target=self._process_input_queue)
@@ -30,14 +31,17 @@ class LLMInstanceBase:
     def _process_input_queue(self):
         while not self.stop_event.is_set():
             try:
-                input_data, response_queue = self.input_queue.get(timeout=1)
-                response = self.process_query(input_data)
+                prompt_message, response_queue = self.input_queue.get(timeout=1)
+                self.recorder.record_query(prompt_message)
+                response, prompt_tokens, completion_tokens = self.process_query(prompt_message)
+                self.recorder.record_response(response, prompt_tokens, completion_tokens)
                 response_queue.put(response)
 
             except Empty:
                 continue
 
     def _stop_processing(self):
+        self.recorder.record_stop()
         self.stop_event.set()
         if self.processing_thread is not None:
             self.processing_thread.join()
