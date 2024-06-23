@@ -1,9 +1,11 @@
 from ..llm_instance_base import LLMInstanceBase
 from openai import OpenAI
 
+
 class OpenAIBase(LLMInstanceBase):
     def __init__(self):
         super().__init__()
+
         pass
 
     def process_query(self, input_data) -> object:
@@ -14,5 +16,3 @@ class OpenAIBase(LLMInstanceBase):
 
     def init_resources(self):
         raise NotImplementedError("init_resources method not implemented")
-    
-

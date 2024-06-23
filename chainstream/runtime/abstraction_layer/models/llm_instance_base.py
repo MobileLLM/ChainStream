@@ -1,4 +1,5 @@
 from queue import Queue, Empty
+from .llm_recorder import LLMRecorder
 import threading
 
 
@@ -9,6 +10,8 @@ class LLMInstanceBase:
         self.lock = threading.Lock()
         self.processing_thread = None
         self.stop_event = threading.Event()
+
+        self.recorder = LLMRecorder()
 
     def process_query(self, input_data) -> object:
         raise NotImplementedError("process_query method not implemented")
