@@ -23,5 +23,10 @@ class LLMInterfaceBase:
 
         return response
 
-    def _set_llm_instance_list(self, llm_instance_list):
+    def set_llm_instance_list(self, llm_instance_list):
         self.router.set_llm_instance_list(llm_instance_list)
+
+
+class LLMTextInterface(LLMInterfaceBase):
+    def __init__(self, agent):
+        super().__init__(agent, "text")

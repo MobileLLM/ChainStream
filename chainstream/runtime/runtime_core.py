@@ -56,6 +56,12 @@ class RuntimeCoreOp:
     def get_stream_list(self) -> list:
         return self.stream_manager.get_stream_list()
 
+    def register_llm(self, agent, llm) -> None:
+        self.llm_manager.register_llm(agent, llm)
+
+    def unregister_llm(self, agent, llm) -> None:
+        self.llm_manager.unregister_llm(agent, llm)
+
 
 class RuntimeCoreAnalysisOp(RuntimeCoreOp):
     def __init__(self):
