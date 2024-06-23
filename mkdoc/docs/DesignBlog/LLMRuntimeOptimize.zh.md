@@ -28,15 +28,31 @@ ChainStream自动检测每个task中所使用的LLM表现，自动为其选择�
 
 - API：确定要支持几种LLM类型。
 - LLM SDK：
-  - get model根据LLM类型返回LLM接口类。
-  - LLM接口类中不执行实际query
-  - 为每个LLM接口类附加recorder
+    - get model根据LLM类型返回LLM接口类。 
+    - LLM接口类中不执行实际query 
+    - 为每个LLM接口类附加recorder
 - Runtime：
-  - llm manager管理每个llm接口类示例
-  - 为每个llm接口类附加一个router，根据节点本身和下游节点的表现情况选择该llm的类型。
+    - llm manager管理每个llm接口类示例
+    - 为每个llm接口类附加一个router，根据节点本身和下游节点的表现情况选择该llm的类型。
 - Abstraction Layer：
-  - 支持各型号LLM，为每个LLM封装型号实例类
-  - 给每个LLM实例类附加recorder，记录运行时性能数据
-  - 给每个LLM实例类附加query队列，根据来源agent优先级和流量情况进行调度
+    - 支持各型号LLM，为每个LLM封装型号实例类
+    - 给每个LLM实例类附加recorder，记录运行时性能数据
+    - 给每个LLM实例类附加query队列，根据来源agent优先级和流量情况进行调度
 - 评测：
-  - 使用ChainStream benchmark，针对本文方法做精度和开销的评估。以最强模型做精度上限，以最便宜模型做开销下限。
+    - 使用ChainStream benchmark，针对本文方法做精度和开销的评估。以最强模型做精度上限，以最便宜模型做开销下限。
+
+
+## 类设计
+
+- API层：
+    - get_model(model_type)： 根据模型类别获得LLMInterface类。
+- LLM SDK层：
+    - LLMInterface类：根据具体类别，通过LLMRouter对接后端LLM实例。
+    - LLMInterfaceRecorder类：记录LLM接口类运行情况。
+- Runtime层：
+    - LLMManager类：管理LLMInstance实例，完成LLMInterface和LLMInstance通过LLMRouter的对接。
+    - LLMRouter类：根据节点性能和流量情况，为LLMInterface选择合适的LLMInstance实例。
+    - LLMInstance类：封装具体型号的LLM实例，附加LLMRecorder和query队列。
+- Config：
+    - 定义各型号LLM的配置参数
+    - LLMRouter的形式
