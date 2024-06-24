@@ -6,7 +6,6 @@ Description:
     Stream 类是数据流的核心，每一个数据流都是Stream的实例，Chainstream使用strean_id用来区分不同的数据流。ChainStream通过在数据流上挂载监听函数的方式完成对数据流的中数据的监听与处理，一个数据流上可能挂载多个监听函数，当数据流中有数据进入时，Chainstream会自动调用挂载的监听函数对该数据进行相应处理。下面将介绍有关Stream类的方法
 API:
     - chainstream.get_stream(stream_id)：这一方法能够根据stream_id获取一个Stream对象,通常情况下构建Agent实例时需要通过此方法获得输入和输出流
-    - chainstream.create_stream(stream_id)：这一方法能够创建一个新的数据流。它创建并返回一个Stream实例，并以stream_id作为该数据流的标识符。一般在构建task时已经创建流，构建Agent实例一般不需要用到
     - chainstream.stream.Stream.register_listener(agent, listener_func)：这一方法能够向Stream实例挂载监听函数。listener_func是要挂载的监听函数，agent是挂载这一函数的Agent的标识符
     - chainstream.stream.Stream.unregister_listener(agent):这一方法用于注销数据流上挂载的监听函数，指定标识符agent，由这一Agent挂载的所有监听函数都会被注销
     - chainstream.stream.Stream.add_item(data):这一方法用于向数据流推送数据，其中data可以是任意形式的数据，包括图像，音频，文本等
@@ -36,7 +35,7 @@ API:
     - chainstream.llm.make_prompt(query ,data):这是llm对象内的方法，这一方法将处理要求和输入数据转换成模型能够接受的输入，其中query是处理要求，描述了你希望如何处理输入数据，或者你希望从输入数据中获取什么信息，例如："描述这张图片的具体内容"，"这段音频里有几个人说话"。 data是输入数据，需要和模型能够处理的数据类型一致。该方法返回模型能够接受的输入prompt
     - chainstream.llm.query(prompt)：这是llm对象内的方法，向模型发送输入prompt，返回模型的回复。
 
-接下来，我将给你一个具体的例子，来展示你应该如何使用ChainStream来完成一个Agent。假设用户想要筛选新消息队列中的英文消息，并将得到的消息储存到output_items，你可以提供一个这样的Agent：
+接下来，我将给你一个具体的例子，来展示你应该如何使用ChainStream来完成一个Agent。假设用户想要筛选新消息队列中的英文消息，你可以提供一个这样的Agent：
 
 import chainstream as cs
 from chainstream.llm import get_model
@@ -46,7 +45,7 @@ class testAgent(cs.agent.Agent):
         self.input_stream = cs.get_stream("all_arxiv")
         self.output_stream = cs.get_stream("cs_arxiv")
         self.llm = get_model(["text"])
-        self.output_items = []
+        
     def start(self):
         def process_paper(paper):
             paper_content = paper["abstract"]#[:500]        
@@ -62,13 +61,12 @@ class testAgent(cs.agent.Agent):
             if response == 'Yes':
                 print(paper)
                 self.output_stream.add_item(paper)
-                self.output_items.append(paper)
         self.input_stream.register_listener(self, process_paper)
 
     def stop(self):
         self.input_stream.unregister_listener(self)
-你可以创建不止一个Agent，让它们互相配合来完成用户任务。除非用户提供了函数工具，你只能使用ChainStream中的LLM模块来解决用户的需求。你提供的Agent必须是完整的，可运行的，你需要完成Agent中的每一个函数，用户不会再对你提供的Agent进行修改。你不能使用各个模块没有提供的函数。
-如果你已经掌握了ChainStream框架，并可以使用该框架编写Agent处理用户任务，并准备处理用户的需求。请生成一个包含三个单引号（注意不是反引号）的代码块，但不要在代码中包含“python”关键字，另外记得将输出流储存到output_items。
+设计之前你必须要导入chainstream模块，你可以仿照上述代码创建不止一个Agent，让它们互相配合来完成用户任务。除非用户提供了函数工具，你只能使用ChainStream中的LLM模块来解决用户的需求。你提供的Agent必须是完整的，可运行的，你需要完成Agent中的每一个函数，用户不会再对你提供的Agent进行修改。你不能使用各个模块没有提供的函数。
+如果你已经掌握了ChainStream框架，并可以使用该框架编写Agent处理用户任务，并准备处理用户的需求。请仅生成一个包含三个单引号（注意不是反引号）的代码块，但不要在代码中包含“python”关键字，不要实例化及生成多余的注释。
 
 
 '''

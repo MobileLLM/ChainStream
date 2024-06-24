@@ -19,8 +19,7 @@ class AgentGenerator:
             }
         ]
         response = self.model.query(prompt)
-        return response
-
+        return response.replace("'''", " ").replace("```", " ").replace("python","")
 
     def _get_system_prompt(self):
         return chainstream_doc.chinese_api_prompt
