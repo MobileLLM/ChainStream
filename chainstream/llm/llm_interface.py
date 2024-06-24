@@ -1,6 +1,7 @@
 from .llm_interface_recorder import LLMInterfaceRecorder
 from chainstream.runtime.abstraction_layer.models.llm_router import LLMRouter
 from queue import Queue
+from . import API_LLM_TYPE
 
 
 class LLMInterfaceBase:
@@ -29,4 +30,19 @@ class LLMInterfaceBase:
 
 class LLMTextInterface(LLMInterfaceBase):
     def __init__(self, agent):
-        super().__init__(agent, "text")
+        super().__init__(agent, API_LLM_TYPE['T'])
+
+
+class LLMTextImageInterface(LLMInterfaceBase):
+    def __init__(self, agent):
+        super().__init__(agent, API_LLM_TYPE['TI'])
+
+
+class LLMTextAudioInterface(LLMInterfaceBase):
+    def __init__(self, agent):
+        super().__init__(agent, API_LLM_TYPE['TA'])
+
+
+class LLMTextImageAudioInterface(LLMInterfaceBase):
+    def __init__(self, agent):
+        super().__init__(agent, API_LLM_TYPE['TAI'])

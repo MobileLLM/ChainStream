@@ -1,9 +1,21 @@
 from queue import Queue, Empty
 from .llm_recorder import LLMRecorder
 import threading
+from enum import Enum
 
 
-class LLMInstanceBase:
+# an enum to mark the llm instance from cloud or local
+class LLMInstanceType(Enum):
+    CLOUD = 1
+    LOCAL = 2
+
+
+
+
+class LLMInstanceMessageBase:
+    model_name = None
+    model_type = None
+
     def __init__(self):
         self.input_queue = Queue()
         self.router_list = []
