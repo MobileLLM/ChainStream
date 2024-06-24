@@ -40,3 +40,20 @@ The detailed design includes the following parts:
   - Attach a query queue to each LLM instance class, scheduling based on the source agent's priority and traffic conditions.
 - **Evaluation**:
   - Use the ChainStream benchmark to evaluate the accuracy and cost of this method. The strongest model serves as the upper limit for accuracy, while the cheapest model serves as the lower limit for costs.
+
+## Class Design
+
+<img src="../../img/LLMRuntimeArch.jpg" alt="ChainStream System Components">
+
+- API Layer:
+    - `get_model(model_type)`: Retrieves the `LLMInterface` class based on the model type.
+- LLM SDK Layer:
+    - `LLMInterface` Class: Connects to the backend LLM instance via `LLMRouter` based on the specific type.
+    - `LLMInterfaceRecorder` Class: Records the operational status of the `LLMInterface` class.
+- Runtime Layer:
+    - `LLMManager` Class: Manages `LLMInstance` instances, facilitating the connection between `LLMInterface` and `LLMInstance` through `LLMRouter`.
+    - `LLMRouter` Class: Selects the appropriate `LLMInstance` for `LLMInterface` based on node performance and traffic conditions.
+    - `LLMInstance` Class: Encapsulates specific models of LLM instances, and includes `LLMRecorder` and a query queue.
+- Config:
+    - Defines configuration parameters for various LLM models.
+    - Configures the form of `LLMRouter`.

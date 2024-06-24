@@ -44,6 +44,9 @@ ChainStream自动检测每个task中所使用的LLM表现，自动为其选择�
 
 ## 类设计
 
+<img src="../../../img/LLMRuntimeArch.jpg" alt="ChainStream System Components">
+
+
 - API层：
     - get_model(model_type)： 根据模型类别获得LLMInterface类。
 - LLM SDK层：
