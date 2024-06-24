@@ -10,8 +10,6 @@ class LLMInstanceType(Enum):
     LOCAL = 2
 
 
-
-
 class LLMInstanceMessageBase:
     model_name = None
     model_type = None
@@ -60,7 +58,8 @@ class LLMInstanceMessageBase:
             self.release_resources()
             self.processing_thread = None
 
-    def send_query(self, prompt, response_queue):
+    def send_query(self, prompt, response_queue, query_info):
+        self.recorder.record_query(prompt, query_info)
         self.input_queue.put((prompt, response_queue))
 
     def _add_router(self, router):
@@ -74,3 +73,7 @@ class LLMInstanceMessageBase:
             self.router_list.remove(router)
             if len(self.router_list) == 0:
                 self._stop_processing()
+
+
+class LLMInstanceBase(LLMInstanceMessageBase):
+    pass

@@ -6,7 +6,7 @@ class LLMRecorder:
         self.prompt_token = 0
         self.history = collections.OrderedDict()
 
-    def record_query(self, prompt):
+    def record_query(self, prompt, query_info):
         pass
 
     def record_response(self, response, prompt_tokens, completion_tokens):

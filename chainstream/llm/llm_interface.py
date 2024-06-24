@@ -1,14 +1,15 @@
 from .llm_interface_recorder import LLMInterfaceRecorder
-from chainstream.runtime.abstraction_layer.models.llm_router import LLMRouter
+from chainstream.runtime.abstraction_layer.models.llm_router import get_llm_router
 from queue import Queue
 from . import API_LLM_TYPE
 
 
 class LLMInterfaceBase:
-    def __init__(self, agent, model_type):
+    def __init__(self, agent, model_type, router_type=None):
         self.model_type = model_type
         self.agent = agent
-        self.router = LLMRouter(model_type)
+        self.router = get_llm_router(model_type, router_type)
+        self.router.set_agent_info(agent)
         self.recorder = LLMInterfaceRecorder()
         self.response_queue = Queue()
 
