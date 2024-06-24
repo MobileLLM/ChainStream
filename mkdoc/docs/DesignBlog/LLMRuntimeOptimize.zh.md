@@ -1,5 +1,8 @@
 # 运行时优化-LLM
 
+!!! example "笔记介绍"
+    本篇笔记记录了设计和修改ChainStream LLM的过程和主要思路。目前尚未完成，主要在[RuntimeOptimize分支](https://github.com/MobileLLM/ChainStream/tree/RuntimeOptimize)，关联到[Issue#86 RuntimeOptimize-已有模型选择和微调新模型](https://github.com/MobileLLM/ChainStream/issues/86)。
+
 ## 目标
 
 ChainStream未来将会运行一个体积庞大的Stream flow graph，其单位时间内的计算量和长期开机的累积计算量都是巨大的，会带来大量的token fee开销。目前已有大量不同类型性能的LLM，但对于用户开发者来讲，选用的LLM只需要满足其需求即可，但往往处于性能最大化的考虑选择最强最贵的模型，从而带来能多额外开销。

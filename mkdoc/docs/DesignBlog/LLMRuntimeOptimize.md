@@ -1,5 +1,8 @@
 # Runtime Optimization - LLM
 
+!!! example "Note Introduction"
+    This note records the process and main ideas for designing and modifying the ChainStream LLM. It is currently incomplete and mainly resides in the [RuntimeOptimize branch](https://github.com/MobileLLM/ChainStream/tree/RuntimeOptimize), associated with [Issue#86 RuntimeOptimize - Existing Model Selection and Fine-Tuning New Models](https://github.com/MobileLLM/ChainStream/issues/86).
+
 ## Objective
 
 In the future, ChainStream will operate a large-scale Stream flow graph, leading to significant computational load both per unit time and cumulatively over long periods of uptime. This will result in substantial token fee costs. Currently, there are many types of LLMs with varying performance levels. However, for user developers, the chosen LLM only needs to meet their requirements. Often, the strongest and most expensive models are selected to maximize performance, resulting in unnecessary additional costs.
