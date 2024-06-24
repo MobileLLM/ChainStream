@@ -1,24 +1,30 @@
 from chainstream.runtime import cs_server
 
+
 class ExecError(Exception):
     def __init__(self, message):
         super().__init__(message)
+
 
 class StartError(Exception):
     def __init__(self, message):
         super().__init__(message)
 
+
 class RunningError(Exception):
     def __init__(self, message):
         super().__init__(message)
+
 
 class FindAgentError(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-class InitalizeError(Exception):
+
+class InitializeError(Exception):
     def __init__(self, message):
         super().__init__(message)
+
 
 class SandBox:
     def __init__(self, task, agent_code):
@@ -45,7 +51,11 @@ class SandBox:
             self.result['start_stream'] = str(e)
             raise RunningError("Error while starting stream: " + str(e))
 
-        self.task.evaluate_task(self.runtime)
+        # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
+        # we only want to init the task environment and start the agent, then start the stream and record all output
+        # into a file. self.task.evaluate_task(self.runtime)
+
+        self._save_result(self.result)
 
     def _start_agent(self):
         try:
@@ -66,7 +76,7 @@ class SandBox:
                 try:
                     self.agent_instance = class_object()
                 except Exception as e:
-                    raise InitalizeError("Error while initializing agent: " + str(e))
+                    raise InitializeError("Error while initializing agent: " + str(e))
             else:
                 raise FindAgentError("Agent class not found in agent file")
             try:
@@ -80,6 +90,11 @@ class SandBox:
 
     def get_agent(self):
         return self.agent_instance
+
+    def _save_result(self, result):
+        # TODO: save the result to a file
+        pass
+
 
 if __name__ == "__main__":
     from tasks import ALL_TASKS

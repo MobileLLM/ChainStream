@@ -4,6 +4,7 @@ from sandbox import SandBox
 from AgentGenerator.agent_generator import AgentGenerator
 from tasks import ALL_TASKS
 
+
 def evaluate_generator():
     results_dir = './results'
     os.makedirs(results_dir, exist_ok=True)
@@ -24,6 +25,7 @@ def evaluate_generator():
             json.dump(res, f)
 
     return all_results
+
 
 if __name__ == '__main__':
     all_results = evaluate_generator()

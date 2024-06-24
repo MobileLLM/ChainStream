@@ -8,7 +8,7 @@ class AgentGenerator:
         self.max_token_len = 4096
 
     def generate_dsl(self, task):
-        prompt  = [
+        prompt = [
             {
                 "role": "system",
                 "content": self._get_system_prompt()
@@ -19,7 +19,7 @@ class AgentGenerator:
             }
         ]
         response = self.model.query(prompt)
-        return response.replace("'''", " ").replace("```", " ").replace("python","")
+        return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
     def _get_system_prompt(self):
         return chainstream_doc.chinese_api_prompt
@@ -36,9 +36,9 @@ class AgentGenerator:
         # return user_prompt
         return task
 
+
 if __name__ == "__main__":
     agent_generator = AgentGenerator()
     task_description = "Process Arxiv paper abstracts to filter those related to 'edge LLM agent'."
     dsl_output = agent_generator.generate_dsl(task_description)
     print(dsl_output)
-

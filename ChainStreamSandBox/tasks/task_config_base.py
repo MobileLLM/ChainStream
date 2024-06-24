@@ -2,7 +2,7 @@ import chainstream as cs
 
 
 class TaskConfigBase(cs.agent.Agent):
-    '''
+    """
     task数据集:
     - task描述，以及最终的output stream
     - 数据源：原始message、email、twitter、image、audio等
@@ -12,7 +12,7 @@ class TaskConfigBase(cs.agent.Agent):
     - 初始化task函数
     - 流开启函数
     - output stream的评测函数
-    '''
+    """
     def __init__(self):
         super().__init__("TaskConfigBase")
         self.task_description = None
