@@ -63,6 +63,9 @@ class RuntimeCoreAnalysisOp(RuntimeCoreOp):
         agent_file_path_to_agent_id = self.agent_manager.get_agent_file_path_to_agent_id()
         return self.stream_manager.get_graph_statistics(agent_file_path_to_agent_id)
 
+    def get_agent_report(self, agent_id):
+        pass
+
 
 class RuntimeCore(RuntimeCoreAnalysisOp):
     def __init__(self):

@@ -1,4 +1,5 @@
 from chainstream.runtime import cs_server
+import json
 
 
 class ExecError(Exception):
@@ -27,7 +28,7 @@ class InitializeError(Exception):
 
 
 class SandBox:
-    def __init__(self, task, agent_code):
+    def __init__(self, task, agent_code, save_path=None):
         cs_server.init(server_type='core')
         cs_server.start()
         self.runtime = cs_server.get_chainstream_core()
@@ -35,6 +36,10 @@ class SandBox:
         self.agent_code = agent_code
         self.agent_instance = None
         self.result = {}
+
+        self.agent_report = {}
+
+        self.save_path = save_path
 
     def start_test_agent(self):
         self.task.init_environment(self.runtime)
@@ -55,7 +60,13 @@ class SandBox:
         # we only want to init the task environment and start the agent, then start the stream and record all output
         # into a file. self.task.evaluate_task(self.runtime)
 
+        self.result['task_output'] = self.task.record_output()
+
+        self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
+
         self._save_result(self.result)
+
+        return self.result
 
     def _start_agent(self):
         try:
@@ -85,15 +96,18 @@ class SandBox:
                 raise StartError("Error while starting agent: " + str(e))
 
         except Exception as e:
+            self.result['start_agent'] = "[ERROR]" + str(e)
             return str(e)
+        self.result['start_agent'] = "[OK]"
         return None
 
     def get_agent(self):
         return self.agent_instance
 
     def _save_result(self, result):
-        # TODO: save the result to a file
-        pass
+        if self.save_path is not None:
+            with open(self.save_path, 'w') as f:
+                json.dump(result, f, indent=4)
 
 
 if __name__ == "__main__":

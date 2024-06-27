@@ -83,7 +83,7 @@ def start_test_agent(self):
     self.task.init_environment(self.runtime)
     self._start_agent()
     self.task.start_task(self.runtime)
-    self.task.evaluate_task(self.runtime)
+    self.task.record_output(self.runtime)
 ```
 
 ```python

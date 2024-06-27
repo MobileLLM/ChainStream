@@ -43,7 +43,7 @@ class ArxivTaskConfig(TaskConfigBase):
         for message in self.paper_data:
             self.input_paper_stream.add_item(message)
 
-    def evaluate_task(self, runtime):
+    def record_output(self, runtime):
         print(self.output_record)
         if len(self.output_record) == 0:
             return False, "No cs-related message found"

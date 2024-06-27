@@ -28,7 +28,7 @@ class TaskConfigBase(cs.agent.Agent):
     def start_task(self, runtime):
         raise RuntimeError("Not implemented")
 
-    def evaluate_task(self, runtime):
+    def record_output(self, runtime):
         raise RuntimeError("Not implemented")
 
 
