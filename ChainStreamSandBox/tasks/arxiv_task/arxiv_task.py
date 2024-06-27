@@ -15,6 +15,7 @@ random.seed(6666)
 class ArxivTaskConfig(TaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
+        self.output_record = None
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
@@ -30,6 +31,13 @@ class ArxivTaskConfig(TaskConfigBase):
         self.input_paper_stream = cs.stream.create_stream('all_arxiv')
         self.output_paper_stream = cs.stream.create_stream('cs_arxiv')
         self.clock_stream = cs.stream.create_stream('clock_every_day')
+        
+        self.output_record = []
+
+        def record_output(data):
+            self.output_record.append(data)
+
+        self.output_paper_stream.register_listener(self, record_output)
 
     def start_task(self, runtime):
         for message in self.paper_data:
