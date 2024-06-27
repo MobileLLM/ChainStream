@@ -21,21 +21,6 @@
 3. 静态评测：生成代码与人类例程的差别
 4. 动态评测：生成代码与人类例程output stream的差别
 
-### 数据源：
-1. camera image：
-    - 第一人称视角图像
-    - 监控视角图像
-2. microphone audio
-    - 可以直接使用文本假装我们前面完成了转录工作
-3. chat message
-    - 聊天记录
-4. email history
-    - 邮件历史记录
-5. daily arxiv paper
-    - 日常arxiv论文
-6. screen snapshot
-    - 屏幕快照
-
 ### 评测环境：
 - 需要有一个运行着的Runtime，并且该Runtime打开了评测模式，可以监控测试agent的动作
 - 监控的动作包括：
@@ -56,20 +41,4 @@
 - 完善nl2dsl prompt
 - 编写评测函数
 - 撰写一大堆task，并收集多模态原始数据
-
-收集的数据集：
-image:
-1. 第一人称视角图像: Ego4D选一点视频抽帧
-
-audios:
-- daily_dialog 数据集
-
-email:
-- enron_mail 数据集
-
-sms:
-- smsCorpus 数据集
-
-twitter：
-- https://huggingface.co/datasets/strombergnlp/broad_twitter_corpus
 
