@@ -2,14 +2,21 @@ import os
 import csv
 import chainstream as cs
 from ..task_config_base import TaskConfigBase
+from ChainStreamSandBox.raw_data import DialogData
+
 
 class DialogueTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
+        self.output_record = None
+        self.output_dialogue_stream = None
+        self.input_dialogue_stream = None
         self.task_description = (
-            "Retrieve data from the input stream all_dialogues,process the dialogue data: Classify the following dialogues contents into one of the categories: positive, negative, neutral, other. Choose one and explain.Finally output the answer to the stream 'cs_news'."
+            "Retrieve data from the input stream all_dialogues,process the dialogue data: Classify the following "
+            "dialogues contents into one of the categories: positive, negative, neutral, other. Choose one and "
+            "explain. Finally output the answer to the stream 'dialogue_classification'."
             "and save the results in the output stream.")
-        self.dialogue_data = self._get_dialogue_data()
+        self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
 
     def init_environment(self, runtime):
         self.input_dialogue_stream = cs.stream.create_stream('all_dialogues')
@@ -32,21 +39,6 @@ class DialogueTaskConfig(TaskConfigBase):
         else:
             return True, f"{len(self.output_record)} dialogues found"
 
-    def _get_dialogue_data(self):
-        data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "daily_dialog",
-                                 "ijcnlp_dailydialog", "conversations.csv")
-        dialogues = []
-
-        with open(data_file, 'r', encoding='utf-8') as file:
-            csv_reader = csv.reader(file, delimiter=',')
-            next(csv_reader)
-            for row in csv_reader:
-                new_message = {}
-                new_message['id'] = row[0]  # Conversation Number
-                new_message['text'] = row[1]  # Conversation
-                dialogues.append(new_message)
-
-        return dialogues
 
 if __name__ == '__main__':
     config = DialogueTaskConfig()

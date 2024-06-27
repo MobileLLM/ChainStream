@@ -5,17 +5,25 @@ import chainstream as cs
 from datetime import datetime
 from ..task_config_base import TaskConfigBase
 import sys
+from ChainStreamSandBox.raw_data import EmailData
 
-csv.field_size_limit(2**31 - 1)
+csv.field_size_limit(2 ** 31 - 1)
 
 random.seed(6666)
+
 
 class EmailTaskConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.task_description = ("Read data from the input stream 'all_news', where each item is a dictionary with at least the keys 'headline' and 'category'.Extract the values of the 'headline' and 'category' keys. Generate a string combining the headline and category, and output this string to the stream 'cs_news'."
-        "and save the results in the output stream.")
-        self.email_data = self._get_email_data()
+        self.output_record = None
+        self.output_email_stream = None
+        self.input_email_stream = None
+        self.task_description = ("Read data from the input stream 'all_news', where each item is a dictionary with at "
+                                 "least the keys 'headline' and 'category'.Extract the values of the 'headline' and "
+                                 "'category' keys. Generate a string combining the headline and category, and output "
+                                 "this string to the stream 'cs_news'."
+                                 "and save the results in the output stream.")
+        self.email_data = EmailData().get_emails(10)
 
     def init_environment(self, runtime):
         self.input_email_stream = cs.stream.create_stream('all_emails')
@@ -39,53 +47,6 @@ class EmailTaskConfig(TaskConfigBase):
         else:
             return True, f"{len(self.output_record)} emails found"
 
-    def _get_email_data(self, num_emails=20):
-        data_file = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "test_data", "email",
-                                 "selected_email.csv")
-        emails = []
-
-        with open(data_file, 'r', encoding='utf-8') as file:
-            csv_reader = csv.reader(file)
-            for row in csv_reader:
-                if len(row) > 1 and row[1].startswith("Message-ID"):
-                    email = self._parse_email(row[1])
-                    if email:
-                        emails.append(email)
-
-        if emails:
-            if len(emails) > num_emails:
-                emails = random.sample(emails, num_emails)
-            emails.sort(key=lambda x: x['Date'], reverse=True)
-            return emails
-        else:
-            return None
-
-    def _parse_email(self, email_text):
-        email_info = {}
-        lines = email_text.split('\n')
-        collecting = False
-        collected_text = []
-        for line in lines:
-            if line.startswith('Date:'):
-                email_info['Date'] = line[len('Date: '):].strip()
-            elif line.startswith('From:'):
-                email_info['From'] = line[len('From: '):].strip()
-            elif line.startswith('To:'):
-                email_info['To'] = line[len('To: '):].strip()
-            elif line.startswith('Subject:'):
-                email_info['Subject'] = line[len('Subject: '):].strip()
-            elif line.startswith('X-FileName:'):
-                # email_info['X-FileName'] = line[len('X-FileName: '):].strip()
-                collecting = True
-            elif collecting:
-                collected_text.append(line.strip())
-
-        if collected_text:
-            email_info['Content'] = '\n'.join(collected_text)
-
-        if all(key in email_info for key in ('Date', 'From', 'To', 'Subject', 'Content')):
-            return email_info
-        return None
 
 if __name__ == '__main__':
     config = EmailTaskConfig()

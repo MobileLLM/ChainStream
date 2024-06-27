@@ -40,4 +40,12 @@ class ArxivData:
         return random.choice(self.paper_data)
 
     def get_random_papers(self, num_papers):
-        return random.sample(self.paper_data, num_papers).sort(key=lambda x: x['update_date'], reverse=True)
+        tmp = random.sample(self.paper_data, num_papers)
+        return sorted(tmp, key=lambda x: x['update_date'], reverse=True)
+
+
+if __name__ == '__main__':
+    arxiv_data = ArxivData()
+    print(len(arxiv_data))
+    print(arxiv_data.get_random_paper())
+    print(arxiv_data.get_random_papers(5))
