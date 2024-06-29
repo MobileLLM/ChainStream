@@ -31,7 +31,7 @@ class NewsTaskConfig(TaskConfigBase):
         for message in self.news_data:
             self.input_news_stream.add_item(message)
 
-    def record_output(self, runtime):
+    def record_output(self):
         print(self.output_record)
         if len(self.output_record) == 0:
             return False, "No news messages found"

@@ -40,7 +40,7 @@ class EmailTaskConfig(TaskConfigBase):
         for message in self.email_data:
             self.input_email_stream.add_item(message)
 
-    def record_output(self, runtime):
+    def record_output(self):
         print(self.output_record)
         if len(self.output_record) == 0:
             return False, "No emails found"

@@ -1,5 +1,8 @@
+import os.path
+import time
 from chainstream.runtime import cs_server
 import json
+import datetime
 
 
 class ExecError(Exception):
@@ -35,13 +38,17 @@ class SandBox:
         self.task = task
         self.agent_code = agent_code
         self.agent_instance = None
-        self.result = {}
 
-        self.agent_report = {}
+        self.result = {'sandbox_info': {
+            'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'task_name': self.task.__class__.__name__,
+            'agent_code': self.agent_code
+        }}
 
         self.save_path = save_path
 
     def start_test_agent(self):
+        self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.task.init_environment(self.runtime)
 
         res = self._start_agent()
@@ -60,7 +67,11 @@ class SandBox:
         # we only want to init the task environment and start the agent, then start the stream and record all output
         # into a file. self.task.evaluate_task(self.runtime)
 
+        self.runtime.wait_all_stream_clear()
+
         self.result['task_output'] = self.task.record_output()
+
+        self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
 
@@ -106,7 +117,12 @@ class SandBox:
 
     def _save_result(self, result):
         if self.save_path is not None:
-            with open(self.save_path, 'w') as f:
+            file_path = os.path.join(
+                self.save_path,
+                datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.task.__class__.__name__ + "_" +
+                self.agent_instance.agent_id + ".json"
+            )
+            with open(file_path, 'w') as f:
                 json.dump(result, f, indent=4)
 
 
@@ -149,5 +165,6 @@ class TestAgent(cs.agent.Agent):
     def stop(self):
         self.input_stream.unregister_listener(self)
     '''
-    oj = SandBox(ArxivTaskConfig(), agent_file)
-    oj.start_test_agent()
+    oj = SandBox(ArxivTaskConfig(), agent_file, save_path='./')
+    res = oj.start_test_agent()
+    print(res)

@@ -36,7 +36,7 @@ class StockTaskConfig(TaskConfigBase):
         for stock in self.stock_data:
             self.input_stock_stream.add_item(stock)
 
-    def record_output(self, runtime):
+    def record_output(self):
         print(self.output_record)
         if len(self.output_record) == 0:
             return False, "No stock data found"

@@ -30,6 +30,13 @@ class BaseStream(StreamInterface):
         super().__init__()
         self.metaData = StreamMeta(stream_id=stream_id, description=description, create_by_agent_file=create_by_agent_file)
         self.logger = logging.getLogger(self.metaData.stream_id)
+
+        self.is_clear = Event()
+        self.is_clear.set()
+
+        self.is_sleeping = Event()
+        self.is_sleeping.set()
+
         self.listeners = []
         self.queue = queue.Queue()
         self.thread = threading.Thread(target=self.process_item)
@@ -43,6 +50,7 @@ class BaseStream(StreamInterface):
             self.recorder.record_listener_actions("register_listener", agent.agent_id, listener_func.__name__)
             self.recorder.record_listener_change(len(self.listeners))
             if not self.is_running:
+                self.is_sleeping.clear()
                 self.is_running = True
                 self.thread.start()
         except Exception as e:
@@ -58,6 +66,7 @@ class BaseStream(StreamInterface):
         self.listeners = new_listeners
         self.recorder.record_listener_change(len(self.listeners))
         if len(self.listeners) == 0:
+            self.is_sleeping.set()
             self.is_running = False
             self.thread.join()
 
@@ -75,9 +84,11 @@ class BaseStream(StreamInterface):
             item = self.queue.get()
             if item is not None:
                 self.logger.debug(f'stream {self.metaData.stream_id} process an item type: {type(item)}')
+                self.is_clear.clear()
                 for agent_, listener_func_ in self.listeners:
                     listener_func_(item)
                     self.recorder.record_send_item(agent_, listener_func_.__name__)
+                self.is_clear.set()
 
     def get_meta_data(self):
         data = self.metaData.__dict__()

@@ -33,7 +33,7 @@ class DialogueTaskConfig(TaskConfigBase):
         for dialogue in self.dialogue_data:
             self.input_dialogue_stream.add_item(dialogue)
 
-    def record_output(self, runtime):
+    def record_output(self):
         if len(self.output_record) == 0:
             return False, "No dialogues found"
         else:

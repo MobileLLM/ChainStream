@@ -8,6 +8,7 @@ from datetime import datetime
 import time
 import threading
 from ChainStreamSandBox.raw_data import ArxivData
+from tqdm import tqdm
 
 random.seed(6666)
 
@@ -31,7 +32,7 @@ class ArxivTaskConfig(TaskConfigBase):
         self.input_paper_stream = cs.stream.create_stream('all_arxiv')
         self.output_paper_stream = cs.stream.create_stream('cs_arxiv')
         self.clock_stream = cs.stream.create_stream('clock_every_day')
-        
+
         self.output_record = []
 
         def record_output(data):
@@ -43,7 +44,7 @@ class ArxivTaskConfig(TaskConfigBase):
         for message in self.paper_data:
             self.input_paper_stream.add_item(message)
 
-    def record_output(self, runtime):
+    def record_output(self):
         print(self.output_record)
         if len(self.output_record) == 0:
             return False, "No cs-related message found"

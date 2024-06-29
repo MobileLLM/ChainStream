@@ -1,7 +1,10 @@
 import collections
 import logging
 from chainstream.stream import register_stream_manager
+import time
 from .agent_manager import AgentManager
+import threading
+from threading import Event
 
 # from chainstream.stream.base_stream import BaseStream
 
@@ -17,7 +20,6 @@ class StreamAnalyzer:
     def get_stream_info(self):
         stream_info = [x.get_meta_data() for x in self.streams.values()]
         return stream_info
-
 
     def get_graph_statistics(self, file_path_to_agent_id):
         stream_info = [x.get_record_data() for x in self.streams.values()]
@@ -96,3 +98,12 @@ class StreamManager(StreamAnalyzer):
             for target_agent in target_agents:
                 edges.append((source_agent, stream, target_agent))
         return edges
+
+    def wait_all_stream_clear(self):
+        # TODO: use threading.Event to wait for all streams to be clear
+        while True:
+            if all(stream.is_clear.is_set() for stream in self.streams.values()):
+                print("All streams are clear")
+                return True
+            time.sleep(1)
+

@@ -54,6 +54,9 @@ class RuntimeCoreOp:
     def get_stream_list(self) -> list:
         return self.stream_manager.get_stream_list()
 
+    def wait_all_stream_clear(self) -> bool:
+        return self.stream_manager.wait_all_stream_clear()
+
 
 class RuntimeCoreAnalysisOp(RuntimeCoreOp):
     def __init__(self):
@@ -70,4 +73,3 @@ class RuntimeCoreAnalysisOp(RuntimeCoreOp):
 class RuntimeCore(RuntimeCoreAnalysisOp):
     def __init__(self):
         super(RuntimeCore, self).__init__()
-
