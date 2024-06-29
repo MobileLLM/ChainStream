@@ -12,7 +12,7 @@ from ChainStreamSandBox.raw_data import ArxivData
 random.seed(6666)
 
 
-class ArxivTaskConfig(TaskConfigBase):
+class ArxivAbstractConfig(TaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
@@ -21,12 +21,41 @@ class ArxivTaskConfig(TaskConfigBase):
         self.input_paper_stream = None
         self.task_description = (
             "Retrieve data from the input stream all_arxiv, and process the value corresponding to the 'abstract' key in the paper dictionary: "
-            "Extract the abstract content and generate a prompt asking whether the abstract is related to 'edge LLM agent'. "
-            "Query the prompt using the text type llm to get a response. If the response is 'Yes', add the paper to the output stream cs_arxiv, "
-            "and save the results in the output stream.")
+            "Extract the abstract content and judge whether the abstract is related to 'edge LLM agent'. "
+            "If the response is 'Yes', add the paper to the output stream cs_arxiv"
+            )
 
         self.paper_data = ArxivData().get_random_papers(paper_number)
+        self.agent_example = '''
+        import chainstream as cs
+        from chainstream.llm import get_model
+        class testAgent(cs.agent.Agent):
+            def __init__(self):
+                super().__init__("test_arxiv_agent")
+                self.input_stream = cs.get_stream("all_arxiv")
+                self.output_stream = cs.get_stream("cs_arxiv")
+                self.llm = get_model(["text"])
+            def start(self):
+                def process_paper(paper):
+                    paper_content = paper["abstract"]#[:500]        
+                    prompt = "Is this abstract related to edge LLM agent? Say 'yes' or 'no'."
+                    prompt = [
+                        {
+                            "role": "user",
+                            "content": prompt+paper_content
+                        }
+                    ]
+                    response = self.llm.query(prompt)
+                    print(response)
+                    if response == 'Yes':
+                        print(paper)
+                        self.output_stream.add_item(paper)
+                self.input_stream.register_listener(self, process_paper)
+        
+            def stop(self):
+                self.input_stream.unregister_listener(self)
 
+        '''
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream('all_arxiv')
         self.output_paper_stream = cs.stream.create_stream('cs_arxiv')
@@ -55,12 +84,12 @@ class ArxivTaskConfig(TaskConfigBase):
             while True:
                 current_date = datetime.now().isoformat()
                 self.clock_stream.add_item({'date': current_date})
-                time.sleep(86400)  # Sleep for one day (86400 seconds)
+                time.sleep(86400)
 
         clock_thread = threading.Thread(target=add_current_date)
-        clock_thread.daemon = True  # Daemonize thread
+        clock_thread.daemon = True
         clock_thread.start()
 
 
 if __name__ == '__main__':
-    config = ArxivTaskConfig()
+    config = ArxivAbstractConfig()
