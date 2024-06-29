@@ -133,7 +133,7 @@ class SandBox:
 if __name__ == "__main__":
     from tasks import ALL_TASKS
 
-    ArxivTaskConfig = ALL_TASKS['ArxivTask']
+    Config = ALL_TASKS['ArxivAbstractTask']
 
     agent_file = '''
 import chainstream as cs
@@ -161,7 +161,7 @@ class TestAgent(cs.agent.Agent):
                     }
                 ]
                 response = self.llm.query(prompt_message)
-                # print(paper_title+" : "+response)
+                print(paper_title+" : "+response)
                 self.output_stream.add_item(paper_title+" : "+response)
 
         self.input_stream.register_listener(self, process_paper)
@@ -169,6 +169,7 @@ class TestAgent(cs.agent.Agent):
     def stop(self):
         self.input_stream.unregister_listener(self)
     '''
-    oj = SandBox(ArxivTaskConfig(), agent_file)
+    config = Config()
+    oj = SandBox(config, agent_file)
     res = oj.start_test_agent()
     print(res)

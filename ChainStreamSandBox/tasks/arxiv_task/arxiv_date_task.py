@@ -1,5 +1,5 @@
 import raw_data
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 import os
 import json
 import random
@@ -13,7 +13,7 @@ from tqdm import tqdm
 random.seed(6666)
 
 
-class ArxivDateConfig(TaskConfigBase):
+class ArxivDateConfig(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
@@ -47,6 +47,7 @@ class ArxivDateConfig(TaskConfigBase):
             def stop(self):
                 self.input_stream.unregister_listener(self)
         '''
+
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream('all_arxiv')
         self.output_paper_stream = cs.stream.create_stream('cs_arxiv')
@@ -62,30 +63,6 @@ class ArxivDateConfig(TaskConfigBase):
     def start_task(self, runtime):
         for message in self.paper_data:
             self.input_paper_stream.add_item(message)
-
-    def record_output(self):
-        # print(self.output_record)
-        if len(self.output_record) == 0:
-            return {
-                "status": "[ERROR] No output message found",
-                "data": []
-            }
-        else:
-            return {
-                "status": "[OK] Task completed",
-                "data": self.output_record
-            }
-
-    def start_clock_stream(self):
-        def add_current_date():
-            while True:
-                current_date = datetime.now().isoformat()
-                self.clock_stream.add_item({'date': current_date})
-                time.sleep(86400)
-
-        clock_thread = threading.Thread(target=add_current_date)
-        clock_thread.daemon = True
-        clock_thread.start()
 
 
 if __name__ == '__main__':

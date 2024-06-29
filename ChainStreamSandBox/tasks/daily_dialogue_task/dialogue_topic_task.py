@@ -1,11 +1,11 @@
 import os
 import csv
 import chainstream as cs
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 from ChainStreamSandBox.raw_data import DialogData
 
 
-class DialogueTopicConfig(TaskConfigBase):
+class DialogueTopicConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -51,6 +51,7 @@ class DialogueTopicConfig(TaskConfigBase):
             def stop(self):
                 self.input_stream.unregister_listener(self)
         '''
+
     def init_environment(self, runtime):
         self.input_dialogue_stream = cs.stream.create_stream('all_dialogues')
         self.output_dialogue_stream = cs.stream.create_stream('cs_dialogues')
@@ -65,12 +66,6 @@ class DialogueTopicConfig(TaskConfigBase):
     def start_task(self, runtime):
         for dialogue in self.dialogue_data:
             self.input_dialogue_stream.add_item(dialogue)
-
-    def record_output(self, runtime):
-        if len(self.output_record) == 0:
-            return False, "No dialogues found"
-        else:
-            return True, self.output_record
 
 
 if __name__ == '__main__':

@@ -1,9 +1,9 @@
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import NewsData
 
 
-class NewsTitleConfig(TaskConfigBase):
+class NewsTitleConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -48,13 +48,6 @@ class NewsTitleConfig(TaskConfigBase):
     def start_task(self, runtime):
         for message in self.news_data:
             self.input_news_stream.add_item(message)
-
-    def record_output(self, runtime):
-        print(self.output_record)
-        if len(self.output_record) == 0:
-            return False, "No news messages found"
-        else:
-            return True, self.output_record
 
 
 if __name__ == '__main__':

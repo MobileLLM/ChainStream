@@ -4,7 +4,7 @@ import csv
 import random
 import chainstream as cs
 from datetime import datetime
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 import sys
 from ChainStreamSandBox.raw_data import EmailData
 
@@ -13,7 +13,7 @@ csv.field_size_limit(2 ** 31 - 1)
 random.seed(6666)
 
 
-class EmailReceiverConfig(TaskConfigBase):
+class EmailReceiverConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -45,6 +45,7 @@ class EmailReceiverConfig(TaskConfigBase):
             def stop(self):
                 self.input_stream.unregister_listener(self)
         '''
+
     def init_environment(self, runtime):
         self.input_email_stream = cs.stream.create_stream('all_emails')
         self.output_email_stream = cs.stream.create_stream('cs_emails')
@@ -59,14 +60,6 @@ class EmailReceiverConfig(TaskConfigBase):
     def start_task(self, runtime):
         for message in self.email_data:
             self.input_email_stream.add_item(message)
-
-    def record_output(self, runtime):
-        print(self.output_stream)
-        # json.dump(self.output_stream)
-        if len(self.output_record) == 0:
-            return False, "No emails found"
-        else:
-            return True, self.output_stream
 
 
 if __name__ == '__main__':

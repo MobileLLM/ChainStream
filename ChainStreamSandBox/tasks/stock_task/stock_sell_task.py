@@ -3,7 +3,7 @@ import csv
 import random
 import chainstream as cs
 from datetime import datetime
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 from ChainStreamSandBox.raw_data import StockData
 
 csv.field_size_limit(2 ** 31 - 1)
@@ -11,7 +11,7 @@ csv.field_size_limit(2 ** 31 - 1)
 random.seed(6666)
 
 
-class StockSellConfig(TaskConfigBase):
+class StockSellConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -49,6 +49,7 @@ class StockSellConfig(TaskConfigBase):
             def stop(self):
                 self.input_stream.unregister_listener(self)
         '''
+
     def init_environment(self, runtime):
         self.input_stock_stream = cs.stream.create_stream('all_stocks')
         self.output_stock_stream = cs.stream.create_stream('cs_stocks')
@@ -63,13 +64,6 @@ class StockSellConfig(TaskConfigBase):
     def start_task(self, runtime):
         for stock in self.stock_data:
             self.input_stock_stream.add_item(stock)
-
-    def record_output(self, runtime):
-        print(self.output_record)
-        if len(self.output_record) == 0:
-            return False, "No stock data found"
-        else:
-            return True, self.output_record
 
 
 if __name__ == '__main__':

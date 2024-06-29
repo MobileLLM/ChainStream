@@ -13,6 +13,7 @@ class TaskConfigBase(cs.agent.Agent):
     - 流开启函数
     - output stream的评测函数
     """
+
     def __init__(self):
         super().__init__("TaskConfigBase")
         self.task_description = None
@@ -24,7 +25,7 @@ class TaskConfigBase(cs.agent.Agent):
 
     def init_environment(self, runtime):
         raise RuntimeError("Not implemented")
-    
+
     def start_task(self, runtime):
         raise RuntimeError("Not implemented")
 
@@ -32,4 +33,20 @@ class TaskConfigBase(cs.agent.Agent):
         raise RuntimeError("Not implemented")
 
 
+class SingleAgentTaskConfigBase(TaskConfigBase):
+    def __init__(self):
+        super().__init__()
+        self.output_record = []
 
+    def record_output(self):
+        # print(self.output_record)
+        if len(self.output_record) == 0:
+            return {
+                "status": "[ERROR] No output message found",
+                "data": []
+            }
+        else:
+            return {
+                "status": "[OK] Task completed",
+                "data": self.output_record
+            }

@@ -1,11 +1,11 @@
 import os
 import csv
 import chainstream as cs
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 from ChainStreamSandBox.raw_data import DialogData
 
 
-class DialogueEmotionConfig(TaskConfigBase):
+class DialogueEmotionConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -15,7 +15,7 @@ class DialogueEmotionConfig(TaskConfigBase):
             "Retrieve data from the input stream all_dialogues,and process the value corresponding to the 'text' key in the paper dictionary:"
             "use LLM to classify the following dialogues contents into one of the categories: positive, negative, neutral, other. Choose one and "
             "explain. Finally output the answer to the stream 'dialogue_classification'."
-            )
+        )
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
         self.agent_example = '''
         import chainstream as cs
@@ -50,6 +50,7 @@ class DialogueEmotionConfig(TaskConfigBase):
             def stop(self):
                 self.input_stream.unregister_listener(self)
         '''
+
     def init_environment(self, runtime):
         self.input_dialogue_stream = cs.stream.create_stream('all_dialogues')
         self.output_dialogue_stream = cs.stream.create_stream('cs_dialogues')
@@ -64,12 +65,6 @@ class DialogueEmotionConfig(TaskConfigBase):
     def start_task(self, runtime):
         for dialogue in self.dialogue_data:
             self.input_dialogue_stream.add_item(dialogue)
-
-    def record_output(self, runtime):
-        if len(self.output_record) == 0:
-            return False, "No dialogues found"
-        else:
-            return True, self.output_record
 
 
 if __name__ == '__main__':

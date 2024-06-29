@@ -1,4 +1,4 @@
-from ..task_config_base import TaskConfigBase
+from ..task_config_base import SingleAgentTaskConfigBase
 import os
 import json
 import random
@@ -8,7 +8,7 @@ from ChainStreamSandBox.raw_data import SMSData
 random.seed(6666)
 
 
-class MessageSummaryConfig(TaskConfigBase):
+class MessageSummaryConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -49,6 +49,7 @@ class MessageSummaryConfig(TaskConfigBase):
             def stop(self):
                 self.input_stream.unregister_listener(self)
         '''
+
     def init_environment(self, runtime):
         self.input_sms_stream = cs.stream.create_stream('all_sms')
         self.output_sms_stream = cs.stream.create_stream('cs_sms')
@@ -63,13 +64,6 @@ class MessageSummaryConfig(TaskConfigBase):
     def start_task(self, runtime):
         for message in self.sms_data:
             self.input_sms_stream.add_item(message)
-
-    def record_output(self, runtime):
-        print(self.output_record)
-        if len(self.output_record) == 0:
-            return False, "No work-related message found"
-        else:
-            return True, "Work-related message found"
 
 
 if __name__ == '__main__':
