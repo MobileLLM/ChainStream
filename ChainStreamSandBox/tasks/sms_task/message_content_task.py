@@ -8,20 +8,37 @@ from ChainStreamSandBox.raw_data import SMSData
 random.seed(6666)
 
 
-class WorkSmsTaskConfig(TaskConfigBase):
+class MessageContentConfig(TaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
         self.output_sms_stream = None
         self.input_sms_stream = None
-        self.task_description = ("Read data from the input stream 'all_sms', define and register a listener function, "
-                                 "and classify each SMS message into one of the categories (positive, negative, "
-                                 "neutral, other) based on its content. Output the message along with its "
-                                 "classification to stream 'cs_sms'."
-                                 "and save the results in the output stream.")
+        self.task_description = (
+            "Retrieve data from the input stream 'all_sms',"
+            "and process the values corresponding to the 'text' key in the SMS dictionary: "
+            "Add each SMS text to the output stream 'cs_sms'."
+        )
 
         self.sms_data = SMSData().get_random_message()
-
+        self.agent_example = '''
+        import chainstream as cs
+        class testAgent(cs.agent.Agent):
+            def __init__(self):
+                super().__init__("test_message_agent")
+                self.input_stream = cs.get_stream("all_sms")
+                self.output_stream = cs.get_stream("cs_sms")
+        
+            def start(self):
+                def process_sms(sms):
+                    sms_text = sms["text"]
+                    print(sms_text)  
+                    self.output_stream.add_item(sms_text)
+                self.input_stream.register_listener(self, process_sms)
+        
+            def stop(self):
+                self.input_stream.unregister_listener(self)
+        '''
     def init_environment(self, runtime):
         self.input_sms_stream = cs.stream.create_stream('all_sms')
         self.output_sms_stream = cs.stream.create_stream('cs_sms')
@@ -46,4 +63,4 @@ class WorkSmsTaskConfig(TaskConfigBase):
 
 
 if __name__ == '__main__':
-    config = WorkSmsTaskConfig()
+    config = MessageContentConfig()
