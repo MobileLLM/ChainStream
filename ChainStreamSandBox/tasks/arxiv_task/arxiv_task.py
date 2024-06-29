@@ -45,11 +45,17 @@ class ArxivTaskConfig(TaskConfigBase):
             self.input_paper_stream.add_item(message)
 
     def record_output(self):
-        print(self.output_record)
+        # print(self.output_record)
         if len(self.output_record) == 0:
-            return False, "No cs-related message found"
+            return {
+                "status": "[ERROR] No output message found",
+                "data": []
+            }
         else:
-            return True, "cs-related message found"
+            return {
+                "status": "[OK] Task completed",
+                "data": self.output_record
+            }
 
     def start_clock_stream(self):
         def add_current_date():
