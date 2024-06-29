@@ -31,7 +31,7 @@ class InitializeError(Exception):
 
 
 class SandBox:
-    def __init__(self, task, agent_code, save_path=None):
+    def __init__(self, task, agent_code, save_path=os.path.join(os.path.dirname(__file__), 'results')):
         cs_server.init(server_type='core')
         cs_server.start()
         self.runtime = cs_server.get_chainstream_core()
@@ -76,6 +76,8 @@ class SandBox:
         self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
 
         self._save_result(self.result)
+        # print("Sandbox result saved to " + self.save_path)
+        self.runtime.shutdown()
 
         return self.result
 
@@ -117,6 +119,8 @@ class SandBox:
 
     def _save_result(self, result):
         if self.save_path is not None:
+            if not os.path.exists(self.save_path):
+                os.makedirs(self.save_path)
             file_path = os.path.join(
                 self.save_path,
                 datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.task.__class__.__name__ + "_" +
@@ -157,7 +161,7 @@ class TestAgent(cs.agent.Agent):
                     }
                 ]
                 response = self.llm.query(prompt_message)
-                print(paper_title+" : "+response)
+                # print(paper_title+" : "+response)
                 self.output_stream.add_item(paper_title+" : "+response)
 
         self.input_stream.register_listener(self, process_paper)
@@ -165,6 +169,6 @@ class TestAgent(cs.agent.Agent):
     def stop(self):
         self.input_stream.unregister_listener(self)
     '''
-    oj = SandBox(ArxivTaskConfig(), agent_file, save_path='./')
+    oj = SandBox(ArxivTaskConfig(), agent_file)
     res = oj.start_test_agent()
     print(res)

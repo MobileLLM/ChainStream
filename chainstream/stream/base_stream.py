@@ -26,6 +26,8 @@ class StreamMeta:
 
 
 class BaseStream(StreamInterface):
+    STOP_SIGNAL = object()
+
     def __init__(self, stream_id, description=None, create_by_agent_file=None) -> None:
         super().__init__()
         self.metaData = StreamMeta(stream_id=stream_id, description=description, create_by_agent_file=create_by_agent_file)
@@ -33,9 +35,6 @@ class BaseStream(StreamInterface):
 
         self.is_clear = Event()
         self.is_clear.set()
-
-        self.is_sleeping = Event()
-        self.is_sleeping.set()
 
         self.listeners = []
         self.queue = queue.Queue()
@@ -50,7 +49,6 @@ class BaseStream(StreamInterface):
             self.recorder.record_listener_actions("register_listener", agent.agent_id, listener_func.__name__)
             self.recorder.record_listener_change(len(self.listeners))
             if not self.is_running:
-                self.is_sleeping.clear()
                 self.is_running = True
                 self.thread.start()
         except Exception as e:
@@ -66,9 +64,10 @@ class BaseStream(StreamInterface):
         self.listeners = new_listeners
         self.recorder.record_listener_change(len(self.listeners))
         if len(self.listeners) == 0:
-            self.is_sleeping.set()
             self.is_running = False
+            self.queue.put(self.STOP_SIGNAL)
             self.thread.join()
+            # print("No more listeners, stopping stream")
 
     def add_item(self, item):
         self.logger.debug(f'stream {self.metaData.stream_id} send an item type: {type(item)}')
@@ -82,6 +81,8 @@ class BaseStream(StreamInterface):
     def process_item(self):
         while True:
             item = self.queue.get()
+            if item is self.STOP_SIGNAL:
+                break
             if item is not None:
                 self.logger.debug(f'stream {self.metaData.stream_id} process an item type: {type(item)}')
                 self.is_clear.clear()
@@ -97,3 +98,12 @@ class BaseStream(StreamInterface):
 
     def get_record_data(self):
         return self.recorder.get_record_data()
+
+    def shutdown(self):
+        self.is_running = False
+        # print(self.metaData.stream_id, "Shutting down stream")
+        self.queue.put(self.STOP_SIGNAL)
+        # print(self.metaData.stream_id, "Waiting for stream thread to stop")
+        if self.thread.is_alive():
+            self.thread.join()
+        # print(self.metaData.stream_id, "Stream thread stopped")

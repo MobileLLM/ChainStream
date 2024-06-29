@@ -103,7 +103,16 @@ class StreamManager(StreamAnalyzer):
         # TODO: use threading.Event to wait for all streams to be clear
         while True:
             if all(stream.is_clear.is_set() for stream in self.streams.values()):
-                print("All streams are clear")
+                # print("All streams are clear")
                 return True
             time.sleep(1)
 
+    def shutdown(self):
+        # print(self.thread_list)
+        for stream in self.streams.values():
+            stream.shutdown()
+        # print(self.thread_list)
+        for thread in self.thread_list.values():
+            if thread.is_alive():
+                thread.join()
+        return True

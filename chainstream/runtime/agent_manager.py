@@ -80,6 +80,15 @@ class AgentManager(AgentAnalyzer):
         agent_list = self._path_to_json(agent_list)
         return agent_list
 
+    def shutdown(self):
+        for agent in self.agents.values():
+            try:
+                agent.stop()
+            except Exception as e:
+                logger.error(f'failed to stop agent {agent.agent_id}: {e}')
+        return True
+
+
     def _path_to_json(self, paths):
         json_data = {}
 
