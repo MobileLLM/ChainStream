@@ -13,7 +13,7 @@ class GPSCountryConfig(SingleAgentTaskConfigBase):
             "Retrieve data from the input stream 'all_gps' and process the values corresponding to the 'CountryName' key in the gps dictionary: "
             "Add the gps country name to the output stream 'cs_gps'."
         )
-        self.gps_data = GPSData().get_entries(10)
+        self.gps_data = GPSData().get_gps(10)
         self.agent_example = '''
         import chainstream as cs
         from chainstream.llm import get_model

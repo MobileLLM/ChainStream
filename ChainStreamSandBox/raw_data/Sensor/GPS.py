@@ -36,8 +36,8 @@ class GPSData:
     def __getitem__(self, index):
         return self.gps_data[index]
 
-    def get_entries(self, num_entries):
-        tmp = random.sample(self.gps_data, num_entries)
+    def get_gps(self, num_gps):
+        tmp = random.sample(self.gps_data, num_gps)
         return tmp
 
 
@@ -45,4 +45,4 @@ if __name__ == '__main__':
     gps_data = GPSData()
     print(len(gps_data))
     print(gps_data[0])
-    print(gps_data.get_entries(5))
+    print(gps_data.get_gps(5))
