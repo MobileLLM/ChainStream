@@ -3,7 +3,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
 
 
-class LandmarkGHGEmissionsConfig(SingleAgentTaskConfigBase):
+class BuildingGHGEmissionsConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -49,4 +49,4 @@ class LandmarkGHGEmissionsConfig(SingleAgentTaskConfigBase):
 
 
 if __name__ == '__main__':
-    config = LandmarkGHGEmissionsConfig()
+    config = BuildingGHGEmissionsConfig()

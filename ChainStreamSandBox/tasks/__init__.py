@@ -64,5 +64,14 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'TweetTimeTask': TweetTimeConfig,
              'TweetTimezoneTask': TweetTimezoneConfig,
              'TweetUserTask': TweetUserConfig
+             'LandmarkLocationTask': LandmarkLocationConfig,
+             'LandmarkTypeTask': LandmarkTypeConfig,
+             'LandmarkTimeTask': LandmarkTimeConfig,
+             'LandmarkNeighborhoodTask': LandmarkNeighborhoodConfig,
+             'LandmarkNameTask': LandmarkNameConfig,
+             'LandmarkFloorsTask': LandmarkFloorsConfig,
+             'BuildingElectricityTask': BuildingElectricityConfig,
+             'BuildingGHGEmissionsTask': BuildingGHGEmissionsConfig,
+             'BuildingNaturalGasTask': BuildingNaturalGasConfig
              }
 
