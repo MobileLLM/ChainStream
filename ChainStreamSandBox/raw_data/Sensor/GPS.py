@@ -6,7 +6,7 @@ random.seed(42)
 
 class GPSData:
     def __init__(self):
-        self.data_path = "gps_data.csv"
+        self.data_path = "gps.csv"
 
         self.gps_data = []
         self._load_data()
