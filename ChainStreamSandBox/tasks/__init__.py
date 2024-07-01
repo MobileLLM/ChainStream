@@ -4,6 +4,7 @@ from tasks.email_task import *
 from tasks.news_task import *
 from tasks.stock_task import *
 from tasks.daily_dialogue_task import *
+from tasks.gps_task import *
 
 ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'ArxivAlgorithmTask': ArxivAlgorithmConfig,
@@ -46,6 +47,11 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'DialogueIdentityTask': DialogueIdentityConfig,
              'DialoguePlaceTask': DialoguePlaceConfig,
              'DialogueTimeTask': DialogueTimeConfig,
-             'DialogueTopicTask': DialogueTopicConfig
+             'DialogueTopicTask': DialogueTopicConfig,
+             'GPSCapitalTask': GPSCapitalConfig,
+             'GPSContinentTask': GPSContinentConfig,
+             'GPSCountryTask': GPSCountryConfig,
+             'GPSLatitudeTask': GPSLatitudeConfig,
+             'GPSLongitudeTask': GPSLongitudeConfig
              }
 

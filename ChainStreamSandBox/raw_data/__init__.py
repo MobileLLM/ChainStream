@@ -4,3 +4,4 @@ from .email.email_data import EmailData
 from .news.news_data import NewsData
 from .sms.sms_data import SMSData
 from .stock.stock_data import StockData
+from .Sensor.GPS import GPSData
