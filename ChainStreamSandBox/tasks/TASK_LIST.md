@@ -76,6 +76,7 @@
   12. building electricity count: count the electricity usage of a building
   13. building gas count: count the natural gas usage of a building
   14. building GHGEmissions count: count the GHG emissions of a building
+
 TODO
 - Ego4d dataset: 20个
   - 活动类：当前是否在 跳绳/开会/做饭/看书，3-5个

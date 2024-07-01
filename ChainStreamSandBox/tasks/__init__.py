@@ -63,7 +63,7 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'TweetTextTask': TweetTextConfig,
              'TweetTimeTask': TweetTimeConfig,
              'TweetTimezoneTask': TweetTimezoneConfig,
-             'TweetUserTask': TweetUserConfig
+             'TweetUserTask': TweetUserConfig,
              'LandmarkLocationTask': LandmarkLocationConfig,
              'LandmarkTypeTask': LandmarkTypeConfig,
              'LandmarkTimeTask': LandmarkTimeConfig,
