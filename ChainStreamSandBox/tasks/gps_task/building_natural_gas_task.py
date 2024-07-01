@@ -3,7 +3,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
 
 
-class LandmarkNaturalGasConfig(SingleAgentTaskConfigBase):
+class BuildingNaturalGasConfig(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -49,4 +49,4 @@ class LandmarkNaturalGasConfig(SingleAgentTaskConfigBase):
 
 
 if __name__ == '__main__':
-    config = LandmarkNaturalGasConfig()
+    config = BuildingNaturalGasConfig()
