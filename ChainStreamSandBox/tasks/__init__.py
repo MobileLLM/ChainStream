@@ -6,6 +6,7 @@ from tasks.stock_task import *
 from tasks.daily_dialogue_task import *
 from tasks.gps_task import *
 from tasks.twitter_task import *
+from tasks.gps_task import *
 
 ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'ArxivAlgorithmTask': ArxivAlgorithmConfig,
@@ -53,7 +54,7 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'GPSContinentTask': GPSContinentConfig,
              'GPSCountryTask': GPSCountryConfig,
              'GPSLatitudeTask': GPSLatitudeConfig,
-             'GPSLongitudeTask': GPSLongitudeConfig
+             'GPSLongitudeTask': GPSLongitudeConfig,
              'RetweetCountTask': RetweetCountConfig,
              'TweetAirlineTask': TweetAirlineConfig,
              'TweetLocationTask': TweetLocationConfig,
