@@ -1,0 +1,5 @@
+from .gps_capital_task import GPSCapitalConfig
+from .gps_continent_task import GPSContinentConfig
+from .gps_country_task import GPSCountryConfig
+from .gps_latitude_task import GPSLatitudeConfig
+from gps_longitude_task import GPSLongitudeConfig
