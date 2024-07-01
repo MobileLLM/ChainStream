@@ -50,7 +50,32 @@
   10. stage identification: identify the process stage of an arxiv paper
   11. topic extraction: extract the topic of an arxiv paper
   12. website identification: identify the publication website of the arxiv paper
-
+- twitter dataset:
+  - airline twitter
+  1. airline extraction: extract  the airline information from a twitter message
+  2. location extraction: extract the location information from a twitter message
+  3. tweet sentiment analysis: analyze the sentiment of a tweet
+  4. negative reason analysis: analyze the negative reason behind a tweet
+  5. retweet collection:  collect the retweets of a tweet
+  6. tweet text presentation: present the text of a tweet
+  7. tweet time extraction: extract the time of a tweet
+  8. tweet timezone extraction: extract the timezone of a tweet
+  9. tweet account extraction: extract the account information of a tweet
+- GPS dataset:
+  1. GPS capital extraction: extract the capital of a GPS message
+  2. GPS continent extraction: extract the continent of a GPS message
+  3. GPS country extraction: extract the country of a GPS message
+  4. GPS latitude extraction: extract the latitude of a GPS message
+  5. GPS longitude extraction: extract the longitude of a GPS message
+  6. landmark location identification: identify  the location of a landmark
+  7. landmark name extraction: extract the name of a landmark
+  8. landmark type extraction: extract the type of a landmark
+  9. landmark time evaluation: evaluate the time of a landmark
+  10. landmark neighborhood investigation:investigate the neighborhood of a landmark
+  11. landmark floors count: count the floors of a landmark
+  12. building electricity count: count the electricity usage of a building
+  13. building gas count: count the natural gas usage of a building
+  14. building GHGEmissions count: count the GHG emissions of a building
 TODO
 - Ego4d dataset: 20个
   - 活动类：当前是否在 跳绳/开会/做饭/看书，3-5个
