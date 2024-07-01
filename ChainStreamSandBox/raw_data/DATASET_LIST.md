@@ -47,3 +47,9 @@ sms:
 
 twitter：
 - https://huggingface.co/datasets/strombergnlp/broad_twitter_corpus
+
+pc screenshot:
+- https://github.com/waltteri/desktop-ui-dataset
+
+web ui：
+- https://uimodeling.github.io/
