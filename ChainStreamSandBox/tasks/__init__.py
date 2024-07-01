@@ -5,6 +5,7 @@ from tasks.news_task import *
 from tasks.stock_task import *
 from tasks.daily_dialogue_task import *
 from tasks.gps_task import *
+from tasks.twitter_task import *
 
 ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'ArxivAlgorithmTask': ArxivAlgorithmConfig,
@@ -53,5 +54,14 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'GPSCountryTask': GPSCountryConfig,
              'GPSLatitudeTask': GPSLatitudeConfig,
              'GPSLongitudeTask': GPSLongitudeConfig
+             'RetweetCountTask': RetweetCountConfig,
+             'TweetAirlineTask': TweetAirlineConfig,
+             'TweetLocationTask': TweetLocationConfig,
+             'TweetNegativeReasonTask': TweetNegativeReasonConfig,
+             'TweetSentimentTask': TweetSentimentConfig,
+             'TweetTextTask': TweetTextConfig,
+             'TweetTimeTask': TweetTimeConfig,
+             'TweetTimezoneTask': TweetTimezoneConfig,
+             'TweetUserTask': TweetUserConfig
              }
 
