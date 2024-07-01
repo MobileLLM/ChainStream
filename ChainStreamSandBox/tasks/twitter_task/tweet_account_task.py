@@ -11,7 +11,7 @@ class TweetUserConfig(SingleAgentTaskConfigBase):
         self.input_twitter_stream = None
         self.task_description = (
             "Retrieve data from the input stream 'all_tweets' and process the values corresponding to the 'name' key in the tweets dictionary: "
-            "Add the airline sentiment value to the output stream 'cs_tweets'."
+            "Add the twitter account to the output stream 'cs_tweets'."
         )
         self.tweet_data = AirlineTwitterData().get_twitter(10)
         self.agent_example = '''

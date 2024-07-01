@@ -11,7 +11,7 @@ class TweetLocationConfig(SingleAgentTaskConfigBase):
         self.input_twitter_stream = None
         self.task_description = (
             "Retrieve data from the input stream 'all_tweets' and process the values corresponding to the 'tweet_location' key in the tweets dictionary: "
-            "Add the airline sentiment value to the output stream 'cs_tweets'."
+            "Add where the twitter message was sent to the output stream 'cs_tweets'."
         )
         self.tweet_data = AirlineTwitterData().get_twitter(10)
         self.agent_example = '''

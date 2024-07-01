@@ -11,7 +11,7 @@ class GPSContinentConfig(SingleAgentTaskConfigBase):
         self.input_gps_stream = None
         self.task_description = (
             "Retrieve data from the input stream 'all_gps' and process the values corresponding to the 'ContinentName' key in the gps dictionary: "
-            "Add the gps capital name to the output stream 'cs_gps'."
+            "Add the gps continent name to the output stream 'cs_gps'."
         )
         self.gps_data = GPSData().get_gps(10)
         self.agent_example = '''
