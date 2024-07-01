@@ -8,32 +8,58 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 import time
-from .video_list import video_list
+from video_list import video_list
 
 
 def split_video_frames(video_path, output_dir, split_gap=1):
     # use ffmpeg to split video into frames
     video_id = video_path.split("/")[-1].split(".")[0]
-    cmd = f"ffmpeg -i {video_path} -vf fps=1/{split_gap} {output_dir}/{video_id}/%06d.jpg"
+    output_video_dir = os.path.join(output_dir, video_id)
+    if not os.path.exists(output_video_dir):
+        os.makedirs(output_video_dir)
+    cmd = f"ffmpeg -i {video_path} -vf fps=1/{split_gap} {output_video_dir}/%06d.jpg"
     os.system(cmd)
 
 
 def preparing_video_dataset(raw_video_dir, output_dir, split_gap=1):
     for video in video_list:
         video_id = video["video_id"]
+        if video_id != "03d4c383-b80e-4095-9328-c964f2803a26":
+            continue
         video_description = video["video_description"]
 
-        video_path = os.path.join(raw_video_dir, f"{video_id}.mp4")
+        video_path = os.path.join(raw_video_dir, f"{video_id}")
         if not os.path.exists(video_path):
             print(f"视频文件 {video_path} 不存在，跳过")
             continue
 
-        # 创建输出目录
-        output_video_dir = os.path.join(output_dir, video_id)
-        os.makedirs(output_video_dir, exist_ok=True)
+        # Split video frames
+        split_video_frames(video_path, output_dir, split_gap=split_gap)
 
-        # 切割视频帧
-        split_video_frames(video_path, output_video_dir, split_gap=split_gap)
+
+# def split_video_frames(video_path, output_dir, split_gap=1):
+#     # use ffmpeg to split video into frames
+#     video_id = video_path.split("/")[-1].split(".")[0]
+#     cmd = f"ffmpeg -i {video_path} -vf fps=1/{split_gap} {output_dir}/{video_id}/%06d.jpg"
+#     os.system(cmd)
+#
+#
+# def preparing_video_dataset(raw_video_dir, output_dir, split_gap=1):
+#     for video in video_list[:1]:
+#         video_id = video["video_id"]
+#         video_description = video["video_description"]
+#
+#         video_path = os.path.join(raw_video_dir, f"{video_id}")
+#         if not os.path.exists(video_path):
+#             print(f"视频文件 {video_path} 不存在，跳过")
+#             continue
+#
+#         # 创建输出目录
+#         output_video_dir = os.path.join(output_dir, video_id)
+#         os.makedirs(output_video_dir, exist_ok=True)
+#
+#         # 切割视频帧
+#         split_video_frames(video_path, output_video_dir, split_gap=split_gap)
 
 
 def download_video_from_preview(video_id, save_path):
@@ -83,7 +109,4 @@ def download_video_from_preview(video_id, save_path):
 
 
 if __name__ == '__main__':
-    # 示例使用
-    video_id = "146d77cc-be02-48cc-8c95-afd7566edfae"
-    save_path = "path_to_save_video.mp4"
-    download_video_from_preview(video_id, save_path)
+    preparing_video_dataset('./raw_video', './video_frame', split_gap=5)
