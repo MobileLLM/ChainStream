@@ -18,15 +18,16 @@ TODO List
 
   * 调prompt
     * chainstream doc的优化
-    * 增加动态例子选择的能力
+    * 增加动态例子选择的能力（）
     * user prompt模版优化
   * 看情况决定要不要加入循环生成，根据报错调整代码之类的方法
   * baseline
     * 找一找其他Agent框架有没有自动生成Agent的能力
     * 新写一个新的generator
-      * LangChain doc
-      * 原生Python+OpenAI库 doc
-      * GPT4o Zero-shot
+      * Python + ChainStream
+      * Python + LangChain
+      * Python + OpenAI库 doc （测一下shot的数量）
+      * GPT4o 直接感知 （批量给数据）
   * 分析
 
 * Model Selection

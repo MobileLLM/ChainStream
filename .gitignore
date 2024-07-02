@@ -168,3 +168,5 @@ PrivacyStream/local.gradle
 /ChainStreamSandBox/raw_data/ego4d/video_frame/
 /ChainStreamSandBox/raw_data/desktop/images/
 /ChainStreamSandBox/raw_data/desktop/xmls/
+/ChainStreamSandBox/raw_data/android_ui/combined/
+/ChainStreamSandBox/raw_data/android_ui/screenshot_data/
