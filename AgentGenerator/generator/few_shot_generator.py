@@ -1,13 +1,15 @@
-from AgentGenerator.query_openai import TextGPTModel
+from AgentGenerator.generator.utils import TextGPTModel
 from AgentGenerator.chainstream_doc import chainstream_doc
+from .generator_base import AgentGeneratorBase
 
 
-class AgentGenerator:
+class AgentGenerator(AgentGeneratorBase):
     def __init__(self, model_name="gpt-3.5-turbo-1106"):
+        super().__init__()
         self.model = TextGPTModel(model_name)
         self.max_token_len = 4096
 
-    def generate_dsl(self, task):
+    def generate_dsl(self, task, input, output):
         prompt = [
             {
                 "role": "system",
@@ -15,7 +17,7 @@ class AgentGenerator:
             },
             {
                 "role": "user",
-                "content": self._get_user_prompt(task)
+                "content": self._get_user_prompt(task+" "+input+" "+output)
             }
         ]
         response = self.model.query(prompt)
