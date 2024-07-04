@@ -11,7 +11,7 @@ The documentation is available at [https://mobilellm.github.io/ChainStream/](htt
 ## Updates
 
 - 2024.06: [ChainStream website](https://mobilellm.github.io/ChainStream/) is launched.
-- 2024.06: ChainStream project team participated in Mobisys2024 in Tokyo and presented a report at EdgeFM Workshop. The paper will be published soon.
+- 2024.06: ChainStream project team participated in Mobisys2024 in Tokyo and presented a report at EdgeFM Workshop, you can find the paper [ChainStream: A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing](https://doi.org/10.1145/3662006.3662063).
 - 2024.06: [ChainStream Github Repo](https://github.com/MobileLLM/ChainStream) is launched.
 - 2024.05: The introduction paper of ChainStream was accepted by [MobiSys 2024, Workshop on Edge and Mobile Foundation Models](https://edgefm.github.io/).
 - 2023.12: The project of ChainStream started preliminary development.
