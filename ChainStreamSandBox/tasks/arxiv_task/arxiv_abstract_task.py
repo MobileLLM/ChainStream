@@ -31,7 +31,7 @@ class ArxivAbstractConfig(SingleAgentTaskConfigBase):
                 self.llm = get_model(["text"])
             def start(self):
                 def process_paper(paper):
-                    paper_content = paper["abstract"]#[:500]        
+                    paper_content = paper["abstract"]     
                     prompt = "Is this abstract related to edge LLM agent? Say 'yes' or 'no'."
                     prompt = [
                         {
@@ -42,7 +42,6 @@ class ArxivAbstractConfig(SingleAgentTaskConfigBase):
                     response = self.llm.query(prompt)
                     print(response)
                     if response == 'Yes':
-                        print(paper)
                         self.output_stream.add_item(paper)
                 self.input_stream.register_listener(self, process_paper)
         
