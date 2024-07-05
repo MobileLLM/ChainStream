@@ -72,6 +72,16 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'LandmarkFloorsTask': LandmarkFloorsConfig,
              'BuildingElectricityTask': BuildingElectricityConfig,
              'BuildingGHGEmissionsTask': BuildingGHGEmissionsConfig,
-             'BuildingNaturalGasTask': BuildingNaturalGasConfig
+             'BuildingNaturalGasTask': BuildingNaturalGasConfig,
+             'ActivityDistanceTask':ActivityDistanceConfig,
+             'ActivityTimeTask':ActivityTimeConfig,
+             'ActivityCaloriesMostTask':CaloriesMostConfig,
+             'ActivityStepsMostTask':StepsMostConfig,
+             'WeatherHumidityTask':HumidityConfig,
+             'WeatherPrecipitationTask':PrecipitationConfig,
+             'WeatherTemperatureTask':TemperatureConfig,
+             'WeatherLocationTask':WeatherLocationConfig,
+             'WeatherTimeTask':WeatherTimeConfig,
+             'WindSpeedTask':WindSpeedConfig
              }
 

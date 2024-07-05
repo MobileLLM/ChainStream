@@ -76,7 +76,18 @@
   12. building electricity count: count the electricity usage of a building
   13. building gas count: count the natural gas usage of a building
   14. building GHGEmissions count: count the GHG emissions of a building
-
+- activity dataset
+  1. activity over 5km: remind the activity over 5km of a person
+  2. activity over 30mins: remind the activity over 30mins of a person
+  3. calories most selection: remind the most burned_calories of a person in an activity
+  4. steps over 5000: remind the steps over 5000 of a person
+- weather dataset
+  1. humidity detection: detect the humidity of the weather
+  2. precipitation detection: detect the precipitation of the weather
+  3. temperature detection: detect the temperature of the weather
+  4. wind speed detection: detect the wind speed of the weather
+  5. weather location detection: present the weather location
+  6. weather time detection: present the weather time
 TODO
 - Ego4d dataset: 20个
   - 活动类：当前是否在 跳绳/开会/做饭/看书，3-5个
