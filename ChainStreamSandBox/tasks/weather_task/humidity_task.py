@@ -10,8 +10,9 @@ class HumidityConfig(SingleAgentTaskConfigBase):
         self.output_weather_stream = None
         self.input_weather_stream = None
         self.task_description = (
-            "Retrieve data from the input stream 'all_weather' and process the values corresponding to the 'Location' "
-            "key in the weather dictionary:Add the location information to the output stream 'cs_weather'. "
+            "Retrieve data from the input stream 'all_weather' and process the values corresponding to the "
+            "'Humidity_pct'key in the weather dictionary:Add the humidity information to the output stream "
+            "'cs_weather'. "
         )
         self.weather_data = WeatherData().get_weather(10)
         self.agent_example = '''
@@ -25,7 +26,7 @@ class HumidityConfig(SingleAgentTaskConfigBase):
                 def process_weather(weather):
                     Location = weather["Location"]        
                     self.output_stream.add_item(Location)
-                self.input_stream.register_listener(self, process_landmark)
+                self.input_stream.register_listener(self, process_weather)
 
             def stop(self):
                 self.input_stream.unregister_listener(self)

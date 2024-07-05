@@ -11,7 +11,7 @@ class WindSpeedConfig(SingleAgentTaskConfigBase):
         self.input_weather_stream = None
         self.task_description = (
             "Retrieve data from the input stream 'all_weather' and process the values corresponding to the "
-            "'Wind_Speed_kmh' key in the weather dictionary: Add the location information to the output stream "
+            "'Wind_Speed_kmh' key in the weather dictionary: Add the wind speed information to the output stream "
             "'cs_weather'. "
         )
         self.weather_data = WeatherData().get_weather(10)
@@ -26,7 +26,7 @@ class WindSpeedConfig(SingleAgentTaskConfigBase):
                 def process_weather(weather):
                     Wind_Speed_kmh = weather["Wind_Speed_kmh"]        
                     self.output_stream.add_item(Wind_Speed_kmh)
-                self.input_stream.register_listener(self, process_landmark)
+                self.input_stream.register_listener(self, process_weather)
 
             def stop(self):
                 self.input_stream.unregister_listener(self)

@@ -26,7 +26,7 @@ class WeatherLocationConfig(SingleAgentTaskConfigBase):
                 def process_weather(weather):
                     Location = weather["Location"]        
                     self.output_stream.add_item(Location)
-                self.input_stream.register_listener(self, process_landmark)
+                self.input_stream.register_listener(self, process_weather)
 
             def stop(self):
                 self.input_stream.unregister_listener(self)

@@ -11,7 +11,7 @@ class TemperatureConfig(SingleAgentTaskConfigBase):
         self.input_weather_stream = None
         self.task_description = (
             "Retrieve data from the input stream 'all_weather' and process the values corresponding to the "
-            "'Temperature_C' key in the weather dictionary: Add the location information to the output stream "
+            "'Temperature_C' key in the weather dictionary: Add the temperature information to the output stream "
             "'cs_weather'. "
         )
         self.weather_data = WeatherData().get_weather(10)
@@ -26,7 +26,7 @@ class TemperatureConfig(SingleAgentTaskConfigBase):
                 def process_weather(weather):
                     Temperature_C = weather["Temperature_C"]        
                     self.output_stream.add_item(Temperature_C)
-                self.input_stream.register_listener(self, process_landmark)
+                self.input_stream.register_listener(self, process_weather)
 
             def stop(self):
                 self.input_stream.unregister_listener(self)
