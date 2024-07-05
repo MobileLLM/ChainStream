@@ -13,7 +13,7 @@
 - news dataset:
   1. authors extraction: extract the authors of a news article
   2. description judgment: judge the topics of a news article
-  3. category classification: classify the category of a news article: classify the category of a news article
+  3. category classification: classify the category of a news article
   4. date extraction: extract the date of a news article
   5. link extraction: extract the links of a news article
   6. title extraction: extract the title of a news article
@@ -88,6 +88,12 @@
   4. wind speed detection: detect the wind speed of the weather
   5. weather location detection: present the weather location
   6. weather time detection: present the weather time
+- wifi dataset
+  1. wifi channel detection: detect the wifi channel
+  2. wifi mac address detection: detect the wifi mac address
+  3. wifi signal strength display:display the wifi signal strength
+  4. wifi SSID detection: detect the wifi SSID
+  5. wifi vendor detection: detect the wifi vendor
 TODO
 - Ego4d dataset: 20个
   - 活动类：当前是否在 跳绳/开会/做饭/看书，3-5个

@@ -82,6 +82,11 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'WeatherTemperatureTask':TemperatureConfig,
              'WeatherLocationTask':WeatherLocationConfig,
              'WeatherTimeTask':WeatherTimeConfig,
-             'WindSpeedTask':WindSpeedConfig
+             'WindSpeedTask':WindSpeedConfig,
+             'WifiChannelTask':WifiChannelConfig,
+             'WifiMacAddressTask':WifiMacAddressConfig,
+             'WifiSignalStrengthTask':WifiSignalStrengthConfig,
+             'WifiSSIDTask':WifiSSIDConfig,
+             'WifiVendorTask':WifiVendorConfig
              }
 
