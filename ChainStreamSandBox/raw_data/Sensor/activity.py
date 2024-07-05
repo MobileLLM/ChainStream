@@ -1,15 +1,13 @@
 import csv
 import random
 
-random.seed(42)
-
-
 class ActivityData:
     def __init__(self):
         self.data_path = "activity.csv"
-
         self.activity_data = []
         self._load_data()
+
+        self.activity = ['Walking', 'Standing', 'Sitting', 'Upstairs', 'Downstairs', 'Jogging']
 
     def _load_data(self):
         with open(self.data_path, "r") as f:
@@ -54,17 +52,29 @@ class ActivityData:
     def __getitem__(self, index):
         return self.activity_data[index]
 
-    def get_random_activity_data(self, num_activities=3):
-        activities = ['Standing', 'Jogging', 'Walking', 'Sitting', 'Downstairs', 'Upstairs']
-        selected_activities = random.sample(activities, num_activities)
+    def get_random_activity_data(self):
+        activity_sequence = self.get_activity_sequence()
+        print(activity_sequence)
         result = []
-
-        for activity in selected_activities:
-            activity_entries = [entry for entry in self.activity_data if entry['activity'] == activity]
-            num_entries = min(random.randint(0, 50), len(activity_entries))
-            result.extend(random.sample(activity_entries, num_entries))
+        for activity in activity_sequence:
+            num_entries = random.randint(0, 20)
+            activity_entries = random.sample([entry for entry in self.activity_data if entry['activity'].lower() == activity.lower()], num_entries)
+            result.extend(activity_entries)
 
         return result
+
+    def get_activity_sequence(self):
+        activity_sequence = []
+
+        act_num = random.randint(1, 4)
+
+        act_seq = [random.choice(self.activity) for _ in range(act_num)]
+
+        for act in act_seq:
+            act_len = random.randint(1, 5)
+            activity_sequence.extend([act for i in range(act_len)])
+
+        return activity_sequence
 
 
 if __name__ == '__main__':
