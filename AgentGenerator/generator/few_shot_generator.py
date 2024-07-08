@@ -24,7 +24,7 @@ class AgentGenerator(AgentGeneratorBase):
         return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
     def _get_system_prompt(self):
-        return chainstream_doc.chinese_api_prompt
+        return chainstream_doc.chinese_chainstream_doc
 
     def _get_user_prompt(self, task):
         # user_prompt = (
