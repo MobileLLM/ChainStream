@@ -88,5 +88,20 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'WifiSignalStrengthTask':WifiSignalStrengthConfig,
              'WifiSSIDTask':WifiSSIDConfig,
              'WifiVendorTask':WifiVendorConfig
+             'ActivityLevelTask':ActivityLevelConfig,
+             'BloodSugarTask':BloodSugarConfig,
+             'BMITask':BMIConfig,
+             'BodyTempTask':BodyTempConfig,
+             'DailyStepsTask':DailyStepsConfig,
+             'DiastolicBPTask':DiastolicBPConfig,
+             'HeartRateTask':HeartRateConfig,
+             'JudgeEmotionTask':JudgeEmotionConfig,
+             'JudgeOccupationTask':JudgeOccupationConfig,
+             'RiskEvaluationTask':RiskEvaluationConfig,
+             'SleepQualityTask':SleepQualityConfig,
+             'SleepDisorderTask':SleepDisorderConfig,
+             'SleepDurationTask':SleepDurationConfig,
+             'StressLevelTask':StressLevelConfig,
+             'SystolicBPTask':SystolicBPConfig
              }
 

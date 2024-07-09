@@ -10,3 +10,4 @@ from .Sensor.Landmarks import LandmarkData
 from .Sensor.activity import ActivityData
 from .Sensor.weather import WeatherData
 from .Sensor.wifi import WifiData
+from .Sensor.health import HealthData

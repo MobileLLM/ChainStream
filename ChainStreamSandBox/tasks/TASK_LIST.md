@@ -94,6 +94,22 @@
   3. wifi signal strength display:display the wifi signal strength
   4. wifi SSID detection: detect the wifi SSID
   5. wifi vendor detection: detect the wifi vendor
+- health dataset
+  1. activity level rating: rate the activity level of a person
+  2. blood sugar measurement: measure the blood sugar of a person
+  3. BMI category classification: classify the BMI category of a person
+  4. body temperature measurement: measure the body temperature of a person
+  5. daily steps calculation: calculate the daily steps of a person
+  6. diastolic blood pressure measurement: measure the diastolic blood pressure of a person
+  7. heart rate measurement: measure the heart rate of a person
+  8. sleep disorder judgment: judge whether a person has sleep disorder
+  9. sleep duration measurement: measure the sleep duration of a person
+  10. sleep quality measurement: measure the real sleep time of a person
+  11. stress level rating: rate the stress level of a person
+  12. systolic blood pressure measurement: measure the systolic blood pressure of a person
+  13. current emotion judgement: judge the current emotion of a person according to the health data
+  14. current occupation estimation: estimate the current occupation of a person according to the health data
+  15. health risk evaluation: evaluate the health risk of a person according to the health data
 TODO
 - Ego4d dataset: 20个
   - 活动类：当前是否在 跳绳/开会/做饭/看书，3-5个
