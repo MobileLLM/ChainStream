@@ -1,19 +1,30 @@
 # All tasks for ChainStreamSandBox
 
+五大API：
+- for_each (Function)：等价于当前的register_listener
+- for_batch (Function, spilt_func)：
+
+典型的Function：
+- filter (Item) -> Item: 字段 
+- group_by (Item) -> Item: 字段
+
+def func(item):
+    
+
 ## Task with dataset (> 100 examples)
 
 - email dataset:
-  1. emo classification: classify the emotion of an email message (positive, negative, neutral)
-  2. date extraction: extract the date of an email message
-  3. receiver extraction: extract the receiver of an email message
-  4. sender extraction: extract the sender of an email message
-  5. subject judgment: Judge the topic of an email message
+  1. emo classification: classify the emotion of an email message (positive, negative, neutral)【改成“每个月从工作email中总结我的情绪”】
+  2. date extraction: extract the date of an email message 【没太想好怎么改】
+  3. receiver extraction: extract the receiver of an email message 
+  4. sender extraction: extract the sender of an email message 【改成“总结每个sender的邮件历史，并且过滤掉广告”】
+  5. subject judgment: Judge the topic of an email message 【改成“”】
   6. summarize content:generate a summary of an email message
   7. auto reply: generate an auto reply for an email message
 - news dataset:
   1. authors extraction: extract the authors of a news article
   2. description judgment: judge the topics of a news article
-  3. category classification: classify the category of a news article
+  3. category classification: classify the category of a news article: classify the category of a news article
   4. date extraction: extract the date of a news article
   5. link extraction: extract the links of a news article
   6. title extraction: extract the title of a news article
@@ -76,40 +87,7 @@
   12. building electricity count: count the electricity usage of a building
   13. building gas count: count the natural gas usage of a building
   14. building GHGEmissions count: count the GHG emissions of a building
-- activity dataset
-  1. activity over 5km: remind the activity over 5km of a person
-  2. activity over 30mins: remind the activity over 30mins of a person
-  3. calories most selection: remind the most burned_calories of a person in an activity
-  4. steps over 5000: remind the steps over 5000 of a person
-- weather dataset
-  1. humidity detection: detect the humidity of the weather
-  2. precipitation detection: detect the precipitation of the weather
-  3. temperature detection: detect the temperature of the weather
-  4. wind speed detection: detect the wind speed of the weather
-  5. weather location detection: present the weather location
-  6. weather time detection: present the weather time
-- wifi dataset
-  1. wifi channel detection: detect the wifi channel
-  2. wifi mac address detection: detect the wifi mac address
-  3. wifi signal strength display:display the wifi signal strength
-  4. wifi SSID detection: detect the wifi SSID
-  5. wifi vendor detection: detect the wifi vendor
-- health dataset
-  1. activity level rating: rate the activity level of a person
-  2. blood sugar measurement: measure the blood sugar of a person
-  3. BMI category classification: classify the BMI category of a person
-  4. body temperature measurement: measure the body temperature of a person
-  5. daily steps calculation: calculate the daily steps of a person
-  6. diastolic blood pressure measurement: measure the diastolic blood pressure of a person
-  7. heart rate measurement: measure the heart rate of a person
-  8. sleep disorder judgment: judge whether a person has sleep disorder
-  9. sleep duration measurement: measure the sleep duration of a person
-  10. sleep quality measurement: measure the real sleep time of a person
-  11. stress level rating: rate the stress level of a person
-  12. systolic blood pressure measurement: measure the systolic blood pressure of a person
-  13. current emotion judgement: judge the current emotion of a person according to the health data
-  14. current occupation estimation: estimate the current occupation of a person according to the health data
-  15. health risk evaluation: evaluate the health risk of a person according to the health data
+
 TODO
 - Ego4d dataset: 20个
   - 活动类：当前是否在 跳绳/开会/做饭/看书，3-5个
