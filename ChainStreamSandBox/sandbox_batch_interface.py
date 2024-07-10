@@ -16,6 +16,11 @@ class BatchInterfaceBase:
     def start(self):
         pass
 
+        self._save_log()
+
+    def _save_log(self):
+        pass
+
     def get_agent_for_specific_task(self, task) -> str:
         raise NotImplementedError()
 
