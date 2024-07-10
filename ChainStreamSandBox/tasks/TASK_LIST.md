@@ -1,13 +1,18 @@
 # All tasks for ChainStreamSandBox
 
+典型的Function：
+所有Function都是
+- filter (Item) -> Item: 字段 
+- group_by (Item) -> Item: 字段 
+
 ## Task with dataset (> 100 examples)
 
 - email dataset:
-  1. emo classification: classify the emotion of an email message (positive, negative, neutral)
-  2. date extraction: extract the date of an email message
-  3. receiver extraction: extract the receiver of an email message
-  4. sender extraction: extract the sender of an email message
-  5. subject judgment: Judge the topic of an email message
+  1. emo classification: classify the emotion of an email message (positive, negative, neutral)【改成“每个月从工作email中总结我的情绪”】
+  2. date extraction: extract the date of an email message 【没太想好怎么改】
+  3. receiver extraction: extract the receiver of an email message 
+  4. sender extraction: extract the sender of an email message 【改成“总结每个sender的邮件历史，并且过滤掉广告”】
+  5. subject judgment: Judge the topic of an email message 【改成“”】
   6. summarize content:generate a summary of an email message
   7. auto reply: generate an auto reply for an email message
 - news dataset:

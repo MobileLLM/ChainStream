@@ -7,6 +7,7 @@ from tasks.daily_dialogue_task import *
 from tasks.gps_task import *
 from tasks.twitter_task import *
 from tasks.gps_task import *
+from task_config_base import TaskConfigBase
 
 ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'ArxivAlgorithmTask': ArxivAlgorithmConfig,

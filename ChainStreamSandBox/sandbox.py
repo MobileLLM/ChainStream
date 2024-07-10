@@ -31,7 +31,7 @@ class InitializeError(Exception):
 
 
 class SandBox:
-    def __init__(self, task, agent_code, save_path=os.path.join(os.path.dirname(__file__), 'results')):
+    def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results')):
         cs_server.init(server_type='core')
         cs_server.start()
         self.runtime = cs_server.get_chainstream_core()
@@ -45,7 +45,10 @@ class SandBox:
             'agent_code': self.agent_code
         }}
 
-        self.save_path = save_path
+        if save_result:
+            self.save_path = save_path
+        else:
+            self.save_path = None
 
     def start_test_agent(self):
         self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

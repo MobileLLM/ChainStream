@@ -19,12 +19,29 @@ class EmailEmotionConfig(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_email_stream = None
         self.input_email_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_emails'. "
-            "Process each email to extract information from the 'Content' fields in the email dictionary: "
-            "Classify the email content into one of the categories (positive, negative, neutral, other) using an LLM."
-            "Add the email subject followed by the classification response to the output stream 'cs_emails'."
-        )
+        # self.task_description = (
+        #     "Retrieve data from the input stream 'all_emails'. "
+        #     "Process each email to extract information from the 'Content' fields in the email dictionary: "
+        #     "Classify the email content into one of the categories (positive, negative, neutral, other) using an LLM."
+        #     "Add the email subject followed by the classification response to the output stream 'cs_emails'."
+        # )
+        self.input_description = [
+                {
+                    "stream_id": "all_emails",
+                    "description": "The input stream 'all_emails' contains a list of dictionaries, where each dictionary represents an email. The dictionary contains the fields 'Subject' and 'Content'."
+                    "fields": ["Subject", "Content"],
+                }
+            ]
+
+        self.output_description = [{
+            "stream_id": "cs_emails",
+            "description": "A list of email summaries for each email sender, excluding ads",
+            "fields": {
+                "sender": "The email sender, string",
+                "summary": "The summary of previous emails of the sender, string"
+            }
+        }]
+        self.output_description = "The output stream 'cs_emails' will contain the email subject followed by the classification response."
         self.email_data = EmailData().get_emails(10)
         self.agent_example = '''
         import chainstream as cs
