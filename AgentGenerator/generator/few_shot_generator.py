@@ -3,12 +3,13 @@ from AgentGenerator.chainstream_doc import chainstream_doc
 from .generator_base import AgentGeneratorBase
 
 
-class AgentGenerator(AgentGeneratorBase):
+class FewShotGenerator(AgentGeneratorBase):
     def __init__(self, model_name="gpt-3.5-turbo-1106"):
         super().__init__()
         self.model = TextGPTModel(model_name)
         self.max_token_len = 4096
 
+    # TODO: need new parameters for few-shot generation
     def generate_dsl(self, task, input, output):
         prompt = [
             {
@@ -40,7 +41,7 @@ class AgentGenerator(AgentGeneratorBase):
 
 
 if __name__ == "__main__":
-    agent_generator = AgentGenerator()
+    agent_generator = FewShotGenerator()
     task_description = "Process Arxiv paper abstracts to filter those related to 'edge LLM agent'."
     dsl_output = agent_generator.generate_dsl(task_description)
     print(dsl_output)

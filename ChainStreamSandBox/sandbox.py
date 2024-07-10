@@ -50,7 +50,7 @@ class SandBox:
         else:
             self.save_path = None
 
-    def start_test_agent(self):
+    def start_test_agent(self, return_report_path=False):
         self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.task.init_environment(self.runtime)
 
@@ -78,10 +78,12 @@ class SandBox:
 
         self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
 
-        self._save_result(self.result)
+        report_path = self._save_result(self.result)
         # print("Sandbox result saved to " + self.save_path)
         self.runtime.shutdown()
 
+        if return_report_path:
+            return report_path
         return self.result
 
     def _start_agent(self):
@@ -131,6 +133,7 @@ class SandBox:
             )
             with open(file_path, 'w') as f:
                 json.dump(result, f, indent=4)
+        return file_path
 
 
 if __name__ == "__main__":

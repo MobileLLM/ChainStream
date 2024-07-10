@@ -76,3 +76,7 @@ ALL_TASKS = {'ArxivAbstractTask': ArxivAbstractConfig,
              'BuildingNaturalGasTask': BuildingNaturalGasConfig
              }
 
+
+def get_task_batch():
+    pass
+
