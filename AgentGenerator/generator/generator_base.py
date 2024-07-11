@@ -11,7 +11,7 @@ class AgentGeneratorBase:
     """
     def __init__(self, runtime=None, stream_selector=None):
         self.runtime = runtime
-        self.stream_selector = stream_selector
+        self.stream_selector = stream_selector()
 
     def generate_agent(self, output_description, input_description=None, use_selector=False) -> str:
         if input_description is None:
