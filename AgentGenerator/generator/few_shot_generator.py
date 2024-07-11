@@ -1,6 +1,7 @@
 from AgentGenerator.generator.utils import TextGPTModel
 from AgentGenerator.chainstream_doc import chainstream_doc
 from .generator_base import AgentGeneratorBase
+from ..io_model import StreamListDescription
 
 
 class FewShotGenerator(AgentGeneratorBase):
@@ -10,7 +11,7 @@ class FewShotGenerator(AgentGeneratorBase):
         self.max_token_len = 4096
 
     # TODO: need new parameters for few-shot generation
-    def generate_dsl(self, task, input, output):
+    def generate_agent_impl(self, input_description: [StreamListDescription, None], agent_description: StreamListDescription) -> str:
         prompt = [
             {
                 "role": "system",
@@ -18,7 +19,7 @@ class FewShotGenerator(AgentGeneratorBase):
             },
             {
                 "role": "user",
-                "content": self._get_user_prompt(task+" "+input+" "+output)
+                "content": self._get_user_prompt(input_description+agent_description)
             }
         ]
         response = self.model.query(prompt)
@@ -27,6 +28,7 @@ class FewShotGenerator(AgentGeneratorBase):
     def _get_system_prompt(self):
         return chainstream_doc.chinese_chainstream_doc
 
+    # TODO: need to update user prompt to support new prompt format
     def _get_user_prompt(self, task):
         # user_prompt = (
         #     "Design an agent mainly for processing Arxiv paper abstracts. Get the configuration of ArxivTask "
