@@ -6,8 +6,8 @@ Description:
     Stream 类是数据流的核心，每一个数据流都是Stream的实例，Chainstream使用strean_id用来区分不同的数据流。ChainStream通过在数据流上挂载监听函数的方式完成对数据流的中数据的监听与处理，一个数据流上可能挂载多个监听函数，当数据流中有数据进入时，Chainstream会自动调用挂载的监听函数对该数据进行相应处理。下面将介绍有关Stream类的方法
 API:
     - chainstream.get_stream(stream_id)：这一方法能够根据stream_id获取一个Stream对象,通常情况下构建Agent实例时需要通过此方法获得输入和输出流
-    - chainstream.stream.Stream.register_listener(agent, listener_func)：这一方法能够向Stream实例挂载监听函数。listener_func是要挂载的监听函数，agent是挂载这一函数的Agent的标识符
-    - chainstream.stream.Stream.unregister_listener(agent):这一方法用于注销数据流上挂载的监听函数，指定标识符agent，由这一Agent挂载的所有监听函数都会被注销
+    - chainstream.stream.Stream.for_each(agent, listener_func)：这一方法能够向Stream实例挂载监听函数。listener_func是要挂载的监听函数，agent是挂载这一函数的Agent的标识符
+    - chainstream.stream.Stream.unregister_all(agent):这一方法用于注销数据流上挂载的监听函数，指定标识符agent，由这一Agent挂载的所有监听函数都会被注销
     - chainstream.stream.Stream.add_item(data):这一方法用于向数据流推送数据，其中data可以是任意形式的数据，包括图像，音频，文本等
     
 Agent模块:
@@ -62,10 +62,10 @@ class testAgent(cs.agent.Agent):
             if response == 'Yes':
                 print(paper)
                 self.output_stream.add_item(paper)
-        self.input_stream.register_listener(self, process_paper)
+        self.input_stream.for_each(self, process_paper)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)
 设计之前你必须要导入chainstream模块，你可以仿照上述代码创建不止一个Agent，让它们互相配合来完成用户任务。除非用户提供了函数工具，你只能使用ChainStream中的LLM模块来解决用户的需求。你提供的Agent必须是完整的，可运行的，你需要完成Agent中的每一个函数，用户不会再对你提供的Agent进行修改。你不能使用各个模块没有提供的函数。
 如果你已经掌握了ChainStream框架，并可以使用该框架编写Agent处理用户任务，并准备处理用户的需求。请仅生成一个包含三个单引号（注意不是反引号）的代码块，但不要在代码中包含“python”关键字，不要实例化及生成多余的注释。
 

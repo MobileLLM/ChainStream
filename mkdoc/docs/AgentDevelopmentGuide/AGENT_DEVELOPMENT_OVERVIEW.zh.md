@@ -12,8 +12,8 @@
 - **API**：
   - `chainstream.get_stream(stream_id)`: 根据 stream_id 获取一个 Stream 对象，通常在构建 Agent 实例时需要使用此方法获取输入和输出流。
   - `chainstream.create_stream(stream_id)`: 创建一个新的数据流，并返回 Stream 实例，以 stream_id 作为标识符。
-  - `chainstream.stream.Stream.register_listener(agent, listener_func)`: 向 Stream 实例挂载监听函数。
-  - `chainstream.stream.Stream.unregister_listener(agent)`: 注销数据流上挂载的监听函数。
+  - `chainstream.stream.Stream.for_each(agent, listener_func)`: 向 Stream 实例挂载监听函数。
+  - `chainstream.stream.Stream.unregister_all(agent)`: 注销数据流上挂载的监听函数。
   - `chainstream.stream.Stream.add_item(data)`: 向数据流推送数据。
 
 ### Agent 模块
@@ -95,9 +95,9 @@ class TestAgent(cs.agent.Agent):
                 print(paper)
                 self.output_stream.add_item(paper)
                 
-        self.input_stream.register_listener(self, process_paper)
+        self.input_stream.for_each(self, process_paper)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)
 ```
 

@@ -25,7 +25,7 @@ class AppUsageStatistics(Agent):
                 self.install_app_memory.add_item(change_action['app_name'])
             elif change_action['action'] == 'uninstall':
                 self.install_app_memory.remove_item(change_action['app_name'])
-        self.app_change_stream.register_listener(self, update_memory_when_install_app_change)
+        self.app_change_stream.for_each(self, update_memory_when_install_app_change)
 
         def statistic_app_usage(screen_snapshot):
             prompt = make_prompt("The following apps are installed", self.install_app_memory, "Please indicate which "
@@ -42,17 +42,17 @@ class AppUsageStatistics(Agent):
             else:
                 self.last_use_app = {'app_name': response, 'time': screen_snapshot['time']}
             self.last_use_app['time'] = screen_snapshot['time']
-        self.screen_snopshot_stream.register_listener(self, statistic_app_usage)
+        self.screen_snopshot_stream.for_each(self, statistic_app_usage)
 
         def record_app_usage_time(clock_time):
             prompt = make_prompt("Give me a report of today app usage: ", self.install_app_memory)
             response = self.llm.generate_response(prompt)
             self.daily_app_usage_report_stream.add_item({'report': response, 'time': clock_time})
             self.app_usage_memory.clear()
-        self.clock.register_listener(self, record_app_usage_time)
+        self.clock.for_each(self, record_app_usage_time)
 
     def stop(self):
-        self.screen_snopshot_stream.unregister_listener(self)
-        self.clock.unregister_listener(self)
-        self.app_change_stream.unregister_listener(self)
+        self.screen_snopshot_stream.unregister_all(self)
+        self.clock.unregister_all(self)
+        self.app_change_stream.unregister_all(self)
 

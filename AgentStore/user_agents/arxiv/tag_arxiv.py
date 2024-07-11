@@ -30,7 +30,7 @@ class TagArxiv(Agent):
             new_paper["tags"] = {"topic": topic_tag,}
             self.paper_to.send(new_paper)
 
-        self.paper_from.register_listener(self, tag_arxiv)
+        self.paper_from.for_each(self, tag_arxiv)
 
     def stop(self):
-        self.paper_to.unregister_listener(self)
+        self.paper_to.unregister_all(self)

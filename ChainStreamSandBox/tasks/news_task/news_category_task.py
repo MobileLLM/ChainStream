@@ -30,10 +30,10 @@ class NewsCategoryConfig(SingleAgentTaskConfigBase):
                     news_category = news["category"]           
                     #print(news_category)
                     self.output_stream.add_item(news_headline+" : "+news_category)
-                self.input_stream.register_listener(self, process_news)
+                self.input_stream.for_each(self, process_news)
         
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -44,7 +44,7 @@ class NewsCategoryConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_news_stream.register_listener(self, record_output)
+        self.output_news_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for message in self.news_data:

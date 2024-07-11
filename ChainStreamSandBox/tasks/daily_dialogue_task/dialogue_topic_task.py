@@ -46,10 +46,10 @@ class DialogueTopicConfig(SingleAgentTaskConfigBase):
                     #print(dialogues)
                     self.output_stream.add_item(dialogues)
         
-                self.input_stream.register_listener(self, process_dialogues)
+                self.input_stream.for_each(self, process_dialogues)
         
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -61,7 +61,7 @@ class DialogueTopicConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_dialogue_stream.register_listener(self, record_output)
+        self.output_dialogue_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for dialogue in self.dialogue_data:

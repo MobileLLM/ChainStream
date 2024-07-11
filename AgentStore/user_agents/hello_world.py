@@ -24,11 +24,11 @@ class HelloAgent(cs.agent.Agent):
             if response.startswith('yes'):
                 self.has_people.send_item({'message': 'hello', 'frame': frame})
         try:
-            self._source1.register_listener(self, handle_new_frame)
+            self._source1.for_each(self, handle_new_frame)
         except Exception as e:
             print("Error in hello agent: ", e)
             return False
-        # self._source1.register_listener(self, handle_new_frame)
+        # self._source1.for_each(self, handle_new_frame)
         return True
 
     def pause(self):

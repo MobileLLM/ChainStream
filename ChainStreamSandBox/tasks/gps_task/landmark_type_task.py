@@ -27,10 +27,10 @@ class LandmarkTypeConfig(SingleAgentTaskConfigBase):
                 def process_landmark(landmark):
                     PrimaryPropertyType = landmark["PrimaryPropertyType"]        
                     self.output_stream.add_item(PrimaryPropertyType)
-                self.input_stream.register_listener(self, process_landmark)
+                self.input_stream.for_each(self, process_landmark)
 
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -41,7 +41,7 @@ class LandmarkTypeConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_landmark_stream.register_listener(self, record_output)
+        self.output_landmark_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for info in self.landmark_data:

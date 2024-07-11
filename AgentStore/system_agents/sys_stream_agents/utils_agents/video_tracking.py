@@ -29,7 +29,7 @@ class VideoTrackingAgent(cs.agent.Agent):
             result = self.track_object(frame)
             self.detection_buffer.save(show_video_tracking_result(frame, result[OutputKeys.BOXES], "./tracking_result.avi"))
         try:
-            self._source1.register_listener(self, handle_new_frame)
+            self._source1.for_each(self, handle_new_frame)
             return True
         except Exception as e:
             print("Error in Video Tracking Agent: ", e)

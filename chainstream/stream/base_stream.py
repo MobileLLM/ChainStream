@@ -43,10 +43,10 @@ class BaseStream(StreamInterface):
         self.recorder = StreamRecorder(self.metaData, self.queue)
         cs_server_core.register_stream(self)
 
-    def register_listener(self, agent, listener_func):
+    def for_each(self, agent, listener_func):
         try:
             self.listeners.append((agent.agent_id, listener_func))
-            self.recorder.record_listener_actions("register_listener", agent.agent_id, listener_func.__name__)
+            self.recorder.record_listener_actions("for_each", agent.agent_id, listener_func.__name__)
             self.recorder.record_listener_change(len(self.listeners))
             if not self.is_running:
                 self.is_running = True
@@ -54,7 +54,7 @@ class BaseStream(StreamInterface):
         except Exception as e:
             print("Error registering listener: ", e)
 
-    def unregister_listener(self, agent, listener_func=None):
+    def unregister_all(self, agent, listener_func=None):
         new_listeners = []
         for agent_, listener_func_ in self.listeners:
             if agent_ != agent.agent_id:

@@ -12,8 +12,8 @@ API:
 
 chainstream.get_stream(stream_id): This method retrieves a Stream object based on stream_id.
 chainstream.create_stream(stream_id): This method creates a new data stream. It creates and returns a Stream instance, using stream_id as the identifier for the data stream.
-chainstream.stream.Stream.register_listener(agent, listener_func): This method attaches a listener function to a Stream instance. listener_func is the listener function to be attached, and agent is the identifier of the Agent that attaches this function.
-chainstream.stream.Stream.unregister_listener(agent): This method unregisters the listener functions attached to a data stream, specifying the identifier agent, and all listener functions attached by this Agent will be unregistered.
+chainstream.stream.Stream.for_each(agent, listener_func): This method attaches a listener function to a Stream instance. listener_func is the listener function to be attached, and agent is the identifier of the Agent that attaches this function.
+chainstream.stream.Stream.unregister_all(agent): This method unregisters the listener functions attached to a data stream, specifying the identifier agent, and all listener functions attached by this Agent will be unregistered.
 Agent Module:
 
 Description:
@@ -68,10 +68,10 @@ class EnglishMessageFilter(Agent):
             if response.lower() == "yes":
                 self.english_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 You can create more than one Agent, allowing them to work together to complete user tasks.
 If you have mastered the ChainStream framework and can use this framework to write Agents to handle user tasks, please reply with "I understand" and be ready to process user requirements.
 '''

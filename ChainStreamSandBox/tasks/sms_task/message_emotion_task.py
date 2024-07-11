@@ -44,10 +44,10 @@ class MessageEmotionConfig(SingleAgentTaskConfigBase):
                     response = self.llm.query(prompt)
                     print(sms_text+" : "+response)
                     self.output_stream.add_item(sms_text+" : "+response)
-                self.input_stream.register_listener(self, process_sms)
+                self.input_stream.for_each(self, process_sms)
         
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -59,7 +59,7 @@ class MessageEmotionConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_sms_stream.register_listener(self, record_output)
+        self.output_sms_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for message in self.sms_data:

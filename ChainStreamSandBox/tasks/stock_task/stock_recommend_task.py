@@ -47,10 +47,10 @@ class StockRecommendConfig(SingleAgentTaskConfigBase):
                     print(response)
                     self.output_stream.add_item(response)
         
-                self.input_stream.register_listener(self, process_stocks)
+                self.input_stream.for_each(self, process_stocks)
         
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -62,7 +62,7 @@ class StockRecommendConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_stock_stream.register_listener(self, record_output)
+        self.output_stock_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for stock in self.stock_data:

@@ -41,10 +41,10 @@ class ArxivCommentsConfig(SingleAgentTaskConfigBase):
                     paper_comments = paper["comments"]#[:500]        
                     if paper_comments is not None: 
                         self.output_stream.add_item(paper_title+" : "+paper_comments)
-                self.input_stream.register_listener(self, process_paper)
+                self.input_stream.for_each(self, process_paper)
         
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -57,7 +57,7 @@ class ArxivCommentsConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_paper_stream.register_listener(self, record_output)
+        self.output_paper_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for message in self.paper_data:

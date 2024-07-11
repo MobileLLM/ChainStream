@@ -37,7 +37,7 @@ class MusicRecommend(Agent):
                       f"accordingly. Answer in chainstream memory api format")
             response = self.memory_llm.generate(prompt)
             self.preference_memory.exec(response)
-        self.clock.register_listener(self, update_preference_memory)
+        self.clock.for_each(self, update_preference_memory)
 
         def recommend_songs(song):
             prompt = make_prompt("I prefer music like ", self.preference_memory, ".\nWill you recommend this song to "
@@ -47,11 +47,11 @@ class MusicRecommend(Agent):
             if response == "yes":
                 notify_user(self, "I recommend this song to you!" + song['audio'])
                 self.wait_feedback_buffer.add(song)
-        self.new_songs.register_listener(self, recommend_songs)
+        self.new_songs.for_each(self, recommend_songs)
 
     def stop(self):
-        self.clock.unregister_listener(self)
-        self.new_songs.unregister_listener(self)
+        self.clock.unregister_all(self)
+        self.new_songs.unregister_all(self)
 
 
 

@@ -32,7 +32,7 @@ class ProductLinks(Agent):
             if response == "yes":
                 self.ad_stream.add_item(message)
 
-        self.messages_stream.register_listener(self, filter_advertisement)
+        self.messages_stream.for_each(self, filter_advertisement)
 
         def fetch_advertisement_product(message):
             prompt = ("What is the name, description, price, etc. of the advertisement product? Answer like this: [{"
@@ -42,13 +42,13 @@ class ProductLinks(Agent):
             for item in product_info:
                 item["message"] = message
                 self.product_stream.add_item(item)
-        self.ad_stream.register_listener(self, fetch_advertisement_product)
+        self.ad_stream.for_each(self, fetch_advertisement_product)
 
         def find_links_to_products(product):
             pass
-        self.product_stream.register_listener(self, find_links_to_products)
+        self.product_stream.for_each(self, find_links_to_products)
 
     def stop(self):
-        self.messages_stream.unregister_listener(self)
-        self.ad_stream.unregister_listener(self)
-        self.product_stream.unregister_listener(self)
+        self.messages_stream.unregister_all(self)
+        self.ad_stream.unregister_all(self)
+        self.product_stream.unregister_all(self)

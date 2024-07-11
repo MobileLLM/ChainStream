@@ -27,10 +27,10 @@ class TweetTextConfig(SingleAgentTaskConfigBase):
                 def process_tweet(tweets):
                     tweets_text = tweets["text"]        
                     self.output_stream.add_item(tweets_text)
-                self.input_stream.register_listener(self, process_tweet)
+                self.input_stream.for_each(self, process_tweet)
 
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -41,7 +41,7 @@ class TweetTextConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_tweet_stream.register_listener(self, record_output)
+        self.output_tweet_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for info in self.tweet_data:

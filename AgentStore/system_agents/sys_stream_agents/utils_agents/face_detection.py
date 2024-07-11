@@ -23,7 +23,7 @@ class FaceDetectionAgent(cs.agent.Agent):
             img_draw = draw_face_detection_result(image_path, result)
             self.result_buffer.save(img_draw)
         try:
-            self._source.register_listener(self, handle_input)
+            self._source.for_each(self, handle_input)
             return True
         except Exception as e:
             print("Error in Face Detection Agent: ", e)

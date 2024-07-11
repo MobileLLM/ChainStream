@@ -22,9 +22,9 @@ class RecommendPaperDaily(Agent):
             summary = self.llm.query(prompt)
             self.output_stream.add_item({"summary": summary, "timestamp": new_day})
 
-        self.clock.register_listener(self, recommend_paper_daily)
-        self.input_stream.register_listener(self, receive_arxiv)
+        self.clock.for_each(self, recommend_paper_daily)
+        self.input_stream.for_each(self, receive_arxiv)
 
     def stop(self):
-        self.clock.unregister_listener(self)
-        self.input_stream.unregister_listener(self)
+        self.clock.unregister_all(self)
+        self.input_stream.unregister_all(self)

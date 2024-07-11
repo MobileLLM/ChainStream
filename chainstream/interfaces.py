@@ -13,10 +13,10 @@ class StreamInterface:
     def add_item(self, data_item):
         pass
 
-    def register_listener(self, agent, listener_func):
+    def for_each(self, agent, listener_func):
         pass
 
-    def unregister_listener(self, agent, listener_func=None):
+    def unregister_all(self, agent, listener_func=None):
         pass
 
 

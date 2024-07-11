@@ -49,10 +49,10 @@ class EmailSummaryConfig(SingleAgentTaskConfigBase):
                     response = self.llm.query(prompt)
                     print(email_subject+" : "+response)
                     self.output_stream.add_item(email_subject+" : "+response)
-                self.input_stream.register_listener(self, process_email)
+                self.input_stream.for_each(self, process_email)
         
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -64,7 +64,7 @@ class EmailSummaryConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_email_stream.register_listener(self, record_output)
+        self.output_email_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for message in self.email_data:

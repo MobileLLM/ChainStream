@@ -55,13 +55,13 @@ class ToyRecognitionAgent(cs.agent.Agent):
             response = self._llm.query(prompt, imgs)
             print(response)
 
-        self._source.register_listener(self, handle_new_frame)
-        self.has_toy.register_listener(self, recognize_toy)
+        self._source.for_each(self, handle_new_frame)
+        self.has_toy.for_each(self, recognize_toy)
 
         return True
 
     def pause(self):
-        self._source.unregister_listener(self)
+        self._source.unregister_all(self)
 
     def stop(self):
         self._source.remove_listener(self)

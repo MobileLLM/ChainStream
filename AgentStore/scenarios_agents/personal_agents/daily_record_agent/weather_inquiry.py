@@ -27,7 +27,7 @@ class AMAPWeatherAgent(cs.agent.Agent):
             self.result_buffer.save(weather_info)
 
         try:
-            self._source.register_listener(self, handle_input)
+            self._source.for_each(self, handle_input)
             return True
         except Exception as e:
             print("Error in Weather Agent: ", e)

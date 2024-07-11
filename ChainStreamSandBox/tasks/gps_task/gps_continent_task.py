@@ -27,10 +27,10 @@ class GPSContinentConfig(SingleAgentTaskConfigBase):
                 def process_gps(gps):
                     gps_continent = gps["ContinentName"]        
                     self.output_stream.add_item(gps_continent)
-                self.input_stream.register_listener(self, process_gps)
+                self.input_stream.for_each(self, process_gps)
 
             def stop(self):
-                self.input_stream.unregister_listener(self)
+                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
@@ -41,7 +41,7 @@ class GPSContinentConfig(SingleAgentTaskConfigBase):
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_gps_stream.register_listener(self, record_output)
+        self.output_gps_stream.for_each(self, record_output)
 
     def start_task(self, runtime):
         for info in self.gps_data:
