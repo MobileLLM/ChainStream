@@ -35,7 +35,6 @@ class AgentAnalyzer:
         return self.path_to_agentId
 
 
-
 class FunctionManager:
     def __init__(self, agent_id):
         self.functions = {}
@@ -50,6 +49,7 @@ class AgentManager(AgentAnalyzer):
         self.agents[agent.agent_id] = agent
         self.agents_metaData[agent.agent_id] = agent.metaData
         self.path_to_agentId[agent.metaData.agent_file_path] = agent.agent_id
+        agent.set_agent_store_base_path(self.predefined_agents_path)
 
     def unregister_agent(self, agent):
         self.agents.pop(agent.agent_id)
@@ -87,7 +87,6 @@ class AgentManager(AgentAnalyzer):
             except Exception as e:
                 logger.error(f'failed to stop agent {agent.agent_id}: {e}')
         return True
-
 
     def _path_to_json(self, paths):
         json_data = {}

@@ -1,1 +1,1 @@
-from agent_function import AgentFunction
+from .agent_function import AgentFunction

@@ -9,6 +9,7 @@ import inspect
 from threading import Event
 from ..context import Buffer
 from ..function import AgentFunction
+import os
 
 
 class StreamForAgent:
@@ -26,13 +27,16 @@ class StreamForAgent:
         self.stream.unregister_all(self.agent, listener_func)
 
     def add_item(self, item):
-        self.stream.add_item(item)
+        self.stream.add_item(self.agent, item)
 
     def send_item(self, item):
         self.add_item(item)
 
     def shutdown(self):
         self.stream.shutdown()
+
+    def get_record_data(self):
+        return self.stream.get_record_data()
 
 
 class StreamMeta:
@@ -84,24 +88,32 @@ class BaseStream(StreamInterface):
         cs_server_core.register_stream(self)
 
     def for_each(self, agent, listener_func):
-        listener_func = AgentFunction(listener_func)
+        listener_func = AgentFunction(agent, listener_func)
         try:
             self.listeners.append((agent.agent_id, listener_func))
-            self.recorder.record_listener_actions("for_each", agent.agent_id, listener_func.__name__)
+            self.recorder.record_listener_actions("for_each", agent.agent_id, listener_func.func_id)
             self.recorder.record_listener_change(len(self.listeners))
             if not self.is_running:
                 self.is_running = True
                 self.thread.start()
+            if "[anonymous]__" not in self.metaData.stream_id:
+                next_stream_id = "[anonymous]__" + self.metaData.stream_id + "_" + agent.agent_id + "__[func]__" + str(
+                    listener_func.func_id + "__[count]__" + "0")
+            else:
+                tmp_agent_name = self.metaData.stream_id.split("__[func]__")[0]
+                tmp_count = self.metaData.stream_id.split("__[count]__")[1]
 
-            next_stream_id = "anonymous_" + self.metaData.stream_id + "_" + agent.agent_id + "_" + str(
-                listener_func.__name__)
+                next_stream_id = tmp_agent_name + "__[func]__" + str(listener_func.func_id) + "__[count]__" + str(int(tmp_count) + 1)
+
             create_by_agent_file = self.metaData.create_by_agent_file
             next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True)
-            self.next_anonymous[(agent.agent_id, listener_func.__name__)] = next_stream
+            self.next_anonymous[(agent.agent_id, listener_func.func_id)] = next_stream
 
-            listener_func.set_output_stream(next_stream)
+            stream_for_agent = StreamForAgent(agent, self.next_anonymous[(agent.agent_id, listener_func.func_id)])
 
-            return StreamForAgent(agent, self.next_anonymous[(agent.agent_id, listener_func.__name__)])
+            listener_func.set_output_stream(stream_for_agent)
+
+            return stream_for_agent
 
         except Exception as e:
             print("Error registering listener: ", e)
@@ -201,14 +213,35 @@ class BaseStream(StreamInterface):
             self.thread.join()
             # print("No more listeners, stopping stream")
 
-    def add_item(self, item):
+    def add_item(self, agent, item):
         self.logger.debug(f'stream {self.metaData.stream_id} send an item type: {type(item)}')
         self.queue.put(item)
-        call_from = inspect.stack()[1]
-        self.recorder.record_new_item(call_from.filename, call_from.function)
+        call_from = inspect.stack()[2]
+        # for i in call_from:
+        #     print(i)
+        # print("call from 2", call_from[2])
+        # print("call from 3", call_from[3])
 
-    def send_item(self, item):
-        self.add_item(item)
+        current_frame = inspect.currentframe()
+        call_frame = current_frame.f_back.f_back
+        caller_instance = call_frame.f_locals.get('self', None)
+        # print(caller_instance)
+
+        # print(call_from.filename, call_from.function)
+        if isinstance(caller_instance, AgentFunction):
+            # print(caller_instance.agent.agent_store_base_path)
+            # agent_full_path = caller_instance.agent.metaData.agent_file_path
+            # agent_base_path = caller_instance.agent.agent_store_base_path
+            # agent_path = os.path.relpath(agent_full_path, agent_base_path)
+            # print(agent_path)
+            self.recorder.record_new_item(caller_instance.agent.metaData.agent_file_path, caller_instance.func_id)
+        else:
+            # print(call_from.filename)
+            self.recorder.record_new_item(call_from.filename, call_from.function)
+        # self.recorder.record_new_item(caller_instance.__file__, caller_instance)
+
+    # def send_item(self, agent, item):
+    #     self.add_item(agent, item)
 
     def process_item(self):
         while True:
@@ -220,12 +253,12 @@ class BaseStream(StreamInterface):
                 self.is_clear.clear()
                 for agent_, listener_func_ in self.listeners:
                     listener_func_(item)
-                    self.recorder.record_send_item(agent_, listener_func_.__name__)
+                    self.recorder.record_send_item(agent_, listener_func_.func_id)
                 self.is_clear.set()
 
     def get_meta_data(self):
         data = self.metaData.__dict__()
-        data['listeners'] = [str(agent_) + ":" + str(listener_func_.__name__) for agent_, listener_func_ in
+        data['listeners'] = [str(agent_) + ":" + str(listener_func_.func_id) for agent_, listener_func_ in
                              self.listeners]
         return data
 

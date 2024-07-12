@@ -32,6 +32,8 @@ class AgentMeta:
 
 
 class Agent(AgentInterface):
+    agent_store_base_path = None
+
     def __init__(self, agent_id) -> None:
         super().__init__()
         self.agent_id = agent_id
@@ -53,3 +55,7 @@ class Agent(AgentInterface):
 
     def get_meta_data(self):
         return self.metaData.__dict__()
+
+    @staticmethod
+    def set_agent_store_base_path(path):
+        Agent.agent_store_base_path = path

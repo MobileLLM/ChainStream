@@ -10,7 +10,7 @@ class AgentInterface:
 
 
 class StreamInterface:
-    def add_item(self, data_item):
+    def add_item(self, agent, data_item):
         pass
 
     def for_each(self, agent, listener_func):

@@ -11,7 +11,7 @@ class DebugHelloAgent(cs.agent.Agent):
         super().__init__(agent_id)
         self.hello_thread = None
         self.enabled = False
-        self.stream = cs.stream.create_stream("debug_hello_stream", self)
+        self.stream = cs.stream.create_stream(self, "debug_hello_stream")
 
     def start(self):
         self.enabled = True
@@ -20,7 +20,7 @@ class DebugHelloAgent(cs.agent.Agent):
 
     def hello(self):
         while self.enabled:
-            # print(f'Hello, world! {datetime.now()}')
+            print(f'Hello, world! {datetime.now()}')
             self.stream.add_item({'message': 'Hello, world!'})
             # print(self.stream.get_record_data())
             time.sleep(3)
