@@ -21,7 +21,7 @@ class StreamForAgent:
         return self.stream.for_each(self.agent, listener_func)
 
     def batch(self, by_count=None, by_time=None, by_key=None, by_fucn=None):
-        pass
+        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_key=by_key, by_func=by_fucn)
 
     def unregister_all(self, listener_func=None):
         self.stream.unregister_all(self.agent, listener_func)
@@ -132,9 +132,9 @@ class BaseStream(StreamInterface):
             none_count += 1
         if by_func is None:
             none_count += 1
-        if none_count == 0:
+        if 4 - none_count == 0:
             raise ValueError("At least one of by_count, by_time, by_key, by_func should be specified")
-        if none_count > 1:
+        if 4 - none_count > 1:
             raise ValueError("Only one of by_count, by_time, by_key, by_func should be specified")
 
         new_buffer = Buffer()
@@ -143,7 +143,7 @@ class BaseStream(StreamInterface):
 
         if by_count is not None:
             def anonymous_batch_func_by_count(item):
-                if len(new_buffer) < by_count:
+                if len(new_buffer) < by_count - 1:
                     new_buffer.append(item)
                 else:
                     new_buffer.append(item)
@@ -223,21 +223,41 @@ class BaseStream(StreamInterface):
         # print("call from 3", call_from[3])
 
         current_frame = inspect.currentframe()
+        # print("first frame", current_frame.f_back)
+        # print("second frame", current_frame.f_back.f_back)
+        # print("third frame", current_frame.f_back.f_back.f_back)
         call_frame = current_frame.f_back.f_back
         caller_instance = call_frame.f_locals.get('self', None)
         # print(caller_instance)
 
         # print(call_from.filename, call_from.function)
+
+
         if isinstance(caller_instance, AgentFunction):
+            """
+            In case of data from return of agent function
+            """
             # print(caller_instance.agent.agent_store_base_path)
             # agent_full_path = caller_instance.agent.metaData.agent_file_path
             # agent_base_path = caller_instance.agent.agent_store_base_path
             # agent_path = os.path.relpath(agent_full_path, agent_base_path)
             # print(agent_path)
             self.recorder.record_new_item(caller_instance.agent.metaData.agent_file_path, caller_instance.func_id)
-        else:
-            # print(call_from.filename)
+        elif isinstance(current_frame.f_back.f_back.f_back.f_locals.get('self', None), threading.Thread):
+            """
+            In case of data from thread, means it is from an original stream
+            """
             self.recorder.record_new_item(call_from.filename, call_from.function)
+        else:
+            """
+            In case of data from from func inside, not from return
+            """
+            # print(call_from.filename)
+            tmp_caller_instance = current_frame.f_back.f_back.f_back.f_locals.get('self', None)
+            # print("tmp_caller_instance", tmp_caller_instance)
+            func_id = tmp_caller_instance.func_id
+            self.recorder.record_new_item(call_from.filename, func_id)
+
         # self.recorder.record_new_item(caller_instance.__file__, caller_instance)
 
     # def send_item(self, agent, item):
