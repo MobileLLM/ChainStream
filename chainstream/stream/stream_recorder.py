@@ -98,12 +98,13 @@ class StreamRecorder:
         self.agent_file_func_to_queue_recorder[(from_file, from_function)].record_new_item()
         self.queue_recorder.record_new_item()
 
-    def record_listener_actions(self, actions, agent_id, func_name):
+    def record_listener_actions(self, actions, agent_id, func_name, error=None):
         self.listener_log.append({
             "time": datetime.datetime.now(), 
             "actions": actions, 
             "agent_id": agent_id, 
-            "func_name": func_name
+            "func_name": func_name,
+            "error": error
             })
 
     def record_listener_change(self, listener_count):
