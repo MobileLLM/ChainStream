@@ -1,14 +1,27 @@
 # All tasks for ChainStreamSandBox
 
-五大API：
+两大API：
 - for_each (Function)：等价于当前的register_listener
-- for_batch (Function, spilt_func)：
+- batch (by_time, by_count, by_key, by_func)：分窗API
 
-典型的Function：
-- filter (Item) -> Item: 字段 
-- group_by (Item) -> Item: 字段
+典型的操作：
 
-def func(item):
+- item转换：
+  - 字段转化（增加、删除、修改）
+  - LLM转化（分词、去停用词、翻译等）
+  - 过滤：字段筛选、复杂条件筛选（数值计算、多文本匹配等）、LLM判断
+  - item转向batch：计数、计时、定时、关键词、复杂条件（数值计算，多类型匹配等）
+- batch转换：
+  - 分组：字段分组、复杂条件分组、LLM分组
+  - 聚合：指定字段聚合、复杂聚合（求和、求并等），LLM聚合（摘要、总结等）
+  - 批转换：反转、排序等
+  - batch转向item：聚合、分组转发等
+- 多流输入输出：
+  - 分发：单输入发送至多个流，类似于分组+转发
+  - 汇总：多出入汇总，需借助buffer，类似于多数据源+聚合，可以考虑多类型数据匹配（如凑够一个红球和两个蓝球等）
+- 当作触发器：
+  - 定时触发：借助系统时钟流实现定时触发，如每天早上8点发送报告、每周五下午12点发送报告等
+  - 事件触发：构造一个事件流，流中的内容代表事件发生，触发后续监听函数中的某个动作（如更新缓存、更新数据库等）
     
 
 ## Task with dataset (> 100 examples)
