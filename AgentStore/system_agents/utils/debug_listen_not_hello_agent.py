@@ -22,10 +22,14 @@ class DebugListenHelloAgent(cs.agent.Agent):
             self.stream2.add_item(data)
             return data
 
+        def handle_new_hello_4(data):
+            return [data, data]
+
         # self.stream.for_each(lambda data: data).for_each(handle_new_hello).for_each(handle_new_hello_3).for_each(handle_new_hello).batch(by_count=2).for_each(lambda data: print(data))
-        self.stream.batch(by_count=2).for_each(lambda data: print(data), to_stream=self.stream2)
+        # self.stream.batch(by_count=2).for_each(lambda data: print(data), to_stream=self.stream2)
         # self.stream.batch(by_count=2).for_each(lambda data: print(data))
         # self.stream.for_each(handle_new_hello).batch(by_count=2).for_each(handle_new_hello_2)
+        self.stream.for_each(handle_new_hello).batch(by_count=2).for_each(handle_new_hello_3).for_each(handle_new_hello_4).for_each(lambda data: print(data))
 
     def stop(self):
         self.stream.remove_listener(self)

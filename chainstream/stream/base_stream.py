@@ -26,8 +26,12 @@ class StreamForAgent:
     def unregister_all(self, listener_func=None):
         self.stream.unregister_all(self.agent, listener_func)
 
-    def add_item(self, item):
-        self.stream.add_item(self.agent, item)
+    def add_item(self, item: [dict, list]):
+        if isinstance(item, dict):
+            self.stream.add_item(self.agent, item)
+        elif isinstance(item, list):
+            for i in item:
+                self.stream.add_item(self.agent, i)
 
     def send_item(self, item):
         self.add_item(item)
@@ -155,7 +159,7 @@ class BaseStream(StreamInterface):
                 else:
                     new_buffer.append(item)
                     all_items = new_buffer.pop_all()
-                    return all_items
+                    return {"item_list": all_items}
 
             return self.for_each(agent, anonymous_batch_func_by_count, to_stream=to_stream)
 
@@ -170,7 +174,7 @@ class BaseStream(StreamInterface):
                 else:
                     all_items = new_buffer.pop_all()
                     new_buffer.append(item)
-                    return all_items
+                    return {"item_list": all_items}
 
             return self.for_each(agent, anonymous_batch_func_by_time, to_stream=to_stream)
 
@@ -186,7 +190,7 @@ class BaseStream(StreamInterface):
                 else:
                     new_buffer.append(item)
                     all_items = new_buffer.pop_all()
-                    return all_items
+                    return {"item_list": all_items}
 
             return self.for_each(agent, anonymous_batch_func_by_key, to_stream=to_stream)
 
