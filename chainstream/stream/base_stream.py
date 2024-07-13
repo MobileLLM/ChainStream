@@ -17,11 +17,11 @@ class StreamForAgent:
         self.stream = stream
         self.agent = agent
 
-    def for_each(self, listener_func):
-        return self.stream.for_each(self.agent, listener_func)
+    def for_each(self, listener_func, to_stream=None):
+        return self.stream.for_each(self.agent, listener_func, to_stream=to_stream)
 
-    def batch(self, by_count=None, by_time=None, by_key=None, by_fucn=None):
-        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_key=by_key, by_func=by_fucn)
+    def batch(self, by_count=None, by_time=None, by_key=None, by_func=None, to_stream=None):
+        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_key=by_key, by_func=by_func, to_stream=to_stream)
 
     def unregister_all(self, listener_func=None):
         self.stream.unregister_all(self.agent, listener_func)
@@ -87,7 +87,7 @@ class BaseStream(StreamInterface):
 
         cs_server_core.register_stream(self)
 
-    def for_each(self, agent, listener_func):
+    def for_each(self, agent, listener_func, to_stream=None):
         listener_func = AgentFunction(agent, listener_func)
         try:
             self.listeners.append((agent.agent_id, listener_func))
@@ -96,20 +96,27 @@ class BaseStream(StreamInterface):
             if not self.is_running:
                 self.is_running = True
                 self.thread.start()
-            if "[anonymous]__" not in self.metaData.stream_id:
-                next_stream_id = "[anonymous]__" + self.metaData.stream_id + "_" + agent.agent_id + "__[func]__" + str(
-                    listener_func.func_id + "__[count]__" + "0")
+
+            if to_stream is None:
+                if "[anonymous]__" not in self.metaData.stream_id:
+                    next_stream_id = "[anonymous]__" + self.metaData.stream_id + "_" + agent.agent_id + "__[func]__" + str(
+                        listener_func.func_id + "__[count]__" + "0")
+                else:
+                    tmp_agent_name = self.metaData.stream_id.split("__[func]__")[0]
+                    tmp_count = self.metaData.stream_id.split("__[count]__")[1]
+
+                    next_stream_id = tmp_agent_name + "__[func]__" + str(listener_func.func_id) + "__[count]__" + str(int(tmp_count) + 1)
+
+                create_by_agent_file = self.metaData.create_by_agent_file
+                next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True)
+                self.next_anonymous[(agent.agent_id, listener_func.func_id)] = next_stream
+
+                stream_for_agent = StreamForAgent(agent, self.next_anonymous[(agent.agent_id, listener_func.func_id)])
             else:
-                tmp_agent_name = self.metaData.stream_id.split("__[func]__")[0]
-                tmp_count = self.metaData.stream_id.split("__[count]__")[1]
-
-                next_stream_id = tmp_agent_name + "__[func]__" + str(listener_func.func_id) + "__[count]__" + str(int(tmp_count) + 1)
-
-            create_by_agent_file = self.metaData.create_by_agent_file
-            next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True)
-            self.next_anonymous[(agent.agent_id, listener_func.func_id)] = next_stream
-
-            stream_for_agent = StreamForAgent(agent, self.next_anonymous[(agent.agent_id, listener_func.func_id)])
+                if isinstance(to_stream, StreamForAgent):
+                    stream_for_agent = to_stream
+                else:
+                    raise ValueError("to_stream should be a StreamForAgent object")
 
             listener_func.set_output_stream(stream_for_agent)
 
@@ -122,7 +129,7 @@ class BaseStream(StreamInterface):
 
             return None
 
-    def batch(self, agent, by_count=None, by_time=None, by_key=None, by_func=None):
+    def batch(self, agent, by_count=None, by_time=None, by_key=None, by_func=None, to_stream=None):
         none_count = 0
         if by_count is None:
             none_count += 1
@@ -150,7 +157,7 @@ class BaseStream(StreamInterface):
                     all_items = new_buffer.pop_all()
                     return all_items
 
-            return self.for_each(agent, anonymous_batch_func_by_count)
+            return self.for_each(agent, anonymous_batch_func_by_count, to_stream=to_stream)
 
         if by_time is not None:
             time_start = datetime.datetime.now()
@@ -165,7 +172,7 @@ class BaseStream(StreamInterface):
                     new_buffer.append(item)
                     return all_items
 
-            return self.for_each(agent, anonymous_batch_func_by_time)
+            return self.for_each(agent, anonymous_batch_func_by_time, to_stream=to_stream)
 
         if by_key is not None:
             key_item = by_key
@@ -181,10 +188,10 @@ class BaseStream(StreamInterface):
                     all_items = new_buffer.pop_all()
                     return all_items
 
-            return self.for_each(agent, anonymous_batch_func_by_key)
+            return self.for_each(agent, anonymous_batch_func_by_key, to_stream=to_stream)
 
         if by_func is not None:
-            return self.for_each(agent, by_func)
+            return self.for_each(agent, by_func, to_stream=to_stream)
 
     def unregister_all(self, agent, listener_func=None):
         new_listeners = []
