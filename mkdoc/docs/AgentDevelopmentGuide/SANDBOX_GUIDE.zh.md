@@ -117,8 +117,9 @@ def _start_agent(self):
 
 ```python
 if __name__ == "__main__":
-    from tasks import ALL_TASKS
-    ArxivTaskConfig = ALL_TASKS['ArxivTask']
+    from tasks import ALL_TASKS_OLD
+
+    ArxivTaskConfig = ALL_TASKS_OLD['ArxivTask']
 
     agent_file = '''
     import chainstream as cs

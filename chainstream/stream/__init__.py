@@ -28,7 +28,14 @@ def create_stream(agent, stream_id, type=None):
         stream = StreamForAgent(agent, stream)
     else:
         from .base_stream import BaseStream, StreamForAgent
-        stream = BaseStream(stream_id, create_by_agent_file=create_by_agent_file)
+        if isinstance(stream_id, str):
+            stream = BaseStream(stream_id, create_by_agent_file=create_by_agent_file)
+        else:
+            if isinstance(stream_id, dict) and "stream_id" in stream_id:
+                stream_id_ = stream_id["stream_id"]
+                stream = BaseStream(stream_id_, description=stream_id, create_by_agent_file=create_by_agent_file)
+            else:
+                raise ValueError("stream_id should be a string or a dictionary with a key 'stream_id'")
         stream = StreamForAgent(agent, stream)
     if stream_manager is None:
         available_streams[stream_id] = stream

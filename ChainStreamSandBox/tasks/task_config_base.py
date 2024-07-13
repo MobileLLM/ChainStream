@@ -1,4 +1,5 @@
 import chainstream as cs
+import inspect
 
 
 class TaskConfigBase(cs.agent.Agent):
@@ -16,6 +17,8 @@ class TaskConfigBase(cs.agent.Agent):
 
     def __init__(self):
         super().__init__("TaskConfigBase")
+        self.task_id = self.__class__.__name__
+
         self.task_description = None
 
         self.need_stream = []

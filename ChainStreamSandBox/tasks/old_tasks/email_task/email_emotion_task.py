@@ -28,7 +28,7 @@ class EmailEmotionConfig(SingleAgentTaskConfigBase):
         self.input_description = [
                 {
                     "stream_id": "all_emails",
-                    "description": "The input stream 'all_emails' contains a list of dictionaries, where each dictionary represents an email. The dictionary contains the fields 'Subject' and 'Content'."
+                    "description": "The input stream 'all_emails' contains a list of dictionaries, where each dictionary represents an email. The dictionary contains the fields 'Subject' and 'Content'.",
                     "fields": ["Subject", "Content"],
                 }
             ]

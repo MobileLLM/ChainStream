@@ -1,4 +1,4 @@
-from generator_base import ReactAgentGenerator
+from .generator_base import ReactAgentGenerator
 from ..io_model import StreamListDescription
 
 class ReactPlusGenerator(ReactAgentGenerator):

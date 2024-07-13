@@ -17,11 +17,12 @@ class StreamForAgent:
         self.stream = stream
         self.agent = agent
 
-    def for_each(self, listener_func, to_stream=None):
+    def for_each(self, listener_func: AgentFunction, to_stream=None):
         return self.stream.for_each(self.agent, listener_func, to_stream=to_stream)
 
     def batch(self, by_count=None, by_time=None, by_key=None, by_func=None, to_stream=None):
-        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_key=by_key, by_func=by_func, to_stream=to_stream)
+        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_key=by_key, by_func=by_func,
+                                 to_stream=to_stream)
 
     def unregister_all(self, listener_func=None):
         self.stream.unregister_all(self.agent, listener_func)
@@ -109,7 +110,8 @@ class BaseStream(StreamInterface):
                     tmp_agent_name = self.metaData.stream_id.split("__[func]__")[0]
                     tmp_count = self.metaData.stream_id.split("__[count]__")[1]
 
-                    next_stream_id = tmp_agent_name + "__[func]__" + str(listener_func.func_id) + "__[count]__" + str(int(tmp_count) + 1)
+                    next_stream_id = tmp_agent_name + "__[func]__" + str(listener_func.func_id) + "__[count]__" + str(
+                        int(tmp_count) + 1)
 
                 create_by_agent_file = self.metaData.create_by_agent_file
                 next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True)
@@ -149,8 +151,11 @@ class BaseStream(StreamInterface):
             raise ValueError("Only one of by_count, by_time, by_key, by_func should be specified")
 
         new_buffer = Buffer()
-        self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
-            new_buffer)
+        # self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
+        #     new_buffer)
+        if agent.agent_id not in self.anonymous_func_params:
+            self.anonymous_func_params[agent.agent_id] = []
+        self.anonymous_func_params[agent.agent_id].append(new_buffer)
 
         if by_count is not None:
             def anonymous_batch_func_by_count(item):
@@ -243,7 +248,6 @@ class BaseStream(StreamInterface):
 
         # print(call_from.filename, call_from.function)
 
-
         if isinstance(caller_instance, AgentFunction):
             """
             In case of data from return of agent function
@@ -266,7 +270,10 @@ class BaseStream(StreamInterface):
             # print(call_from.filename)
             tmp_caller_instance = current_frame.f_back.f_back.f_back.f_locals.get('self', None)
             # print("tmp_caller_instance", tmp_caller_instance)
-            func_id = tmp_caller_instance.func_id
+            if tmp_caller_instance.__class__.__name__ == "SandBox":
+                func_id = "__[sandbox]__"
+            else:
+                func_id = tmp_caller_instance.func_id
             self.recorder.record_new_item(call_from.filename, func_id)
 
         # self.recorder.record_new_item(caller_instance.__file__, caller_instance)

@@ -32,7 +32,7 @@ class FewShotGenerator(AgentGeneratorBase):
     def _get_user_prompt(self, task):
         # user_prompt = (
         #     "Design an agent mainly for processing Arxiv paper abstracts. Get the configuration of ArxivTask "
-        #     "from the ALL_TASKS dictionary, retrieve data from the input stream all_arxiv, define and register "
+        #     "from the ALL_TASKS_OLD dictionary, retrieve data from the input stream all_arxiv, define and register "
         #     "a listener, and process the value corresponding to the 'abstract' key in the paper dictionary: "
         #     "Extract the abstract content and generate a prompt asking whether the abstract is related to 'edge LLM agent'. "
         #     "Query the prompt using the text type llm to get a response. If the response is 'Yes', add the paper to the output stream cs_arxiv, "

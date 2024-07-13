@@ -1,4 +1,4 @@
-from generator_base import ReactAgentGenerator
+from .generator_base import ReactAgentGenerator
 
 
 class ReactGenerator(ReactAgentGenerator):

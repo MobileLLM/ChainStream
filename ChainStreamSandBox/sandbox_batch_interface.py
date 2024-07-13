@@ -1,3 +1,5 @@
+import traceback
+
 from sandbox import SandBox
 import datetime
 import os
@@ -7,16 +9,17 @@ import inspect
 
 
 class BatchInterfaceBase:
-    def __init__(self, task_list, output_path, repeat_time=5, result_path='./result', task_log_path=None):
+    def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
         self.task_list = task_list
-        self.output_path = output_path
 
-        self.start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
         if task_log_path is None:
             self.run_times = 1
 
-            self.report_path = os.path.join(result_path, self.start_time)
+            self.report_path_base = os.path.join(result_path, self.start_time)
+            if not os.path.exists(self.report_path_base):
+                os.makedirs(self.report_path_base)
 
             self.repeat_time = repeat_time
 
@@ -25,27 +28,26 @@ class BatchInterfaceBase:
         else:
             self.test_log = self._load_log(task_log_path)
             self.test_log['run_times'] = self.test_log['run_times'] + 1
-            self.report_path = self.test_log['report_path']
+            self.report_path_base = self.test_log['report_path_base']
             self.repeat_time = self.test_log['repeat_time']
 
             if isinstance(self.test_log['start_time'], str):
                 self.test_log['start_time'] = [self.test_log['start_time'],
-                                               datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+                                               datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")]
             else:
-                self.test_log['start_time'].append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                self.test_log['start_time'].append(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))
 
     def _set_base_log(self):
         self.test_log = {
             "run_times": self.run_times,
             "start_time": self.start_time,
             "end_time": None,
-            "report_path": self.report_path,
-            "task_list": self.task_list,
-            "output_path": self.output_path,
+            "report_path_base": self.report_path_base,
+            "task_list": list(self.task_list),
             "repeat_time": self.repeat_time,
             "generator": self._set_generator_log(),
             "task_log": {
-                xx.__name__: []
+                xx: []
                 for xx in self.task_list
             }
         }
@@ -62,23 +64,23 @@ class BatchInterfaceBase:
         pbar = tqdm.tqdm(total=len(self.task_list) * self.repeat_time)
 
         for i in range(self.repeat_time):
-            for task in self.task_list:
+            for task_name, task in self.task_list.items():
                 if self.run_times > 1:
                     success_times = 0
-                    for log in self.test_log['task_log'][task.__name__]:
+                    for log in self.test_log['task_log'][task_name]:
                         if log['error_msg'] == "success":
                             success_times += 1
-                    if success_times >= len(self.test_log['task_log'][task.__name__]):
+                    if success_times >= len(self.test_log['task_log'][task_name]):
                         continue
-                pbar.set_description(f"Task: {task.__name__}, Repeat: {i + 1}")
+                pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
                 self._one_task_step(task)
                 pbar.update(1)
 
-        self.test_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.test_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         self._save_log()
 
     def _save_log(self):
-        with open(os.path.join(self.report_path, 'test_log.json'), 'w') as f:
+        with open(os.path.join(self.report_path_base, 'test_log.json'), 'w') as f:
             json.dump(self.test_log, f, indent=4)
 
     def _load_log(self, log_path):
@@ -87,24 +89,29 @@ class BatchInterfaceBase:
         return log
 
     def _one_task_step(self, task):
+        task = task()
         tmp_task_log = {
-            "task_name": task.__name__,
-            "start_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "task_name": task.task_id,
+            "start_time": datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
             "end_time": None,
             "error_msg": None,
         }
         agent_code = self.get_agent_for_specific_task(task)
         try:
-            sandbox = SandBox(task, agent_code)
+            if not os.path.exists(os.path.join(self.report_path_base, "task_reports")):
+                os.makedirs(os.path.join(self.report_path_base, "task_reports"))
+
+            sandbox = SandBox(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"), raise_exception=False)
             report_path = sandbox.start_test_agent(return_report_path=True)
             tmp_task_log['report_path'] = report_path
         except Exception as e:
             tmp_task_log['error_msg'] = str(e)
+            traceback.print_exc()
         else:
             tmp_task_log['error_msg'] = "success"
         finally:
-            tmp_task_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.test_log['task_log'][task.__name__].append(tmp_task_log)
+            tmp_task_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+            self.test_log['task_log'][task.task_id].append(tmp_task_log)
 
     def get_agent_for_specific_task(self, task) -> str:
         raise NotImplementedError(
@@ -112,8 +119,8 @@ class BatchInterfaceBase:
 
 
 class SandboxBatchInterface(BatchInterfaceBase):
-    def __init__(self, task_list, output_path, repeat_time=5, result_path='./result', task_log_path=None):
-        super().__init__(task_list, output_path, repeat_time, result_path, task_log_path)
+    def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
+        super().__init__(task_list, repeat_time, result_path, task_log_path)
 
     def start(self):
         self._start()

@@ -5,30 +5,36 @@ import os
 
 _model_instances = {}
 
-def get_model(type=['text']):
+def get_model(llm_type=['text']):
     '''
-    name: list of model type, e.g. ['text', 'image', 'audio']
+    name: list of model llm_type, e.g. ['text', 'image', 'audio']
     '''
-    if tuple(sorted(type)) in _model_instances and _model_instances[tuple(sorted(type))] is not None:
-        return _model_instances[tuple(sorted(type))]
 
-    if type is [] or not all(n in ['text', 'image', 'audio'] for n in type):
-        raise ValueError(f'invalid name: {type}')
+    if isinstance(llm_type, str):
+        if llm_type.lower() not in ['text', 'image', 'audio']:
+            raise ValueError(f'invalid name: {llm_type}')
+        llm_type = [llm_type.lower()]
 
-    if type == ['text']:
+    if tuple(sorted(llm_type)) in _model_instances and _model_instances[tuple(sorted(llm_type))] is not None:
+        return _model_instances[tuple(sorted(llm_type))]
+
+    if llm_type is [] or not all(n in ['text', 'image', 'audio'] for n in llm_type):
+        raise ValueError(f'invalid name: {llm_type}')
+
+    if llm_type == ['text']:
         from chainstream.llm.python_base_openai_make_prompt import TextGPTModel
         inst = TextGPTModel()
-    elif 'image' in type and 'audio' not in type:
+    elif 'image' in llm_type and 'audio' not in llm_type:
         from chainstream.llm.python_base_openai_make_prompt import ImageGPTModel
         inst = ImageGPTModel()
-    elif 'audio' in type and 'image' not in type:
+    elif 'audio' in llm_type and 'image' not in llm_type:
         from chainstream.llm.python_base_openai_make_prompt import AudioGPTModel
         inst = AudioGPTModel()
     else:
         from chainstream.llm.python_base_openai_make_prompt import AudioImageGPTModel
         inst = AudioImageGPTModel()
 
-    _model_instances[tuple(sorted(type))] = inst
+    _model_instances[tuple(sorted(llm_type))] = inst
     return inst
 
 def make_prompt(*args, system_prompt=None):
