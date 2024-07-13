@@ -8,6 +8,8 @@ from chainstream.runtime import cs_server
 import json
 import datetime
 
+from chainstream.sandbox_recorder import start_sandbox_recording
+
 
 class SandboxError(Exception):
     def __init__(self, message):
@@ -50,6 +52,8 @@ class SandBox:
                  raise_exception=True):
         cs_server.init(server_type='core')
         cs_server.start()
+
+        start_sandbox_recording()
 
         self.raise_exception = raise_exception
 
@@ -104,7 +108,10 @@ class SandBox:
 
             self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
+            # self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            report = SANDBOX_RECORDER.get_event_recordings()
+            self.result['runtime_report'] = report
 
         except Exception as e:
             self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

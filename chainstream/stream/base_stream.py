@@ -14,6 +14,7 @@ import os
 
 class StreamForAgent:
     def __init__(self, agent, stream):
+        self.stream_id = stream.stream_id
         self.stream = stream
         self.agent = agent
 
@@ -66,6 +67,7 @@ class BaseStream(StreamInterface):
 
     def __init__(self, stream_id, description=None, create_by_agent_file=None, is_anonymous=False) -> None:
         super().__init__()
+        self.stream_id = stream_id
         self.metaData = StreamMeta(
             stream_id=stream_id,
             description=description,
@@ -117,6 +119,16 @@ class BaseStream(StreamInterface):
                 next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True)
                 self.next_anonymous[(agent.agent_id, listener_func.func_id)] = next_stream
 
+                from chainstream.sandbox_recorder import SANDBOX_RECORDER
+                if SANDBOX_RECORDER is not None:
+                    inspect_stack = inspect.stack()
+                    stream_id = next_stream_id
+                    agent_id = agent.agent_id
+                    listener_id = listener_func.func_id
+                    success_create = next_stream is not None
+                    SANDBOX_RECORDER.record_create_anonymous_stream(agent_id, stream_id, listener_id, success_create,
+                                                          inspect_stack)
+
                 stream_for_agent = StreamForAgent(agent, self.next_anonymous[(agent.agent_id, listener_func.func_id)])
             else:
                 if isinstance(to_stream, StreamForAgent):
@@ -125,6 +137,17 @@ class BaseStream(StreamInterface):
                     raise ValueError("to_stream should be a StreamForAgent object")
 
             listener_func.set_output_stream(stream_for_agent)
+
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            if SANDBOX_RECORDER is not None:
+                inspect_stack = inspect.stack()
+                stream_id = stream_for_agent.stream.metaData.stream_id
+                agent_id = agent.agent_id
+                listener_id = listener_func.func_id
+                success_create = stream_for_agent is not None
+                to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
+                SANDBOX_RECORDER.record_for_each(agent_id, stream_id, listener_id, success_create, to_stream_id,
+                                                 inspect_stack)
 
             return stream_for_agent
 
@@ -165,6 +188,16 @@ class BaseStream(StreamInterface):
                     new_buffer.append(item)
                     all_items = new_buffer.pop_all()
                     return {"item_list": all_items}
+
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            if SANDBOX_RECORDER is not None:
+                inspect_stack = inspect.stack()
+                stream_id = self.metaData.stream_id
+                agent_id = agent.agent_id
+                listener_id = "batch_by_count"
+                listener_params = {"by_count": by_count}
+                to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, inspect_stack)
 
             return self.for_each(agent, anonymous_batch_func_by_count, to_stream=to_stream)
 
@@ -257,11 +290,13 @@ class BaseStream(StreamInterface):
             # agent_base_path = caller_instance.agent.agent_store_base_path
             # agent_path = os.path.relpath(agent_full_path, agent_base_path)
             # print(agent_path)
+            func_id = caller_instance.func_id
             self.recorder.record_new_item(caller_instance.agent.metaData.agent_file_path, caller_instance.func_id)
         elif isinstance(current_frame.f_back.f_back.f_back.f_locals.get('self', None), threading.Thread):
             """
             In case of data from thread, means it is from an original stream
             """
+            func_id = call_from.function
             self.recorder.record_new_item(call_from.filename, call_from.function)
         else:
             """
@@ -274,7 +309,17 @@ class BaseStream(StreamInterface):
                 func_id = "__[sandbox]__"
             else:
                 func_id = tmp_caller_instance.func_id
+
             self.recorder.record_new_item(call_from.filename, func_id)
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            inspect_stack = inspect.stack()
+            stream_id = self.metaData.stream_id
+            agent_id = agent.agent_id
+            item_data = item
+
+            SANDBOX_RECORDER.record_add_item(agent_id, stream_id, item_data, func_id, inspect_stack)
 
         # self.recorder.record_new_item(caller_instance.__file__, caller_instance)
 

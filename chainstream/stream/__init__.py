@@ -1,6 +1,5 @@
 import inspect
 
-
 available_streams = {}
 
 stream_manager = None
@@ -10,12 +9,39 @@ def get_stream(agent, stream_id):
     if stream_manager is not None:
         from .base_stream import BaseStream, StreamForAgent
         stream = stream_manager.get_stream(stream_id)
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            inspect_stack = inspect.stack()
+            stream_id = stream_id
+            is_stream_manager = stream_manager is not None
+            find_stream = stream is not None
+            SANDBOX_RECORDER.record_get_stream(agent, stream_id, is_stream_manager, find_stream, inspect_stack)
+
         return StreamForAgent(agent, stream)
     if stream_id in available_streams:
         from .base_stream import BaseStream, StreamForAgent
         stream = available_streams[stream_id]
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            inspect_stack = inspect.stack()
+            stream_id = stream_id
+            is_stream_manager = stream_manager is not None
+            find_stream = stream is not None
+            SANDBOX_RECORDER.record_get_stream(agent, stream_id, is_stream_manager, find_stream, inspect_stack)
+
         return StreamForAgent(agent, stream)
     else:
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            inspect_stack = inspect.stack()
+            stream_id = stream_id
+            is_stream_manager = stream_manager is not None
+            find_stream = False
+            SANDBOX_RECORDER.record_get_stream(agent, stream_id, is_stream_manager, find_stream, inspect_stack)
+
         raise RuntimeError(f'unknown stream_id: {stream_id}')
 
 
@@ -39,6 +65,16 @@ def create_stream(agent, stream_id, type=None):
         stream = StreamForAgent(agent, stream)
     if stream_manager is None:
         available_streams[stream_id] = stream
+
+    from chainstream.sandbox_recorder import SANDBOX_RECORDER
+    if SANDBOX_RECORDER is not None:
+        inspect_stack = inspect.stack()
+        stream_id = stream_id
+        agent_id = agent.agent_id
+        is_stream_manager = stream_manager is not None
+        success_create = stream is not None
+        SANDBOX_RECORDER.record_create_stream(agent_id, stream_id, is_stream_manager, success_create, inspect_stack)
+
     return stream
 
 

@@ -56,6 +56,18 @@ class BaseOpenAI:
         self.identifier = identifier if identifier != "" else model
 
     def query(self, *args, **kwargs):
+
+        res = self.query_impl(*args, **kwargs)
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        import inspect
+        if SANDBOX_RECORDER is not None:
+            inspect_stack = inspect.stack()
+            SANDBOX_RECORDER.record_query(args, kwargs, res, inspect_stack)
+
+        return res
+
+    def query_impl(self, prompt_message) -> str:
         raise RuntimeError("must implement query method")
 
 
@@ -64,7 +76,7 @@ class TextGPTModel(BaseOpenAI):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 
-    def query(self, prompt_message):
+    def query_impl(self, prompt_message) -> str:
         response = self.client.chat.completions.create(
             model=self.model,
             messages=prompt_message,
@@ -78,7 +90,6 @@ class TextGPTModel(BaseOpenAI):
         return res
 
 
-
 class ImageGPTModel(BaseOpenAI):
     def __init__(self, model='gpt-4-vision-preview', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
                  detail='low', resize_width=512):
@@ -87,8 +98,8 @@ class ImageGPTModel(BaseOpenAI):
         self.detail = detail
         self.resize_width = resize_width
 
-    def query(self, prompt_message):
-    
+    def query_impl(self, prompt_message) -> str:
+
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[
@@ -106,28 +117,28 @@ class ImageGPTModel(BaseOpenAI):
         self.history[prompt] = res
 
         return res
-        pil_image = None
-        if isinstance(image_path, str):
-            pil_image = Image.open(image_path)
-        elif isinstance(image_path, Image.Image):
-            pil_image = image_path
-
-        pil_image = self._resize_maintain_aspect_ratio(pil_image)
-        # Ensure the image is in a supported format
-        if pil_image.format is None or pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
-            # Convert the image to JPEG format, for example
-            pil_image = pil_image.convert("RGB")
-            image_format = "jpeg"
-        else:
-            image_format = pil_image.format.lower()
-
-        # Convert PIL Image to BytesIO
-        image_bytesio = BytesIO()
-        pil_image.save(image_bytesio, format=image_format)
-
-        # Encode the BytesIO as base64
-        base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
-        return f"data:image/{image_format};base64,{base64_image}"
+        # pil_image = None
+        # if isinstance(image_path, str):
+        #     pil_image = Image.open(image_path)
+        # elif isinstance(image_path, Image.Image):
+        #     pil_image = image_path
+        #
+        # pil_image = self._resize_maintain_aspect_ratio(pil_image)
+        # # Ensure the image is in a supported format
+        # if pil_image.format is None or pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
+        #     # Convert the image to JPEG format, for example
+        #     pil_image = pil_image.convert("RGB")
+        #     image_format = "jpeg"
+        # else:
+        #     image_format = pil_image.format.lower()
+        #
+        # # Convert PIL Image to BytesIO
+        # image_bytesio = BytesIO()
+        # pil_image.save(image_bytesio, format=image_format)
+        #
+        # # Encode the BytesIO as base64
+        # base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
+        # return f"data:image/{image_format};base64,{base64_image}"
 
 
 class AudioGPTModel(BaseOpenAI):
@@ -137,8 +148,7 @@ class AudioGPTModel(BaseOpenAI):
                          timeout=timeout, identifier=identifier)
         self.chat_model = chat_model
 
-    def query(self, prompt_message):
-
+    def query_impl(self, prompt_message) -> str:
         response = self.client.chat.completions.create(
             model=self.chat_model,
             temperature=self.temperature,
@@ -160,8 +170,7 @@ class AudioImageGPTModel(BaseOpenAI):
                          timeout=timeout, identifier=identifier)
         self.chat_model = chat_model
 
-    def query(self, prompt_message):
-
+    def query_impl(self, prompt_message) -> str:
         response = self.client.chat.completions.create(
             model=self.chat_model,
             temperature=self.temperature,
