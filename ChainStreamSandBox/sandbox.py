@@ -96,7 +96,7 @@ class SandBox:
                     raise RunningError(traceback.format_exc())
             else:
                 self.result['start_task'] = "[OK]"
-                self.result['sent_item'] = sent_item
+                self.result['input_stream_item'] = sent_item
 
             # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
             # we only want to init the task environment and start the agent, then start the stream and record all output
@@ -104,7 +104,7 @@ class SandBox:
 
             self.runtime.wait_all_stream_clear()
 
-            self.result['task_output'] = self.task.record_output()
+            self.result['output_stream_output'] = self.task.record_output()
 
             self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

@@ -6,14 +6,23 @@ class SandboxEvent:
         self.event_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
     def to_dict(self):
-        return {k: str(v) for k, v in self.__dict__.items() if not k.startswith('_')}
+        new_dict = {}
+        for k, v in self.__dict__.items():
+            if not k.startswith('_'):
+                if k == "inspect_stack":
+                    v = [str(x) for x in v]
+                else:
+                    v = str(v)
+                new_dict[k] = v
+
+        return new_dict
 
 
 class GetModelEvent(SandboxEvent):
     def __init__(self, model_class_name, inspect_stack):
         super().__init__()
         self.model_class_name = model_class_name
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class MakePromptEvent(SandboxEvent):
@@ -21,7 +30,7 @@ class MakePromptEvent(SandboxEvent):
         super().__init__()
         self.prompt = prompt
         self.input_args = input_args
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class QueryEvent(SandboxEvent):
@@ -30,7 +39,7 @@ class QueryEvent(SandboxEvent):
         self.args = args
         self.kwargs = kwargs
         self.res = res
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class GetStreamEvent(SandboxEvent):
@@ -40,7 +49,7 @@ class GetStreamEvent(SandboxEvent):
         self.stream_id = stream_id
         self.is_stream_manager = is_stream_manager
         self.find_stream = find_stream
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class CreateStreamEvent(SandboxEvent):
@@ -50,7 +59,7 @@ class CreateStreamEvent(SandboxEvent):
         self.stream_id = stream_id
         self.listener_id = listener_id
         self.success_create = success_create
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class ForEachEvent(SandboxEvent):
@@ -61,7 +70,7 @@ class ForEachEvent(SandboxEvent):
         self.listener_id = listener_id
         self.success_create = success_create
         self.to_stream_id = to_stream_id
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class BatchEvent(SandboxEvent):
@@ -72,7 +81,7 @@ class BatchEvent(SandboxEvent):
         self.listener_id = listener_id
         self.listener_params = listener_params
         self.to_stream_id = to_stream_id
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class AddItemEvent(SandboxEvent):
@@ -82,14 +91,14 @@ class AddItemEvent(SandboxEvent):
         self.stream_id = stream_id
         self.item = item
         self.func_id = func_id
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class FunctionInstantiateEvent(SandboxEvent):
     def __init__(self, agent_id, inspect_stack):
         super().__init__()
         self.agent_id = agent_id
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class FunctionStartEvent(SandboxEvent):
@@ -97,7 +106,7 @@ class FunctionStartEvent(SandboxEvent):
         super().__init__()
         self.agent_id = agent_id
         self.start_res = start_res
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class FunctionCallEvent(SandboxEvent):
@@ -109,7 +118,7 @@ class FunctionCallEvent(SandboxEvent):
         self.args = args
         self.kwargs = kwargs
         self.func_result = func_result
-        self.inspect_stack = inspect_stack
+        self.inspect_stack = [x for x in inspect_stack]
 
 
 class SandboxRecorder:

@@ -8,14 +8,14 @@ random.seed(6666)
 
 
 class EmailTask1(SingleAgentTaskConfigBase):
-    def __init__(self, paper_number=10, eot_gap=4):
+    def __init__(self, paper_number=10, eos_gap=4):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
 
-        self.eos_gap = eot_gap
+        self.eos_gap = eos_gap
 
         self.output_stream_description = StreamListDescription(streams=[
             {
