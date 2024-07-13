@@ -81,7 +81,7 @@ class SandBox:
                 raise StartError(res)
 
             try:
-                self.task.start_task(self.runtime)
+                sent_item = self.task.start_task(self.runtime)
             except Exception as e:
                 self.result['start_task'] = {
                     "error_message": "[ERROR]" + str(e),
@@ -90,6 +90,9 @@ class SandBox:
                 }
                 if self.raise_exception:
                     raise RunningError(traceback.format_exc())
+            else:
+                self.result['start_task'] = "[OK]"
+                self.result['sent_item'] = sent_item
 
             # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
             # we only want to init the task environment and start the agent, then start the stream and record all output

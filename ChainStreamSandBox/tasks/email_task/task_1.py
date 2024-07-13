@@ -76,7 +76,7 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
             print("sum_by_sender", res)
             self.email_output.add_item({
                 "sender": sender,
-                "sum": res
+                "summary": res
             })
 
         self.email_input.for_each(filter_ads).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
@@ -93,17 +93,14 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
 
         self.output_paper_stream.for_each(record_output)
 
-    def start_task(self, runtime):
-        count = 0
+    def start_task(self, runtime) -> list:
+        sent_messages = []
         for message in self.paper_data:
-            count += 1
-            # if count % self.eos_gap == 0:
-            #     print("adding EOS")
-            #     self.input_paper_stream.add_item("EOS")
             message['sender'] = message['From']
-            print("adding message", message)
+            # print("adding message", message)
+            sent_messages.append(message)
             self.input_paper_stream.add_item(message)
-        # self.input_paper_stream.add_item("EOS")
+        return sent_messages
 
 
 
