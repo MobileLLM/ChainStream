@@ -1,6 +1,6 @@
 import traceback
 
-from sandbox import SandBox
+from .sandbox import SandBox
 import datetime
 import os
 import json
@@ -9,10 +9,10 @@ import inspect
 
 
 class BatchInterfaceBase:
-    def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
+    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None):
         self.task_list = task_list
 
-        self.start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        self.start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         if task_log_path is None:
             self.run_times = 1
@@ -30,6 +30,8 @@ class BatchInterfaceBase:
             self.test_log['run_times'] = self.test_log['run_times'] + 1
             self.report_path_base = self.test_log['report_path_base']
             self.repeat_time = self.test_log['repeat_time']
+
+            self.run_times = self.test_log["run_times"]
 
             if isinstance(self.test_log['start_time'], str):
                 self.test_log['start_time'] = [self.test_log['start_time'],
@@ -119,7 +121,7 @@ class BatchInterfaceBase:
 
 
 class SandboxBatchInterface(BatchInterfaceBase):
-    def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
+    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None):
         super().__init__(task_list, repeat_time, result_path, task_log_path)
 
     def start(self):

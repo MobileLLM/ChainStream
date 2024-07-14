@@ -1,4 +1,4 @@
-from tasks.task_config_base import SingleAgentTaskConfigBase
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData

@@ -1,3 +1,3 @@
-from sandbox import SandBox
+from .sandbox import SandBox
 
 __all__ = ["SandBox"]
