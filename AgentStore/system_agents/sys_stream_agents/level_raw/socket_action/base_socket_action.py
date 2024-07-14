@@ -35,7 +35,7 @@ class BaseSocketActions:
             # print(f"{self.cmd},{log}")
             self.socket_client.send_message(f"{self.cmd},{log}")
 
-        self.stream.register_listener(agent, handel_new_action)
+        self.stream.for_each(agent, handel_new_action)
 
     def stop(self):
         if self.socket_client is not None:

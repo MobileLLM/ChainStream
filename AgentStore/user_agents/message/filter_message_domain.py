@@ -20,10 +20,10 @@ class GirlFriendMessageFilter(Agent):
             if response.lower() == "yes":
                 self.girl_friend_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 
 class FriendMessageFilter(Agent):
     def __init__(self):
@@ -41,10 +41,10 @@ class FriendMessageFilter(Agent):
             if response.lower() == "yes":
                 self.friend_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 
 
 class WorkMessageFilter(Agent):
@@ -63,10 +63,10 @@ class WorkMessageFilter(Agent):
             if response.lower() == "yes":
                 self.work_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 
 
 class AdvertisementMessageFilter(Agent):
@@ -85,10 +85,10 @@ class AdvertisementMessageFilter(Agent):
             if response.lower() == "yes":
                 self.advertisement_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 
 
 class EnglishMessageFilter(Agent):
@@ -107,10 +107,10 @@ class EnglishMessageFilter(Agent):
             if response.lower() == "yes":
                 self.english_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 
 
 class ChineseMessageFilter(Agent):
@@ -129,10 +129,10 @@ class ChineseMessageFilter(Agent):
             if response.lower() == "yes":
                 self.chinese_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)
 
 
 class SpanishMessageFilter(Agent):
@@ -151,7 +151,7 @@ class SpanishMessageFilter(Agent):
             if response.lower() == "yes":
                 self.spanish_message.add_item(message)
 
-        self.message_from.register_listener(self, filter_message)
+        self.message_from.for_each(self, filter_message)
 
     def stop(self):
-        self.message_from.deregister_listener(self)
+        self.message_from.defor_each(self)

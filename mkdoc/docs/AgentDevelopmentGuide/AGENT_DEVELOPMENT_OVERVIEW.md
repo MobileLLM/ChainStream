@@ -12,8 +12,8 @@
 - API:
   - `chainstream.get_stream(stream_id)`: Retrieves a `Stream` object based on the provided `stream_id`, typically used when constructing an `Agent` instance to obtain input and output streams.
   - `chainstream.create_stream(stream_id)`: Creates a new data stream and returns a `Stream` instance identified by `stream_id`.
-  - `chainstream.stream.Stream.register_listener(agent, listener_func)`: Attaches a listener function to the `Stream` instance.
-  - `chainstream.stream.Stream.unregister_listener(agent)`: Unregisters all listener functions attached to the data stream.
+  - `chainstream.stream.Stream.for_each(agent, listener_func)`: Attaches a listener function to the `Stream` instance.
+  - `chainstream.stream.Stream.unregister_all(agent)`: Unregisters all listener functions attached to the data stream.
   - `chainstream.stream.Stream.add_item(data)`: Pushes data into the data stream.
 
 ### Agent Module
@@ -95,9 +95,9 @@ class TestAgent(cs.agent.Agent):
                 print(paper)
                 self.output_stream.add_item(paper)
                 
-        self.input_stream.register_listener(self, process_paper)
+        self.input_stream.for_each(self, process_paper)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)
 ```
 

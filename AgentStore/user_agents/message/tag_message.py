@@ -40,10 +40,10 @@ class TagMessage(Agent):
             new_message["tags"] = {"topic": topic_tag, "emotion": emotion_tag, "domain": domain_tag, "advertised": advertised_tag}
             self.message_to.send(new_message)
 
-        self.message_from.register_listener(self, tag_message)
+        self.message_from.for_each(self, tag_message)
 
     def stop(self):
-        self.message_to.unregister_listener(self)
+        self.message_to.unregister_all(self)
 
 
 class TopicTagger(Agent):
@@ -73,10 +73,10 @@ class TopicTagger(Agent):
             new_message["tags"] = {"topic": topic_tag}
             self.message_to.send(new_message)
 
-        self.message_from.register_listener(self, tag_topic)
+        self.message_from.for_each(self, tag_topic)
 
     def stop(self):
-        self.message_to.unregister_listener(self)
+        self.message_to.unregister_all(self)
 
 
 class EmotionTagger(Agent):
@@ -106,10 +106,10 @@ class EmotionTagger(Agent):
             new_message["tags"] = {"emotion": emotion_tag}
             self.message_to.send(new_message)
 
-        self.message_from.register_listener(self, tag_emotion)
+        self.message_from.for_each(self, tag_emotion)
 
     def stop(self):
-        self.message_to.unregister_listener(self)
+        self.message_to.unregister_all(self)
 
 
 class DomainTagger(Agent):
@@ -139,7 +139,7 @@ class DomainTagger(Agent):
             new_message["tags"] = {"domain": domain_tag}
             self.message_to.send(new_message)
 
-        self.message_from.register_listener(self, tag_domain)
+        self.message_from.for_each(self, tag_domain)
 
     def stop(self):
-        self.message_to.unregister_listener(self)
+        self.message_to.unregister_all(self)

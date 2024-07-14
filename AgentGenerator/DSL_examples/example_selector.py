@@ -1,3 +1,4 @@
+from examples import ALL_EXAMPLES
 
 
 class ExampleSelector:

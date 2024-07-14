@@ -24,7 +24,7 @@
 ### 评测环境：
 - 需要有一个运行着的Runtime，并且该Runtime打开了评测模式，可以监控测试agent的动作
 - 监控的动作包括：
-    1. get_stream、create_stream、register_listener
+    1. get_stream、create_stream、for_each
     2. get_model、make_prompt、query
     3. stream.add_item
 - 评测流程：

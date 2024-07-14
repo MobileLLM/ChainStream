@@ -27,7 +27,7 @@ class Audio_To_Text_Agent(cs.agent.Agent):
                 print(f'text:{segment.text}')
 
         try:
-            self._source.register_listener(self, handle_wav)
+            self._source.for_each(self, handle_wav)
         except Exception as e:
             print("Error in Audio to Text agent: ", e)
             return False

@@ -1,4 +1,5 @@
 import chainstream as cs
+import inspect
 
 
 class TaskConfigBase(cs.agent.Agent):
@@ -16,6 +17,8 @@ class TaskConfigBase(cs.agent.Agent):
 
     def __init__(self):
         super().__init__("TaskConfigBase")
+        self.task_id = self.__class__.__name__
+
         self.task_description = None
 
         self.need_stream = []
@@ -26,7 +29,7 @@ class TaskConfigBase(cs.agent.Agent):
     def init_environment(self, runtime):
         raise RuntimeError("Not implemented")
 
-    def start_task(self, runtime):
+    def start_task(self, runtime) -> list:
         raise RuntimeError("Not implemented")
 
     def record_output(self):

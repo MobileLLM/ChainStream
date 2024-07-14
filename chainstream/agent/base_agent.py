@@ -31,7 +31,25 @@ class AgentMeta:
         }
 
 
+def record_start(func):
+    def wrapper(self, *args, **kwargs):
+        res = func(self, *args, **kwargs)
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            agent_id = self.agent_id
+            inspect_stack = inspect.stack()
+            start_res = res
+            SANDBOX_RECORDER.record_start(agent_id, start_res, inspect_stack)
+
+        return res
+
+    return wrapper
+
+
 class Agent(AgentInterface):
+    agent_store_base_path = None
+
     def __init__(self, agent_id) -> None:
         super().__init__()
         self.agent_id = agent_id
@@ -42,6 +60,13 @@ class Agent(AgentInterface):
         self.recorder = AgentRecorder(agentMetaData=self.metaData)
         cs_server_core.register_agent(agent=self)
 
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            agent_id = self.agent_id
+            inspect_stack = inspect.stack()
+            SANDBOX_RECORDER.record_instantiate(agent_id, inspect_stack)
+
+    @record_start
     def start(self):
         pass
 
@@ -53,3 +78,7 @@ class Agent(AgentInterface):
 
     def get_meta_data(self):
         return self.metaData.__dict__()
+
+    @staticmethod
+    def set_agent_store_base_path(path):
+        Agent.agent_store_base_path = path

@@ -117,8 +117,9 @@ Here's how you can use the `SandBox` class for specific Task testing:
 
 ```python
 if __name__ == "__main__":
-    from tasks import ALL_TASKS
-    ArxivTaskConfig = ALL_TASKS['ArxivTask']
+    from tasks import ALL_TASKS_OLD
+
+    ArxivTaskConfig = ALL_TASKS_OLD['ArxivTask']
 
     agent_file = '''
     import chainstream as cs
@@ -149,10 +150,10 @@ if __name__ == "__main__":
                     print(paper_title+" : "+response)
                     self.output_stream.add_item(paper_title+" : "+response)
 
-            self.input_stream.register_listener(self, process_paper)
+            self.input_stream.for_each(self, process_paper)
 
         def stop(self):
-            self.input_stream.unregister_listener(self)
+            self.input_stream.unregister_all(self)
     '''
 
     oj = SandBox(ArxivTaskConfig(), agent_file)

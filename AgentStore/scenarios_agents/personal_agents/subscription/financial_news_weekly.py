@@ -19,7 +19,7 @@ class BloombergNewsAgent(cs.agent.Agent):
 
     def start(self):
         try:
-            self._source.register_listener(self, self.handle_input)
+            self._source.for_each(self, self.handle_input)
             return True
         except Exception as e:
             print("Error in Bloomberg News Agent: ", e)

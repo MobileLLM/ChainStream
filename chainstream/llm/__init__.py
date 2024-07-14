@@ -2,34 +2,48 @@ from .utils import convert_audio_to_text, convert_image_to_base64
 from PIL import Image
 from chainstream.context import Buffer
 import os
+import inspect
 
 _model_instances = {}
 
-def get_model(type=['text']):
-    '''
-    name: list of model type, e.g. ['text', 'image', 'audio']
-    '''
-    if tuple(sorted(type)) in _model_instances and _model_instances[tuple(sorted(type))] is not None:
-        return _model_instances[tuple(sorted(type))]
 
-    if type is [] or not all(n in ['text', 'image', 'audio'] for n in type):
-        raise ValueError(f'invalid name: {type}')
+def get_model(llm_type=['text']):
+    '''
+    name: list of model llm_type, e.g. ['text', 'image', 'audio']
+    '''
 
-    if type == ['text']:
+    if isinstance(llm_type, str):
+        if llm_type.lower() not in ['text', 'image', 'audio']:
+            raise ValueError(f'invalid name: {llm_type}')
+        llm_type = [llm_type.lower()]
+
+    if tuple(sorted(llm_type)) in _model_instances and _model_instances[tuple(sorted(llm_type))] is not None:
+        return _model_instances[tuple(sorted(llm_type))]
+
+    if llm_type is [] or not all(n in ['text', 'image', 'audio'] for n in llm_type):
+        raise ValueError(f'invalid name: {llm_type}')
+
+    if llm_type == ['text']:
         from chainstream.llm.python_base_openai_make_prompt import TextGPTModel
         inst = TextGPTModel()
-    elif 'image' in type and 'audio' not in type:
+    elif 'image' in llm_type and 'audio' not in llm_type:
         from chainstream.llm.python_base_openai_make_prompt import ImageGPTModel
         inst = ImageGPTModel()
-    elif 'audio' in type and 'image' not in type:
+    elif 'audio' in llm_type and 'image' not in llm_type:
         from chainstream.llm.python_base_openai_make_prompt import AudioGPTModel
         inst = AudioGPTModel()
     else:
         from chainstream.llm.python_base_openai_make_prompt import AudioImageGPTModel
         inst = AudioImageGPTModel()
 
-    _model_instances[tuple(sorted(type))] = inst
+    from chainstream.sandbox_recorder import SANDBOX_RECORDER
+    if SANDBOX_RECORDER is not None:
+        inspect_stack = inspect.stack()
+        SANDBOX_RECORDER.record_get_model(inst.__class__.__name__, inspect_stack)
+
+    _model_instances[tuple(sorted(llm_type))] = inst
     return inst
+
 
 def make_prompt(*args, system_prompt=None):
     '''
@@ -66,7 +80,8 @@ def make_prompt(*args, system_prompt=None):
                 "type": "text",
                 "text": arg
             })
-        elif isinstance(arg, Image.Image) or (isinstance(arg, str) and arg.split('.')[-1].lower() in ['jpg', 'png', 'jpeg']):
+        elif isinstance(arg, Image.Image) or (
+                isinstance(arg, str) and arg.split('.')[-1].lower() in ['jpg', 'png', 'jpeg']):
             user_content.append({
                 "type": "image_url",
                 "image_url": {
@@ -82,7 +97,8 @@ def make_prompt(*args, system_prompt=None):
             # check if all elements are same type
             if not all(isinstance(a, type(arg[0])) for a in arg):
                 raise ValueError(f'all elements must be of the same type, got {type(arg[0])}')
-            if isinstance(arg[0], Image.Image) or (isinstance(arg[0], str) and arg[0].split('.')[-1].lower() in ['jpg', 'png', 'jpeg']):
+            if isinstance(arg[0], Image.Image) or (
+                    isinstance(arg[0], str) and arg[0].split('.')[-1].lower() in ['jpg', 'png', 'jpeg']):
                 for a in arg:
                     user_content.append({
                         "type": "image_url",
@@ -102,6 +118,15 @@ def make_prompt(*args, system_prompt=None):
         "role": "user",
         "content": user_content
     })
+
+    from chainstream.sandbox_recorder import SANDBOX_RECORDER
+    if SANDBOX_RECORDER is not None:
+        inspect_stack = inspect.stack()
+        input_args = [str(a) for a in args]
+        prompt = message_prompt
+
+        SANDBOX_RECORDER.record_make_prompt(prompt, input_args, inspect_stack)
+
     return message_prompt
 
 
