@@ -13,5 +13,5 @@ class EvalExampleAgent(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_batch()
-    eval_agent = EvalExampleAgent(task_list, repeat_time=1, task_log_path=r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\2024-07-14_18-28-26\test_log.json")
+    eval_agent = EvalExampleAgent(task_list, repeat_time=1)
     eval_agent.start()
