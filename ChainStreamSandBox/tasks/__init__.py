@@ -81,11 +81,14 @@ from .email_task import EmailTask2
 from .email_task import EmailTask3
 from .email_task import EmailTask4
 from .news_task  import NewsTask1
+from .news_task  import NewsTask2
 ALL_TASKS = {
     # EmailTask1.__name__: EmailTask1,
-    # EmailTask2.__name__: EmailTask2,
-    EmailTask4.__name__: EmailTask4
-    # NewsTask1.__name__: NewsTask1
+    # EmailTask2.__name__: EmailTask2
+    # EmailTask3.__name__: EmailTask3
+    # EmailTask4.__name__: EmailTask4
+    NewsTask1.__name__: NewsTask1
+    # NewsTask2.__name__: NewsTask2
 }
 
 

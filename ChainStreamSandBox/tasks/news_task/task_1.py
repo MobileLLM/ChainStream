@@ -81,7 +81,7 @@ class AgentExampleForNewsTask1(cs.agent.Agent):
                 "summary": res
             })
 
-        self.email_input.for_each(filter_politics).for_each(extract_dialogues).batch(by_count=2).for_each(sum_by_dialogues)
+        self.news_input.for_each(filter_politics).for_each(extract_dialogues).batch(by_count=2).for_each(sum_by_dialogues)
         '''
 
     def init_environment(self, runtime):

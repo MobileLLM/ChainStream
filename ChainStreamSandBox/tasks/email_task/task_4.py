@@ -30,6 +30,8 @@ class EmailTask4(SingleAgentTaskConfigBase):
 
         self.paper_data = EmailData().get_emails(paper_number)
         self.agent_example = '''
+import chainstream as cs
+
 class AgentExampleForEmailTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_email_task_4"):
         super().__init__(agent_id)
@@ -85,7 +87,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
     def start_task(self, runtime) -> list:
         sent_messages = []
         for message in self.paper_data:
-            message['sender'] = message['From']
+            # message['sender'] = message['From']
             # print("adding message", message)
             sent_messages.append(message)
             self.input_paper_stream.add_item(message)
