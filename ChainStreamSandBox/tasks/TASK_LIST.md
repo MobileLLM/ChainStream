@@ -28,48 +28,48 @@
 
 - email dataset:
   1. emo classification: classify the emotion of an email message (positive, negative, neutral)【改成“每个月从工作email中总结我的情绪”】
-  2. date extraction: extract the date of an email message 【没太想好怎么改】
-  3. receiver extraction: extract the receiver of an email message 
+  2. date extraction: extract the date of an email message 【分析邮件的时间分布，并将高峰时段的邮件发送者告诉我】
+  3. receiver extraction: extract the receiver of an email message 【总结近一个月每个receiver的邮件，主题是跟工作有关的】
   4. sender extraction: extract the sender of an email message 【改成“总结每个sender的邮件历史，并且过滤掉广告”】
   5. subject judgment: Judge the topic of an email message 【改成“”】
-  6. summarize content:generate a summary of an email message
-  7. auto reply: generate an auto reply for an email message
+  6. summarize content:generate a summary of an email message 【改成“每周生成跟LLM Agent内容有关的摘要报告”】
+  7. auto reply: generate an auto reply for an email message 【对于不是广告的邮件，自动回复已收到，并筛选出发送人】
 - news dataset:
-  1. authors extraction: extract the authors of a news article
-  2. description judgment: judge the topics of a news article
-  3. category classification: classify the category of a news article: classify the category of a news article
-  4. date extraction: extract the date of a news article
-  5. link extraction: extract the links of a news article
-  6. title extraction: extract the title of a news article
-  7. people extraction: extract the people mentioned in a news article
-  8. place extraction: extract the places mentioned in a news article
+  1. authors extraction: extract the authors of a news article【改成“按作者生成每月新闻贡献报告”】
+  2. description judgment: judge the topics of a news article 【""】
+  3. category classification: classify the category of a news article【对近一个月的新闻，按主题分类，统计出每个主题的数量】
+  4. date extraction: extract the date of a news article 【""】
+  5. link extraction: extract the links of a news article【改成提取新闻文章中的所有链接，并分析哪个网站频率较高】
+  6. title extraction: extract the title of a news article【对新闻的主题进行总结，并在每天下午5点告诉我】
+  7. people extraction: extract the people mentioned in a news article【从新闻中筛选出跟AI三巨头有关的对话，并总结其观点】
+  8. place extraction: extract the places mentioned in a news article【筛选加利福尼亚洲发生的新闻，并进行新闻的分类】
 - message dataset:
-  1. content judgment: judge the content of a message
-  2. emotion classification: classify the emotion of a message
+  1. content judgment: judge the content of a message【
+  2. emotion classification: classify the emotion of a message【
   3. language identification: identify the language of a message
   4. summarize content:generate a summary of a message
   5. time extraction: extract the time of a message
 - stock dataset:
-  1. information presentation: present the information of stocks
-  2. purchase recommendation: recommend the purchase of stocks
-  3. sell recommendation: recommend the selling of stocks
+  1. information presentation: present the information of stocks【从每天的股市信息中关注我买入的股票情况，评价其涨跌幅】
+  2. purchase recommendation: recommend the purchase of stocks【根据股市的涨跌，在工作日早上八点推荐买入】
+  3. sell recommendation: recommend the selling of stocks【根据股市的涨跌，在每日收盘后推荐卖出】
   4. type recommendation: recommend the type of stocks that can be bought
 - dialogue dataset:
   1. information presentation: present the information of daily dialogues
   2. emotion classification: classify the emotion of people in a daily dialogue
   3. identity identification: identify the identity of people in a daily dialogue
-  4. place extraction: extract the places where a daily dialogue takes place
+  4. place extraction: extract the places where a daily dialogue takes place【根据对话判断出场景，并且
   5. time extraction: extract the time of a daily dialogue
   6. topic summary: summary the topic of a daily dialogue
 - arxiv dataset:
-  1. abstract extraction: extract the abstract of an arxiv paper
+  1. abstract extraction: extract the abstract of an arxiv paper【对近一个月有关LLM的arxiv文章进行摘要提取】
   2. algorithm identification: identify the algorithm used in an arxiv paper
-  3. approach identification: identify the approach used in an arxiv paper
-  4. authors identification: identify the authors of an arxiv paper
-  5. comments extraction: extract the comments of an arxiv paper
+  3. approach identification: identify the approach used in an arxiv paper【分析近来arxiv上LLM研究的论文，找出其使用的研究方法】
+  4. authors identification: identify the authors of an arxiv paper【对吴恩达的论文进行筛选，并总结其核心观点】
+  5. comments extraction: extract the comments of an arxiv paper【根据评论数对arxiv文章关注量进行排序，给我推荐前5评论量的文章】
   6. date extraction: extract the date of an arxiv paper
   7. implementation identification: identify the implementation used in an arxiv paper
-  8. journal reference identification: identify the journal reference id of an arxiv paper
+  8. journal reference identification: identify the journal reference id of an arxiv paper【根据引用量对arxiv文章进行排序，给我推荐前5的文章】
   9. problems extraction: extract the problems to solve of an arxiv paper
   10. stage identification: identify the process stage of an arxiv paper
   11. topic extraction: extract the topic of an arxiv paper
