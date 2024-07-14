@@ -77,9 +77,10 @@
 #                  }
 
 from .email_task import EmailTask1
-
+from .email_task import EmailTask2
 ALL_TASKS = {
-    EmailTask1.__name__: EmailTask1,
+    #EmailTask1.__name__: EmailTask1,
+    EmailTask2.__name__: EmailTask2
 }
 
 
