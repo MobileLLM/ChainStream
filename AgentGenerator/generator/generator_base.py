@@ -26,7 +26,7 @@ class AgentGeneratorBase:
 
         return self.generate_agent_impl(selected_streams, output_description)
 
-    def generate_agent_impl(self, input_description: [StreamListDescription, None], agent_description: StreamListDescription) -> str:
+    def generate_agent_impl(self, input_description: [StreamListDescription, None], output_description: StreamListDescription) -> str:
         raise NotImplementedError("Agent generator must implement generate_agent_impl function.")
 
     def generate_agent_for_runtime(self, output_description: StreamListDescription):

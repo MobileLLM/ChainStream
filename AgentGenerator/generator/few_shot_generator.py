@@ -1,5 +1,5 @@
-from AgentGenerator.generator.utils import TextGPTModel
-from AgentGenerator.chainstream_doc import chainstream_doc
+from AgentGenerator.utils.llm_utils import TextGPTModel
+from AgentGenerator.prompt.chainstream_doc import chainstream_doc
 from .generator_base import AgentGeneratorBase
 from ..io_model import StreamListDescription
 
