@@ -4,7 +4,8 @@ TEMPLATE_PROMPT = [
     {
         "operation": "filter",
         "description": "",
-        "prompt": ""
+        "prompt": """
+        """
     },
     {
         "operation": "group_by",

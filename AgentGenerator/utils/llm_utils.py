@@ -64,15 +64,27 @@ class TextGPTModel(BaseOpenAI):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 
-    def query(self, prompt):
+    def query(self, prompt, stop=None):
         print(self.model)
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=
-                prompt
-            ,
-            temperature=self.temperature
-        )
+        if stop is None:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=prompt,
+                temperature=self.temperature,
+                top_p=1,
+                frequency_penalty=0.0,
+                presence_penalty=0.0,
+            )
+        else:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=prompt,
+                temperature=self.temperature,
+                top_p=1,
+                frequency_penalty=0.0,
+                presence_penalty=0.0,
+                stop=stop
+            )
         res = response.choices[0].message.content
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens
@@ -81,14 +93,13 @@ class TextGPTModel(BaseOpenAI):
         return res
 
 
-
 if __name__ == '__main__':
     prompt = {
         "role": "system",
-        "content": "介绍一下你自己，你是具体什么型号的模型" 
+        "content": "介绍一下你自己，你是具体什么型号的模型"
     }
     model = TextGPTModel(model='gpt-4o')
-    
+
     print(model.query(prompt))
 
     # prompt = "请概括这里说了什么"

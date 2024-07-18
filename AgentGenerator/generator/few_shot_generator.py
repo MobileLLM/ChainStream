@@ -26,7 +26,7 @@ class FewShotGenerator(AgentGeneratorBase):
         return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
     def _get_system_prompt(self):
-        return chainstream_doc.chinese_chainstream_doc
+        return chainstream_doc.chainstream_chinese_doc
 
     # TODO: need to update user prompt to support new prompt format
     def _get_user_prompt(self, task):
