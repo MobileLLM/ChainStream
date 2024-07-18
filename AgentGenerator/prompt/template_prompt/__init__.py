@@ -79,11 +79,11 @@ TEMPLATE_PROMPT = [
     }
 ]
 
-AGENT_EXAMPLE = {
+AGENT_EXAMPLE = [
     {
         "description": "",
         "code": "",
     }
 
-}
+]
 

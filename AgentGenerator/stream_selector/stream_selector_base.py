@@ -26,7 +26,7 @@ class StreamSelectorBase:
                     all_stream = self._select_stream_by_llm()
 
                 all_stream = self._process_input_stream(all_stream)
-                input_stream_prompt = f"There are multiple input streams available. The agent should select some of them: {all_stream}"
+                input_stream_prompt = f"There are multiple input streams available. The agent should select some of them:\n {all_stream}"
 
         prompt = f"{output_prompt}\n{input_stream_prompt}"
         return prompt
@@ -35,9 +35,13 @@ class StreamSelectorBase:
         self.all_stream_list = all_stream_list
 
     def _process_output_stream(self, output_stream_list: StreamListDescription):
-        output_stream = self._process_output_stream(output_stream_list)
-        prompt = f"""
-        Your mission is to programme an agent with chainstream framework to get the following output streams:
+        # output_stream = self._process_output_stream(output_stream_list)
+        tmp_prompt = ""
+        for stream in output_stream_list:
+            tmp_prompt += f"{str(stream)}\n"
+        output_stream = tmp_prompt[:-1]
+
+        prompt = f"""Your mission is to programme an agent with chainstream framework to get the following output streams:
         {output_stream}
         """
         return prompt
@@ -46,4 +50,8 @@ class StreamSelectorBase:
         pass
 
     def _process_input_stream(self, input_stream_list: StreamListDescription) -> str:
-        pass
+        tmp_prompt = ""
+        for stream in input_stream_list:
+            tmp_prompt += f"{str(stream)}\n"
+        input_stream = tmp_prompt[:-1]
+        return input_stream

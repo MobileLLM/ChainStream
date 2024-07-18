@@ -1,8 +1,8 @@
 from ChainStreamSandBox import SandBox
-from ..io_model import StreamListDescription
-from ..stream_selector import StreamSelectorBase
-from ..prompt.chainstream_doc import chainstream_chinese_doc
-from ..prompt import REACT_PROMPT
+from AgentGenerator.io_model import StreamListDescription
+from AgentGenerator.stream_selector import StreamSelectorBase
+from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc
+from AgentGenerator.prompt import REACT_PROMPT
 
 
 class AgentGeneratorBase:
@@ -50,7 +50,7 @@ class AgentGeneratorBase:
         # TODO: this API is still under development
         stream_list = self.runtime.get_stream_description_list()
 
-        agent = self.generate_agent(stream_list, output_description, use_selector=True)
+        agent = self.generate_agent(output_description, input_description=stream_list, use_selector=True)
 
         return agent
 

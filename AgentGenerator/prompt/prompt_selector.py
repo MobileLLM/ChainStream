@@ -1,6 +1,6 @@
 from AgentGenerator.utils import TextGPTModel
-from API_prompt import API_USAGE_PROMPT
-from template_prompt import TEMPLATE_PROMPT, AGENT_EXAMPLE
+from .API_prompt import API_USAGE_PROMPT
+from .template_prompt import TEMPLATE_PROMPT, AGENT_EXAMPLE
 
 
 class PromptSelector:

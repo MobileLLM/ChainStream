@@ -21,8 +21,8 @@ class StreamForAgent:
     def for_each(self, listener_func: AgentFunction, to_stream=None):
         return self.stream.for_each(self.agent, listener_func, to_stream=to_stream)
 
-    def batch(self, by_count=None, by_time=None, by_key=None, by_func=None, to_stream=None):
-        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_key=by_key, by_func=by_func,
+    def batch(self, by_count=None, by_time=None, by_item=None, by_func=None, to_stream=None):
+        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_item=by_item, by_func=by_func,
                                  to_stream=to_stream)
 
     def unregister_all(self, listener_func=None):
@@ -158,20 +158,20 @@ class BaseStream(StreamInterface):
 
             return None
 
-    def batch(self, agent, by_count=None, by_time=None, by_key=None, by_func=None, to_stream=None):
+    def batch(self, agent, by_count=None, by_time=None, by_item=None, by_func=None, to_stream=None):
         none_count = 0
         if by_count is None:
             none_count += 1
         if by_time is None:
             none_count += 1
-        if by_key is None:
+        if by_item is None:
             none_count += 1
         if by_func is None:
             none_count += 1
         if 4 - none_count == 0:
-            raise ValueError("At least one of by_count, by_time, by_key, by_func should be specified")
+            raise ValueError("At least one of by_count, by_time, by_item, by_func should be specified")
         if 4 - none_count > 1:
-            raise ValueError("Only one of by_count, by_time, by_key, by_func should be specified")
+            raise ValueError("Only one of by_count, by_time, by_item, by_func should be specified")
 
         new_buffer = Buffer()
         # self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
@@ -216,12 +216,12 @@ class BaseStream(StreamInterface):
 
             return self.for_each(agent, anonymous_batch_func_by_time, to_stream=to_stream)
 
-        if by_key is not None:
-            key_item = by_key
+        if by_item is not None:
+            key_item = by_item
             self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
                 key_item)
 
-            def anonymous_batch_func_by_key(item):
+            def anonymous_batch_func_by_item(item):
                 if key_item != item:
                     new_buffer.append(item)
 
@@ -230,7 +230,7 @@ class BaseStream(StreamInterface):
                     all_items = new_buffer.pop_all()
                     return {"item_list": all_items}
 
-            return self.for_each(agent, anonymous_batch_func_by_key, to_stream=to_stream)
+            return self.for_each(agent, anonymous_batch_func_by_item, to_stream=to_stream)
 
         if by_func is not None:
             return self.for_each(agent, by_func, to_stream=to_stream)
