@@ -9,6 +9,7 @@ import json
 import datetime
 
 from chainstream.sandbox_recorder import start_sandbox_recording
+from chainstream.agent.base_agent import Agent
 
 
 class SandboxError(Exception):
@@ -155,7 +156,7 @@ class SandBox:
             class_object = None
             # globals().update(namespace)
             for name, obj in module.__dict__.items():
-                if isinstance(obj, type):
+                if isinstance(obj, type) and not obj.__name__ == "Agent" and issubclass(obj, Agent):
                     class_object = obj
                     break
 

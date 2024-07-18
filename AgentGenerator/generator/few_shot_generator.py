@@ -1,6 +1,6 @@
 from AgentGenerator.utils.llm_utils import TextGPTModel
 from AgentGenerator.prompt.chainstream_doc import chainstream_doc
-from generator_base import AgentGeneratorBase
+from AgentGenerator.generator.generator_base import AgentGeneratorBase
 from AgentGenerator.io_model import StreamListDescription
 
 
@@ -23,7 +23,7 @@ class FewShotGenerator(AgentGeneratorBase):
         #     }
         # ]
 
-        base_prompt = base_prompt + "\nPlease write code directly in the code block below, do not need any explanation.\nCode: "
+        base_prompt = base_prompt + "\n\nPlease write code directly in the code block below, do not need any explanation.\nCode: "
 
         print(base_prompt)
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     agent_code = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
-            "description": "A list of email summaries for each email sender, excluding ads",
+            "description": "A list of email summaries grouped by each email sender for pre 10 emails, excluding advertisement emails",
             "fields": {
                 "sender": "name xxx, string",
                 "summary": "sum xxx, string"
