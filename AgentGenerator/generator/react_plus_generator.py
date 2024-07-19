@@ -22,7 +22,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
         n_badcalls = 0
         for i in range(self.max_loop):
             n_calls += 1
-            thought_action = self.llm.query(prompt + f"Thought {i}:", stop=[f"\nSandbox Error {i}:"])
+            thought_action = self.llm.query(prompt + f"Thought {i}:", stop=[f"\nSandboxObservation {i}:"])
 
             try:
                 thought, action = thought_action.strip().split(f"\nAction {i}: ")
@@ -36,7 +36,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
             error_prompt, done = self.step(action[0].lower() + action[1:])
 
             error = error_prompt.replace('\\n', '')
-            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nSandbox Error {i}:: {error}\n"
+            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nSandboxObservation {i}:: {error}\n"
             prompt += step_str
 
             if done:
