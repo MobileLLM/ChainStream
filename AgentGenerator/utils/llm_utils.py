@@ -65,7 +65,7 @@ class TextGPTModel(BaseOpenAI):
                          timeout=timeout, identifier=identifier)
 
     def query(self, prompt, stop=None):
-        print(self.model)
+        # print(self.model)
         if stop is None:
             response = self.client.chat.completions.create(
                 model=self.model,

@@ -11,7 +11,7 @@ class FewShotGenerator(AgentGeneratorBase):
         self.max_token_len = 4096
 
     # TODO: need new parameters for few-shot generation
-    def generate_agent_impl(self, base_prompt) -> str:
+    def generate_agent_impl(self, chainstream_chinese_doc: str, input_and_output_prompt: str) -> str:
         # prompt = [
         #     {
         #         "role": "system",
@@ -22,6 +22,7 @@ class FewShotGenerator(AgentGeneratorBase):
         #         "content": self._get_user_prompt(input_description+agent_description)
         #     }
         # ]
+        base_prompt = f"{chainstream_chinese_doc}\n{input_and_output_prompt}"
 
         base_prompt = base_prompt + "\n\nPlease write code directly in the code block below, do not need any explanation.\nCode: "
 

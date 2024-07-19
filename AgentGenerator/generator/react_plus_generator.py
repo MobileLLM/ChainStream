@@ -1,28 +1,34 @@
-from .generator_base import ReactAgentGenerator
-from ..io_model import StreamListDescription
-from ..utils import TextGPTModel
-from ..prompt import REACT_PROMPT
-from ..prompt import PromptSelector
+from AgentGenerator.generator.generator_base import ReactAgentGenerator
+from AgentGenerator.io_model import StreamListDescription
+from AgentGenerator.utils import TextGPTModel
+from AgentGenerator.prompt import REACT_PROMPT
+from AgentGenerator.prompt import PromptSelector
 
 
 class ReactPlusGenerator(ReactAgentGenerator):
     def __init__(self, max_loop=10):
         super().__init__()
+        self.answer = None
         self.llm = TextGPTModel()
 
         self.max_loop = max_loop
 
-    def generate_agent_impl(self, base_prompt, react_prompt=None) -> str:
+    def generate_agent_impl(self, chainstream_chinese_doc, input_and_output_prompt, react_prompt=None) -> str:
         if react_prompt is None:
             react_prompt = REACT_PROMPT
 
-        prompt = f"{base_prompt}\n{react_prompt}"
+        prompt = f"Doc: {chainstream_chinese_doc}\nMission: {input_and_output_prompt}\nInstructions: {react_prompt}\n"
 
         n_calls = 0
         n_badcalls = 0
+
+        done = False
+
+        # print(f"First Prompt: {prompt}")
+
         for i in range(self.max_loop):
             n_calls += 1
-            thought_action = self.llm.query(prompt + f"Thought {i}:", stop=[f"\nSandboxObservation {i}:"])
+            thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nSandboxObservation {i}:"])
 
             try:
                 thought, action = thought_action.strip().split(f"\nAction {i}: ")
@@ -31,38 +37,52 @@ class ReactPlusGenerator(ReactAgentGenerator):
                 n_badcalls += 1
                 n_calls += 1
                 thought = thought_action.strip().split('\n')[0]
-                action = self.llm.query(prompt + f"Thought {i}: {thought}\nAction {i}:", stop=[f"\n"]).strip()
+                action = self._query_llm(prompt + f"Thought {i}: {thought}\nAction {i}:", stop=[f"\n"]).strip()
 
-            error_prompt, done = self.step(action[0].lower() + action[1:])
+            error_prompt, done = self.step(action)
 
             error = error_prompt.replace('\\n', '')
-            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nSandboxObservation {i}:: {error}\n"
+            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nSandboxObservation {i}: {error}\n"
             prompt += step_str
+            print(f"Step: {i}, prompt: {prompt}")
 
             if done:
                 break
         if not done:
             error_prompt, done = self.step("finish[]")
 
+    def _query_llm(self, prompt, stop=None):
+        prompt = [
+            {
+                "role": "system",
+                "content": prompt,
+                "stop": stop
+            }
+        ]
+        response = self.llm.query(prompt)
+        return response
+
     def step(self, action) -> (str, bool):
+        done = False
+
         action = action.strip()
-        if action.startswith("code[") and action.endswith("]"):
-            entity = action[len("search["):-1]
-            self.sandbox_exec(entity)
-        elif action.startswith("finish[") and action.endswith("]"):
-            answer = action[len("finish["):-1]
+        if action.startswith("CODE<<") and action.endswith(">>"):
+            entity = action[len("CODE<<"):-2]
+            obs = self.sandbox_exec(entity)
+        elif action.startswith("FINISH<<") and action.endswith(">>"):
+            answer = action[len("FINISH<<"):-2]
             self.answer = answer
             done = True
-            self.obs = f"Episode finished, reward = {reward}\n"
-        elif action.startswith("think[") and action.endswith("]"):
-            self.obs = "Nice thought."
+            obs = f"Episode finished. The answer is: {answer}"
+        elif action.startswith("THINK<<") and action.endswith(">>"):
+            obs = "Nice thought."
         else:
-            self.obs = "Invalid action: {}".format(action)
+            obs = "Invalid action: {}".format(action)
 
-        pass
+        return obs, done
 
-    def sandbox_exec(self, agent_code):
-        pass
+    def sandbox_exec(self, agent_code) -> str:
+        return "[SandboxObservation {test}]"
 
 
 if __name__ == '__main__':

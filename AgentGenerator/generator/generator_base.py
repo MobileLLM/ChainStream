@@ -32,15 +32,15 @@ class AgentGeneratorBase:
                 # Specify input_description, use llm to select input streams
                 input_and_output_prompt = self.stream_selector.select_stream(output_description, select_policy='llm')
 
-        basic_prompt = f"{chainstream_chinese_doc}\n{input_and_output_prompt}"
+        # basic_prompt = f"{chainstream_chinese_doc}\n{input_and_output_prompt}"
 
-        return self.generate_agent_impl(basic_prompt)
+        return self.generate_agent_impl(chainstream_chinese_doc, input_and_output_prompt)
 
     # def generate_agent_impl(self, input_description: [StreamListDescription, None], output_description:
     # StreamListDescription) -> str: raise NotImplementedError("Agent generator must implement generate_agent_impl
     # function.")
 
-    def generate_agent_impl(self, base_prompt) -> str:
+    def generate_agent_impl(self, chainstream_chinese_doc: str, input_and_output_prompt: str) -> str:
         raise NotImplementedError("Agent generator must implement generate_agent_impl function.")
 
     def generate_agent_for_runtime(self, output_description: StreamListDescription):
