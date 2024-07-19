@@ -80,15 +80,53 @@ from .email_task import EmailTask1
 from .email_task import EmailTask2
 from .email_task import EmailTask3
 from .email_task import EmailTask4
+from .email_task import EmailTask5
 from .news_task  import NewsTask1
 from .news_task  import NewsTask2
+from .news_task  import NewsTask3
+from .news_task  import NewsTask4
+from .stock_task import StockTask1
+from .arxiv_task import ArxivTask1
+from .arxiv_task import ArxivTask2
+from .arxiv_task import ArxivTask3
+from .sensor_task import GPSTask1
+from .sensor_task import GPSTask2
+from .sensor_task import GPSTask3
+from .sensor_task import WeatherTask1
+from .sensor_task import WeatherTask2
+from .sensor_task import WeatherTask3
+from .sensor_task import WeatherTask4
+from .sensor_task import HealthTask1
+from .sensor_task import HealthTask2
+from .sensor_task import HealthTask3
+from .sensor_task import HealthTask4
+from .sensor_task import HealthTask5
 ALL_TASKS = {
-    # EmailTask1.__name__: EmailTask1,
-    # EmailTask2.__name__: EmailTask2
-    # EmailTask3.__name__: EmailTask3
-    # EmailTask4.__name__: EmailTask4
-    NewsTask1.__name__: NewsTask1
-    # NewsTask2.__name__: NewsTask2
+    EmailTask1.__name__: EmailTask1,
+    EmailTask2.__name__: EmailTask2,
+    EmailTask3.__name__: EmailTask3,
+    EmailTask4.__name__: EmailTask4,
+    EmailTask5.__name__: EmailTask5,
+    NewsTask1.__name__: NewsTask1,
+    NewsTask2.__name__: NewsTask2,
+    NewsTask3.__name__: NewsTask3,
+    NewsTask4.__name__: NewsTask4,
+    StockTask1.__name__: StockTask1,
+    ArxivTask1.__name__: ArxivTask1,
+    ArxivTask2.__name__: ArxivTask2,
+    ArxivTask3.__name__: ArxivTask3,
+    GPSTask1.__name__: GPSTask1,
+    GPSTask2.__name__: GPSTask2,
+    GPSTask3.__name__: GPSTask3,
+    WeatherTask1.__name__: WeatherTask1,
+    WeatherTask2.__name__: WeatherTask2,
+    WeatherTask3.__name__: WeatherTask3,
+    WeatherTask4.__name__: WeatherTask4,
+    HealthTask1.__name__: HealthTask1,
+    HealthTask2.__name__: HealthTask2,
+    HealthTask3.__name__: HealthTask3,
+    HealthTask4.__name__: HealthTask4,
+    HealthTask5.__name__: HealthTask5
 }
 
 
