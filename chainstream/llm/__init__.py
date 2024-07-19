@@ -12,10 +12,19 @@ def get_model(llm_type=['text']):
     name: list of model llm_type, e.g. ['text', 'image', 'audio']
     '''
 
+    if llm_type is None:
+        raise ValueError('llm_type cannot be None')
+    if not isinstance(llm_type, list) and not isinstance(llm_type, str):
+        raise ValueError(f'invalid llm_type type: {type(llm_type)}, must be a list or string')
+    if isinstance(llm_type, list) and llm_type == []:
+        raise ValueError('llm_type cannot be an empty list')
+
     if isinstance(llm_type, str):
         if llm_type.lower() not in ['text', 'image', 'audio']:
-            raise ValueError(f'invalid name: {llm_type}')
+            raise ValueError(f'invalid llm_type name: {llm_type}, must be one of text, image, audio')
         llm_type = [llm_type.lower()]
+
+    llm_type = list(set(llm_type))
 
     if tuple(sorted(llm_type)) in _model_instances and _model_instances[tuple(sorted(llm_type))] is not None:
         return _model_instances[tuple(sorted(llm_type))]

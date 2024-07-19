@@ -50,8 +50,14 @@ def record_start(func):
 class Agent(AgentInterface):
     agent_store_base_path = None
 
-    def __init__(self, agent_id) -> None:
+    def __init__(self, agent_id=None) -> None:
         super().__init__()
+
+        if agent_id is None:
+            raise ValueError("agent_id must be specified, please make sure you call `super().__init__(agent_id)` with a valid agent_id")
+        if not isinstance(agent_id, str):
+            raise ValueError(f"agent_id must be a string, but got {type(agent_id)}")
+
         self.agent_id = agent_id
         caller_frame = inspect.currentframe().f_back
 

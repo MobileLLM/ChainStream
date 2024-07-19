@@ -98,7 +98,7 @@ class SandBox:
                 self.result['start_agent'] = res
                 raise StartError(res)
 
-            if not return_report_path:
+            if not self.only_init_agent:
                 try:
                     sent_item = self.task.start_task(self.runtime)
                 except Exception as e:
@@ -234,45 +234,56 @@ class SandBox:
 
 
 if __name__ == "__main__":
-    from tasks import ALL_TASKS_OLD
+    from tasks import ALL_TASKS
 
-    Config = ALL_TASKS_OLD['ArxivAbstractTask']
+    Config = ALL_TASKS['EmailTask1']
 
     agent_file = '''
-import chainstream as cs
-from chainstream.llm import get_model
+import chainstream
+from chainstream.agent import Agent
+from chainstream.stream import get_stream, create_stream
+from chainstream.context import Buffer
+from chainstream.llm import get_model, make_prompt
 
-class TestAgent(cs.agent.Agent):
-    def __init__(self):
-        super().__init__("test_arxiv_agent")
-        self.input_stream = cs.get_stream("all_arxiv")
-        self.output_stream = cs.get_stream("cs_arxiv")
+class EmailSummaryAgent(Agent):
+    def __init__(self, agent_id: str="email_summary_agent"):
+        super().__init__(agent_id)
+        self.email_stream = create_stream(self, "all_email")
+        self.summary_stream = create_stream(self, "summary_by_sender")
         self.llm = get_model(["text"])
 
-    def start(self):
-        def process_paper(paper):
-            if "abstract" in paper:
-                paper_title = paper["title"]
-                paper_content = paper["abstract"]
-                paper_versions = paper["versions"]
-                stage_tags = ['Conceptual', 'Development', 'Testing', 'Deployment', 'Maintenance','Other']
-                prompt = "Give you an abstract of a paper: {} and the version of this paper:{}. What tag would you like to add to this paper? Choose from the following: {}".format(paper_content,paper_versions, ', '.join(stage_tags))
-                prompt_message = [
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-                response = self.llm.query(prompt_message)
-                print(paper_title+" : "+response)
-                self.output_stream.add_item(paper_title+" : "+response)
-
-        self.input_stream.for_each(self, process_paper)
-
-    def stop(self):
-        self.input_stream.unregister_all(self)
+    def start(self) -> None:
+        def filter_advertisements(email):
+            print("filter_advertisements", email)
+            if "advertisement" not in email['Content'].lower():
+                print("not an advertisement", email)
+                return email
+    
+        def summarize_emails(email_batch):
+            print("summarize_emails", email_batch)
+            buffer = Buffer()
+            for email in email_batch['item_list']:
+                buffer.append({'sender': email['sender'], 'content': email['Content']})
+            
+            prompt = make_prompt(buffer, "Provide a summary for each sender's emails.")
+            summary = self.llm.query(prompt)
+            
+            self.summary_stream.add_item({'sender': email['sender'], 'summary': summary})
+        
+        self.email_stream.for_each(filter_advertisements)\
+                          .batch(by_count=5)\
+                          .for_each(summarize_emails)
+        
+    def stop(self, haha) -> None:
+        self.email_stream.unregister_all(self)
     '''
     config = Config()
-    oj = SandBox(config, agent_file)
-    res = oj.start_test_agent()
+    oj = SandBox(config, agent_file, save_result=False, only_init_agent=True)
+
+    res = oj.start_test_agent(return_report_path=False)
     print(res)
+
+    if res['start_agent'] != "[OK]":
+        print("\n\nError while starting agent:", res['start_agent']['error_message'])
+        for line in res['start_agent']['traceback'].split('\n'):
+            print(line)

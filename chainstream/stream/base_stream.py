@@ -10,6 +10,8 @@ from threading import Event
 from ..context import Buffer
 from ..function import AgentFunction
 import os
+from typing import Callable
+import inspect
 
 
 class StreamForAgent:
@@ -18,22 +20,46 @@ class StreamForAgent:
         self.stream = stream
         self.agent = agent
 
-    def for_each(self, listener_func: AgentFunction, to_stream=None):
+    def for_each(self, listener_func, to_stream=None):
+        if listener_func is None:
+            raise ValueError("listener_func should not be None")
+        if not isinstance(listener_func, Callable):
+            raise ValueError(f"listener_func should be callable, got {type(listener_func)}")
+        # if hasattr(listener_func, "__qualname__"):
+        #     raise ValueError(f"listener_func should not be a class method, got {type(listener_func)}")
+
+        # cls = getattr(listener_func, '__qualname__', '').split('.<locals>', 1)[0].rsplit('.', 1)[0]
+        # if cls in listener_func.__module__:
+        if '.' in listener_func.__qualname__ and not "<locals>" in listener_func.__qualname__:
+            raise ValueError(f"listener_func should not be a class method, got {listener_func.__qualname__}")
+
+        if to_stream is not None and not isinstance(to_stream, StreamForAgent):
+            raise ValueError("to_stream should be a StreamForAgent object，which means that stream should be created "
+                             "by agent through `create_stream`")
+
+        if len(inspect.signature(listener_func).parameters) != 1:
+            raise ValueError(f"listener_func should have only one parameter, got {len(inspect.signature(listener_func).parameters)}")
+
         return self.stream.for_each(self.agent, listener_func, to_stream=to_stream)
 
     def batch(self, by_count=None, by_time=None, by_item=None, by_func=None, to_stream=None):
-        return self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_item=by_item, by_func=by_func,
-                                 to_stream=to_stream)
+
+        res = self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_item=by_item, by_func=by_func,
+                              to_stream=to_stream)
+
+        return res
 
     def unregister_all(self, listener_func=None):
         self.stream.unregister_all(self.agent, listener_func)
 
-    def add_item(self, item: [dict, list]):
-        if isinstance(item, dict):
+    def add_item(self, item: [dict, str, list]):
+        if isinstance(item, dict) or isinstance(item, str):
             self.stream.add_item(self.agent, item)
         elif isinstance(item, list):
             for i in item:
                 self.stream.add_item(self.agent, i)
+        else:
+            raise ValueError(f"item should be a dict, str or list of dict or str, got {type(item)}")
 
     def send_item(self, item):
         self.add_item(item)
@@ -169,9 +195,9 @@ class BaseStream(StreamInterface):
         if by_func is None:
             none_count += 1
         if 4 - none_count == 0:
-            raise ValueError("At least one of by_count, by_time, by_item, by_func should be specified")
+            raise ValueError("At least one of by_count, by_time, by_item, by_func should be specified, got None")
         if 4 - none_count > 1:
-            raise ValueError("Only one of by_count, by_time, by_item, by_func should be specified")
+            raise ValueError(f"Only one of by_count, by_time, by_item, by_func should be specified, got {none_count}")
 
         new_buffer = Buffer()
         # self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
@@ -181,6 +207,11 @@ class BaseStream(StreamInterface):
         self.anonymous_func_params[agent.agent_id].append(new_buffer)
 
         if by_count is not None:
+            if not isinstance(by_count, int):
+                raise ValueError(f"by_count should be an integer, got {by_count}")
+            if by_count <= 0:
+                raise ValueError(f"by_count should be a positive integer, got {by_count}")
+
             def anonymous_batch_func_by_count(item):
                 if len(new_buffer) < by_count - 1:
                     new_buffer.append(item)
@@ -202,6 +233,11 @@ class BaseStream(StreamInterface):
             return self.for_each(agent, anonymous_batch_func_by_count, to_stream=to_stream)
 
         if by_time is not None:
+            if not isinstance(by_time, int):
+                raise ValueError(f"by_time should be an integer, got {by_time}")
+            if by_time <= 0:
+                raise ValueError(f"by_time should be a positive integer, got {by_time}")
+
             time_start = datetime.datetime.now()
             self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
                 time_start)
@@ -217,6 +253,7 @@ class BaseStream(StreamInterface):
             return self.for_each(agent, anonymous_batch_func_by_time, to_stream=to_stream)
 
         if by_item is not None:
+
             key_item = by_item
             self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
                 key_item)
@@ -233,6 +270,9 @@ class BaseStream(StreamInterface):
             return self.for_each(agent, anonymous_batch_func_by_item, to_stream=to_stream)
 
         if by_func is not None:
+            if not isinstance(by_func, Callable):
+                raise ValueError(f"by_func should be a callable, got {by_func}")
+
             return self.for_each(agent, by_func, to_stream=to_stream)
 
     def unregister_all(self, agent, listener_func=None):

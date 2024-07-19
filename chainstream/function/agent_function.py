@@ -16,7 +16,10 @@ class AgentFunction:
         setattr(self.func, "func_id", self.func_id)
 
     def __call__(self, *args, **kwargs):
-        result = self.func(*args, **kwargs)
+        try:
+            result = self.func(*args, **kwargs)
+        except Exception as e:
+            raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
         if self.output_stream is not None:
             self.output_stream.add_item(result)
 

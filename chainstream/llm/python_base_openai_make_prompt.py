@@ -56,8 +56,10 @@ class BaseOpenAI:
         self.identifier = identifier if identifier != "" else model
 
     def query(self, *args, **kwargs):
-
-        res = self.query_impl(*args, **kwargs)
+        try:
+            res = self.query_impl(*args, **kwargs)
+        except Exception as e:
+            raise e
 
         from chainstream.sandbox_recorder import SANDBOX_RECORDER
         import inspect
