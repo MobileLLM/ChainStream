@@ -8,12 +8,12 @@ random.seed(6666)
 
 
 class NewsTask1(SingleAgentTaskConfigBase):
-    def __init__(self, paper_number=10, eos_gap=4):
+    def __init__(self, news_number=30, eos_gap=4):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
-        self.output_paper_stream = None
-        self.input_paper_stream = None
+        self.output_news_stream = None
+        self.input_news_stream = None
 
         self.eos_gap = eos_gap
 
@@ -28,7 +28,7 @@ class NewsTask1(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.paper_data = NewsData().get_random_articles(paper_number)
+        self.news_data = NewsData().get_random_articles(news_number)
         self.agent_example = '''
 import chainstream as cs
 
@@ -37,71 +37,47 @@ class AgentExampleForNewsTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
         self.news_output = cs.get_stream(self, "summary_from_dialogue")
-        # self.email_output = cs.create_stream(self, {
-        #     "stream_id": "summary_from_dialogue",
-        #     "description": "A list of email summaries for each email sender, excluding ads",
-        #     "fields": {
-        #         "sender": "name xxx, string",
-        #         "summary": "sum xxx, string"
-        #     }
-        # })
-
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def filter_politics(email):
-            email_type = email['category']
-            if email_type == 'POLITICS':
-                return email
-        def extract_dialogues(email):
-            prompt = "is this news on conference? answer y or n"
-            res = self.llm.query(cs.llm.make_prompt(email['headline'], prompt))
-            print("filter_conference", res)
-            if res.lower() == 'y':
-                return email
-        # def group_by_sender(email_list):
-        #     email_list = email_list['item_list']
-        #     sender_group = {}
-        #     for email in email_list:
-        #         if email['sender'] not in sender_group:
-        #             sender_group[email['sender']] = [email]
-        #         else:
-        #             sender_group[email['sender']].append(email)
-        # 
-        #     print("group_by_sender", list(sender_group.values()))
-        #     return list(sender_group.values())
+        def filter_politics(news):
+            news_type = news['category']
+            if news_type == "POLITICS":
+                return news
 
-        def sum_by_dialogues(news):
-            date = news[0]['date']
-            prompt = "Summarize the main idea of the dialogues in the conference"
-            print("sum_by_dialogues: query", [x['short_description'] for x in news], prompt)
-            print("sum_by_sender", res)
-            self.email_output.add_item({
-                "conference_date": date,
-                "summary": res
-            })
+        def sum_by_dialogues(news_list):
+            news_list = news_list['item_list']
+            for news in news_list:
+                date = news.get('date')
+                prompt = "Summarize the main idea of the dialogues in the conference"
+                descriptions = [x.get('short_description', '') for x in news_list]
+                print("sum_by_dialogues: query", descriptions, prompt)
+                res = self.llm.query(cs.llm.make_prompt(descriptions, prompt))
+                print("sum_by_dialogues", res)
+                self.news_output.add_item({
+                    "conference_date": date,
+                    "summary": res
+                })
 
-        self.news_input.for_each(filter_politics).for_each(extract_dialogues).batch(by_count=2).for_each(sum_by_dialogues)
+        self.news_input.for_each(filter_politics).batch(by_count=2).for_each(sum_by_dialogues)
         '''
 
     def init_environment(self, runtime):
-        self.input_paper_stream = cs.stream.create_stream(self, 'all_news')
-        self.output_paper_stream = cs.stream.create_stream(self, 'summary_from_dialogue')
+        self.input_news_stream = cs.stream.create_stream(self, 'all_news')
+        self.output_news_stream = cs.stream.create_stream(self, 'summary_from_dialogue')
 
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_paper_stream.for_each(record_output)
+        self.output_news_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
         sent_messages = []
-        for message in self.paper_data:
-            # message['sender'] = message['From']
-            # print("adding message", message)
+        for message in self.news_data:
             sent_messages.append(message)
-            self.input_paper_stream.add_item(message)
+            self.input_news_stream.add_item(message)
         return sent_messages
 
 

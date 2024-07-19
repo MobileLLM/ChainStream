@@ -6,7 +6,7 @@ from .sms.sms_data import SMSData
 from .stock.stock_data import StockData
 from .Sensor.GPS import GPSData
 from .airline_twitter.airline_twitter import AirlineTwitterData
-from .Sensor.Landmarks import   LandmarkData
+from .Sensor.Landmarks import LandmarkData
 # from .ego4d.ego4d_data import Ego4DData
 from .android_ui.android_ui_data import AndroidUIData
 from .desktop_ui.desktop_data import DesktopData

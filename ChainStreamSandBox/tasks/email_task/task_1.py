@@ -8,12 +8,12 @@ random.seed(6666)
 
 
 class EmailTask1(SingleAgentTaskConfigBase):
-    def __init__(self, paper_number=10, eos_gap=4):
+    def __init__(self, email_number=10, eos_gap=4):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
-        self.output_paper_stream = None
-        self.input_paper_stream = None
+        self.output_email_stream = None
+        self.input_email_stream = None
 
         self.eos_gap = eos_gap
 
@@ -28,7 +28,7 @@ class EmailTask1(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.paper_data = EmailData().get_emails(paper_number)
+        self.email_data = EmailData().get_emails(email_number)
         self.agent_example = '''
 import chainstream as cs
 
@@ -83,23 +83,22 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_paper_stream = cs.stream.create_stream(self, 'all_email')
-        self.output_paper_stream = cs.stream.create_stream(self, 'summary_by_sender')
+        self.input_email_stream = cs.stream.create_stream(self, 'all_email')
+        self.output_email_stream = cs.stream.create_stream(self, 'summary_by_sender')
 
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_paper_stream.for_each(record_output)
+        self.output_email_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
         sent_messages = []
-        for message in self.paper_data:
+        for message in self.email_data:
             message['sender'] = message['From']
-            # print("adding message", message)
             sent_messages.append(message)
-            self.input_paper_stream.add_item(message)
+            self.input_email_stream.add_item(message)
         return sent_messages
 
 
