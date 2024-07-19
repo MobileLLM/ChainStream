@@ -32,7 +32,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
 
             try:
                 thought, action = thought_action.strip().split(f"\nAction {i}: ")
-            except:
+            except Exception as e:
                 print('ohh...', thought_action)
                 n_badcalls += 1
                 n_calls += 1
@@ -82,20 +82,27 @@ class ReactPlusGenerator(ReactAgentGenerator):
         return obs, done
 
     def sandbox_exec(self, agent_code) -> str:
-        return "[SandboxObservation {test}]"
+        sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
+        for stream in self.input_description.streams:
+            sandbox.create_stream(stream)
+        for stream in self.output_description.streams:
+            sandbox.create_stream(stream)
+        error = sandbox.start_test_agent()
+
+        return error
 
 
 if __name__ == '__main__':
     generator = ReactPlusGenerator()
     agent_code = generator.generate_agent(
         StreamListDescription(streams=[{
-                "stream_id": "summary_by_sender",
-                "description": "A list of email summaries grouped by each email sender, excluding ads",
-                "fields": {
-                    "sender": "name xxx, string",
-                    "summary": "sum xxx, string"
-                }
-            }]),
+            "stream_id": "summary_by_sender",
+            "description": "A list of email summaries grouped by each email sender, excluding ads",
+            "fields": {
+                "sender": "name xxx, string",
+                "summary": "sum xxx, string"
+            }
+        }]),
         input_description=StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",
@@ -103,8 +110,7 @@ if __name__ == '__main__':
                 "sender": "name xxx, string",
                 "Content": "text xxx, string"
             }
-            }])
+        }])
     )
 
     print(agent_code)
-

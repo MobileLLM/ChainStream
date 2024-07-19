@@ -10,6 +10,8 @@ import datetime
 
 from chainstream.sandbox_recorder import start_sandbox_recording
 from chainstream.agent.base_agent import Agent
+from chainstream.stream import create_stream
+from AgentGenerator.io_model import StreamDescription
 
 
 class SandboxError(Exception):
@@ -50,7 +52,7 @@ class InitializeError(SandboxError):
 
 class SandBox:
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
-                 raise_exception=True):
+                 raise_exception=True, only_init_agent=False):
         cs_server.init(server_type='core')
         cs_server.start()
 
@@ -63,11 +65,21 @@ class SandBox:
         self.agent_code = agent_code
         self.agent_instance = None
 
-        self.result = {'sandbox_info': {
-            'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'task_name': self.task.task_id,
-            'agent_code': self.agent_code
-        }}
+        self.only_init_agent = only_init_agent
+
+        self.agent_instance = Agent("sandbox_tmp_agent")
+
+        if self.only_init_agent:
+            self.result = {'sandbox_info': {
+                'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'agent_code': self.agent_code
+            }}
+        else:
+            self.result = {'sandbox_info': {
+                'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'task_name': self.task.task_id,
+                'agent_code': self.agent_code
+            }}
 
         if save_result:
             self.save_path = save_path
@@ -77,7 +89,8 @@ class SandBox:
     def start_test_agent(self, return_report_path=False):
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.task.init_environment(self.runtime)
+            if not self.only_init_agent:
+                self.task.init_environment(self.runtime)
 
             res = self._start_agent()
 
@@ -85,34 +98,35 @@ class SandBox:
                 self.result['start_agent'] = res
                 raise StartError(res)
 
-            try:
-                sent_item = self.task.start_task(self.runtime)
-            except Exception as e:
-                self.result['start_task'] = {
-                    "error_message": "[ERROR]" + str(e),
-                    "traceback": traceback.format_exc(),
-                    "error_type": str(type(e))
-                }
-                if self.raise_exception:
-                    raise RunningError(traceback.format_exc())
-            else:
-                self.result['start_task'] = "[OK]"
-                self.result['input_stream_item'] = sent_item
+            if not return_report_path:
+                try:
+                    sent_item = self.task.start_task(self.runtime)
+                except Exception as e:
+                    self.result['start_task'] = {
+                        "error_message": "[ERROR]" + str(e),
+                        "traceback": traceback.format_exc(),
+                        "error_type": str(type(e))
+                    }
+                    if self.raise_exception:
+                        raise RunningError(traceback.format_exc())
+                else:
+                    self.result['start_task'] = "[OK]"
+                    self.result['input_stream_item'] = sent_item
 
-            # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
-            # we only want to init the task environment and start the agent, then start the stream and record all output
-            # into a file. self.task.evaluate_task(self.runtime)
+                # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
+                # we only want to init the task environment and start the agent, then start the stream and record all output
+                # into a file. self.task.evaluate_task(self.runtime)
 
-            self.runtime.wait_all_stream_clear()
+                self.runtime.wait_all_stream_clear()
 
-            self.result['output_stream_output'] = self.task.record_output()
+                self.result['output_stream_output'] = self.task.record_output()
 
-            self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            # self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
-            from chainstream.sandbox_recorder import SANDBOX_RECORDER
-            report = SANDBOX_RECORDER.get_event_recordings()
-            self.result['runtime_report'] = report
+                # self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
+                from chainstream.sandbox_recorder import SANDBOX_RECORDER
+                report = SANDBOX_RECORDER.get_event_recordings()
+                self.result['runtime_report'] = report
 
         except Exception as e:
             self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -185,10 +199,20 @@ class SandBox:
         self.result['start_agent'] = "[OK]"
         return None
 
+    def create_stream(self, stream_description):
+
+        if isinstance(stream_description, StreamDescription):
+            stream_id = stream_description.stream_id
+        else:
+            stream_id = stream_description
+
+        create_stream(self.agent_instance, stream_id)
+
     def get_agent(self):
         return self.agent_instance
 
     def _save_result(self, result):
+        file_path = None
         if self.save_path is not None:
             if not os.path.exists(self.save_path):
                 os.makedirs(self.save_path)

@@ -16,7 +16,13 @@ class AgentGeneratorBase:
         self.runtime = runtime
         self.stream_selector = StreamSelectorBase()
 
+        self.output_description = None
+        self.input_description = None
+
     def generate_agent(self, output_description, input_description=None, use_selector=False) -> str:
+        self.output_description = output_description
+        self.input_description = input_description
+
         self.stream_selector.set_all_stream_list(input_description)
 
         # Do not specify input_description, let llm make up the input stream
