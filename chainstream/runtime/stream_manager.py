@@ -71,7 +71,7 @@ class StreamManager(StreamAnalyzer):
 
     def register_stream(self, stream):
         if stream.metaData.stream_id in self.streams:
-            raise ValueError(f"Stream with id {stream.metaData.stream_id} already exists")
+            raise KeyError(f"Stream with id {stream.metaData.stream_id} already exists")
         self.streams[stream.metaData.stream_id] = stream
         self.thread_list[stream.metaData.stream_id] = stream.thread
         self.recorders[stream.metaData.stream_id] = stream.recorder
@@ -81,7 +81,7 @@ class StreamManager(StreamAnalyzer):
 
     def get_stream(self, stream_id):
         if stream_id not in self.streams:
-            raise ValueError(f"Stream with id {stream_id} not found")
+            raise KeyError(f"Stream with id {stream_id} not found")
         return self.streams.get(stream_id)
 
     def get_stream_list(self):

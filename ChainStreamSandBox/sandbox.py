@@ -9,6 +9,9 @@ import json
 import datetime
 
 from chainstream.sandbox_recorder import start_sandbox_recording
+from chainstream.agent.base_agent import Agent
+from chainstream.stream import create_stream
+from AgentGenerator.io_model import StreamDescription
 
 
 class SandboxError(Exception):
@@ -49,7 +52,7 @@ class InitializeError(SandboxError):
 
 class SandBox:
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
-                 raise_exception=True):
+                 raise_exception=True, only_init_agent=False):
         cs_server.init(server_type='core')
         cs_server.start()
 
@@ -62,11 +65,21 @@ class SandBox:
         self.agent_code = agent_code
         self.agent_instance = None
 
-        self.result = {'sandbox_info': {
-            'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'task_name': self.task.task_id,
-            'agent_code': self.agent_code
-        }}
+        self.only_init_agent = only_init_agent
+
+        self.agent_instance = Agent("sandbox_tmp_agent")
+
+        if self.only_init_agent:
+            self.result = {'sandbox_info': {
+                'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'agent_code': self.agent_code
+            }}
+        else:
+            self.result = {'sandbox_info': {
+                'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'task_name': self.task.task_id,
+                'agent_code': self.agent_code
+            }}
 
         if save_result:
             self.save_path = save_path
@@ -76,7 +89,8 @@ class SandBox:
     def start_test_agent(self, return_report_path=False):
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.task.init_environment(self.runtime)
+            if not self.only_init_agent:
+                self.task.init_environment(self.runtime)
 
             res = self._start_agent()
 
@@ -84,34 +98,35 @@ class SandBox:
                 self.result['start_agent'] = res
                 raise StartError(res)
 
-            try:
-                sent_item = self.task.start_task(self.runtime)
-            except Exception as e:
-                self.result['start_task'] = {
-                    "error_message": "[ERROR]" + str(e),
-                    "traceback": traceback.format_exc(),
-                    "error_type": str(type(e))
-                }
-                if self.raise_exception:
-                    raise RunningError(traceback.format_exc())
-            else:
-                self.result['start_task'] = "[OK]"
-                self.result['input_stream_item'] = sent_item
+            if not self.only_init_agent:
+                try:
+                    sent_item = self.task.start_task(self.runtime)
+                except Exception as e:
+                    self.result['start_task'] = {
+                        "error_message": "[ERROR]" + str(e),
+                        "traceback": traceback.format_exc(),
+                        "error_type": str(type(e))
+                    }
+                    if self.raise_exception:
+                        raise RunningError(traceback.format_exc())
+                else:
+                    self.result['start_task'] = "[OK]"
+                    self.result['input_stream_item'] = sent_item
 
-            # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
-            # we only want to init the task environment and start the agent, then start the stream and record all output
-            # into a file. self.task.evaluate_task(self.runtime)
+                # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
+                # we only want to init the task environment and start the agent, then start the stream and record all output
+                # into a file. self.task.evaluate_task(self.runtime)
 
-            self.runtime.wait_all_stream_clear()
+                self.runtime.wait_all_stream_clear()
 
-            self.result['output_stream_output'] = self.task.record_output()
+                self.result['output_stream_output'] = self.task.record_output()
 
-            self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            # self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
-            from chainstream.sandbox_recorder import SANDBOX_RECORDER
-            report = SANDBOX_RECORDER.get_event_recordings()
-            self.result['runtime_report'] = report
+                # self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
+                from chainstream.sandbox_recorder import SANDBOX_RECORDER
+                report = SANDBOX_RECORDER.get_event_recordings()
+                self.result['runtime_report'] = report
 
         except Exception as e:
             self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -155,7 +170,7 @@ class SandBox:
             class_object = None
             # globals().update(namespace)
             for name, obj in module.__dict__.items():
-                if isinstance(obj, type):
+                if isinstance(obj, type) and not obj.__name__ == "Agent" and issubclass(obj, Agent):
                     class_object = obj
                     break
 
@@ -184,10 +199,20 @@ class SandBox:
         self.result['start_agent'] = "[OK]"
         return None
 
+    def create_stream(self, stream_description):
+
+        if isinstance(stream_description, StreamDescription):
+            stream_id = stream_description.stream_id
+        else:
+            stream_id = stream_description
+
+        create_stream(self.agent_instance, stream_id)
+
     def get_agent(self):
         return self.agent_instance
 
     def _save_result(self, result):
+        file_path = None
         if self.save_path is not None:
             if not os.path.exists(self.save_path):
                 os.makedirs(self.save_path)
@@ -209,45 +234,56 @@ class SandBox:
 
 
 if __name__ == "__main__":
-    from tasks import ALL_TASKS_OLD
+    from tasks import ALL_TASKS
 
-    Config = ALL_TASKS_OLD['ArxivAbstractTask']
+    Config = ALL_TASKS['EmailTask1']
 
     agent_file = '''
-import chainstream as cs
-from chainstream.llm import get_model
+import chainstream
+from chainstream.agent import Agent
+from chainstream.stream import get_stream, create_stream
+from chainstream.context import Buffer
+from chainstream.llm import get_model, make_prompt
 
-class TestAgent(cs.agent.Agent):
-    def __init__(self):
-        super().__init__("test_arxiv_agent")
-        self.input_stream = cs.get_stream("all_arxiv")
-        self.output_stream = cs.get_stream("cs_arxiv")
+class EmailSummaryAgent(Agent):
+    def __init__(self, agent_id: str="email_summary_agent"):
+        super().__init__(agent_id)
+        self.email_stream = create_stream(self, "all_email")
+        self.summary_stream = create_stream(self, "summary_by_sender")
         self.llm = get_model(["text"])
 
-    def start(self):
-        def process_paper(paper):
-            if "abstract" in paper:
-                paper_title = paper["title"]
-                paper_content = paper["abstract"]
-                paper_versions = paper["versions"]
-                stage_tags = ['Conceptual', 'Development', 'Testing', 'Deployment', 'Maintenance','Other']
-                prompt = "Give you an abstract of a paper: {} and the version of this paper:{}. What tag would you like to add to this paper? Choose from the following: {}".format(paper_content,paper_versions, ', '.join(stage_tags))
-                prompt_message = [
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-                response = self.llm.query(prompt_message)
-                print(paper_title+" : "+response)
-                self.output_stream.add_item(paper_title+" : "+response)
-
-        self.input_stream.for_each(self, process_paper)
-
-    def stop(self):
-        self.input_stream.unregister_all(self)
+    def start(self) -> None:
+        def filter_advertisements(email):
+            print("filter_advertisements", email)
+            if "advertisement" not in email['Content'].lower():
+                print("not an advertisement", email)
+                return email
+    
+        def summarize_emails(email_batch):
+            print("summarize_emails", email_batch)
+            buffer = Buffer()
+            for email in email_batch['item_list']:
+                buffer.append({'sender': email['sender'], 'content': email['Content']})
+            
+            prompt = make_prompt(buffer, "Provide a summary for each sender's emails.")
+            summary = self.llm.query(prompt)
+            
+            self.summary_stream.add_item({'sender': email['sender'], 'summary': summary})
+        
+        self.email_stream.for_each(filter_advertisements)\
+                          .batch(by_count=5)\
+                          .for_each(summarize_emails)
+        
+    def stop(self, haha) -> None:
+        self.email_stream.unregister_all(self)
     '''
     config = Config()
-    oj = SandBox(config, agent_file)
-    res = oj.start_test_agent()
+    oj = SandBox(config, agent_file, save_result=False, only_init_agent=True)
+
+    res = oj.start_test_agent(return_report_path=False)
     print(res)
+
+    if res['start_agent'] != "[OK]":
+        print("\n\nError while starting agent:", res['start_agent']['error_message'])
+        for line in res['start_agent']['traceback'].split('\n'):
+            print(line)
