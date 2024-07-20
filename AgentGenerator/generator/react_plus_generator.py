@@ -3,6 +3,7 @@ from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.utils import TextGPTModel
 from AgentGenerator.prompt import REACT_PROMPT
 from AgentGenerator.prompt import PromptSelector
+import datetime
 
 
 class ReactPlusGenerator(ReactAgentGenerator):
@@ -26,9 +27,9 @@ class ReactPlusGenerator(ReactAgentGenerator):
 
         # print(f"First Prompt: {prompt}")
 
-        for i in range(self.max_loop):
+        for i in range(1, self.max_loop):
             n_calls += 1
-            thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nSandboxObservation {i}:"])
+            thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
 
             try:
                 thought, action = thought_action.strip().split(f"\nAction {i}: ")
@@ -42,16 +43,17 @@ class ReactPlusGenerator(ReactAgentGenerator):
             error_prompt, done = self.step(action)
 
             error = error_prompt.replace('\\n', '')
-            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nSandboxObservation {i}: {error}\n"
+            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nObservation {i}: {error}\n"
             prompt += step_str
-            print(f"Step: {i}, prompt: {prompt}")
+            # print(f"Step: {i}, prompt: {prompt}")
 
             if done:
                 break
         if not done:
-            error_prompt, done = self.step("finish[]")
+            error_prompt, done = self.step("FINISH<<>>")
 
     def _query_llm(self, prompt, stop=None):
+
         prompt = [
             {
                 "role": "system",
@@ -60,15 +62,30 @@ class ReactPlusGenerator(ReactAgentGenerator):
             }
         ]
         response = self.llm.query(prompt)
+
+        print(f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt}\nResponse: {response}\n##############\n")
         return response
 
     def step(self, action) -> (str, bool):
         done = False
 
+        code_num = action.count("CODE<<")
+        finish_num = action.count("FINISH<<")
+
+        if code_num + finish_num > 1:
+            obs = "[FormatError] You can only provide one code or one finish action at a time, please check your response format and try again."
+            return obs, done
+
         action = action.strip()
         if action.startswith("CODE<<") and action.endswith(">>"):
             entity = action[len("CODE<<"):-2]
-            obs = self.sandbox_exec(entity)
+            if entity == "agent_code":
+                obs = "[FormatError] Note that you must provide the agent code in the CODE<<`agent_code`>> format.We can't find your agent code, please check your response format and try again."
+            else:
+                entity = entity.strip()
+                if entity.startswith("```python") and entity.endswith("```"):
+                    entity = entity[len("```python"):-3]
+                obs = self.sandbox_exec(entity)
         elif action.startswith("FINISH<<") and action.endswith(">>"):
             answer = action[len("FINISH<<"):-2]
             self.answer = answer
@@ -77,19 +94,29 @@ class ReactPlusGenerator(ReactAgentGenerator):
         elif action.startswith("THINK<<") and action.endswith(">>"):
             obs = "Nice thought."
         else:
-            obs = "Invalid action: {}".format(action)
+            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, THINK<<`your_thought`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(action)
 
         return obs, done
 
     def sandbox_exec(self, agent_code) -> str:
         sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
-        for stream in self.input_description.streams:
-            sandbox.create_stream(stream)
-        for stream in self.output_description.streams:
-            sandbox.create_stream(stream)
+
+        try:
+            for stream in self.input_description.streams:
+                sandbox.create_stream(stream)
+            for stream in self.output_description.streams:
+                sandbox.create_stream(stream)
+        except Exception as e:
+            print(f"Error creating streams: {e}")
+            raise e
+
         error = sandbox.start_test_agent()
 
-        return error
+        # del sandbox
+
+        tmp_prompt = f"After executing the code, the sandbox reported: {error['start_agent']}"
+
+        return tmp_prompt
 
 
 if __name__ == '__main__':

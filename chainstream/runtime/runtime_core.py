@@ -59,11 +59,11 @@ class RuntimeCoreOp:
         return self.stream_manager.wait_all_stream_clear()
 
     def shutdown(self) -> None:
-        # print('Shutting down runtime core...')
+        print('Shutting down runtime core...')
         self.agent_manager.shutdown()
-        # print('Runtime core shutdown complete.')
+        print('Runtime core shutdown complete.')
         self.stream_manager.shutdown()
-        # print('Stream manager shutdown complete.')
+        print('Stream manager shutdown complete.')
 
         reset_model_instances()
 

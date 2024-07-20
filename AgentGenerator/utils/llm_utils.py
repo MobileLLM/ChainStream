@@ -60,7 +60,7 @@ class BaseOpenAI:
 
 
 class TextGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-4', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
+    def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 

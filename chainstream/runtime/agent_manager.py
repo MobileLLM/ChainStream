@@ -81,11 +81,21 @@ class AgentManager(AgentAnalyzer):
         return agent_list
 
     def shutdown(self):
-        for agent in self.agents.values():
+        try:
             try:
-                agent.stop()
+                for agent in self.agents.values():
+                    try:
+                        agent.stop()
+                    except Exception as e:
+                        logger.error(f'failed to stop agent {agent.agent_id}: {e}')
+                    finally:
+                        self.agents[agent.agent_id] = None
             except Exception as e:
-                logger.error(f'failed to stop agent {agent.agent_id}: {e}')
+                logger.error(f'failed to stop all agents: {e}')
+            self.agents = collections.OrderedDict()
+        except Exception as e:
+            logger.error(f'failed to shutdown agent manager: {e}')
+
         return True
 
     def _path_to_json(self, paths):

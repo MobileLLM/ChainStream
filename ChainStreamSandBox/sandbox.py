@@ -5,6 +5,7 @@ import tempfile
 import importlib.util
 
 from chainstream.runtime import cs_server
+from chainstream.runtime import reset_chainstream_server
 import json
 import datetime
 
@@ -141,7 +142,9 @@ class SandBox:
 
             report_path = self._save_result(self.result)
             # print("Sandbox result saved to " + self.save_path)
+
             self.runtime.shutdown()
+            reset_chainstream_server()
 
             if return_report_path:
                 return report_path
@@ -232,9 +235,16 @@ class SandBox:
                 json.dump(result, f, indent=4)
         return file_path
 
-    def __del__(self):
-        print("Sandbox object deleted")
-        self.runtime.shutdown()
+    # def __del__(self):
+    #     try:
+    #         self.runtime.shutdown()
+    #     except Exception as e:
+    #         print("Error while shutting down runtime:", e)
+    #     try:
+    #         reset_chainstream_server()
+    #         print("Sandbox object deleted")
+    #     except Exception as e:
+    #         print("Error while resetting chainstream server:", e)
 
 
 if __name__ == "__main__":

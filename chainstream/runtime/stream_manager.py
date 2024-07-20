@@ -119,4 +119,7 @@ class StreamManager(StreamAnalyzer):
         for thread in self.thread_list.values():
             if thread.is_alive():
                 thread.join()
+
+        self.streams = collections.OrderedDict()
+
         return True
