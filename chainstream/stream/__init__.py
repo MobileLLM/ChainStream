@@ -6,6 +6,18 @@ available_streams = {}
 stream_manager = None
 
 
+def reset_stream():
+    global available_streams
+    global stream_manager
+
+    for k, v in available_streams.items():
+        v.shutdown()
+        del v
+
+    available_streams = {}
+    stream_manager = None
+
+
 def get_stream(agent, stream_id):
     from chainstream.agent import Agent
     if agent is None:

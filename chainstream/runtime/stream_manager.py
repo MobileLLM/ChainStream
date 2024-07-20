@@ -5,6 +5,7 @@ import time
 from .agent_manager import AgentManager
 import threading
 from threading import Event
+from chainstream.stream import reset_stream
 
 # from chainstream.stream.base_stream import BaseStream
 
@@ -108,6 +109,9 @@ class StreamManager(StreamAnalyzer):
             time.sleep(1)
 
     def shutdown(self):
+
+        reset_stream()
+
         # print(self.thread_list)
         for stream in self.streams.values():
             stream.shutdown()

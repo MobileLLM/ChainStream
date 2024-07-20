@@ -1,6 +1,7 @@
 import logging
 from .stream_manager import StreamManager
 from .agent_manager import AgentManager
+from chainstream.llm import reset_model_instances
 
 
 class RuntimeCoreOp:
@@ -63,6 +64,8 @@ class RuntimeCoreOp:
         # print('Runtime core shutdown complete.')
         self.stream_manager.shutdown()
         # print('Stream manager shutdown complete.')
+
+        reset_model_instances()
 
 
 class RuntimeCoreAnalysisOp(RuntimeCoreOp):

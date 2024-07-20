@@ -232,6 +232,10 @@ class SandBox:
                 json.dump(result, f, indent=4)
         return file_path
 
+    def __del__(self):
+        print("Sandbox object deleted")
+        self.runtime.shutdown()
+
 
 if __name__ == "__main__":
     from tasks import ALL_TASKS
@@ -274,7 +278,7 @@ class EmailSummaryAgent(Agent):
                           .batch(by_count=5)\
                           .for_each(summarize_emails)
         
-    def stop(self, haha) -> None:
+    def stop(self) -> None:
         self.email_stream.unregister_all(self)
     '''
     config = Config()
