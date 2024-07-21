@@ -12,7 +12,6 @@ import datetime
 from chainstream.sandbox_recorder import start_sandbox_recording
 from chainstream.agent.base_agent import Agent
 from chainstream.stream import create_stream
-from AgentGenerator.io_model import StreamDescription
 
 
 class SandboxError(Exception):
@@ -203,7 +202,7 @@ class SandBox:
         return None
 
     def create_stream(self, stream_description):
-
+        from AgentGenerator.io_model import StreamDescription
         if isinstance(stream_description, StreamDescription):
             stream_id = stream_description.stream_id
         else:
