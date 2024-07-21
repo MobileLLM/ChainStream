@@ -3,6 +3,7 @@ from PIL import Image
 from chainstream.context import Buffer
 import os
 import inspect
+import warnings
 
 _model_instances = {}
 
@@ -113,6 +114,9 @@ def make_prompt(*args, system_prompt=None):
             # check if all elements are same type
             if not all(isinstance(a, type(arg[0])) for a in arg):
                 raise ValueError(f'all elements must be of the same type, got {type(arg[0])}')
+            if arg is None or len(arg) == 0:
+                warnings.warn("your argument is empty, please provide at least one element")
+                continue
             if isinstance(arg[0], Image.Image) or (
                     isinstance(arg[0], str) and arg[0].split('.')[-1].lower() in ['jpg', 'png', 'jpeg']):
                 for a in arg:

@@ -16,7 +16,7 @@ class LandmarkData:
             csv_reader = csv.DictReader(f)
             headers = csv_reader.fieldnames
             expected_headers = [
-                'PrimaryPropertyType', 'PropertyName', 'Location','Neighborhood', 'YearBuilt',
+                'PrimaryPropertyType', 'PropertyName', 'Location', 'Neighborhood', 'YearBuilt',
                 'NumberofFloors', 'Electricity(kWh)', 'NaturalGas(therms)', 'GHGEmissions(MetricTonsCO2e)'
             ]
             if not all(header in headers for header in expected_headers):
@@ -29,10 +29,10 @@ class LandmarkData:
                     'Location': row['Location'],
                     'Neighborhood': row['Neighborhood'],
                     'YearBuilt': int(row['YearBuilt']),
-                    'NumberofFloors': int(row['NumberofFloors']),
-                    'Electricity(kWh)': float(row['Electricity(kWh)']),
-                    'NaturalGas(therms)': float(row['NaturalGas(therms)']),
-                    'GHGEmissions(MetricTonsCO2e)': float(row['GHGEmissions(MetricTonsCO2e)'])
+                    'NumberofFloors': int(row['NumberofFloors']) if row['NumberofFloors'] else None,
+                    'Electricity(kWh)': float(row['Electricity(kWh)']) if row['Electricity(kWh)'] else None,
+                    'NaturalGas(therms)': float(row['NaturalGas(therms)']) if row['NaturalGas(therms)'] else None,
+                    'GHGEmissions(MetricTonsCO2e)': float(row['GHGEmissions(MetricTonsCO2e)']) if row['GHGEmissions(MetricTonsCO2e)'] else None
                 }
                 self.landmark_data.append(landmark_entry)
 

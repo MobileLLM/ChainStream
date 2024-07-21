@@ -12,11 +12,11 @@ class AirlineTwitterData:
         self._load_data()
 
     def _load_data(self):
-        with open(self.data_path, "r") as f:
+        with open(self.data_path, "r",encoding="utf-8",errors="ignore") as f:
             csv_reader = csv.DictReader(f)
             headers = csv_reader.fieldnames
             expected_headers = [
-                'airline_sentiment', 'negative_reason','airline',  'name',
+                'airline_sentiment', 'negative_reason','airline', 'name',
                 'retweet_count', 'text', 'tweet_created','tweet_location', 'user_timezone'
             ]
             if not all(header in headers for header in expected_headers):
@@ -50,4 +50,4 @@ if __name__ == '__main__':
     airline_data = AirlineTwitterData()
     print(len(airline_data))
     print(airline_data[0])
-    print(airline_data.get_twitter(5))
+    print(airline_data.get_twitter(1))
