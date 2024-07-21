@@ -1,5 +1,4 @@
 from chainstream.interfaces import AgentInterface
-from chainstream.runtime import cs_server_core
 import logging
 from .agent_recorder import AgentRecorder
 import inspect
@@ -64,6 +63,8 @@ class Agent(AgentInterface):
         self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=caller_frame.f_globals['__file__'])
         self.logger = logging.getLogger(self.agent_id)
         self.recorder = AgentRecorder(agentMetaData=self.metaData)
+
+        from chainstream.runtime import cs_server_core
         cs_server_core.register_agent(agent=self)
 
         from chainstream.sandbox_recorder import SANDBOX_RECORDER

@@ -59,7 +59,7 @@ if __name__ == "__main__":
     agent_code = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
-            "description": "A list of email summaries grouped by each email sender for pre 10 emails, excluding advertisement emails",
+            "description": "A list of email summaries grouped by each email sender for pre 3 emails, excluding advertisement emails",
             "fields": {
                 "sender": "name xxx, string",
                 "summary": "sum xxx, string"
