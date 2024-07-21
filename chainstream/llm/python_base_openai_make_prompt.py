@@ -58,6 +58,7 @@ class BaseOpenAI:
     def query(self, *args, **kwargs):
         try:
             res = self.query_impl(*args, **kwargs)
+            # print(res)
         except Exception as e:
             raise e
 
@@ -93,7 +94,7 @@ class TextGPTModel(BaseOpenAI):
 
 
 class ImageGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-4-vision-preview', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
+    def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
                  detail='low', resize_width=512):
         super().__init__(model=model, model_type='image', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
@@ -104,12 +105,7 @@ class ImageGPTModel(BaseOpenAI):
 
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt_message
-                }
-            ],
+            messages=prompt_message,
             temperature=self.temperature,
             max_tokens=300,
         )
@@ -180,6 +176,7 @@ class AudioImageGPTModel(BaseOpenAI):
         )
 
         res = response.choices[0].message.content
+        # print(res)
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens
         self.history[prompt] = res
@@ -188,6 +185,7 @@ class AudioImageGPTModel(BaseOpenAI):
 
 
 if __name__ == '__main__':
+    from chainstream.llm import make_prompt
     # prompt = "你好，你是什么模型，具体是什么型号?"
     # model = TextGPTModel()
     #
@@ -222,7 +220,8 @@ if __name__ == '__main__':
     #                            image_file_path5, image_file_path5,
     #                            image_file_path5, image_file_path5,
     #                            ]))
-    print(model.query(prompt, [image_file_path1, image_file_path2,
-                               image_file_path3, image_file_path4,
-                               image_file_path5
-                               ]))
+    # print(model.query(prompt, [image_file_path1, image_file_path2,
+    #                            image_file_path3, image_file_path4,
+    #                            image_file_path5
+    #                            ]))
+    print(str(model.query(make_prompt(prompt, image_file_path1, image_file_path2))))
