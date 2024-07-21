@@ -8,6 +8,13 @@ import warnings
 _model_instances = {}
 
 
+def reset_model_instances():
+    global _model_instances
+    for k in list(_model_instances.keys()):
+        del _model_instances[k]
+    _model_instances = {}
+
+
 def get_model(llm_type=['text']):
     '''
     name: list of model llm_type, e.g. ['text', 'image', 'audio']

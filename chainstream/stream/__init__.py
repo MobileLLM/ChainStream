@@ -6,7 +6,22 @@ available_streams = {}
 stream_manager = None
 
 
+def reset_stream():
+    global available_streams
+    global stream_manager
+
+    for k, v in available_streams.items():
+        v.shutdown()
+        del v
+
+    available_streams = {}
+    stream_manager = None
+
+
 def get_stream(agent, stream_id):
+    global available_streams
+    global stream_manager
+
     from chainstream.agent import Agent
     if agent is None:
         raise ValueError("agent should not be None")
@@ -65,6 +80,9 @@ def get_stream(agent, stream_id):
 
 
 def create_stream(agent, stream_id, type=None):
+    global available_streams
+    global stream_manager
+
     from chainstream.agent import Agent
     if agent is None:
         raise ValueError("agent should not be None")
@@ -103,6 +121,7 @@ def create_stream(agent, stream_id, type=None):
             else:
                 raise ValueError("stream_id should be a string or a dictionary with a key 'stream_id'")
         stream = StreamForAgent(agent, stream)
+
     if stream_manager is None:
         available_streams[stream_id] = stream
 

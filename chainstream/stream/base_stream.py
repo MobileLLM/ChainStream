@@ -299,7 +299,8 @@ class BaseStream(StreamInterface):
         if len(self.listeners) == 0:
             self.is_running = False
             self.queue.put(self.STOP_SIGNAL)
-            self.thread.join()
+            if self.thread.is_alive():
+                self.thread.join()
             # print("No more listeners, stopping stream")
 
     def add_item(self, agent, item):

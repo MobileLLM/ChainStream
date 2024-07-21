@@ -5,13 +5,13 @@ import tempfile
 import importlib.util
 
 from chainstream.runtime import cs_server
+from chainstream.runtime import reset_chainstream_server
 import json
 import datetime
 
 from chainstream.sandbox_recorder import start_sandbox_recording
 from chainstream.agent.base_agent import Agent
 from chainstream.stream import create_stream
-from AgentGenerator.io_model import StreamDescription
 
 
 class SandboxError(Exception):
@@ -141,7 +141,9 @@ class SandBox:
 
             report_path = self._save_result(self.result)
             # print("Sandbox result saved to " + self.save_path)
+
             self.runtime.shutdown()
+            reset_chainstream_server()
 
             if return_report_path:
                 return report_path
@@ -200,7 +202,7 @@ class SandBox:
         return None
 
     def create_stream(self, stream_description):
-
+        from AgentGenerator.io_model import StreamDescription
         if isinstance(stream_description, StreamDescription):
             stream_id = stream_description.stream_id
         else:
@@ -231,6 +233,17 @@ class SandBox:
             with open(file_path, 'w') as f:
                 json.dump(result, f, indent=4)
         return file_path
+
+    # def __del__(self):
+    #     try:
+    #         self.runtime.shutdown()
+    #     except Exception as e:
+    #         print("Error while shutting down runtime:", e)
+    #     try:
+    #         reset_chainstream_server()
+    #         print("Sandbox object deleted")
+    #     except Exception as e:
+    #         print("Error while resetting chainstream server:", e)
 
 
 if __name__ == "__main__":
@@ -274,7 +287,7 @@ class EmailSummaryAgent(Agent):
                           .batch(by_count=5)\
                           .for_each(summarize_emails)
         
-    def stop(self, haha) -> None:
+    def stop(self) -> None:
         self.email_stream.unregister_all(self)
     '''
     config = Config()
