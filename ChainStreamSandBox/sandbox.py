@@ -89,7 +89,7 @@ class SandBox:
     def start_test_agent(self, return_report_path=False):
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            if not self.only_init_agent:
+            if self.task is not None:
                 self.task.init_environment(self.runtime)
 
             res = self._start_agent()
