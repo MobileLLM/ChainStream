@@ -1,7 +1,7 @@
 from ChainStreamSandBox import SandBox
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.stream_selector import StreamSelectorBase
-from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc
+from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc, chainstream_english_doc
 from AgentGenerator.prompt import REACT_PROMPT
 
 
@@ -40,13 +40,13 @@ class AgentGeneratorBase:
 
         # basic_prompt = f"{chainstream_chinese_doc}\n{input_and_output_prompt}"
 
-        return self.generate_agent_impl(chainstream_chinese_doc, input_and_output_prompt)
+        return self.generate_agent_impl(chainstream_english_doc, input_and_output_prompt)
 
     # def generate_agent_impl(self, input_description: [StreamListDescription, None], output_description:
     # StreamListDescription) -> str: raise NotImplementedError("Agent generator must implement generate_agent_impl
     # function.")
 
-    def generate_agent_impl(self, chainstream_chinese_doc: str, input_and_output_prompt: str) -> str:
+    def generate_agent_impl(self, chainstream_doc: str, input_and_output_prompt: str) -> str:
         raise NotImplementedError("Agent generator must implement generate_agent_impl function.")
 
     def generate_agent_for_runtime(self, output_description: StreamListDescription):

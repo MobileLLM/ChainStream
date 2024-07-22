@@ -1,5 +1,4 @@
 from chainstream.interfaces import StreamInterface
-from chainstream.runtime import cs_server_core
 from .stream_recorder import StreamRecorder
 import logging
 import datetime
@@ -118,6 +117,7 @@ class BaseStream(StreamInterface):
 
         self.recorder = StreamRecorder(self.metaData, self.queue)
 
+        from chainstream.runtime import cs_server_core
         cs_server_core.register_stream(self)
 
     def for_each(self, agent, listener_func, to_stream=None):

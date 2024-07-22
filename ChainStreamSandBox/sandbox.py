@@ -4,7 +4,6 @@ import traceback
 import tempfile
 import importlib.util
 
-from chainstream.runtime import cs_server
 from chainstream.runtime import reset_chainstream_server
 import json
 import datetime
@@ -53,6 +52,7 @@ class InitializeError(SandboxError):
 class SandBox:
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
                  raise_exception=True, only_init_agent=False):
+        from chainstream.runtime import cs_server
         cs_server.init(server_type='core')
         cs_server.start()
 
