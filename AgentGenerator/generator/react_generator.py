@@ -30,6 +30,7 @@ class ReactGenerator(ReactAgentGenerator):
 
         # print(f"First Prompt: {prompt}")
 
+        last_agent_code = None
         for i in range(1, self.max_loop):
             n_calls += 1
             thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
@@ -43,7 +44,9 @@ class ReactGenerator(ReactAgentGenerator):
                 thought = thought_action.strip().split('\n')[0]
                 action = self._query_llm(prompt + f"Thought {i}: {thought}\nAction {i}:", stop=[f"\n"]).strip()
 
-            error_prompt, done = self.step(action)
+            error_prompt, done, entity = self.step(action)
+            if entity is not None:
+                last_agent_code = entity
 
             error = error_prompt.replace('\\n', '')
             step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nObservation {i}: {error}\n"
@@ -53,7 +56,11 @@ class ReactGenerator(ReactAgentGenerator):
             if done:
                 break
         if not done:
-            error_prompt, done = self.step("FINISH<<>>")
+            error_prompt, done, entity = self.step("FINISH<<>>")
+            if entity is not None:
+                last_agent_code = entity
+
+        return last_agent_code
 
     def _query_llm(self, prompt, stop=None):
 
@@ -79,6 +86,7 @@ class ReactGenerator(ReactAgentGenerator):
             obs = "[FormatError] You can only provide one code or one finish action at a time, please check your response format and try again."
             return obs, done
 
+        tmp_agent_code = None
         action = action.strip()
         if action.startswith("CODE<<") and action.endswith(">>"):
             entity = action[len("CODE<<"):-2]
@@ -88,6 +96,7 @@ class ReactGenerator(ReactAgentGenerator):
                 entity = entity.strip()
                 if entity.startswith("```python") and entity.endswith("```"):
                     entity = entity[len("```python"):-3]
+                tmp_agent_code = entity
                 obs = self.sandbox_exec(entity)
         elif action.startswith("FINISH<<") and action.endswith(">>"):
             answer = action[len("FINISH<<"):-2]
@@ -99,7 +108,7 @@ class ReactGenerator(ReactAgentGenerator):
         else:
             obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, THINK<<`your_thought`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(action)
 
-        return obs, done
+        return obs, done, tmp_agent_code
 
     def sandbox_exec(self, agent_code) -> str:
         sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
