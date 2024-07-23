@@ -12,13 +12,21 @@ class VideoTask1(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_ego_stream = None
         self.input_ego_stream = None
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "ego_4D",
+            "description": "All first person perspective images",
+            "fields": {
+                # "Occupation": " xxx, string",
+                # "Sleep Duration": " xxx, float",
+                # "Age": " xxx, int"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "analysis_results",
-                "description": "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking','swimming','climbing','skating'],and just tell me what kind",
+                "stream_id": "analysis_actions",
+                "description": "Detect what I am doing right now",
                 "fields": {
-                    "screenshot_id": "id of the screenshot, string",
-                    "analysis_result": "result of the analysis, string"}
+                    "analysis_result": " result xxx, string"}
             }
         ])
         self.ego_4d_data = Ego4DData().load_for_action()
@@ -28,7 +36,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.screenshot_input = cs.get_stream(self, "ego_4D")
-        self.analysis_output = cs.get_stream(self, "analysis_pages")
+        self.analysis_output = cs.get_stream(self, "analysis_actions")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
@@ -46,7 +54,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_ui_stream = cs.stream.create_stream(self, 'ego_4D')
-        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_pages')
+        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_actions')
 
         self.output_record = []
 

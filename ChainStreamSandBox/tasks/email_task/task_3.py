@@ -16,7 +16,14 @@ class EmailTask3(SingleAgentTaskConfigBase):
         self.input_email_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_email",
+            "description": "All email messages",
+            "fields": {
+                "receiver": "name xxx, string",
+                "Content": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_by_receiver",
@@ -98,6 +105,7 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
         for message in self.email_data:
             message['receiver'] = message['To']
             received_messages.append(message)
+            print(message)
             self.input_email_stream.add_item(message)
         return received_messages
 

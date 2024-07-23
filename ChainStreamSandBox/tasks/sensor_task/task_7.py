@@ -16,13 +16,21 @@ class WeatherTask4(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_weather",
+            "description": "All weather information",
+            "fields": {
+                "Wind_Speed_kmh": " xxx, float",
+                "Date_Time": "date xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_stream4",
-                "description": "Judging whether I need to collect the clothes in the balcony by the current wind speed",
+                "stream_id": "remind_clothes",
+                "description": "If the current wind speed is over 20,remind me to take all the clothes in the balcony",
                 "fields": {
-                    "precipitation":"xxx,string",
+                    "date_time": "date xxx, string",
+                    "wind_speed_kmh": "text xxx, float",
                     "reminder":"Collect the clothes in the balcony!"
                 }
             }
@@ -52,7 +60,7 @@ class AgentExampleForSensorTask7(cs.agent.Agent):
                 self.sensor_output.add_item({
                     "date_time": date_time,
                     "wind_speed": wind_speed,
-                    "remind": "Collect the clothes in the balcony!"
+                    "reminder": "Collect the clothes in the balcony!"
                 })
         self.sensor_input.for_each(filter_precipitation).batch(by_count=2).for_each(reminder)
         '''

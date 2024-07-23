@@ -8,7 +8,7 @@ random.seed(6666)
 
 
 class HealthTask4(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=100, eos_gap=4):
+    def __init__(self, sensor_number=80, eos_gap=4):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -16,14 +16,20 @@ class HealthTask4(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_health",
+            "description": "All health information",
+            "fields": {
+                "HeartRate": " xxx, float"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "health_stream4",
-                "description": "Remind me to rest myself when my heart rate is over 95/min",
+                "stream_id": "remind_rest",
+                "description": "Remind me to rest myself when my heart rate is over 85",
                 "fields": {
                     "Heart Rate":"xxx,string",
-                    "Reminder":"Heart rate is too high!Remember to rest yourself!"
+                    "reminder":"Heart rate is too high!Remember to rest yourself!"
                 }
             }
         ])
@@ -49,7 +55,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
                 HeartRate = health['HeartRate']
                 self.sensor_output.add_item({
                     "HeartRate": str(HeartRate)+"/min",
-                    "remind": "Heart rate is too high!Remember to rest yourself!"
+                    "reminder": "Heart rate is too high!Remember to rest yourself!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)
         '''

@@ -16,14 +16,23 @@ class StockTask1(SingleAgentTaskConfigBase):
         self.input_stock_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_stock",
+            "description": "All stock information",
+            "fields": {
+                "symbol": "name xxx, string",
+                "open": "text xxx, string",
+                "close": "text xxx, string",
+                "volume": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "up_or_down",
-                "description": "A analysis of the up or down of my stock every single day",
+                "description": "A analysis of the up or down percentage of my stock(symbol MLM) with the volume",
                 "fields": {
-                    "up or down": "xxx, float",
-                    "symbol": "xxx, string"
+                    "change_percentage": "xxx, float",
+                    "volume": "xxx, string"
                 }
             }
         ])

@@ -16,11 +16,19 @@ class HealthTask5(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_health",
+            "description": "All health information",
+            "fields": {
+                "Occupation": " xxx, string",
+                "Sleep Duration": " xxx, float",
+                "Age": " xxx, int"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "health_stream5",
-                "description": "Count the ages and sleep times of all the company's programmers and give "
+                "stream_id": "engineer_advice",
+                "description": "Count the ages and sleep times of all the company's engineer and give "
                                "reasonable advice",
                 "fields": {
                     "age":"xxx,string",
@@ -38,11 +46,11 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_health_task_5"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_health")
-        self.sensor_output = cs.get_stream(self, "programmer_advice")
+        self.sensor_output = cs.get_stream(self, "engineer_advice")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def filter_programmers(health):
+        def filter_engineer(health):
             occupation = health['Occupation']
             if occupation == "Engineer":
                 return health
@@ -51,8 +59,8 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
             for health in health_list['item_list']:
                 sleep_time = health['Sleep Duration']
                 age = health['Age']
-                prompt = ("These are the ages and the sleep duration of all the software engineers in our company. "
-                          "Do you think the sleeping time is enough? Make your own opinion and give some suggestions.")
+                prompt = ("These are the ages and the sleep duration of all the software engineers in our company."
+                          "Do you think the sleeping time is enough? Simply answer y or n.If the answer is n,give some suggestions.")
                 res = self.llm.query(cs.llm.make_prompt(f"Age: {age}, Sleep Duration: {sleep_time} hours", prompt))
                 self.sensor_output.add_item({
                     "age": age,
@@ -60,12 +68,12 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
                     "advice": res
                 })
 
-        self.sensor_input.for_each(filter_programmers).batch(by_count=2).for_each(reminder)
+        self.sensor_input.for_each(filter_engineer).batch(by_count=2).for_each(reminder)
         '''
 
     def init_environment(self, runtime):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_sensor_stream = cs.stream.create_stream(self, 'programmer_advice')
+        self.output_sensor_stream = cs.stream.create_stream(self, 'engineer_advice')
 
         self.output_record = []
 

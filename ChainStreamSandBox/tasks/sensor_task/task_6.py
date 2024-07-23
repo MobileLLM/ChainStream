@@ -16,14 +16,22 @@ class WeatherTask3(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_weather",
+            "description": "All weather information",
+            "fields": {
+                "Precipitation_mm": "date xxx, float",
+                "Date_Time": "date xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_stream3",
-                "description": "Tell me if I need to wear rain boots based on current precipitation",
+                "stream_id": "remind_rainfall",
+                "description": "If the current precipitation is over 5,remind me to wear rain boots if I go out",
                 "fields": {
+                    "date_time":"xxx,string",
                     "precipitation":"xxx,string",
-                    "reminder":"xxx,string"
+                    "reminder":"Rain boots are recommended for walking outside!"
                 }
             }
         ])
@@ -51,8 +59,8 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
                 date_time = weather.get('Date_Time')
                 self.sensor_output.add_item({
                     "date_time": date_time,
-                    "humidity": precipitation+"mm",
-                    "remind": "Rain boots are recommended for walking outside!"
+                    "precipitation": precipitation+"mm",
+                    "reminder": "Rain boots are recommended for walking outside!"
                 })
         self.sensor_input.for_each(filter_precipitation).batch(by_count=2).for_each(reminder)
         '''

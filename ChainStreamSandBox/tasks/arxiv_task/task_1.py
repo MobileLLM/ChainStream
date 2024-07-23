@@ -16,13 +16,20 @@ class ArxivTask1(SingleAgentTaskConfigBase):
         self.input_paper_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_arxiv",
+            "description": "All arxiv information",
+            "fields": {
+                "title": "name xxx, string",
+                "abstract": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "summary_by_sender",
-                "description": "A list of summaries of each arxiv paper on LLM",
+                "stream_id": "summary_of_paper",
+                "description": "A list of summaries of each arxiv paper on computer science",
                 "fields": {
-                    "website": "name xxx, string",
+                    "title": "name xxx, string",
                     "summary": "sum xxx, string"
                 }
             }

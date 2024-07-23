@@ -16,14 +16,20 @@ class HealthTask3(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_health",
+            "description": "All health information",
+            "fields": {
+                "BMI Category": " xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "health_stream3",
-                "description": "Remind me to take some exercise when my BMI is not a normal weight everyday",
+                "stream_id": "remind_exercise",
+                "description": "Remind me to take some exercise when my BMI is 'Overweight' or 'Obese' everyday",
                 "fields": {
-                    "Blood_sugar":"xxx,string",
-                    "Reminder":"Excercise yourself!"
+                    "BMI":"xxx,string",
+                    "reminder":"Excercise yourself!"
                 }
             }
         ])
@@ -49,7 +55,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
                 BMI = health['BMI Category']
                 self.sensor_output.add_item({
                     "BMI": BMI,
-                    "remind": "Excercise yourself!"
+                    "reminder": "Excercise yourself!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)
         '''

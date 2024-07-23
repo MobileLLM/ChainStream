@@ -16,14 +16,22 @@ class WeatherTask2(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_weather",
+            "description": "All weather information",
+            "fields": {
+                "Humidity_pct": "date xxx, float",
+                "Date_Time": "date xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_stream2",
-                "description": "When the humidity percentage is over 70%,remind me of the slippery",
+                "stream_id": "remind_wet",
+                "description": "When the humidity percentage is over 70,remind me of the slippery",
                 "fields": {
+                    "date_time":"date xxx, string",
                     "humidity":"xxx,string",
-                    "remind":"When walking on the road, pay attention to wet and slippery!"
+                    "reminder":"When walking on the road, pay attention to wet and slippery!"
                 }
             }
         ])
@@ -53,7 +61,7 @@ class AgentExampleForSensorTask5(cs.agent.Agent):
                 self.sensor_output.add_item({
                     "date_time": date_time,
                     "humidity": humidity+"%",
-                    "remind": "When walking on the road, pay attention to wet and slippery!"
+                    "reminder": "When walking on the road, pay attention to wet and slippery!"
                 })
         self.sensor_input.for_each(filter_humidity).batch(by_count=2).for_each(reminder)
         '''

@@ -16,11 +16,19 @@ class NewsTask1(SingleAgentTaskConfigBase):
         self.input_news_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_news",
+            "description": "All news messages",
+            "fields": {
+                "category": "name xxx, string",
+                "date": "date xxx, string",
+                "short_description":"text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_from_dialogue",
-                "description": "A summary of the dialogues in conference from the news",
+                "description": "A summary of the dialogues in conference from the news with the date",
                 "fields": {
                     "conference": "name xxx, string",
                     "summary": "sum xxx, string"
