@@ -20,7 +20,7 @@ class AgentFunction:
             result = self.func(*args, **kwargs)
         except Exception as e:
             raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
-        if self.output_stream is not None:
+        if self.output_stream is not None and result is not None:
             self.output_stream.add_item(result)
 
         from chainstream.sandbox_recorder import SANDBOX_RECORDER

@@ -89,7 +89,7 @@ class SandBox:
     def start_test_agent(self, return_report_path=False):
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            if not self.only_init_agent:
+            if self.task is not None:
                 self.task.init_environment(self.runtime)
 
             res = self._start_agent()
@@ -111,7 +111,7 @@ class SandBox:
                         raise RunningError(traceback.format_exc())
                 else:
                     self.result['start_task'] = "[OK]"
-                    self.result['input_stream_item'] = sent_item
+                    self.result['input_stream_item'] = self._process_item_list_to_str(sent_item)
 
                 # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
                 # we only want to init the task environment and start the agent, then start the stream and record all output
@@ -119,7 +119,10 @@ class SandBox:
 
                 self.runtime.wait_all_stream_clear()
 
-                self.result['output_stream_output'] = self.task.record_output()
+                tmp_output = self.task.record_output()
+                # print("before record output", tmp_output)
+                tmp_output['data'] = self._process_item_list_to_str(tmp_output['data'])
+                self.result['output_stream_output'] = tmp_output
 
                 self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -148,6 +151,23 @@ class SandBox:
             if return_report_path:
                 return report_path
             return self.result
+
+    def _process_item_list_to_str(self, item_list):
+        str_sent_item = []
+        for item in item_list:
+            if isinstance(item, str):
+                str_sent_item.append(item)
+            elif isinstance(item, dict):
+                tmp_str_item = {}
+                for k, v in item.items():
+                    tmp_str_item[k] = str(v)
+                str_sent_item.append(tmp_str_item)
+            elif isinstance(item, list):
+                str_sent_item.append([str(i) for i in item])
+            else:
+                raise RunningError("Unsupported item type: "+ str(type(item)))
+
+        return str_sent_item
 
     def _start_agent(self):
         try:
