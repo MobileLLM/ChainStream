@@ -19,6 +19,7 @@ class AgentFunction:
         setattr(self.func, "func_id", self.func_id)
 
     def __call__(self, *args, **kwargs):
+        result = None
         try:
             result = self.func(*args, **kwargs)
         except Exception as e:
@@ -29,7 +30,7 @@ class AgentFunction:
                 "agent_id": self.agent.agent_id,
                 "output_stream_id": self.output_stream.stream_id if self.output_stream is not None else None,
             }
-            cs_server_core.record_error(ErrorType.FUNCTION_ERROR, error_message=error_msg, error_traceback=traceback.format_exc())
+            cs_server_core.record_error(ErrorType.FUNCTION_ERROR.value, error_message=error_msg, error_traceback=traceback.format_exc())
             # raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
         if self.output_stream is not None and result is not None:
             self.output_stream.add_item(result)

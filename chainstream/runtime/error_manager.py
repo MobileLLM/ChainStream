@@ -31,7 +31,7 @@ class ErrorManager:
             "other_error": [],
         }
 
-    def record_error(self, error_type: ErrorType, error_message, traceback_obj=None):
+    def record_error(self, error_type, error_message, traceback_obj=None):
         if traceback_obj is None:
             traceback_obj = traceback.format_exc()
         self.error_count += 1

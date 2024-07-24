@@ -151,6 +151,7 @@ class SandBox:
             reset_chainstream_server()
 
             if return_report_path:
+                print("Sandbox result saved to ", report_path)
                 return report_path
             return self.result
 
@@ -283,8 +284,8 @@ from chainstream.llm import get_model, make_prompt
 class EmailSummaryAgent(Agent):
     def __init__(self, agent_id: str="email_summary_agent"):
         super().__init__(agent_id)
-        self.email_stream = create_stream(self, "all_email")
-        self.summary_stream = create_stream(self, "summary_by_sender")
+        self.email_stream = get_stream(self, "all_email")
+        self.summary_stream = get_stream(self, "summary_by_sender")
         self.llm = get_model(["text"])
 
     def start(self) -> None:
@@ -313,12 +314,12 @@ class EmailSummaryAgent(Agent):
         self.email_stream.unregister_all(self)
     '''
     config = Config()
-    oj = SandBox(config, agent_file, save_result=False, only_init_agent=True)
+    oj = SandBox(config, agent_file, save_result=True, only_init_agent=False)
 
-    res = oj.start_test_agent(return_report_path=False)
+    res = oj.start_test_agent(return_report_path=True)
     print(res)
 
-    if res['start_agent'] != "[OK]":
-        print("\n\nError while starting agent:", res['start_agent']['error_message'])
-        for line in res['start_agent']['traceback'].split('\n'):
-            print(line)
+    # if res['start_agent'] != "[OK]":
+    #     print("\n\nError while starting agent:", res['start_agent']['error_message'])
+    #     for line in res['start_agent']['traceback'].split('\n'):
+    #         print(line)
