@@ -142,6 +142,8 @@ class SandBox:
                 raise e
         finally:
 
+            self.result['error_message'] = self.runtime.get_error_history()
+
             report_path = self._save_result(self.result)
             # print("Sandbox result saved to " + self.save_path)
 

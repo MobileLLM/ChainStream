@@ -1,4 +1,4 @@
-from video_list import video_list
+from .video_list import video_list
 import os
 import PIL.Image as Image
 import random
