@@ -16,15 +16,23 @@ class HealthTask1(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_health",
+            "description": "All health information",
+            "fields": {
+                "SystolicBP": " xxx, float",
+                "DiastolicBP": "date xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "health_stream1",
-                "description": "Remind me to take some medicine when my blood pressure is above normal",
+                "stream_id": "remind_medicine",
+                "description": "Remind me to take some medicine when my systolic blood pressure is above 120,"
+                               "and my diastolic blood pressure is over 70",
                 "fields": {
                     "SystolicBP":"xxx,string",
                     "DiastolicBP":"xxx,string",
-                    "Reminder":"Remember to take your medicine!"
+                    "reminder":"Remember to take your medicine!"
                 }
             }
         ])
@@ -54,7 +62,7 @@ class AgentExampleForSensorTask8(cs.agent.Agent):
                 self.sensor_output.add_item({
                     "SystolicBP": str(SystolicBP) + "mmHg",
                     "DiastolicBP": str(DiastolicBP) + "mmHg",
-                    "remind": "Remember to take your medicine!"
+                    "reminder": "Remember to take your medicine!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)
         '''

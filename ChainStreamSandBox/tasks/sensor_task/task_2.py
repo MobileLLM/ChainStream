@@ -16,11 +16,19 @@ class GPSTask2(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_locations",
+            "description": "All locations information",
+            "fields": {
+                "PrimaryPropertyType": "name xxx, string",
+                "Street Address": "text xxx, string",
+                "PropertyName": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "hotel_nearest",
-                "description": "Tell me the nearest hotel according to my address",
+                "stream_id": "nearest_hotel",
+                "description": "Tell me the hotel name around according to my street address",
                 "fields": {
                     "address":"xxx,string",
                     "hotel":"xxx,string"

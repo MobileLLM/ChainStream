@@ -16,7 +16,7 @@ class LandmarkData:
             csv_reader = csv.DictReader(f)
             headers = csv_reader.fieldnames
             expected_headers = [
-                'PrimaryPropertyType', 'PropertyName', 'Location', 'Neighborhood', 'YearBuilt',
+                'PrimaryPropertyType', 'PropertyName', 'Street Address', 'Neighborhood', 'YearBuilt',
                 'NumberofFloors', 'Electricity(kWh)', 'NaturalGas(therms)', 'GHGEmissions(MetricTonsCO2e)'
             ]
             if not all(header in headers for header in expected_headers):
@@ -26,7 +26,7 @@ class LandmarkData:
                 landmark_entry = {
                     'PrimaryPropertyType': row['PrimaryPropertyType'],
                     'PropertyName': row['PropertyName'],
-                    'Location': row['Location'],
+                    'Street Address': row['Street Address'],
                     'Neighborhood': row['Neighborhood'],
                     'YearBuilt': int(row['YearBuilt']),
                     'NumberofFloors': int(row['NumberofFloors']) if row['NumberofFloors'] else None,

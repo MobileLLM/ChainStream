@@ -16,7 +16,16 @@ class GPSTask1(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_locations",
+            "description": "All locations information",
+            "fields": {
+                "ContinentName": "name xxx, string",
+                "CapitalLatitude": "text xxx, string",
+                "CapitalLongitude": "text xxx, string",
+                "CapitalName":"text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "country_analysis",
@@ -25,7 +34,7 @@ class GPSTask1(SingleAgentTaskConfigBase):
                 "fields": {
                     "longitude": "xxx, string",
                     "latitude": "XXX, string",
-                    "country": "XXX, string"
+                    "city": "XXX, string"
                 }
             }
         ])
@@ -57,7 +66,7 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
                 self.sensor_output.add_item({
                     "latitude": latitude,
                     "longitude": longitude,
-                    "country":capital
+                    "city":capital
                 })
 
         self.sensor_input.for_each(filter_location).batch(by_count=2).for_each(analysis_location)

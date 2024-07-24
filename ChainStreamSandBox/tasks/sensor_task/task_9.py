@@ -16,14 +16,20 @@ class HealthTask2(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_health",
+            "description": "All health information",
+            "fields": {
+                "BS": " xxx, float"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "health_stream2",
-                "description": "Remind me to hospital when my blood sugar is above normal",
+                "stream_id": "remind_medicine",
+                "description": "Remind me to hospital when my blood sugar is above 8.4",
                 "fields": {
                     "Blood_sugar":"xxx,string",
-                    "Reminder":"High blood sugar！You'd better go to the hospital to check your body!"
+                    "reminder":"High blood sugar！You'd better go to the hospital to check your body!"
                 }
             }
         ])
@@ -50,7 +56,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
                 Blood_sugar = health['BS']
                 self.sensor_output.add_item({
                     "Blood_sugar": str(Blood_sugar)+"mmol/L",
-                    "remind": "High blood sugar！You'd better go to the hospital to check your body!"
+                    "reminder": "High blood sugar！You'd better go to the hospital to check your body!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)
         '''

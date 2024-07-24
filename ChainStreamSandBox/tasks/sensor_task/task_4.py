@@ -16,11 +16,18 @@ class WeatherTask1(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_weather",
+            "description": "All weather information",
+            "fields": {
+                "Date_Time": "date xxx, string",
+                "Temperature_C": "temp xxx, float"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_stream",
-                "description": "Recommend the suitable clothing today according to the temperature this month",
+                "stream_id": "clothing_recommendation",
+                "description": "Recommend the suitable clothing according to the temperature this month(May)",
                 "fields": {
                     "temperature":"xxx,string",
                     "clothing":"xxx,string"

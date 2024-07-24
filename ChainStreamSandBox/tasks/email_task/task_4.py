@@ -16,7 +16,14 @@ class EmailTask4(SingleAgentTaskConfigBase):
         self.input_email_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_email",
+            "description": "All email messages",
+            "fields": {
+                "sender": "name xxx, string",
+                "Content": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply",

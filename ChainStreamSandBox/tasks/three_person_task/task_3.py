@@ -1,20 +1,20 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
-from ChainStreamSandBox.raw_data import Ego4DData
+from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 
 random.seed(6666)
 
-class VideoTask1(SingleAgentTaskConfigBase):
+class VideoTask6(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
         self.output_ego_stream = None
         self.input_ego_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "ego_4D",
-            "description": "All first person perspective images",
+            "stream_id": "three_person",
+            "description": "All third person perspective images",
             "fields": {
                 # "Occupation": " xxx, string",
                 # "Sleep Duration": " xxx, float",
@@ -23,38 +23,37 @@ class VideoTask1(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "analysis_actions",
-                "description": "Detect what I am doing right now",
+                "stream_id": "detect_person",
+                "description": "Determine if the secret base has been invaded by person",
                 "fields": {
-                    "analysis_result": " result xxx, string"}
+                    "analysis_result": "result xxx, string"}
             }
         ])
-        self.ego_4d_data = Ego4DData().load_for_action()
+        self.Sphar_data = SpharData().load_for_person_detection()
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
-        self.screenshot_input = cs.get_stream(self, "ego_4D")
-        self.analysis_output = cs.get_stream(self, "analysis_actions")
+        self.surveillance_input = cs.get_stream(self, "three_person")
+        self.analysis_output = cs.get_stream(self, "detect_person")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def analyze_screenshot(ego_data):
-            print(type(ego_data))
-            prompt = "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking','swimming','climbing','skating'],and just tell me what kind"
-            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data))
+        def analyze_surveillance(three_person_data):
+            prompt = "The following images were captured by a surveillance camera at a secret base.Judge if there is personnel in the secret base?simply answer y or n"
+            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
             print("analyze_screenshot", res)
             self.analysis_output.add_item({
                 "analysis_result": res
             })
 
-        self.screenshot_input.for_each(analyze_screenshot)
+        self.surveillance_input.for_each(analyze_surveillance)
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'ego_4D')
-        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_actions')
+        self.input_ui_stream = cs.stream.create_stream(self, 'three_person')
+        self.output_ui_stream = cs.stream.create_stream(self, 'detect_person')
 
         self.output_record = []
 
@@ -66,9 +65,9 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         processed_results = []
-        for screenshot in self.ego_4d_data:
-            processed_results.append(screenshot)
-            self.input_ui_stream.add_item(screenshot)
+        for shot in self.Sphar_data:
+            processed_results.append(shot)
+            self.input_ui_stream.add_item(shot)
         return processed_results
 
     def stop_task(self, runtime):

@@ -49,6 +49,82 @@ You can use other common Python libraries to fulfill your processing requirement
 
 The returned code should follow PEP8 standards.
 
+Now I will give you a specific example to demonstrate how you should use ChainStream to complete an Agent. Suppose you want to summarize all the emails sent by each sender, excluding advertisements. You can provide an Agent like this:
+
+import chainstream as cs
+
+class AgentExampleForEmailTask1(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_email_task_1"):
+        super().__init__(agent_id)
+        self.email_input = cs.get_stream(self, "all_email")
+        self.email_output = cs.get_stream(self, "summary_by_sender")
+        self.llm = cs.llm.get_model("Text")
+
+    def start(self):
+        def filter_ads(email):
+            prompt = "is this email an advertisement? answer y or n"
+            res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
+            print("filter_ads", res)
+            if res.lower() == 'n':
+                return email
+
+        def group_by_sender(email_list):
+            email_list = email_list['item_list']
+            sender_group = {}
+            for email in email_list:
+                if email['sender'] not in sender_group:
+                    sender_group[email['sender']] = [email]
+                else:
+                    sender_group[email['sender']].append(email)
+
+            print("group_by_sender", list(sender_group.values()))
+            return list(sender_group.values())
+
+        def sum_by_sender(sender_email):
+            sender = sender_email[0]['sender']
+            prompt = "Summarize these all email here"
+            print("sum_by_sender: query", [x['Content'] for x in sender_email], prompt)
+            res = self.llm.query(cs.llm.make_prompt([x['Content'] for x in sender_email], prompt))
+            print("sum_by_sender", res)
+            self.email_output.add_item({
+                "sender": sender,
+                "summary": res
+            })
+
+        self.email_input.for_each(filter_ads).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
+
+Now I will give you another example:Suppose you want to filter the temperatures for May and recommend clothing to users based on the temperatures. You can provide an Agent like this:
+
+import chainstream as cs
+import pandas as pd
+
+class AgentExampleForSensorTask4(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_weather_task_1"):
+        super().__init__(agent_id)
+        self.sensor_input = cs.get_stream(self, "all_weather")
+        self.sensor_output = cs.get_stream(self, "clothing_recommendation")
+        self.llm = cs.llm.get_model("Text")
+
+    def start(self):
+        def filter_date(weather):
+            date_str = weather.get('Date_Time')
+            date = pd.to_datetime(date_str, format='%Y/%m/%d %H:%M:%S', errors='coerce')
+            if pd.isna(date):
+                return None
+            if date.year == 2024 and date.month == 5:
+                return weather
+
+        def recommend_clothing(weather_list):
+            for weather in weather_list['item_list']:
+                temperature = weather.get('Temperature_C')
+                if temperature is not None:
+                    prompt = "Recommend the suitable clothing today according to the temperature."
+                    res = self.llm.query(cs.llm.make_prompt(str(temperature), prompt))
+                    self.sensor_output.add_item({
+                        "temperature": temperature,
+                        "clothing": res
+                    })
+        self.sensor_input.for_each(filter_date).batch(by_count=2).for_each(recommend_clothing)
 ---
 '''
 

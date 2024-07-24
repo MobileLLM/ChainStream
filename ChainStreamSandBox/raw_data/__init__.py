@@ -14,3 +14,4 @@ from .Sensor.activity import ActivityData
 from .Sensor.weather import WeatherData
 from .Sensor.wifi import WifiData
 from .Sensor.health import HealthData
+from .three_person_video.sphar.sphar_data import SpharData

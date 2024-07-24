@@ -16,7 +16,14 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.input_paper_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_arxiv",
+            "description": "All arxiv information",
+            "fields": {
+                "title": "name xxx, string",
+                "abstract": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "research_method",

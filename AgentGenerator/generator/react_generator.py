@@ -76,7 +76,7 @@ class ReactGenerator(ReactAgentGenerator):
         print(f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
         return response
 
-    def step(self, action) -> (str, bool):
+    def step(self, action) -> (str, bool,str):
         done = False
 
         code_num = action.count("CODE<<")
@@ -84,7 +84,7 @@ class ReactGenerator(ReactAgentGenerator):
 
         if code_num + finish_num > 1:
             obs = "[FormatError] You can only provide one code or one finish action at a time, please check your response format and try again."
-            return obs, done
+            return obs, done, None
 
         tmp_agent_code = None
         action = action.strip()

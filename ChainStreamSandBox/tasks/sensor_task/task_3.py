@@ -16,14 +16,22 @@ class GPSTask3(SingleAgentTaskConfigBase):
         self.input_sensor_stream = None
 
         self.eos_gap = eos_gap
-
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_locations",
+            "description": "All locations information",
+            "fields": {
+                "PrimaryPropertyType": "name xxx, string",
+                "Street Address": "text xxx, string",
+                "PropertyName": "text xxx, string"
+            }
+        }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "school_street",
-                "description": "Tell me the street address of all the schools in my city",
+                "stream_id": "street_of_school",
+                "description": "Tell me the street address of all the 'K-12 School' in my city",
                 "fields": {
                     "address":"xxx,string",
-                    "hotel":"xxx,string"
+                    "school":"xxx,string"
                 }
             }
         ])
