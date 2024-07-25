@@ -59,7 +59,7 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
                 date_time = weather.get('Date_Time')
                 self.sensor_output.add_item({
                     "date_time": date_time,
-                    "precipitation": precipitation+"mm",
+                    "precipitation": str(precipitation)+"mm",
                     "reminder": "Rain boots are recommended for walking outside!"
                 })
         self.sensor_input.for_each(filter_precipitation).batch(by_count=2).for_each(reminder)
