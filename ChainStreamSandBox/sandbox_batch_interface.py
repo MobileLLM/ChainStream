@@ -31,6 +31,11 @@ class BatchInterfaceBase:
             self.report_path_base = self.test_log['report_path_base']
             self.repeat_time = self.test_log['repeat_time']
 
+            if self.test_log['test_description'] is None:
+                self.test_log['test_description'] = [self._get_test_description()]
+            else:
+                self.test_log['test_description'].append(self._get_test_description())
+
             self.run_times = self.test_log["run_times"]
 
             if isinstance(self.test_log['start_time'], str):
@@ -38,6 +43,13 @@ class BatchInterfaceBase:
                                                datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")]
             else:
                 self.test_log['start_time'].append(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))
+
+    def _get_test_description(self):
+        tmp_des = {
+            "test_description": input("描述一下这次测试的目的，这段文字会被自动记录到log文件中，用于后续区分测试结果"),
+            "time": datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        }
+        return tmp_des
 
     def _set_base_log(self):
         self.test_log = {
@@ -48,6 +60,7 @@ class BatchInterfaceBase:
             "task_list": list(self.task_list),
             "repeat_time": self.repeat_time,
             "generator": self._set_generator_log(),
+            "test_description": [self._get_test_description()],
             "task_log": {
                 xx: []
                 for xx in self.task_list

@@ -1,12 +1,12 @@
 from AgentGenerator.generator.generator_base import ReactAgentGenerator
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.utils import TextGPTModel
-from AgentGenerator.prompt import REACT_PROMPT_WITH_RUNNING
+from AgentGenerator.prompt import REACT_PROMPT_ONLY_START
 from AgentGenerator.prompt import PromptSelector
 import datetime
 
 
-class ReactPlusGenerator(ReactAgentGenerator):
+class ReactGeneratorForStarting(ReactAgentGenerator):
     """
         React with sandbox starting error ability
     """
@@ -19,7 +19,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
 
     def generate_agent_impl(self, chainstream_doc, input_and_output_prompt, react_prompt=None) -> str:
         if react_prompt is None:
-            react_prompt = REACT_PROMPT_WITH_RUNNING
+            react_prompt = REACT_PROMPT_ONLY_START
 
         prompt = f"Doc: {chainstream_doc}\nMission: {input_and_output_prompt}\nInstructions: {react_prompt}\n"
 
@@ -30,6 +30,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
 
         # print(f"First Prompt: {prompt}")
 
+        last_agent_code = None
         for i in range(1, self.max_loop):
             n_calls += 1
             thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
@@ -43,7 +44,9 @@ class ReactPlusGenerator(ReactAgentGenerator):
                 thought = thought_action.strip().split('\n')[0]
                 action = self._query_llm(prompt + f"Thought {i}: {thought}\nAction {i}:", stop=[f"\n"]).strip()
 
-            error_prompt, done = self.step(action)
+            error_prompt, done, entity = self.step(action)
+            if entity is not None:
+                last_agent_code = entity
 
             error = error_prompt.replace('\\n', '')
             step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nObservation {i}: {error}\n"
@@ -53,7 +56,11 @@ class ReactPlusGenerator(ReactAgentGenerator):
             if done:
                 break
         if not done:
-            error_prompt, done = self.step("FINISH<<>>")
+            error_prompt, done, entity = self.step("FINISH<<>>")
+            if entity is not None:
+                last_agent_code = entity
+
+        return last_agent_code
 
     def _query_llm(self, prompt, stop=None):
 
@@ -69,7 +76,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
         print(f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
         return response
 
-    def step(self, action) -> (str, bool):
+    def step(self, action) -> (str, bool,str):
         done = False
 
         code_num = action.count("CODE<<")
@@ -77,8 +84,9 @@ class ReactPlusGenerator(ReactAgentGenerator):
 
         if code_num + finish_num > 1:
             obs = "[FormatError] You can only provide one code or one finish action at a time, please check your response format and try again."
-            return obs, done
+            return obs, done, None
 
+        tmp_agent_code = None
         action = action.strip()
         if action.startswith("CODE<<") and action.endswith(">>"):
             entity = action[len("CODE<<"):-2]
@@ -88,10 +96,8 @@ class ReactPlusGenerator(ReactAgentGenerator):
                 entity = entity.strip()
                 if entity.startswith("```python") and entity.endswith("```"):
                     entity = entity[len("```python"):-3]
+                tmp_agent_code = entity
                 obs = self.sandbox_exec(entity)
-        elif action.startswith("TEST<<") and action.endswith(">>"):
-            pass
-
         elif action.startswith("FINISH<<") and action.endswith(">>"):
             answer = action[len("FINISH<<"):-2]
             self.answer = answer
@@ -102,7 +108,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
         else:
             obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, THINK<<`your_thought`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(action)
 
-        return obs, done
+        return obs, done, tmp_agent_code
 
     def sandbox_exec(self, agent_code) -> str:
         sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
@@ -126,7 +132,7 @@ class ReactPlusGenerator(ReactAgentGenerator):
 
 
 if __name__ == '__main__':
-    generator = ReactPlusGenerator()
+    generator = ReactGeneratorForStarting()
     agent_code = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

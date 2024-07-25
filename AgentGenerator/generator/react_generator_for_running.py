@@ -6,7 +6,7 @@ from AgentGenerator.prompt import PromptSelector
 import datetime
 
 
-class ReactGenerator(ReactAgentGenerator):
+class ReactGeneratorForRunning(ReactAgentGenerator):
     """
         React with sandbox starting error ability
     """
@@ -76,7 +76,7 @@ class ReactGenerator(ReactAgentGenerator):
         print(f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
         return response
 
-    def step(self, action) -> (str, bool,str):
+    def step(self, action) -> (str, bool, str):
         done = False
 
         code_num = action.count("CODE<<")
@@ -125,14 +125,19 @@ class ReactGenerator(ReactAgentGenerator):
         error = sandbox.start_test_agent()
 
         # del sandbox
-
-        tmp_prompt = f"After executing the code, the sandbox reported: {error['start_agent']}"
-
+        # if error['start_agent']：
+        tmp_prompt = None
+        if error['start_agent'] != "[OK]":
+            tmp_prompt = f"After starting the code, the sandbox reported: {error['start_agent']}"
+        elif len(error['error_message']['function_error']) > 0:
+            tmp_prompt = f"The code can successfully start in the sandbox, means that the `Agent.__init__` and `Agent.start` are correct. However, when running the agent the sandbox reported register lisenter function error: {error['error_message']['function_error']}. Please check your code and try again."
+        else:
+            tmp_prompt = f"Your code passed the sandbox test!"
         return tmp_prompt
 
 
 if __name__ == '__main__':
-    generator = ReactGenerator()
+    generator = ReactGeneratorForRunning()
     agent_code = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
