@@ -5,17 +5,19 @@ from AgentGenerator.prompt import REACT_PROMPT_WITH_RUNNING
 from AgentGenerator.prompt import PromptSelector
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import datetime
+import ast
 
 
 class FakeTaskConfig(SingleAgentTaskConfigBase):
-    def __init__(self, runtime, input_description=None, output_description=None):
+    def __init__(self, input_description=None, output_description=None):
         super().__init__()
+        from chainstream.runtime import cs_server_core
         self.input_stream = None
         self.output_stream = None
         self.input_description = input_description
         self.output_description = output_description
         self.input_items = None
-        self.runtime = runtime
+        self.runtime = cs_server_core
 
     def set_input_items(self, items):
         """
@@ -29,6 +31,8 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
         self.input_items = items
 
     def init_environment(self, runtime):
+        for stream in self.input_description.streams:
+            self.runtime.create_stream(self, stream['stream_id'])
         self.input_stream = self.runtime.create_stream(self, self.input_description['stream_id'])
         self.output_stream = self.runtime.create_stream(self, self.output_description['stream_id'])
 
@@ -82,7 +86,10 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
             thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
 
             try:
+                if thought_action.strip().endswith("Observation:"):
+                    thought_action = thought_action.strip()[:-len("Observation:")]
                 thought, action = thought_action.strip().split(f"\nAction {i}: ")
+
             except Exception as e:
                 print('ohh...', thought_action)
                 n_badcalls += 1
@@ -128,9 +135,10 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
 
         code_num = action.count("CODE<<")
         finish_num = action.count("FINISH<<")
+        input_num = action.count("INPUT<<")
 
-        if code_num + finish_num > 1:
-            obs = "[FormatError] You can only provide one code or one finish action at a time, please check your response format and try again."
+        if code_num + finish_num + input_num > 1:
+            obs = "[FormatError] You can only provide one code, one input or one finish action at a time, please check your response format and try again."
             return obs, done, None
 
         tmp_agent_code = None
@@ -142,7 +150,7 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
             else:
                 entity = entity.strip()
                 if entity.startswith("```python") and entity.endswith("```"):
-                    entity = entity[len("```python"):-3]
+                    entity = entity[len("```python"):-3].strip()
                 tmp_agent_code = entity
                 obs = self.sandbox_exec(entity)
         elif action.startswith("FINISH<<") and action.endswith(">>"):
@@ -153,12 +161,14 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
         elif action.startswith("INPUT<<") and action.endswith(">>"):
             input = action.strip()[len("INPUT<<"):-2]
             try:
-                stream_id = input.split()[0]
+                stream_id = input.split(",")[0]
                 if stream_id.startswith("`") and stream_id.endswith("`"):
                     stream_id = stream_id[1:-1]
-                items = input.split()[1:]
+                items = input.split(",", 1)[1]
+                items = ast.literal_eval(items)
             except Exception as e:
-                obs = f"[FormatError] Invalid input format. The input should be in the format of `stream_id item1 item2...`, you can't provide more than one input stream at a time. Please check your response format and try again."
+                # obs = f"[FormatError] Invalid input format. The input should be in the format of `stream_id item1 item2...`, you can't provide more than one input stream at a time. Please check your response format and try again."
+                obs = f"[INPUTError] get input error: {e}"
             else:
                 if last_code is None:
                     obs = "[Error] Can not find your agent code"
@@ -189,7 +199,7 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
             error = sandbox.start_test_agent()
 
         else:
-            tmp_task = FakeTaskConfig(self.runtime, input_description=self.input_description, output_description=self.output_description)
+            tmp_task = FakeTaskConfig(input_description=self.input_description, output_description=self.output_description)
             tmp_task.set_input_items([{
                 "stream_id": stream_id,
                 "items": items
