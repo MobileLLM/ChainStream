@@ -4,6 +4,7 @@ from AgentGenerator.utils import TextGPTModel
 from AgentGenerator.prompt import REACT_PROMPT_WITH_RUNNING
 from AgentGenerator.prompt import PromptSelector
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
+from chainstream.stream import create_stream
 import datetime
 import ast
 
@@ -32,9 +33,9 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
 
     def init_environment(self, runtime):
         for stream in self.input_description.streams:
-            self.runtime.create_stream(self, stream['stream_id'])
-        self.input_stream = self.runtime.create_stream(self, self.input_description['stream_id'])
-        self.output_stream = self.runtime.create_stream(self, self.output_description['stream_id'])
+            create_stream(self, stream['stream_id'])
+        self.input_stream = create_stream(self, self.input_description['stream_id'])
+        self.output_stream = create_stream(self, self.output_description['stream_id'])
 
         self.output_records = []
 

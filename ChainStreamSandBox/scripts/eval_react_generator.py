@@ -12,6 +12,7 @@ class EvalReactGenerator(SandboxBatchInterface):
         # TODO: fix this para with a new output description
         agent = generator.generate_agent(task.output_stream_description, task.input_stream_description)
         return agent
+
 if __name__ == '__main__':
     task_list = get_task_batch()
     evaluator = EvalReactGenerator(task_list)

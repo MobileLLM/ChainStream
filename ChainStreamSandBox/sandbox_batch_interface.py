@@ -116,7 +116,7 @@ class BatchInterfaceBase:
             if not os.path.exists(os.path.join(self.report_path_base, "task_reports")):
                 os.makedirs(os.path.join(self.report_path_base, "task_reports"))
 
-            sandbox = SandBox(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"), raise_exception=False, only_init_agent=True)
+            sandbox = SandBox(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"), raise_exception=False, only_init_agent=False)
             report_path = sandbox.start_test_agent(return_report_path=True)
             tmp_task_log['report_path'] = report_path
         except Exception as e:
