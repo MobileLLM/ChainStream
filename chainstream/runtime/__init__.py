@@ -1,4 +1,5 @@
 from .server import ChainStreamServer
+from .error_manager import ErrorType
 
 cs_server = ChainStreamServer()
 cs_server_core = cs_server.get_chainstream_core()

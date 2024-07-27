@@ -46,7 +46,7 @@ class EmailData:
         self._load_data()
 
     def _load_data(self):
-        with open(self.data_path, 'r') as f:
+        with open(self.data_path, 'r', encoding='utf-8', errors='ignore') as f:
             reader = csv.reader(f)
             for row in reader:
                 if len(row) > 1 and row[1].startswith("Message-ID"):

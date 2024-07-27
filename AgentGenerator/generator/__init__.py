@@ -1,4 +1,4 @@
 from .few_shot_generator import FewShotGenerator
-from .react_generator import ReactGenerator
-from .react_plus_generator import ReactPlusGenerator
+from .react_generator_for_starting import ReactGeneratorForStarting
+from .react_generator_for_debugging import ReactGeneratorForDebugging
 from .cot_generator import CoTGenerator

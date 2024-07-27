@@ -108,7 +108,7 @@ from .three_person_task import VideoTask4
 from .three_person_task import VideoTask5
 from .three_person_task import VideoTask6
 ALL_TASKS = {
-    # EmailTask1.__name__: EmailTask1,
+    EmailTask1.__name__: EmailTask1,
     EmailTask2.__name__: EmailTask2,
     EmailTask3.__name__: EmailTask3,
     EmailTask4.__name__: EmailTask4,

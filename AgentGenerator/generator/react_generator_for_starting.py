@@ -1,12 +1,12 @@
 from AgentGenerator.generator.generator_base import ReactAgentGenerator
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.utils import TextGPTModel
-from AgentGenerator.prompt import REACT_PROMPT
+from AgentGenerator.prompt import REACT_PROMPT_ONLY_START
 from AgentGenerator.prompt import PromptSelector
 import datetime
 
 
-class ReactGenerator(ReactAgentGenerator):
+class ReactGeneratorForStarting(ReactAgentGenerator):
     """
         React with sandbox starting error ability
     """
@@ -19,7 +19,7 @@ class ReactGenerator(ReactAgentGenerator):
 
     def generate_agent_impl(self, chainstream_doc, input_and_output_prompt, react_prompt=None) -> str:
         if react_prompt is None:
-            react_prompt = REACT_PROMPT
+            react_prompt = REACT_PROMPT_ONLY_START
 
         prompt = f"Doc: {chainstream_doc}\nMission: {input_and_output_prompt}\nInstructions: {react_prompt}\n"
 
@@ -132,7 +132,7 @@ class ReactGenerator(ReactAgentGenerator):
 
 
 if __name__ == '__main__':
-    generator = ReactGenerator()
+    generator = ReactGeneratorForStarting()
     agent_code = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

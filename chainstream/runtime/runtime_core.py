@@ -1,6 +1,7 @@
 import logging
 from .stream_manager import StreamManager
 from .agent_manager import AgentManager
+from .error_manager import ErrorManager
 from chainstream.llm import reset_model_instances
 
 
@@ -14,6 +15,7 @@ class RuntimeCoreOp:
 
         self.agent_manager = AgentManager()
         self.stream_manager = StreamManager()
+        self.error_manager = ErrorManager()
 
     def config(self, *args, **kwargs):
         self.verbose = kwargs.get('verbose', False)
@@ -57,6 +59,12 @@ class RuntimeCoreOp:
 
     def wait_all_stream_clear(self) -> bool:
         return self.stream_manager.wait_all_stream_clear()
+
+    def record_error(self, error_type, error_message, error_traceback) -> None:
+        self.error_manager.record_error(error_type, error_message, error_traceback)
+
+    def get_error_history(self) -> list:
+        return self.error_manager.get_error_history()
 
     def shutdown(self) -> None:
         print('Shutting down runtime core...')
