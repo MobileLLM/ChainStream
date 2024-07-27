@@ -4,7 +4,7 @@ from AgentGenerator.utils import TextGPTModel
 from AgentGenerator.prompt import REACT_PROMPT_WITH_RUNNING
 from AgentGenerator.prompt import PromptSelector
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-from chainstream.stream import create_stream
+from chainstream.stream import create_stream, get_stream
 import datetime
 import ast
 
@@ -33,11 +33,11 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
 
     def init_environment(self, runtime):
         for stream in self.input_description.streams:
-            create_stream(self, stream['stream_id'])
-        self.input_stream = create_stream(self, self.input_description['stream_id'])
-        self.output_stream = create_stream(self, self.output_description['stream_id'])
-
-        self.output_records = []
+            create_stream(self, stream.stream_id)
+        for stream in self.output_description.streams:
+            self.output_stream = create_stream(self, stream.stream_id)
+        # self.input_stream = create_stream(self, self.input_description.stream_id)
+        # self.output_stream = create_stream(self, self.output_description.stream_id)
 
         def record_output(record):
             self.output_records.append(record)
@@ -47,7 +47,7 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
     def start_task(self, runtime):
         for item in self.input_items:
             try:
-                tmp_input_stream = self.runtime.get_stream(item['stream_id'])
+                tmp_input_stream = get_stream(self, item['stream_id'])
             except Exception as e:
                 raise Exception(f"Can not find input stream {item['stream_id']}, error: {e}")
             for i in item['items']:
