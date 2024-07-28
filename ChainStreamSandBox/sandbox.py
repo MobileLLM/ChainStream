@@ -221,8 +221,9 @@ class SandBox:
             if self.raise_exception:
                 raise RunningError("Error while starting agent: " + str(e))
             return str(e)
-        self.result['start_agent'] = "[OK]"
-        return None
+        else:
+            self.result['start_agent'] = "[OK]"
+            return None
 
     def create_stream(self, stream_description):
         from AgentGenerator.io_model import StreamDescription

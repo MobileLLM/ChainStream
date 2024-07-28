@@ -34,11 +34,12 @@ class MakePromptEvent(SandboxEvent):
 
 
 class QueryEvent(SandboxEvent):
-    def __init__(self, args, kwargs, res, inspect_stack):
+    def __init__(self, args, kwargs, res, error, inspect_stack):
         super().__init__()
         self.args = args
         self.kwargs = kwargs
         self.res = res
+        self.error = error
         self.inspect_stack = [x for x in inspect_stack]
 
 
@@ -155,8 +156,8 @@ class SandboxRecorder:
         event = MakePromptEvent(prompt, input_args, inspect_stack).to_dict()
         self.event_recordings["llm"]["make_prompt"].append(event)
 
-    def record_query(self, args, kwargs, res, inspect_stack):
-        event = QueryEvent(args, kwargs, res, inspect_stack).to_dict()
+    def record_query(self, args, kwargs, res, error, inspect_stack):
+        event = QueryEvent(args, kwargs, res, error, inspect_stack).to_dict()
         self.event_recordings["llm"]["query"].append(event)
 
     def record_get_stream(self, agent, stream_id, is_stream_manager, find_stream, inspect_stack):

@@ -40,7 +40,7 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
         # self.output_stream = create_stream(self, self.output_description.stream_id)
 
         def record_output(record):
-            self.output_records.append(record)
+            self.output_record.append(record)
 
         self.output_stream.for_each(record_output)
 
@@ -179,7 +179,7 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
         elif action.startswith("THINK<<") and action.endswith(">>"):
             obs = "Nice thought."
         else:
-            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, THINK<<`your_thought`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(
+            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, INPUT<<`stream_id`, `[item1 item2...]`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(
                 action)
 
         return obs, done, tmp_agent_code

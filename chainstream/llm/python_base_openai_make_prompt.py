@@ -56,19 +56,23 @@ class BaseOpenAI:
         self.identifier = identifier if identifier != "" else model
 
     def query(self, *args, **kwargs):
+        res = None
+        error = None
         try:
             res = self.query_impl(*args, **kwargs)
             # print(res)
         except Exception as e:
+            error = e
             raise e
+        else:
+            return res
+        finally:
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            import inspect
+            if SANDBOX_RECORDER is not None:
+                inspect_stack = inspect.stack()
+                SANDBOX_RECORDER.record_query(args, kwargs, res, error, inspect_stack)
 
-        from chainstream.sandbox_recorder import SANDBOX_RECORDER
-        import inspect
-        if SANDBOX_RECORDER is not None:
-            inspect_stack = inspect.stack()
-            SANDBOX_RECORDER.record_query(args, kwargs, res, inspect_stack)
-
-        return res
 
     def query_impl(self, prompt_message) -> str:
         raise RuntimeError("must implement query method")
