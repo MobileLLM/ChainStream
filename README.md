@@ -84,9 +84,9 @@ class PeopleRecognitionAgent(cs.agent.Agent):
             face_name = cs.llm.parse_response(self._llm.query(prompt))
             cs.action.notify_user(self, face_name)  # tell the user who is talking
 
-        self._source1.register_listener(self, handle_new_frame)
-        self._source2.register_listener(self, handle_new_audio)
-        self.talking_to_people.register_listener(self, recognize_person)
+        self._source1.for_each(self, handle_new_frame)
+        self._source2.for_each(self, handle_new_audio)
+        self.talking_to_people.for_each(self, recognize_person)
 
     def pause(self):
         self._source1.pause_listener(self)

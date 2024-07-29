@@ -20,11 +20,11 @@ class CaptionAgent(cs.agent.Agent):
             response = self._llm.query(prompt, image['frame']).lower().strip()
             self.text_buffer.save(response)
         try:
-            self._source1.register_listener(self, handle_new_image)
+            self._source1.for_each(self, handle_new_image)
         except Exception as e:
             print("Error in image caption agent: ", e)
             return False
-        # self._source1.register_listener(self, handle_new_frame)
+        # self._source1.for_each(self, handle_new_frame)
         return True
 
     def pause(self):

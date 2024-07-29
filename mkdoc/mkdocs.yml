@@ -1,17 +1,25 @@
-site_name: ChainStream
+site_name: ChainStream-A Stream-based LLM Agent Framework
 site_description: A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing
 site_author: liou
 site_url: https://mobilellm.github.io/ChainStream
 
-copyright: Copyright &copy; 2023 ~ now | Jiacheng Liu
+copyright: Copyright &copy; 2023 AIR-AIoT. All rights reserved.
 
 repo_name: ChainStream
 repo_url: https://github.com/MobileLLM/ChainStream
 
 nav:
   - Home: index.md
+  - Overview:
+      - What's ChainStream: SystemOverview/WHAT_IS_CHAINSTREAM.md
+      - Scenarios: SystemOverview/SYSTEM_SCENARIOS.md
+      - System Overview: SystemOverview/SYSTEM_OVERVIEW.md
+      - ChainStream Framework Architecture: SystemOverview/CHAINSTREAM_FRAMEWORK_OVERVIEW.md
+      - Code Structure: SystemOverview/CODE_STRUCTURE.md
+  - Demo:
+      - Glasses Camera Demo: Demo/GLASSES_CAMERA.md
   - User Guide:
-      - Installation: UserGuide/INSTALLATION.md
+      - Quick start: UserGuide/QUICK_START.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
       - Agent Store: UserGuide/AGENT_STORE_GUIDE.md
       - Edge Sensor: UserGuide/EDGE_SENSOR_USER_GUIDE.md
@@ -21,9 +29,12 @@ nav:
       - SandBox Usage: AgentDevelopmentGuide/SANDBOX_GUIDE.md
   - ChainStream Sys Contribution Guide:
       - Overview: ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW.md
+      - Documentation: ChainStreamDevelopmentGuide/MKDOCS_DEVELOPMENT_GUIDE.md
       - Agent Generator: ChainStreamDevelopmentGuide/AGENT_GENERATOR_DEVELOPMENT_GUIDE.md
       - Agent Store: ChainStreamDevelopmentGuide/AGENT_STORE_DEVELOPMENT_GUIDE.md
-      - SandBox Usage: ChainStreamDevelopmentGuide/SANDBOX_DEVELOPMENT_GUIDE.md
+      - SandBox: ChainStreamDevelopmentGuide/SANDBOX_DEVELOPMENT_GUIDE.md
+      - ChainStream Runtime: ChainStreamDevelopmentGuide/RUNTIME_DEVELOPMENT_GUIDE.md
+      - ChainStream SDK: ChainStreamDevelopmentGuide/SDK_DEVELOPMENT_GUIDE.md
       - Edge Sensor: ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md
       - Dashboard: ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md
 extra:
@@ -70,6 +81,16 @@ plugins:
             Installation: 安装
             Dashboard Guide: 控制面板
             Agent Store Guide: Agent商店指南
+            System Overview: ChainStream系统概览
+            Scenarios: ChainStream应用场景
+            ChainStream Architecture: ChainStream框架架构
+            Documentation: 项目文档
+            What's ChainStream: 什么是ChainStream？
+            Code Structure: 代码结构
+            Quick start: 快速入门
+            Demo: 示例
+            Glasses Camera Demo: 智能眼镜摄像头Demo
+
 
 theme:
   name: material
@@ -134,6 +155,9 @@ markdown_extensions:
     - pymdownx.keys
     - pymdownx.mark
     - pymdownx.tilde
+    - pymdownx.emoji:
+        emoji_index: !!python/name:material.extensions.emoji.twemoji
+        emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 
 

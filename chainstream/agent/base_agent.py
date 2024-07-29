@@ -1,5 +1,4 @@
 from chainstream.interfaces import AgentInterface
-from chainstream.runtime import cs_server_core
 import logging
 from .agent_recorder import AgentRecorder
 import inspect
@@ -31,17 +30,50 @@ class AgentMeta:
         }
 
 
+def record_start(func):
+    def wrapper(self, *args, **kwargs):
+        res = func(self, *args, **kwargs)
+
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            agent_id = self.agent_id
+            inspect_stack = inspect.stack()
+            start_res = res
+            SANDBOX_RECORDER.record_start(agent_id, start_res, inspect_stack)
+
+        return res
+
+    return wrapper
+
+
 class Agent(AgentInterface):
-    def __init__(self, agent_id) -> None:
+    agent_store_base_path = None
+
+    def __init__(self, agent_id=None) -> None:
         super().__init__()
+
+        if agent_id is None:
+            raise ValueError("agent_id must be specified, please make sure you call `super().__init__(agent_id)` with a valid agent_id")
+        if not isinstance(agent_id, str):
+            raise ValueError(f"agent_id must be a string, but got {type(agent_id)}")
+
         self.agent_id = agent_id
         caller_frame = inspect.currentframe().f_back
 
         self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=caller_frame.f_globals['__file__'])
         self.logger = logging.getLogger(self.agent_id)
         self.recorder = AgentRecorder(agentMetaData=self.metaData)
+
+        from chainstream.runtime import cs_server_core
         cs_server_core.register_agent(agent=self)
 
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        if SANDBOX_RECORDER is not None:
+            agent_id = self.agent_id
+            inspect_stack = inspect.stack()
+            SANDBOX_RECORDER.record_instantiate(agent_id, inspect_stack)
+
+    @record_start
     def start(self):
         pass
 
@@ -53,3 +85,7 @@ class Agent(AgentInterface):
 
     def get_meta_data(self):
         return self.metaData.__dict__()
+
+    @staticmethod
+    def set_agent_store_base_path(path):
+        Agent.agent_store_base_path = path

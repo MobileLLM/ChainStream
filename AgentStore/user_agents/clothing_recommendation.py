@@ -31,9 +31,9 @@ class ClothingRecommendation(cs.agent.Agent):
             response = self._llm.query(prompt)  #
             self.send_recommend_info({'message': response})
 
-        self._source1.register_listener(self, handle_new_weather)
-        self._source2.register_listener(self, handle_new_schedule)
-        self._source3.register_listener(self, handle_new_wakeup)
+        self._source1.for_each(self, handle_new_weather)
+        self._source2.for_each(self, handle_new_schedule)
+        self._source3.for_each(self, handle_new_wakeup)
 
     def pause(self):
         self._source1.pause_listener(self)

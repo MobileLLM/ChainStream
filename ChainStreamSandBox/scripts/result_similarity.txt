@@ -1,0 +1,12 @@
+Task: EmailTask1, Max Similarity score: 0.4073226544622426
+Task: EmailTask2, Max Similarity score: 0.325115562403698
+Task: EmailTask3, Max Similarity score: 0
+Task: EmailTask4, Max Similarity score: 0
+Task: NewsTask1, Max Similarity score: 0
+Task: NewsTask2, Max Similarity score: 0
+Task: NewsTask3, Max Similarity score: 0
+Task: NewsTask4, Max Similarity score: 0
+Task: StockTask1, Max Similarity score: 0
+Task: ArxivTask1, Max Similarity score: 0.9559055118110236
+Task: ArxivTask2, Max Similarity score: 0
+Task: ArxivTask3, Max Similarity score: 0

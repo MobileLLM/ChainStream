@@ -18,10 +18,10 @@ class DistributeMessageBySender(Agent):
                 sender_stream = create_memory(f"user_agents/message/sender_{sender}")
             sender_stream.add_item(message)
 
-        self.input_stream.register_listener(self, distribute_message)
+        self.input_stream.for_each(self, distribute_message)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)
 
 
 class DistributeMessageByTopic(Agent):
@@ -44,10 +44,10 @@ class DistributeMessageByTopic(Agent):
                 topic_stream = get_memory(f"user_agents/message/topic_{response}")
             topic_stream.add_item(message)
 
-        self.input_stream.register_listener(self, distribute_message)
+        self.input_stream.for_each(self, distribute_message)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)
 
 
 class DistributeMessageByEmotion(Agent):
@@ -65,10 +65,10 @@ class DistributeMessageByEmotion(Agent):
             emotion_stream = get_memory(f"user_agents/message/emotion_{emotion}")
             emotion_stream.add_item(message)
 
-        self.input_stream.register_listener(self, distribute_message)
+        self.input_stream.for_each(self, distribute_message)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)
 
 
 class DistributeMessageByLanguage(Agent):
@@ -86,7 +86,7 @@ class DistributeMessageByLanguage(Agent):
             language_stream = get_memory(f"user_agents/message/language_{language}")
             language_stream.add_item(message)
 
-        self.input_stream.register_listener(self, distribute_message)
+        self.input_stream.for_each(self, distribute_message)
 
     def stop(self):
-        self.input_stream.unregister_listener(self)
+        self.input_stream.unregister_all(self)

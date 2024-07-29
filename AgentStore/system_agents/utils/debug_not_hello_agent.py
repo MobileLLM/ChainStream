@@ -2,6 +2,7 @@ import chainstream as cs
 import threading
 import time
 from datetime import datetime
+import time
 
 
 class DebugHelloAgent(cs.agent.Agent):
@@ -11,7 +12,7 @@ class DebugHelloAgent(cs.agent.Agent):
         super().__init__(agent_id)
         self.hello_thread = None
         self.enabled = False
-        self.stream = cs.stream.create_stream("debug_not_hello_stream", self)
+        self.stream = cs.stream.create_stream(self, "debug_not_hello_stream")
 
     def start(self):
         self.enabled = True
@@ -19,6 +20,7 @@ class DebugHelloAgent(cs.agent.Agent):
         self.hello_thread.start()
 
     def hello(self):
+        time.sleep(3)
         while self.enabled:
             # print(f'Hello, world! {datetime.now()}')
             self.stream.add_item({'message': 'Hello, world!'})

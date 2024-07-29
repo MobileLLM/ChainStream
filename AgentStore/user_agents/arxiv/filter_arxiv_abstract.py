@@ -18,7 +18,7 @@ class Arxiv_Edge_LLM_Agent_Filter(Agent):
             if response.lower() == "yes":
                 self.llm_paper.add_item(paper)
 
-        self.paper_from.register_listener(self, filter_arxiv)
+        self.paper_from.for_each(self, filter_arxiv)
 
     def stop(self):
-        self.paper_from.deregister_listener(self)
+        self.paper_from.defor_each(self)
