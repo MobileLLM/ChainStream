@@ -51,6 +51,12 @@ The returned code should follow PEP8 standards.
 
 Now I will give you a specific example to demonstrate how you should use ChainStream to complete an Agent. Suppose you want to summarize all the emails sent by each sender, excluding advertisements. You can provide an Agent like this:
 
+---
+'''
+
+english_examples = [
+    '''
+    
 import chainstream as cs
 
 class AgentExampleForEmailTask1(cs.agent.Agent):
@@ -92,8 +98,9 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
             })
 
         self.email_input.for_each(filter_ads).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
-
-Now I will give you another example:Suppose you want to filter the temperatures for May and recommend clothing to users based on the temperatures. You can provide an Agent like this:
+    ''',
+    '''
+    Now I will give you another example:Suppose you want to filter the temperatures for May and recommend clothing to users based on the temperatures. You can provide an Agent like this:
 
 import chainstream as cs
 import pandas as pd
@@ -125,6 +132,6 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
                         "clothing": res
                     })
         self.sensor_input.for_each(filter_date).batch(by_count=2).for_each(recommend_clothing)
----
-'''
+    '''
+]
 
