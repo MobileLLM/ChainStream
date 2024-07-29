@@ -15,6 +15,12 @@ class Buffer(ContextInterface):
     def pop(self):
         return self.buffer.popleft()
 
+    def popright(self):
+        return self.buffer.pop()
+
+    def get(self, index):
+        return self.buffer[index]
+
     def get_all(self):
         return list(self.buffer)
 

@@ -75,13 +75,14 @@ class ForEachEvent(SandboxEvent):
 
 
 class BatchEvent(SandboxEvent):
-    def __init__(self, agent_id, stream_id, listener_id, listener_params, to_stream_id, inspect_stack):
+    def __init__(self, agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped, inspect_stack):
         super().__init__()
         self.agent_id = agent_id
         self.stream_id = stream_id
         self.listener_id = listener_id
         self.listener_params = listener_params
         self.to_stream_id = to_stream_id
+        self.overlapped = overlapped
         self.inspect_stack = [x for x in inspect_stack]
 
 
@@ -176,8 +177,8 @@ class SandboxRecorder:
         event = ForEachEvent(agent_id, stream_id, listener_id, success_create, to_stream_id, inspect_stack).to_dict()
         self.event_recordings["stream"]["for_each"].append(event)
 
-    def record_batch(self, agent_id, stream_id, listener_id, listener_params, to_stream_id, inspect_stack):
-        event = BatchEvent(agent_id, stream_id, listener_id, listener_params, to_stream_id, inspect_stack).to_dict()
+    def record_batch(self, agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped, inspect_stack):
+        event = BatchEvent(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped, inspect_stack).to_dict()
         self.event_recordings["stream"]["batch"].append(event)
 
     def record_add_item(self, agent_id, stream_id, item, func_id, inspect_stack):

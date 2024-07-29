@@ -7,7 +7,7 @@ import threading
 import inspect
 from threading import Event
 from ..context import Buffer
-from ..function import AgentFunction
+from ..function import AgentFunction, BatchFunction
 import os
 from typing import Callable
 import inspect
@@ -184,7 +184,7 @@ class BaseStream(StreamInterface):
 
             return None
 
-    def batch(self, agent, by_count=None, by_time=None, by_item=None, by_func=None, to_stream=None):
+    def batch(self, agent, by_count=None, by_time=None, by_item=None, by_func=None, to_stream=None, overlapped=False):
         none_count = 0
         if by_count is None:
             none_count += 1
@@ -199,7 +199,7 @@ class BaseStream(StreamInterface):
         if 4 - none_count > 1:
             raise ValueError(f"Only one of by_count, by_time, by_item, by_func should be specified, got {none_count}")
 
-        new_buffer = Buffer()
+        new_buffer = Buffer(maxlen=by_count if overlapped and by_count else None)
         # self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
         #     new_buffer)
         if agent.agent_id not in self.anonymous_func_params:
@@ -220,6 +220,14 @@ class BaseStream(StreamInterface):
                     all_items = new_buffer.pop_all()
                     return {"item_list": all_items}
 
+            def anonymous_batch_func_by_count_overlapped(item):
+                if len(new_buffer) < by_count - 1:
+                    new_buffer.append(item)
+                else:
+                    new_buffer.append(item)
+                    all_items = new_buffer.get_all()
+                    return {"item_list": all_items}
+
             from chainstream.sandbox_recorder import SANDBOX_RECORDER
             if SANDBOX_RECORDER is not None:
                 inspect_stack = inspect.stack()
@@ -228,8 +236,10 @@ class BaseStream(StreamInterface):
                 listener_id = "batch_by_count"
                 listener_params = {"by_count": by_count}
                 to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
-                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, inspect_stack)
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped, inspect_stack)
 
+            if overlapped:
+                return self.for_each(agent, anonymous_batch_func_by_count_overlapped, to_stream=to_stream)
             return self.for_each(agent, anonymous_batch_func_by_count, to_stream=to_stream)
 
         if by_time is not None:
@@ -250,6 +260,30 @@ class BaseStream(StreamInterface):
                     new_buffer.append(item)
                     return {"item_list": all_items}
 
+            def anonymous_batch_func_by_time_overlapped(item):
+                current_time = datetime.datetime.now()
+                new_buffer.append((current_time, item))
+
+                while new_buffer and new_buffer[0][0] < current_time - by_time:
+                    new_buffer.pop()
+
+                all_items = new_buffer.get_all()
+                all_items = [item[1] for item in all_items]
+                return {"item_list": all_items}
+
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            if SANDBOX_RECORDER is not None:
+                inspect_stack = inspect.stack()
+                stream_id = self.metaData.stream_id
+                agent_id = agent.agent_id
+                listener_id = "batch_by_time"
+                listener_params = {"by_time": by_time}
+                to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped,
+                                              inspect_stack)
+
+            if overlapped:
+                return self.for_each(agent, anonymous_batch_func_by_time_overlapped, to_stream=to_stream)
             return self.for_each(agent, anonymous_batch_func_by_time, to_stream=to_stream)
 
         if by_item is not None:
@@ -257,6 +291,9 @@ class BaseStream(StreamInterface):
             key_item = by_item
             self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
                 key_item)
+
+            if overlapped:
+                raise ValueError("overlapped is not supported for by_item")
 
             def anonymous_batch_func_by_item(item):
                 if key_item != item:
@@ -267,11 +304,32 @@ class BaseStream(StreamInterface):
                     all_items = new_buffer.pop_all()
                     return {"item_list": all_items}
 
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            if SANDBOX_RECORDER is not None:
+                inspect_stack = inspect.stack()
+                stream_id = self.metaData.stream_id
+                agent_id = agent.agent_id
+                listener_id = "batch_by_item"
+                listener_params = {"by_item": by_item}
+                to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped,
+                                              inspect_stack)
+
             return self.for_each(agent, anonymous_batch_func_by_item, to_stream=to_stream)
 
         if by_func is not None:
             if not isinstance(by_func, Callable):
                 raise ValueError(f"by_func should be a callable, got {by_func}")
+
+            if overlapped:
+                raise ValueError("overlapped is not supported for by_func")
+
+            new_tmp_params = {}
+            self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
+                new_tmp_params
+            )
+
+            by_func = BatchFunction(agent, by_func, new_tmp_params)
 
             return self.for_each(agent, by_func, to_stream=to_stream)
 
