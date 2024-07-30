@@ -37,14 +37,15 @@ class StreamForAgent:
                              "by agent through `create_stream`")
 
         if len(inspect.signature(listener_func).parameters) != 1:
-            raise ValueError(f"listener_func should have only one parameter, got {len(inspect.signature(listener_func).parameters)}")
+            raise ValueError(
+                f"listener_func should have only one parameter, got {len(inspect.signature(listener_func).parameters)}")
 
         return self.stream.for_each(self.agent, listener_func, to_stream=to_stream)
 
     def batch(self, by_count=None, by_time=None, by_item=None, by_func=None, to_stream=None):
 
         res = self.stream.batch(self.agent, by_count=by_count, by_time=by_time, by_item=by_item, by_func=by_func,
-                              to_stream=to_stream)
+                                to_stream=to_stream)
 
         return res
 
@@ -153,7 +154,7 @@ class BaseStream(StreamInterface):
                     listener_id = listener_func.func_id
                     success_create = next_stream is not None
                     SANDBOX_RECORDER.record_create_anonymous_stream(agent_id, stream_id, listener_id, success_create,
-                                                          inspect_stack)
+                                                                    inspect_stack)
 
                 stream_for_agent = StreamForAgent(agent, self.next_anonymous[(agent.agent_id, listener_func.func_id)])
             else:
@@ -202,9 +203,11 @@ class BaseStream(StreamInterface):
         new_buffer = Buffer(maxlen=by_count if overlapped and by_count else None)
         # self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
         #     new_buffer)
+        time_start = {}
         if agent.agent_id not in self.anonymous_func_params:
             self.anonymous_func_params[agent.agent_id] = []
         self.anonymous_func_params[agent.agent_id].append(new_buffer)
+        self.anonymous_func_params[agent.agent_id].append(time_start)
 
         if by_count is not None:
             if not isinstance(by_count, int):
@@ -236,7 +239,8 @@ class BaseStream(StreamInterface):
                 listener_id = "batch_by_count"
                 listener_params = {"by_count": by_count}
                 to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
-                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped, inspect_stack)
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id,
+                                              overlapped, inspect_stack)
 
             if overlapped:
                 return self.for_each(agent, anonymous_batch_func_by_count_overlapped, to_stream=to_stream)
@@ -248,17 +252,22 @@ class BaseStream(StreamInterface):
             if by_time <= 0:
                 raise ValueError(f"by_time should be a positive integer, got {by_time}")
 
-            time_start = datetime.datetime.now()
-            self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
-                time_start)
+            # self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
+            #     time_start)
+            # time_start = self.anonymous_func_params[agent.agent_id][-1]
 
             def anonymous_batch_func_by_time(item):
-                if datetime.datetime.now() - time_start < by_time:
+                if time_start['last_time'] is None:
+                    time_start['last_time'] = datetime.datetime.now()
                     new_buffer.append(item)
                 else:
-                    all_items = new_buffer.pop_all()
-                    new_buffer.append(item)
-                    return {"item_list": all_items}
+                    if datetime.datetime.now() - time_start['last_time'] < by_time:
+                        new_buffer.append(item)
+                    else:
+                        all_items = new_buffer.pop_all()
+                        time_start['last_time'] = datetime.datetime.now()
+                        new_buffer.append(item)
+                        return {"item_list": all_items}
 
             def anonymous_batch_func_by_time_overlapped(item):
                 current_time = datetime.datetime.now()
@@ -279,7 +288,8 @@ class BaseStream(StreamInterface):
                 listener_id = "batch_by_time"
                 listener_params = {"by_time": by_time}
                 to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
-                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped,
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id,
+                                              overlapped,
                                               inspect_stack)
 
             if overlapped:
@@ -312,7 +322,8 @@ class BaseStream(StreamInterface):
                 listener_id = "batch_by_item"
                 listener_params = {"by_item": by_item}
                 to_stream_id = to_stream.stream.metaData.stream_id if to_stream is not None else None
-                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id, overlapped,
+                SANDBOX_RECORDER.record_batch(agent_id, stream_id, listener_id, listener_params, to_stream_id,
+                                              overlapped,
                                               inspect_stack)
 
             return self.for_each(agent, anonymous_batch_func_by_item, to_stream=to_stream)
@@ -329,7 +340,7 @@ class BaseStream(StreamInterface):
                 new_tmp_params
             )
 
-            by_func = BatchFunction(agent, by_func, new_tmp_params)
+            by_func = BatchFunction(by_func, new_tmp_params)
 
             return self.for_each(agent, by_func, to_stream=to_stream)
 
