@@ -46,7 +46,7 @@ class BatchInterfaceBase:
 
     def _get_test_description(self):
         tmp_des = {
-            "test_description": input("描述一下这次测试的目的，这段文字会被自动记录到log文件中，用于后续区分测试结果"),
+            "test_description": input("描述一下这次测试的目的，这段文字会被自动记录到log文件中，用于后续区分测试结果:"),
             "time": datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         }
         return tmp_des
