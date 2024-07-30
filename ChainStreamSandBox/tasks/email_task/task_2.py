@@ -29,7 +29,8 @@ class EmailTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emo_from_work",
-                "description": "A list of summaries of the purpose of the emails for each work-related email during these several months",
+                "description": "A list of summaries of the purpose of the emails for each work-related email during "
+                               "these several months",
                 "fields": {
                     "work_emails": "content xxx, string",
                     "purpose": "emo xxx, string"

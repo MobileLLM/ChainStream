@@ -9,7 +9,8 @@ random.seed(42)
 class Ego4DData:
     def __init__(self):
         self.video_list = video_list
-        self.frame_path_base = "./video_frame/"
+
+        self.frame_path_base = os.path.join(os.path.dirname(__file__), "video_frame")
 
         self.video_frame_data = []
 

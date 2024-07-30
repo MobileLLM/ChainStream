@@ -1,12 +1,12 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 
 class GPSData:
     def __init__(self):
-        self.data_path = "gps.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__),'gps.csv')
 
         self.gps_data = []
         self._load_data()

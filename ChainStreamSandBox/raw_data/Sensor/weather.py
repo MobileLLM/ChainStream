@@ -1,12 +1,12 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 
 class WeatherData:
     def __init__(self):
-        self.data_path = "weather.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'weather.csv')
 
         self.weather_data = []
         self._load_data()

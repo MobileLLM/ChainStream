@@ -1,12 +1,12 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 
 class LandmarkData:
     def __init__(self):
-        self.data_path = "landmarks.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'landmarks.csv')
 
         self.landmark_data = []
         self._load_data()
