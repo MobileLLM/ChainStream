@@ -257,15 +257,15 @@ class BaseStream(StreamInterface):
             # time_start = self.anonymous_func_params[agent.agent_id][-1]
 
             def anonymous_batch_func_by_time(item):
-                if time_start['last_time'] is None:
+                if 'last_time' not in time_start or time_start['last_time'] is None:
                     time_start['last_time'] = datetime.datetime.now()
                     new_buffer.append(item)
                 else:
-                    if datetime.datetime.now() - time_start['last_time'] < by_time:
+                    if (datetime.datetime.now() - time_start['last_time']).seconds < by_time:
                         new_buffer.append(item)
                     else:
                         all_items = new_buffer.pop_all()
-                        time_start['last_time'] = datetime.datetime.now()
+                        time_start['last_time'] = None
                         new_buffer.append(item)
                         return {"item_list": all_items}
 

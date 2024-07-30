@@ -3,12 +3,17 @@ import uuid
 from chainstream.runtime import cs_server_core
 from chainstream.runtime import ErrorType
 import traceback
+from .batch_function import BatchFunction
 
 
 class AgentFunction:
     def __init__(self, agent, func, output_stream=None):
         self.id = str(uuid.uuid4())
         self.agent = agent
+        self.is_batch_func = False
+        if isinstance(func, BatchFunction):
+            self.is_batch_func = True
+
         self.func = func
 
         self.output_stream = output_stream
@@ -22,6 +27,8 @@ class AgentFunction:
         result = None
         try:
             result = self.func(*args, **kwargs)
+            if self.is_batch_func:
+                result = result[0]
         except Exception as e:
             error_msg = {
                 "exception": str(e),

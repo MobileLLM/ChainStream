@@ -5,10 +5,12 @@ from chainstream.context import Buffer
 
 
 class BatchFunction:
+
     def __init__(self, func, params):
-        self.func = func
-        functools.update_wrapper(self, func)
         self.kwargs = params
+        self.func = func
+        # functools.update_wrapper(self, func)
+
 
     def __call__(self, item):
         try:
