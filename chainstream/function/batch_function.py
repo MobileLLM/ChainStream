@@ -11,7 +11,6 @@ class BatchFunction:
         self.func = func
         # functools.update_wrapper(self, func)
 
-
     def __call__(self, item):
         try:
             output, self.kwargs = self.func(item, **self.kwargs)
@@ -34,8 +33,10 @@ if __name__ == '__main__':
             all_items = buffer.pop_all()
             return {"item_list": all_items}, kwargs
 
+
     def is_ads(item):
         pass
+
 
     def filter_func(item, **kwargs):
         man_buffer = kwargs.get('buffer_man', Buffer())
@@ -57,6 +58,7 @@ if __name__ == '__main__':
                 woman_buffer.append(item)
                 all_items = woman_buffer.pop_all()
                 return {"item_list": all_items}, kwargs
+
 
     def overlapped_two_frames(item, **kwargs):
         by_count = 10

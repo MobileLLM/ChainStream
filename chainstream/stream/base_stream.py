@@ -299,8 +299,8 @@ class BaseStream(StreamInterface):
         if by_item is not None:
 
             key_item = by_item
-            self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
-                key_item)
+            self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, [])
+            self.anonymous_func_params[agent.agent_id].append(key_item)
 
             if overlapped:
                 raise ValueError("overlapped is not supported for by_item")
@@ -336,9 +336,8 @@ class BaseStream(StreamInterface):
                 raise ValueError("overlapped is not supported for by_func")
 
             new_tmp_params = {}
-            self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, []).append(
-                new_tmp_params
-            )
+            self.anonymous_func_params[agent.agent_id] = self.anonymous_func_params.get(agent.agent_id, [])
+            self.anonymous_func_params[agent.agent_id].append(new_tmp_params)
 
             by_func = BatchFunction(by_func, new_tmp_params)
 
