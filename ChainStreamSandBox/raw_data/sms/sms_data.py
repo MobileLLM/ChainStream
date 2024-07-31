@@ -1,5 +1,6 @@
 import json
 import random
+import os
 
 random.seed(42)
 
@@ -31,8 +32,8 @@ def _split_messages(messages):
 
 class SMSData:
     def __init__(self):
-        self.en_data_path = "archive/smsCorpus_en_2015.03.09_all.json"
-        self.zh_data_path = "archive/smsCorpus_zh_2015.03.09.json"
+        self.en_data_path = os.path.join(os.path.dirname(__file__), "archive", "smsCorpus_en_2015.03.09_all.json")
+        self.zh_data_path = os.path.join(os.path.dirname(__file__), "archive", "smsCorpus_zh_2015.03.09.json")
 
         self.en_data = {}
         self.zh_data = {}

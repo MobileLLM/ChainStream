@@ -13,11 +13,15 @@ class AgentFunction:
         self.is_batch_func = False
         if isinstance(func, BatchFunction):
             self.is_batch_func = True
+            self.kwargs = func.kwargs
 
         self.func = func
 
         self.output_stream = output_stream
-        functools.update_wrapper(self, func)  # This updates the wrapper to have the attributes of the wrapped function
+
+        # FIXME: This wrapper will broke the __call__ method with kwargs input of the BatchFunction, so here have to
+        #  use self.kwargs to pass the kwargs to the BatchFunction, need to find a better way to handle this
+        functools.update_wrapper(self, func)
 
         self.func_id = self.func.__name__ + "_" + self.id
 
@@ -26,9 +30,11 @@ class AgentFunction:
     def __call__(self, *args, **kwargs):
         result = None
         try:
-            result = self.func(*args, **kwargs)
             if self.is_batch_func:
+                result, self.kwargs = self.func(args[0], self.kwargs)
                 result = result[0]
+            else:
+                result = self.func(*args, **kwargs)
         except Exception as e:
             error_msg = {
                 "exception": str(e),

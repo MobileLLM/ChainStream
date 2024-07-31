@@ -1,13 +1,14 @@
 import csv
 import random
 from datetime import datetime
+import os
 
 random.seed(42)
 
 
 class StockData:
     def __init__(self):
-        self.data_path = "stock_data.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), "stock_data.csv")
 
         self.stock_data = []
         self._load_data()

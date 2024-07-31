@@ -80,11 +80,13 @@ class AgentExampleForMessageTask4(cs.agent.Agent):
                 change_percentage = (close_price - open_price) / open_price * 100
                 if change_percentage < 0:
                     return stock
-        def example_func(item, **kwargs):
+        def example_func(item, kwargs):
             buffer = kwargs.get('buffer', Buffer())
-            print(buffer.get_all())
+            kwargs['buffer'] = buffer
             if len(buffer) < 2:
+                print("buffer is too short")
                 buffer.append(item)
+                print(buffer.get_all())
                 return None, kwargs
             else:
                 buffer.append(item)
