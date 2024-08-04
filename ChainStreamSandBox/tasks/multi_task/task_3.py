@@ -3,11 +3,11 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import NewsData
 from AgentGenerator.io_model import StreamListDescription
-
+import time
 random.seed(6666)
 
 
-class MessageTaskTest2(SingleAgentTaskConfigBase):
+class StoreOpinionTest(SingleAgentTaskConfigBase):
     def __init__(self, number=10, eos_gap=4):
         super().__init__()
         self.output_record = None
@@ -16,7 +16,7 @@ class MessageTaskTest2(SingleAgentTaskConfigBase):
         self.output_local_stream = None
         self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_message",
+            "stream_id": "all_news",
             "description": "All message messages",
             "fields": {
                 "sender": "name xxx, string",
@@ -25,8 +25,8 @@ class MessageTaskTest2(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "auto_reply_in_office",
-                "description": "Replied list of messages,excluding ads when I am in the office",
+                "stream_id": "summarize_ceo_opinion",
+                "description": "Summaries of CEOs' opinions on techtronic and save to the local",
                 "fields": {
                     "content": "xxx, string",
                     "tag": "Received, string"
@@ -36,40 +36,42 @@ class MessageTaskTest2(SingleAgentTaskConfigBase):
         self.news_data = NewsData().get_random_articles(number)
         self.agent_example = '''
 import chainstream as cs
-from chainstream.context.buffer import TextBuffer
+from chainstream.context import Buffer
 class AgentExampleForMessageTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_message_task_4"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
-        self.message_buffer = TextBuffer(max_text_num=10000)
+        self.message_buffer = Buffer()
         self.output_local_stream = cs.get_stream(self, "summary_output")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def save_message(message):
-            self.message_buffer.append(message)
-        self.news_input.for_each(save_message)
-
-        def send_msg(stocks):
-            stock_list = stocks["item_list"]
-            # print(stock)
-            messages = self.message_buffer.pop_all()
-            # print("messages", messages)
-            for message in messages:  
-                for stock in stock_list:  
-                    print(message["id"],stock["symbol"])
-                    self.stock_output.add_item({
-                        "stock": stock["symbol"], 
-                        "id": message["id"]  
-                    })
+        def summary_description(news):
+            news_list = news["item_list"]
+            print(news_list)
+            for news in news_list:
+                print(news)
+                title = news["headline"]
+                print(title)
+                prompt = "Summarize the opinions of the CEO in the news"
+                print("sum_on_financial_news: query", news['short_description'], prompt)
+                res = self.llm.query(cs.llm.make_prompt(news['short_description'], prompt))
+                print("sum_on_financial_news", res)
+                self.output_local_stream.add_item({
+                    "news": title,
+                    "summary": res
+                })
             return messages
 
         def extract_type(news):
+            print("news:", news)
             news_type = news['category']
-            if news_type == "MONEY":
+            if news_type == "Techtronic":
+                # print(news)
+                print("after filter", news)
                 return news
 
-        self.news_input.for_each(extract_type).batch(by_count=7).for_each(send_msg)
+        self.news_input.for_each(extract_type).batch(by_time=1).for_each(summary_description)
         '''
 
     def init_environment(self, runtime):
@@ -88,6 +90,7 @@ class AgentExampleForMessageTask4(cs.agent.Agent):
         for message in self.news_data:
             sent_messages.append(message)
             self.input_news_stream.add_item(message)
+            time.sleep(3)
         return sent_messages
 
 

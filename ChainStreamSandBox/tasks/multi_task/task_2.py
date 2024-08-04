@@ -8,7 +8,7 @@ import time
 random.seed(6666)
 
 
-class MessageTaskTest(SingleAgentTaskConfigBase):
+class MessageStockTask(SingleAgentTaskConfigBase):
     def __init__(self, number=10, eos_gap=4):
         super().__init__()
         self.output_record = None

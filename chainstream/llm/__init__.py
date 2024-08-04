@@ -132,6 +132,11 @@ def make_prompt(*args, system_prompt=None):
                         "type": "text",
                         "text": convert_audio_to_text(a)
                     })
+        elif isinstance(arg, dict):
+            user_content.append({
+                "type": "text",
+                "text": str(arg),
+            })
         else:
             raise ValueError(f'unsupported type: {type(arg)}')
     message_prompt.append({

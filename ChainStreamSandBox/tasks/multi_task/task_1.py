@@ -42,7 +42,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.email_data = EmailData().get_emails(number)
         self.agent_example = '''
 import chainstream as cs
-from chainstream.context.buffer import TextBuffer
+from chainstream.context import Buffer
 class AgentExampleForEmailTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_email_task_4"):
         super().__init__(agent_id)
@@ -50,7 +50,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         self.gps_input = cs.get_stream(self, "all_gps")
         self.gps_output = cs.get_stream(self, "gps_output")
         self.email_output = cs.get_stream(self, "auto_reply_in_office")
-        self.email_buffer = TextBuffer(max_text_num=10000)
+        self.email_buffer = Buffer()
         self.is_office_event = cs.get_stream(self, "is_office_event")
         self.llm = cs.llm.get_model("Text")
         
@@ -61,17 +61,18 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         
         def filter_ads(is_office_event):
             print(is_office_event)
-            emails = self.email_buffer.pop_all()
-            print("emails",emails)
-            matching_emails = []
-            for email in emails:
-                prompt = "is this email an advertisement? answer y or n"
-                res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
-                print("filter_ads", res)
-                if res.lower() == 'n':
-                    matching_emails.append(email)
-            print("matching_emails", matching_emails)
-            return matching_emails
+            if is_office_event:
+                emails = self.email_buffer.pop_all()
+                print("emails",emails)
+                matching_emails = []
+                for email in emails:
+                    prompt = "is this email an advertisement? answer y or n"
+                    res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
+                    print("filter_ads", res)
+                    if res.lower() == 'n':
+                        matching_emails.append(email)
+                print("matching_emails", matching_emails)
+                return matching_emails
 
         def auto_reply(email_list):
             print("auto_reply", email_list)
