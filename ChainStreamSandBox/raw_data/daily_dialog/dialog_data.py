@@ -1,6 +1,6 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 """Here are some explanations about the files:
@@ -23,10 +23,11 @@ topic_idx_to_text = {1: "Ordinary Life", 2: "School Life", 3: "Culture & Educati
 
 class DialogData:
     def __init__(self):
-        self.text_path = "ijcnlp_dailydialog/dialogues_text.txt"
-        self.act_path = "ijcnlp_dailydialog/dialogues_act.txt"
-        self.emotion_path = "ijcnlp_dailydialog/dialogues_emotion.txt"
-        self.topic_path = "ijcnlp_dailydialog/dialogues_topic.txt"
+        base_dir = os.path.join(os.path.dirname(__file__), "ijcnlp_dailydialog")
+        self.text_path = os.path.join(base_dir, "dialogues_text.txt")
+        self.act_path = os.path.join(base_dir, "dialogues_act.txt")
+        self.emotion_path = os.path.join(base_dir, "dialogues_emotion.txt")
+        self.topic_path = os.path.join(base_dir, "dialogues_topic.txt")
 
         self.dialog_data = []
 
@@ -86,4 +87,4 @@ class DialogData:
 
 if __name__ == "__main__":
     dialog_data = DialogData()
-    print(len(dialog_data))
+    print(dialog_data.get_dialog_batch(3))
