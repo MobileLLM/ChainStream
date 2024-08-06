@@ -135,3 +135,6 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
     '''
 ]
 
+chainstream_english_doc_with_1_example = chainstream_english_doc + english_examples[0]
+chainstream_english_doc_with_2_example = chainstream_english_doc + english_examples[0] + english_examples[1]
+
