@@ -18,28 +18,24 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
-            "stream_id": "all_video",
-            "description": "All video messages",
-            "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
-            }
-        }])
-        self.input_stream_description2 = StreamListDescription(stream=[{
             "stream_id": "all_gps",
-            "description": "All email messages",
+            "description": "GPS data",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "Street Address": "xxx,str"
+            }
+        },{
+            "stream_id": "all_video",
+            "description": "video data",
+            "fields": {
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "message_reminder",
-                "description": "Replied list of emails,excluding ads when I am in the office",
+                "stream_id": "reminder",
+                "description": "Reminder list of watering the flowers after a period of time if I am not at home.("
+                               "Street Addresss:123 Main St)",
                 "fields": {
-                    "content": "xxx, string",
-                    "tag": "Received, string"
+                    "reminder": "You have not watered the flowers for a period of time. Please water the flowers."
                 }
             }
         ])
@@ -48,8 +44,8 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
-class AgentExampleForImageTask(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_image_task"):
+class AgentExampleForMultiTask7(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task7"):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
@@ -72,14 +68,12 @@ class AgentExampleForImageTask(cs.agent.Agent):
             for data in data_list:
                 prompt = "Please check if the flowers are watered.Simply answer y or n."
                 res = self.llm.query(cs.llm.make_prompt(prompt,data))
-                # print("res", res)
                 if res.lower()== "n" :
                     self.message_output.add_item({
-                        "analysis_result": res,
                         "reminder":"You have not watered the flowers for a period of time. Please water the flowers."
                     })
             return three_person_data
-
+            
         self.video_input.for_each(check_place).batch(by_time=1).for_each(check_flower)
         '''
 
@@ -100,8 +94,10 @@ class AgentExampleForImageTask(cs.agent.Agent):
         for message in self.video_data:
             sent_messages.append(message)
             time.sleep(2)
+            self.input_video_stream.add_item(message)
         for message in self.gps_data:
             sent_messages.append(message)
+            self.gps_stream.add_item(message)
         return sent_messages
 
 

@@ -17,7 +17,6 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.input_email_stream = None
         self.input_gps_stream = None
         self.is_office_event = None
-        self.gps_output = None
 
         self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
@@ -27,14 +26,32 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
                 "sender": "name xxx, string",
                 "Content": "text xxx, string"
             }
+        },{
+            "stream_id": "all_gps",
+            "description": "GPS data",
+            "fields": {
+                "Street Address": "xxx,str"
+            }
         }])
+        # self.input_stream_description3 = StreamListDescription(streams=[{
+        #     "stream_id": "is_office_event",
+        #     "description": "whether I am in office or not",
+        #     "fields": {"Status":"True or False,bool"}
+        # }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding ads when I am in the office",
+                "description": "Replied list of emails,excluding ads when I am in the office.(street address:3127 "
+                               "Edgemont Boulevard)",
                 "fields": {
                     "content": "xxx, string",
-                    "tag": "Received, string"
+                    "tag": "Received!"
+                }
+            },{
+                "stream_id": "is_office_event",
+                "description": "Check whether the person is in the office",
+                "fields": {
+                    "Status": "True or False,bool"
                 }
             }
         ])
@@ -43,12 +60,11 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
-class AgentExampleForEmailTask4(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_email_task_4"):
+class AgentExampleForMultiTask1(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task_1"):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.gps_output = cs.get_stream(self, "gps_output")
         self.email_output = cs.get_stream(self, "auto_reply_in_office")
         self.email_buffer = Buffer()
         self.is_office_event = cs.get_stream(self, "is_office_event")
@@ -81,7 +97,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
                 content = email.get('Content')
                 if content:
                     self.email_output.add_item({
-                        "email": content,
+                        "content": content,
                         "tag": "Received!"
                     })
                 else:
@@ -106,7 +122,6 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.output_email_stream = cs.stream.create_stream(self, 'auto_reply_in_office')
         self.is_office_event = cs.stream.create_stream(self, 'is_office_event')
-        self.gps_output = cs.stream.create_stream(self, 'gps_output')
 
         self.output_record = []
 

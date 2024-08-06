@@ -4,7 +4,6 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import DesktopData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
-import time
 random.seed(6666)
 
 
@@ -19,21 +18,37 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.is_office_event = None
 
         self.eos_gap = eos_gap
-        self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_email",
-            "description": "All email messages",
+        self.input_stream_description1 = StreamListDescription(streams=[{
+            "stream_id": "all_gps",
+            "description": "GPS data",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "Street Address": "xxx,str"
+            }
+        },{
+            "stream_id": "all_ui",
+            "description": "All ui snapshots",
+            "fields": {
+                "image_file": "name xxx, string"
             }
         }])
+        # self.input_stream_description3 = StreamListDescription(streams=[{
+        #     "stream_id": "is_office_event",
+        #     "description": "whether I am in office or not",
+        #     "fields": {"Status":"True or False,bool"}
+        # }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding ads when I am in the office",
+                "stream_id": "auto_reminder",
+                "description": "Reminder from the messages when I slack off in the office.(Street Address:3127 "
+                               "Edgemont Boulevard)",
                 "fields": {
-                    "content": "xxx, string",
-                    "tag": "Received, string"
+                    "reminder": "Go back to work!"
+                }
+            },{
+                "stream_id": "is_office_event",
+                "description": "Check whether the person is in the office",
+                "fields": {
+                    "Status": "True or False,bool"
                 }
             }
         ])
@@ -42,8 +57,8 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
-class AgentExampleForEmailTask4(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_email_task_4"):
+class AgentExampleForMultiTask4(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task_4"):
         super().__init__(agent_id)
         self.ui_input = cs.get_stream(self, "all_ui")
         self.gps_input = cs.get_stream(self, "all_gps")
@@ -66,13 +81,8 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
                     prompt = "Is the person slacking off in the office?Simply answer y or n,if you're not sure,answer y"
                     res = self.llm.query(cs.llm.make_prompt(ui['image_file'], prompt))
                     print("res", res)
-                    if res.lower() == 'n':
+                    if res.lower() == 'y':
                         self.message_output.add_item({
-                            "res": res,
-                        })
-                    elif res.lower() == 'y':
-                        self.message_output.add_item({
-                            "res":res,
                             "reminder":"Go back to work!"
                         })
                 return uis

@@ -18,20 +18,24 @@ class CatFoodTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
-            "stream_id": "all_email",
-            "description": "All email messages",
+            "stream_id": "all_gps",
+            "description": "GPS data",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "Street Address": "xxx,str"
+            }
+        },{
+            "stream_id": "all_video",
+            "description": "video data",
+            "fields": {
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding ads when I am in the office",
+                "stream_id": "reminder",
+                "description": "Reminder list of Refilling the cat food if the bowl is empty when I am not at home.("
+                               "Street Addresss:123 Main St)",
                 "fields": {
-                    "content": "xxx, string",
-                    "tag": "Received, string"
+                    "reminder": "There is no cat food already. Please refill it."
                 }
             }
         ])
@@ -40,8 +44,8 @@ class CatFoodTask(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
-class AgentExampleForImageTask(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_image_task"):
+class AgentExampleForMultiTask6(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task6"):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
@@ -67,7 +71,6 @@ class AgentExampleForImageTask(cs.agent.Agent):
                 # print("res", res)
                 if res.lower()== "n" :
                     self.message_output.add_item({
-                        "analysis_result": res,
                         "reminder":"There is no cat food already. Please refill it."
                     })
             return three_person_data
@@ -91,8 +94,10 @@ class AgentExampleForImageTask(cs.agent.Agent):
         sent_messages = []
         for message in self.video_data:
             sent_messages.append(message)
+            self.input_video_stream.add_item(message)
         for message in self.gps_data:
             sent_messages.append(message)
+            self.gps_stream.add_item(message)
         return sent_messages
 
 

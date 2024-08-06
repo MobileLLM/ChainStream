@@ -15,25 +15,33 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.input_message_stream = None
         self.input_stock_stream = None
-        self.is_bad_event = None
         self.stock_message_output = None
 
         self.eos_gap = eos_gap
-        self.input_stream_description = StreamListDescription(streams=[{
+        self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_message",
-            "description": "All message messages",
+            "description": "All message information",
             "fields": {
                 "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "Content": "text xxx, string",
+                "id":"id xxx, int"
+            }
+        },{
+            "stream_id": "all_stock",
+            "description": "All stock messages",
+            "fields": {
+                "open": "xxx, float",
+                "close": "xxx, float",
+                "symbol":"xxx,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "auto_reply_in_office",
-                "description": "Replied list of messages,excluding ads when I am in the office",
+                "stream_id": "stock_output",
+                "description": "A message to remind me when the stock plummeted",
                 "fields": {
-                    "content": "xxx, string",
-                    "tag": "Received, string"
+                    "stock": "xxx, string",
+                    "id": "xxx, int"
                 }
             }
         ])
@@ -42,14 +50,13 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
-class AgentExampleForMessageTask4(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_message_task_4"):
+class AgentExampleForMultiTask2(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task_2"):
         super().__init__(agent_id)
         self.message_input = cs.get_stream(self, "all_message")
         self.stock_input = cs.get_stream(self, "all_stock")
         self.stock_output = cs.get_stream(self, "stock_output")
         self.message_buffer = Buffer()
-        self.is_bad_event = cs.get_stream(self, "is_bad_event")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -71,7 +78,6 @@ class AgentExampleForMessageTask4(cs.agent.Agent):
                         "id": message["id"]  
                     })
             return messages
-
         def analysis_stock(stock):
             # print("stock",stock)
             open_price = stock['open']
@@ -98,7 +104,6 @@ class AgentExampleForMessageTask4(cs.agent.Agent):
     def init_environment(self, runtime):
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
         self.input_message_stream = cs.stream.create_stream(self, 'all_message')
-        self.is_bad_event = cs.stream.create_stream(self, 'is_bad_event')
         self.stock_message_output = cs.stream.create_stream(self, 'stock_output')
 
         self.output_record = []

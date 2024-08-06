@@ -17,19 +17,20 @@ class StoreOpinionTest(SingleAgentTaskConfigBase):
         self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "All message messages",
+            "description": "All message information",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "headline": "name xxx, string",
+                "short_description": "text xxx, string",
+                "category":"category xxx, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "summarize_ceo_opinion",
-                "description": "Summaries of CEOs' opinions on techtronic and save to the local",
+                "stream_id": "summary_output",
+                "description": "Summaries of CEOs' opinions on Techtronic and save to the local",
                 "fields": {
-                    "content": "xxx, string",
-                    "tag": "Received, string"
+                    "news": "xxx, string",
+                    "summary": "xxx, string"
                 }
             }
         ])
@@ -37,8 +38,8 @@ class StoreOpinionTest(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
-class AgentExampleForMessageTask4(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_message_task_4"):
+class AgentExampleForMultiTask3(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task_3"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
         self.message_buffer = Buffer()
