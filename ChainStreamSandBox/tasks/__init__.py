@@ -80,14 +80,6 @@ from .email_task import EmailTask1
 from .email_task import EmailTask2
 from .email_task import EmailTask3
 from .email_task import EmailTask4
-from .multi_task import EmailTaskTest
-from .multi_task import MessageStockTask
-from .multi_task import MessageStockTask
-from .multi_task import WorkReminderTask
-from .multi_task import StoreOpinionTest
-from .multi_task import CatFoodTask
-from .multi_task import TravelTask
-from .multi_task import WaterFlowerTask
 from .news_task  import NewsTask1
 from .news_task  import NewsTask2
 from .news_task  import NewsTask3
@@ -119,6 +111,22 @@ from .github_task import GithubTask1
 from .github_task import GithubTask2
 from .github_task import GithubTask3
 from .github_task import GithubTask4
+from .multi_task import EmailTaskTest
+from .multi_task import MessageStockTask
+from .multi_task import MessageStockTask
+from .multi_task import WorkReminderTask
+from .multi_task import StoreOpinionTest
+from .multi_task import CatFoodTask
+from .multi_task import TravelTask
+from .multi_task import WaterFlowerTask
+from .multi_task import KitchenSafetyTask
+from .multi_task import CloseWindowTask
+from .multi_task import RemindDriverTask
+from .multi_task import StudentInClassTask
+from .multi_task import ReadingLightTask
+from .multi_task import WaitingRoomTask
+from .multi_task import ShopStockTask
+from .multi_task import TripMusicTask
 ALL_TASKS = {
     EmailTask1.__name__: EmailTask1,
     EmailTask2.__name__: EmailTask2,
@@ -128,40 +136,49 @@ ALL_TASKS = {
     NewsTask2.__name__: NewsTask2,
     NewsTask3.__name__: NewsTask3,
     NewsTask4.__name__: NewsTask4,
-    # StockTask1.__name__: StockTask1,
-    # ArxivTask1.__name__: ArxivTask1,
-    # ArxivTask2.__name__: ArxivTask2,
-    # ArxivTask3.__name__: ArxivTask3,
-    # GPSTask1.__name__: GPSTask1,
-    # GPSTask2.__name__: GPSTask2,
-    # GPSTask3.__name__: GPSTask3,
-    # WeatherTask1.__name__: WeatherTask1,
-    # WeatherTask2.__name__: WeatherTask2,
-    # WeatherTask3.__name__: WeatherTask3,
-    # WeatherTask4.__name__: WeatherTask4,
-    # HealthTask1.__name__: HealthTask1,
-    # HealthTask2.__name__: HealthTask2,
-    # HealthTask3.__name__: HealthTask3,
-    # HealthTask4.__name__: HealthTask4,
-    # HealthTask5.__name__: HealthTask5,
-    # ImageTask1.__name__: ImageTask1,
-    # VideoTask1.__name__: VideoTask1,
-    # VideoTask2.__name__: VideoTask2,
-    # VideoTask3.__name__: VideoTask3,
-    # VideoTask4.__name__: VideoTask4,
-    # VideoTask5.__name__: VideoTask5,
-    # VideoTask6.__name__: VideoTask6
-    # GithubTask1.__name__: GithubTask1,
-    # GithubTask2.__name__: GithubTask2,
-    # GithubTask3.__name__: GithubTask3,
-    # GithubTask4.__name__: GithubTask4,
-    # EmailTaskTest.__name__: EmailTaskTest,
-    # MessageStockTask.__name__: MessageStockTask,
-    # StoreOpinionTest.__name__: StoreOpinionTest,
-    # WorkReminderTask.__name__: WorkReminderTask,
-    # TravelTask.__name__: TravelTask,
-    # CatFoodTask.__name__: CatFoodTask,
-    # WaterFlowerTask.__name__: WaterFlowerTask
+    StockTask1.__name__: StockTask1,
+    ArxivTask1.__name__: ArxivTask1,
+    ArxivTask2.__name__: ArxivTask2,
+    ArxivTask3.__name__: ArxivTask3,
+    GPSTask1.__name__: GPSTask1,
+    GPSTask2.__name__: GPSTask2,
+    GPSTask3.__name__: GPSTask3,
+    WeatherTask1.__name__: WeatherTask1,
+    WeatherTask2.__name__: WeatherTask2,
+    WeatherTask3.__name__: WeatherTask3,
+    WeatherTask4.__name__: WeatherTask4,
+    HealthTask1.__name__: HealthTask1,
+    HealthTask2.__name__: HealthTask2,
+    HealthTask3.__name__: HealthTask3,
+    HealthTask4.__name__: HealthTask4,
+    HealthTask5.__name__: HealthTask5,
+    ImageTask1.__name__: ImageTask1,
+    VideoTask1.__name__: VideoTask1,
+    VideoTask2.__name__: VideoTask2,
+    VideoTask3.__name__: VideoTask3,
+    VideoTask4.__name__: VideoTask4,
+    VideoTask5.__name__: VideoTask5,
+    VideoTask6.__name__: VideoTask6,
+    GithubTask1.__name__: GithubTask1,
+    GithubTask2.__name__: GithubTask2,
+    GithubTask3.__name__: GithubTask3,
+    GithubTask4.__name__: GithubTask4,
+    EmailTaskTest.__name__: EmailTaskTest,
+    MessageStockTask.__name__: MessageStockTask,
+    StoreOpinionTest.__name__: StoreOpinionTest,
+    WorkReminderTask.__name__: WorkReminderTask,
+    TravelTask.__name__: TravelTask,
+    CatFoodTask.__name__: CatFoodTask,
+    WaterFlowerTask.__name__: WaterFlowerTask,
+    KitchenSafetyTask.__name__: KitchenSafetyTask,
+    CloseWindowTask.__name__: CloseWindowTask,
+    RemindDriverTask.__name__: RemindDriverTask,
+    StudentInClassTask.__name__: StudentInClassTask,
+    ReadingLightTask.__name__:ReadingLightTask,
+    WaitingRoomTask.__name__: WaitingRoomTask,
+    ShopStockTask.__name__: ShopStockTask,
+    TripMusicTask.__name__:TripMusicTask
+
 }
 
 
