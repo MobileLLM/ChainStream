@@ -10,8 +10,8 @@ class VideoTask3(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
-        self.output_ego_stream = None
-        self.input_ego_stream = None
+        self.output_ui_stream = None
+        self.input_ui_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "ego_4D",
             "description": "All first person perspective images",
@@ -52,8 +52,8 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_ego_stream = cs.stream.create_stream(self, 'ego_4D')
-        self.output_ego_stream = cs.stream.create_stream(self, 'analysis_topic')
+        self.input_ui_stream = cs.stream.create_stream(self, 'ego_4D')
+        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_topic')
 
         self.output_record = []
 
@@ -61,7 +61,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
             print("output task",data)
             self.output_record.append(data)
 
-        self.output_ego_stream.for_each(record_output)
+        self.output_ui_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
         processed_results = []

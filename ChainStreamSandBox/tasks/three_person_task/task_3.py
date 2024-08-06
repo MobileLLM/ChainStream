@@ -10,8 +10,8 @@ class VideoTask6(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
-        self.output_ego_stream = None
-        self.input_ego_stream = None
+        self.output_ui_stream = None
+        self.input_ui_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "three_person",
             "description": "All third person perspective images",
