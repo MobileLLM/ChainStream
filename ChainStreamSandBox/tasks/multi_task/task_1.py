@@ -9,7 +9,7 @@ random.seed(6666)
 
 
 class EmailTaskTest(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -17,39 +17,32 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.input_email_stream = None
         self.input_gps_stream = None
         self.is_office_event = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "sender": "the name of the sender, string",
+                "Content": "the content of the email, string"
             }
-        },{
+        }, {
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "all gps data",
             "fields": {
-                "Street Address": "xxx,str"
+                "Street Address": "the street address information from the gps sensor,str"
             }
         }])
-        # self.input_stream_description3 = StreamListDescription(streams=[{
-        #     "stream_id": "is_office_event",
-        #     "description": "whether I am in office or not",
-        #     "fields": {"Status":"True or False,bool"}
-        # }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding ads when I am in the office.(street address:3127 "
+                "description": "Replied list of emails,excluding ads in the office.(street address:3127 "
                                "Edgemont Boulevard)",
                 "fields": {
-                    "content": "xxx, string",
+                    "content": "the content of the emails, string",
                     "tag": "Received!"
                 }
-            },{
+            }, {
                 "stream_id": "is_office_event",
-                "description": "Check whether the person is in the office",
+                "description": "A bool to check whether the person is in the office",
                 "fields": {
                     "Status": "True or False,bool"
                 }
@@ -76,22 +69,17 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.email_input.for_each(save_email)
         
         def filter_ads(is_office_event):
-            print(is_office_event)
             if is_office_event:
                 emails = self.email_buffer.pop_all()
-                print("emails",emails)
                 matching_emails = []
                 for email in emails:
                     prompt = "is this email an advertisement? answer y or n"
                     res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
-                    print("filter_ads", res)
                     if res.lower() == 'n':
                         matching_emails.append(email)
-                print("matching_emails", matching_emails)
                 return matching_emails
 
         def auto_reply(email_list):
-            print("auto_reply", email_list)
             email_list = email_list['item_list']
             for email in email_list:
                 content = email.get('Content')
@@ -100,20 +88,14 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
                         "content": content,
                         "tag": "Received!"
                     })
-                else:
-                    print(f"Email missing 'Content' field: {email}")
+                    
         def analysis_gps(gps):
             address = gps["Street Address"]
             if address == "3127 Edgemont Boulevard":
-                print("True")
-                self.is_office_event.add_item("True")
+                self.is_office_event.add_item({"Status":"True"})
                 return gps
             else:
                 return None
-            # else:
-            #     print("False")
-            #     self.is_office_event.add_item("False")
-            # return gps
         self.gps_input.for_each(analysis_gps).for_each(filter_ads).batch(by_count=2).for_each(auto_reply)     
         '''
 
@@ -139,8 +121,3 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             sent_messages.append(gps)
             self.input_gps_stream.add_item(gps)
         return sent_messages
-
-
-
-
-

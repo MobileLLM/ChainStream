@@ -1,7 +1,7 @@
 from ChainStreamSandBox import SandBox
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.stream_selector import StreamSelectorBase
-from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc, chainstream_english_doc
+from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc, chainstream_english_doc, chainstream_english_doc_with_1_example, chainstream_english_doc_with_2_example
 from AgentGenerator.prompt import REACT_PROMPT_ONLY_START
 
 

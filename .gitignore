@@ -173,3 +173,8 @@ PrivacyStream/local.gradle
 /ChainStreamSandBox/raw_data/three_person_video/sphar/SPHAR-Dataset-1.0/
 /ChainStreamSandBox/raw_data/three_person_video/sphar/video_frame/
 /ChainStreamSandBox/scripts/result/
+
+*/_MACOSX/*
+/ChainStreamSandBox/raw_data/desktop_ui/images/
+/ChainStreamSandBox/raw_data/desktop_ui/xmls/
+/ChainStreamSandBox/raw_data/desktop_ui/__MACOSX/

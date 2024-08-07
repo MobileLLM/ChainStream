@@ -8,32 +8,30 @@ random.seed(6666)
 
 
 class HealthTask5(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=20, eos_gap=4):
+    def __init__(self, sensor_number=20):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "All health information",
             "fields": {
-                "Occupation": " xxx, string",
-                "Sleep Duration": " xxx, float",
-                "Age": " xxx, int"
+                "Occupation": "The occupation information of the patients, string",
+                "Sleep Duration": "the average sleep duration information per day of the patients, float",
+                "Age": "the age information of the patients, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "engineer_advice",
-                "description": "Count the ages and sleep times of all the company's engineer and give "
-                               "reasonable advice",
+                "stream_id": "health_advice_for_engineers",
+                "description": "A list of the reasonable advice for the company's engineer according to their ages "
+                               "and sleeping time",
                 "fields": {
-                    "age":"xxx,string",
-                    "sleep_time":"xxx,string",
-                    "advice":"xxx,string"
+                    "age": "the age of the engineer,int",
+                    "sleep_time": "the average sleep duration of the engineer,float",
+                    "advice": "the reasonable advice for every engineer,string"
                 }
             }
         ])
@@ -46,7 +44,7 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_health_task_5"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_health")
-        self.sensor_output = cs.get_stream(self, "engineer_advice")
+        self.sensor_output = cs.get_stream(self, "health_advice_for_engineers")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -73,7 +71,7 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_sensor_stream = cs.stream.create_stream(self, 'engineer_advice')
+        self.output_sensor_stream = cs.stream.create_stream(self, 'health_advice_for_engineers')
 
         self.output_record = []
 
@@ -88,9 +86,3 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

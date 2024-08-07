@@ -8,28 +8,26 @@ random.seed(6666)
 
 
 class HealthTask3(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=40, eos_gap=4):
+    def __init__(self, sensor_number=40):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "All health information",
             "fields": {
-                "BMI Category": " xxx, string"
+                "BMI Category": "the BMI category of the body check, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_exercise",
-                "description": "Remind me to take some exercise when my BMI is 'Overweight' or 'Obese' everyday",
+                "description": "A list of reminders to take some exercise when the BMI is 'Overweight' or 'Obese'",
                 "fields": {
-                    "BMI":"xxx,string",
-                    "reminder":"Excercise yourself!"
+                    "BMI": "the BMI category of the body check,string",
+                    "reminder": "Exercise yourself!"
                 }
             }
         ])
@@ -55,7 +53,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
                 BMI = health['BMI Category']
                 self.sensor_output.add_item({
                     "BMI": BMI,
-                    "reminder": "Excercise yourself!"
+                    "reminder": "Exercise yourself!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)
         '''
@@ -77,9 +75,3 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

@@ -8,32 +8,29 @@ random.seed(6666)
 
 
 class GithubTask1(SingleAgentTaskConfigBase):
-    def __init__(self, github_number=10, eos_gap=4):
+    def __init__(self, github_number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github messages",
+            "description": "All github information",
             "fields": {
-                "stars_count": "xxx,int",
-                "watchers": "xxx, int",
-                "name": "xxx, string"
+                "stars_count": "the number of the stars received in the github repository, int",
+                "watchers": "the number of the watchers in the github repository, int",
+                "name": "the name of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "watchers_and_stars",
-                "description": "select ten github repositories with most stars and tell me the number of watchers of "
-                               "them",
+                "stream_id": "top_ten_stars_github_repository",
+                "description": "Ten most-stars github repositories with the number of watchers",
                 "fields": {
-                    "stars": "xxx, int",
-                    "name": "name xxx, string",
-                    "watchers": "xxx, int"
+                    "stars": "the number of the stars received in the github repository, int",
+                    "name": "the name of the github repository, string",
+                    "watchers": "the number of the watchers in the github repository, int"
                 }
             }
         ])
@@ -46,7 +43,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "watchers_and_stars")
+        self.github_output = cs.get_stream(self, "top_ten_stars_github_repository")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -54,12 +51,9 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
             # all_github = []
             github_list = github_dicts['item_list']
             sorted_dicts = sorted(github_list, key=lambda x: x['stars_count'], reverse=True)
-            # print("after sort",sorted_dicts)
             top_10_dicts = sorted_dicts[:10]
-            print(top_10_dicts)
             return top_10_dicts
         def count_watchers(github_list):
-            print(github_list)
             stars = github_list.get('stars_count')
             watchers = github_list.get('watchers')
             name = github_list.get('name')
@@ -74,7 +68,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
-        self.output_github_stream = cs.stream.create_stream(self, 'watchers_and_stars')
+        self.output_github_stream = cs.stream.create_stream(self, 'top_ten_stars_github_repository')
 
         self.output_record = []
 

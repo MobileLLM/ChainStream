@@ -3,28 +3,29 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
+
 random.seed(6666)
 
 
 class ShopStockTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.input_shop_stream = None
         self.output_message_stream = None
         self.work_trigger_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "clock",
-            "description": "display the time right now",
+            "description": "the hour of the real-time clock data",
             "fields": {
-                "Time":"xxx,string"
+                "Time": "the hour information,string"
             }
-        },{
+        }, {
             "stream_id": "all_one_person_shop",
             "description": "one_person perspective data",
             "fields": {
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -61,7 +62,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
             clock_time_str = clock_input["Time"]  
             hour = int(clock_time_str.split(':')[0])  
             if 8 <= hour <= 22:
-                self.work_trigger.add_item("True")
+                self.work_trigger.add_item({"Status":"True"})
                 return clock_input
         self.clock_input.for_each(business_hours)
 
@@ -106,12 +107,15 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         sent_messages = []
+
+        clock_now = 9
+        self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
+        cou = 0
         for message in self.video_data:
             sent_messages.append(message)
-            self.input_shop_stream.add_item(message)
+            self.input_shop_stream.add_item({"frame": message})
+            cou += 1
+            if cou % 3 == 0:
+                clock_now += 1
+                self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
         return sent_messages
-
-
-
-
-

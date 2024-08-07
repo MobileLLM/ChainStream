@@ -8,32 +8,30 @@ random.seed(6666)
 
 
 class GithubTask2(SingleAgentTaskConfigBase):
-    def __init__(self, github_number=40, eos_gap=4):
+    def __init__(self, github_number=40):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github messages",
+            "description": "All github information",
             "fields": {
-                "commit_count": "xxx,int",
-                "created_at": "xxx, string",
-                "name": "xxx, string"
+                "commit_count": "the number of the commits in the github repository,int",
+                "created_at": "the time that the github repository was created at using ISO 8601 datetime format, "
+                              "string",
+                "name": "the name of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "commit_most_this_year",
-                "description": "select ten github repositories this year and tell me the number of commits of "
-                               "them",
+                "description": "Ten github repositories with the most number of commits in 2024",
                 "fields": {
-                    "date": "xxx, string",
-                    "name": "name xxx, string",
-                    "commit_count": "xxx, int"
+                    "date": "the time that the github repository was created at using ISO 8601 datetime format, string",
+                    "name": "the name of the github repository, string",
+                    "commit_count": "the number of the commits in the github repository, int"
                 }
             }
         ])
@@ -53,7 +51,6 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         def count_stars(github_dicts):
             date = github_dicts['created_at']
             if date.startswith("2024"):
-                # print(github_dicts)
                 return github_dicts
         def count_commit(github_list):
             github_list2 = github_list['item_list']

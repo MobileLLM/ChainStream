@@ -4,11 +4,12 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import DesktopData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
+
 random.seed(6666)
 
 
 class WorkReminderTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -16,37 +17,30 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.input_ui_stream = None
         self.input_gps_stream = None
         self.is_office_event = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "all gps data",
             "fields": {
-                "Street Address": "xxx,str"
+                "Street Address": "the street address information from the gps sensor,str"
             }
-        },{
+        }, {
             "stream_id": "all_ui",
-            "description": "All ui snapshots",
+            "description": "all ui snapshots",
             "fields": {
-                "image_file": "name xxx, string"
+                "image_file": "image file in the Jpeg format processed using PIL,string"
             }
         }])
-        # self.input_stream_description3 = StreamListDescription(streams=[{
-        #     "stream_id": "is_office_event",
-        #     "description": "whether I am in office or not",
-        #     "fields": {"Status":"True or False,bool"}
-        # }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reminder",
-                "description": "Reminder from the messages when I slack off in the office.(Street Address:3127 "
+                "description": "A list of reminder messages when I slack off in the office.(Office street address:3127 "
                                "Edgemont Boulevard)",
                 "fields": {
                     "reminder": "Go back to work!"
                 }
-            },{
+            }, {
                 "stream_id": "is_office_event",
-                "description": "Check whether the person is in the office",
+                "description": "A check for whether the person is in the office",
                 "fields": {
                     "Status": "True or False,bool"
                 }
@@ -73,14 +67,11 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         self.ui_input.for_each(save_ui)
 
         def check_lazy(is_office_event):
-            print(is_office_event)
             if is_office_event is not None:
                 uis = self.ui_buffer.pop_all()
-                print("uis",len(uis))
                 for ui in uis:
                     prompt = "Is the person slacking off in the office?Simply answer y or n,if you're not sure,answer y"
                     res = self.llm.query(cs.llm.make_prompt(ui['image_file'], prompt))
-                    print("res", res)
                     if res.lower() == 'y':
                         self.message_output.add_item({
                             "reminder":"Go back to work!"
@@ -90,15 +81,10 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         def analysis_gps(gps):
             address = gps["Street Address"]
             if address == "3127 Edgemont Boulevard":
-                print("True")
-                self.is_office_event.add_item("True")
+                self.is_office_event.add_item({"Status":"True"})
                 return gps
             else:
                 return None
-            # else:
-            #     print("False")
-            #     self.is_office_event.add_item("False")
-            # return gps
         self.gps_input.for_each(analysis_gps).for_each(check_lazy)
         '''
 
@@ -124,8 +110,3 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
             sent_messages.append(gps)
             self.input_gps_stream.add_item(gps)
         return sent_messages
-
-
-
-
-

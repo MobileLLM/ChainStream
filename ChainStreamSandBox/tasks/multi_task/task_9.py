@@ -9,33 +9,32 @@ random.seed(6666)
 
 
 class CloseWindowTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_action_stream = None
         self.input_weather_stream = None
         self.gps_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "all gps data",
             "fields": {
-                "Street Address": "xxx,str"
+                "Street Address": "the street address information from the gps sensor,str"
             }
-        },{
+        }, {
             "stream_id": "all_weather",
             "description": "All weather messages",
             "fields": {
-                "Location": " xxx, string",
-                "Temperature_C": " xxx, float",
-                "Weather":"xxx,string"
+                "Location": "the weather location, string",
+                "Temperature_C": "temperature in degrees Celsius, float",
+                "Weather": "the weather condition,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "The operation of automatically closing the window",
+                "description": "A list of commands of automatically closing the window",
                 "fields": {
                     "action": "Close all the windows!"
                 }
@@ -98,8 +97,3 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
             sent_messages.append(message)
             self.gps_stream.add_item(message)
         return sent_messages
-
-
-
-
-

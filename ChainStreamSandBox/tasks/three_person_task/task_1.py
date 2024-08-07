@@ -6,6 +6,7 @@ from AgentGenerator.io_model import StreamListDescription
 
 random.seed(6666)
 
+
 class VideoTask4(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
@@ -16,17 +17,15 @@ class VideoTask4(SingleAgentTaskConfigBase):
             "stream_id": "three_person",
             "description": "All third person perspective images",
             "fields": {
-                # "Occupation": " xxx, string",
-                # "Sleep Duration": " xxx, float",
-                # "Age": " xxx, int"
+                "images": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_traffic",
-                "description": "Analyze whether a building collapses or a car accident occurs at this moment",
+                "description": "A list of analysis of whether a building collapses or a car accident occurs",
                 "fields": {
-                    "analysis_result": "result xxx, string"}
+                    "analysis_result": "the analysis of the traffic accident, string"}
             }
         ])
         self.Sphar_data = SpharData().load_for_traffic()
@@ -41,10 +40,9 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_surveillance(three_person_data):
-            print(type(three_person_data))
-            prompt = " Analyze if there is anything unusual on the road?simply answer y or n.If the answer is y,judge the type of the accident from the tags:[car_accident,collapse,fire,others]."
+            prompt = " Analyze if there is anything unusual on the road?simply answer y or n.If the answer is y,judge"
+            " the type of the accident from the tags:[car_accident,collapse,fire,others]."
             res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
-            print("analyze_surveillance", res)
             self.analysis_output.add_item({
                 "analysis_result": res
             })
@@ -59,7 +57,6 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_record = []
 
         def record_output(data):
-            print("output task",data)
             self.output_record.append(data)
 
         self.output_ui_stream.for_each(record_output)
@@ -67,7 +64,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def start_task(self, runtime) -> list:
         processed_results = []
         for shot in self.Sphar_data:
-            processed_results.append(shot)
+            processed_results.append({"images": shot})
             self.input_ui_stream.add_item(shot)
         return processed_results
 

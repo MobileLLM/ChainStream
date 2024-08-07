@@ -1,2 +1,2 @@
 from .chainstream_doc import chainstream_chinese_doc, chinese_one_example
-from .chainstream_english_doc import chainstream_english_doc
+from .chainstream_english_doc import chainstream_english_doc, chainstream_english_doc_with_1_example, chainstream_english_doc_with_2_example

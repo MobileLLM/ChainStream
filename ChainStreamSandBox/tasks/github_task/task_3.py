@@ -8,32 +8,29 @@ random.seed(6666)
 
 
 class GithubTask3(SingleAgentTaskConfigBase):
-    def __init__(self, github_number=20, eos_gap=4):
+    def __init__(self, github_number=20):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github messages",
+            "description": "All github information",
             "fields": {
-                "licence": "xxx,string",
-                "forks_count": "xxx, int",
-                "name": "xxx, string"
+                "licence": "the licence of the github repository,string",
+                "forks_count": "the number of forks from the github repository, int",
+                "name": "the name of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "most_forks_with_licence",
-                "description": "select the github repositories with licence and tell me the number of forks of "
-                               "them",
+                "description": "A list of fork number of github repositories with licence",
                 "fields": {
-                    "licence": "xxx,string",
-                    "name": "name xxx, string",
-                    "forks_count": "xxx, int"
+                    "licence": "the licence of the github repository,string",
+                    "name": "the name of the github repository, string",
+                    "forks_count": "the number of forks from the github repository, int"
                 }
             }
         ])
@@ -52,13 +49,10 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def start(self):
         def license_or_not(github_dicts):
             license_value = github_dicts.get('licence') 
-            # print(license_value)
             if license_value:  
-                # print(license_value)
                 return github_dicts
         def count_forks(github_list):
             github_list2 = github_list['item_list']
-            print(github_list2)
             sorted_dicts = sorted(github_list2, key=lambda x: int(x['forks_count']), reverse=True)
             top_10_dicts = sorted_dicts[:10]
             for github in top_10_dicts:

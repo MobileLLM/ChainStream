@@ -8,31 +8,29 @@ random.seed(6666)
 
 
 class HealthTask1(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=40, eos_gap=4):
+    def __init__(self, sensor_number=40):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "All health information",
             "fields": {
-                "SystolicBP": " xxx, float",
-                "DiastolicBP": "date xxx, string"
+                "SystolicBP": "the systolic blood pressure data from the health sensor, float",
+                "DiastolicBP": "the diastolic blood pressure data from the health sensor, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_medicine",
-                "description": "Remind me to take some medicine when my systolic blood pressure is above 120,"
-                               "and my diastolic blood pressure is over 70",
+                "description": "A list of reminders to take some medicine when the systolic blood pressure is over "
+                               "120 and the diastolic blood pressure is over 70 ",
                 "fields": {
-                    "SystolicBP":"xxx,string",
-                    "DiastolicBP":"xxx,string",
-                    "reminder":"Remember to take your medicine!"
+                    "SystolicBP": "the systolic blood pressure data from the health sensor,float",
+                    "DiastolicBP": "the diastolic blood pressure data from the health sensor, float",
+                    "reminder": "Remember to take your medicine!"
                 }
             }
         ])
@@ -84,9 +82,3 @@ class AgentExampleForSensorTask8(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

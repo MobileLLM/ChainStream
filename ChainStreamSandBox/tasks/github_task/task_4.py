@@ -8,32 +8,29 @@ random.seed(6666)
 
 
 class GithubTask4(SingleAgentTaskConfigBase):
-    def __init__(self, github_number=10, eos_gap=4):
+    def __init__(self, github_number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github messages",
+            "description": "All github information",
             "fields": {
-                "pull_requests": "xxx,int",
-                "languages_used": "xxx, string",
-                "name": "xxx, string"
+                "pull_requests": "the number of the pull-requests of the github repository,int",
+                "languages_used": "The code language used in github, string",
+                "name": "the name of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "language_from_most_pr",
-                "description": "select ten github repositories with most numbers of pr and tell me the computer "
-                               "language used of them",
+                "description": "A list of code language used in the github projects with most number of pull-requests",
                 "fields": {
-                    "pull_requests": "xxx,int",
-                    "name": "name xxx, string",
-                    "languages_used": "xxx, string"
+                    "pull_requests": "the name of the github repository",
+                    "name": "the name of the github repository, string",
+                    "languages_used": "The code language used in github, string"
                 }
             }
         ])
@@ -53,9 +50,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         def count_pr(github_dicts):
             github_list = github_dicts['item_list']
             sorted_dicts = sorted(github_list, key=lambda x: x['pull_requests'], reverse=True)
-            # print("after sort",sorted_dicts)
             top_10_dicts = sorted_dicts[:10]
-            print(top_10_dicts)
             return top_10_dicts
         def find_language(github_list):
             pull_requests = github_list.get('pull_requests')

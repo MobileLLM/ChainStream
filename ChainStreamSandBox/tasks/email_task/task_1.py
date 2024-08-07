@@ -8,20 +8,18 @@ random.seed(6666)
 
 
 class EmailTask1(SingleAgentTaskConfigBase):
-    def __init__(self, paper_number=10, eos_gap=4):
+    def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string"
+                "sender": "the name of the sender, string",
+                "Content": "the content of the email, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,8 +27,8 @@ class EmailTask1(SingleAgentTaskConfigBase):
                 "stream_id": "summary_by_sender",
                 "description": "A list of email summaries for each email sender, excluding ads",
                 "fields": {
-                    "sender": "name xxx, string",
-                    "summary": "sum xxx, string"
+                    "sender": "the name of the sender, string",
+                    "summary": "the summary of the email for each email sender,excluding ads, string"
                 }
             }
         ])
@@ -44,22 +42,12 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
         self.email_output = cs.get_stream(self, "summary_by_sender")
-        # self.email_output = cs.create_stream(self, {
-        #     "stream_id": "summary_by_sender",
-        #     "description": "A list of email summaries for each email sender, excluding ads",
-        #     "fields": {
-        #         "sender": "name xxx, string",
-        #         "summary": "sum xxx, string"
-        #     }
-        # })
-
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
         def filter_ads(email):
             prompt = "is this email an advertisement? answer y or n"
             res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
-            print("filter_ads", res)
             if res.lower() == 'n':
                 return email
 
@@ -71,16 +59,12 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
                     sender_group[email['sender']] = [email]
                 else:
                     sender_group[email['sender']].append(email)
-
-            print("group_by_sender", list(sender_group.values()))
             return list(sender_group.values())
 
         def sum_by_sender(sender_email):
             sender = sender_email[0]['sender']
             prompt = "Summarize these all email here"
-            print("sum_by_sender: query", [x['Content'] for x in sender_email], prompt)
             res = self.llm.query(cs.llm.make_prompt([x['Content'] for x in sender_email], prompt))
-            print("sum_by_sender", res)
             self.email_output.add_item({
                 "sender": sender,
                 "summary": res
@@ -104,7 +88,6 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         sent_messages = []
         for message in self.paper_data:
             message['sender'] = message['From']
-            # print("adding message", message)
             sent_messages.append(message)
             self.input_paper_stream.add_item(message)
         return sent_messages

@@ -4,33 +4,33 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import NewsData
 from AgentGenerator.io_model import StreamListDescription
 import time
+
 random.seed(6666)
 
 
 class StoreOpinionTest(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.input_news_stream = None
         self.output_local_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "All message information",
+            "description": "All news items",
             "fields": {
-                "headline": "name xxx, string",
-                "short_description": "text xxx, string",
-                "category":"category xxx, string"
+                "category": "the category of the news, string",
+                "short_description": "the short description of the news, string",
+                "headline": "the headline of the news event, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_output",
-                "description": "Summaries of CEOs' opinions on Techtronic and save to the local",
+                "description": "A list of the summary of the CEOs' opinions on Techtronic",
                 "fields": {
-                    "news": "xxx, string",
-                    "summary": "xxx, string"
+                    "news": "the headline of the news event, string",
+                    "summary": "the summary of the CEOs' opinions on Techtronic, string"
                 }
             }
         ])
@@ -49,15 +49,10 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
     def start(self):
         def summary_description(news):
             news_list = news["item_list"]
-            print(news_list)
             for news in news_list:
-                print(news)
                 title = news["headline"]
-                print(title)
                 prompt = "Summarize the opinions of the CEO in the news"
-                print("sum_on_financial_news: query", news['short_description'], prompt)
                 res = self.llm.query(cs.llm.make_prompt(news['short_description'], prompt))
-                print("sum_on_financial_news", res)
                 self.output_local_stream.add_item({
                     "news": title,
                     "summary": res
@@ -65,11 +60,8 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
             return messages
 
         def extract_type(news):
-            print("news:", news)
             news_type = news['category']
             if news_type == "Techtronic":
-                # print(news)
-                print("after filter", news)
                 return news
 
         self.news_input.for_each(extract_type).batch(by_time=1).for_each(summary_description)
@@ -93,8 +85,3 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
             self.input_news_stream.add_item(message)
             time.sleep(3)
         return sent_messages
-
-
-
-
-

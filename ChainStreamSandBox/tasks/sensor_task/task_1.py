@@ -8,33 +8,31 @@ random.seed(6666)
 
 
 class GPSTask1(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=10, eos_gap=4):
+    def __init__(self, sensor_number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_locations",
             "description": "All locations information",
             "fields": {
-                "ContinentName": "name xxx, string",
-                "CapitalLatitude": "text xxx, string",
-                "CapitalLongitude": "text xxx, string",
-                "CapitalName":"text xxx, string"
+                "ContinentName": "the name of the continent, string",
+                "CapitalLatitude": "the latitude of my location, string",
+                "CapitalLongitude": "the longitude of my location, string",
+                "CapitalName": "the name of the capital, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "country_analysis",
-                "description": "Tell me which city I was in according to my longitude and latitude detection during "
-                               "these days in North America",
+                "stream_id": "city_identification",
+                "description": "A list of the city identifications according to the longitude and latitude sensor in "
+                               "North America",
                 "fields": {
-                    "longitude": "xxx, string",
-                    "latitude": "XXX, string",
-                    "city": "XXX, string"
+                    "longitude": "the longitude of my location, string",
+                    "latitude": "the latitude of my location, string",
+                    "city": "the name of my city, string"
                 }
             }
         ])
@@ -47,7 +45,7 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_gps_task_1"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_locations")
-        self.sensor_output = cs.get_stream(self, "country_analysis")
+        self.sensor_output = cs.get_stream(self, "city_identification")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -58,7 +56,6 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
 
         def analysis_location(location_list):
             location_list = location_list['item_list']
-            # print(location_list)
             for location in location_list:
                 latitude = location.get('CapitalLatitude')
                 longitude = location.get('CapitalLongitude')
@@ -74,7 +71,7 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_locations')
-        self.output_sensor_stream = cs.stream.create_stream(self, 'country_analysis')
+        self.output_sensor_stream = cs.stream.create_stream(self, 'city_identification')
 
         self.output_record = []
 
@@ -89,8 +86,3 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-

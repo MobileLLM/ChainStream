@@ -8,30 +8,28 @@ random.seed(6666)
 
 
 class GPSTask3(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=100, eos_gap=4):
+    def __init__(self, sensor_number=100):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_locations",
             "description": "All locations information",
             "fields": {
-                "PrimaryPropertyType": "name xxx, string",
-                "Street Address": "text xxx, string",
-                "PropertyName": "text xxx, string"
+                "PrimaryPropertyType": "the type of the primary property, string",
+                "Street Address": "the street address of my location, string",
+                "PropertyName": "the name of the primary property, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "street_of_school",
-                "description": "Tell me the street address of all the 'K-12 School' in my city",
+                "description": "A list of the street addresses of all the 'K-12 School' around",
                 "fields": {
-                    "address":"xxx,string",
-                    "school":"xxx,string"
+                    "address": "the street address of my location,string",
+                    "school": "the names of the schools around,string"
                 }
             }
         ])
@@ -51,13 +49,10 @@ class AgentExampleForSensorTask3(cs.agent.Agent):
         def filter_school(location):
             type = location['PrimaryPropertyType']
             if type == "K-12 School":
-                print(location)
                 return location
 
         def nearest_district(location_list):
-            # print(location_list)
             location_list = location_list['item_list']
-            # print(location_list)
             for location in location_list:
                 address = location.get('Street Address')
                 school = location.get('PropertyName')
@@ -87,9 +82,3 @@ class AgentExampleForSensorTask3(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-
