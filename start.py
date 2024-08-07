@@ -18,7 +18,7 @@ def parse_args():
                         help="directory of output")
     parser.add_argument("-verbose", action="store_true", dest="verbose", default=False,
                         help="run in verbose mode")
-    parser.add_argument("--platform", action='store', dest='platform', default='web', 
+    parser.add_argument("--platform", action='store', dest='platform', default='web',
                         choices=['web', 'shell'], 
                         help='runtime core server platform: web or shell')
     args = parser.parse_args()

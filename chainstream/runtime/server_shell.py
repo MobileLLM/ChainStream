@@ -33,7 +33,7 @@ class ChainStreamServerShell():
             self.chainstream_core.get_graph_statistics()
         elif cmd == 'list agents' or cmd == 'LA':
             out += 'available agents:\n'
-            for i, (name, agent) in enumerate(self.chainstream_core.get_running_agents_name_list()):
+            for i, (name, agent) in enumerate(self.chainstream_core.get_running_agents_info_list()):
                 out += f'  {i}: {name}\n'
         elif cmd.startswith('start agent') or cmd == 'S':
             # agents_path = os.path.abspath(os.path.join(os.getcwd(), '..', '..', 'agents'))
