@@ -8,30 +8,28 @@ random.seed(6666)
 
 
 class GPSTask2(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=30, eos_gap=4):
+    def __init__(self, sensor_number=30):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_locations",
             "description": "All locations information",
             "fields": {
-                "PrimaryPropertyType": "name xxx, string",
-                "Street Address": "text xxx, string",
-                "PropertyName": "text xxx, string"
+                "PrimaryPropertyType": "the type of the primary property, string",
+                "Street Address": "the street address of my location, string",
+                "PropertyName": "the name of the primary property, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "nearest_hotel",
-                "description": "Tell me the hotel name around according to my street address",
+                "description": "A list of the hotel around according to the street address",
                 "fields": {
-                    "address":"xxx,string",
-                    "hotel":"xxx,string"
+                    "address": "the street address of my location",
+                    "hotel": "the names of the hotels around,string"
                 }
             }
         ])
@@ -55,7 +53,6 @@ class AgentExampleForSensorTask2(cs.agent.Agent):
 
         def nearest_hotel(location_list):
             location_list = location_list['item_list']
-            # print(location_list)
             for location in location_list:
                 address = location.get('Street Address')
                 hotel = location.get('PropertyName')
@@ -85,8 +82,3 @@ class AgentExampleForSensorTask2(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-

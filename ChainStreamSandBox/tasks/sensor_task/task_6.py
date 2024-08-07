@@ -8,30 +8,28 @@ random.seed(6666)
 
 
 class WeatherTask3(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=40, eos_gap=4):
+    def __init__(self, sensor_number=40):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
             "description": "All weather information",
             "fields": {
-                "Precipitation_mm": "date xxx, float",
-                "Date_Time": "date xxx, string"
+                "Precipitation_mm": "the precipitation of the city in mm, float",
+                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "remind_rainfall",
-                "description": "If the current precipitation is over 5,remind me to wear rain boots if I go out",
+                "stream_id": "alarm_rainfall",
+                "description": "A list of reminders to wear rain boots outside if the precipitation is over 5 mm",
                 "fields": {
-                    "date_time":"xxx,string",
-                    "precipitation":"xxx,string",
-                    "reminder":"Rain boots are recommended for walking outside!"
+                    "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "precipitation": "the precipitation of the city in mm, float",
+                    "reminder": "Rain boots are recommended for walking outside!"
                 }
             }
         ])
@@ -44,7 +42,7 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_weather_task_6"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_weather")
-        self.sensor_output = cs.get_stream(self, "remind_rainfall")
+        self.sensor_output = cs.get_stream(self, "alarm_rainfall")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -67,7 +65,7 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_weather')
-        self.output_sensor_stream = cs.stream.create_stream(self, 'remind_rainfall')
+        self.output_sensor_stream = cs.stream.create_stream(self, 'alarm_rainfall')
 
         self.output_record = []
 
@@ -82,9 +80,3 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

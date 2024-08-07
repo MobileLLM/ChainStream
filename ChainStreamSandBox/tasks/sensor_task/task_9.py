@@ -8,28 +8,26 @@ random.seed(6666)
 
 
 class HealthTask2(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=40, eos_gap=4):
+    def __init__(self, sensor_number=40):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "All health information",
             "fields": {
-                "BS": " xxx, float"
+                "BS": "the blood sugar data from the health sensor, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "remind_medicine",
-                "description": "Remind me to hospital when my blood sugar is above 8.4",
+                "stream_id": "remind_check",
+                "description": "A list of reminders to go to the hospital for a check when the blood sugar is over 8.4",
                 "fields": {
-                    "Blood_sugar":"xxx,string",
-                    "reminder":"High blood sugar！You'd better go to the hospital to check your body!"
+                    "Blood_sugar": "the blood sugar data from the health sensor, float",
+                    "reminder": "High blood sugar！You'd better go to the hospital to check your body!"
                 }
             }
         ])
@@ -42,7 +40,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_health_task_2"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_health")
-        self.sensor_output = cs.get_stream(self, "remind_medicine")
+        self.sensor_output = cs.get_stream(self, "remind_check")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -63,7 +61,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_sensor_stream = cs.stream.create_stream(self, 'remind_medicine')
+        self.output_sensor_stream = cs.stream.create_stream(self, 'remind_check')
 
         self.output_record = []
 
@@ -78,9 +76,3 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

@@ -2,7 +2,6 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DialogData
-from ChainStreamSandBox.raw_data import LandmarkData
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 
@@ -10,36 +9,34 @@ random.seed(6666)
 
 
 class TravelTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_message_stream = None
         self.input_weather_stream = None
         self.input_dialogue_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_weather",
             "description": "All weather messages",
             "fields": {
-                "Location": " xxx, string",
-                "Temperature_C": " xxx, float"
+                "Location": "the weather location, string",
+                "Temperature_C": "temperature in degrees Celsius, float"
             }
-        },{
+        }, {
             "stream_id": "all_dialogue",
-            "description": "All dialogue messages",
+            "description": "All dialogues recorder",
             "fields": {
-                "dialog": "name xxx, string"
+                "dialog": "the dialogues information, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_report",
-                "description": "A list of the place extracted from the dialogues with the temperature reports",
+                "description": "A list of the places extracted from the dialogues with the temperature",
                 "fields": {
-                    "place": "xxx, string",
-                    "temperature": "xxx, float"
+                    "place": "the place extracted from the dialogue, string",
+                    "temperature": "the temperature of the place extracted from the dialogue, float"
                 }
             }
         ])
@@ -64,17 +61,11 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
 
         def check_weather(dialogs_list):
             dialogs = dialogs_list["item_list"]
-            # print(dialogs)
             weather_information = self.weather_buffer.pop_all()
-            # print(weather_information)
             for dialog in dialogs:
-                print(dialog)
                 prompt = "Extract the place in the dialog.Simply tell me the place."
-                print(prompt)
                 res = self.llm.query(cs.llm.make_prompt(dialog, prompt))
-                print(res)
                 for weather in weather_information:
-                    print(weather)
                     if weather['Location'] == res:
                         self.message_output.add_item({
                             "place":res,
@@ -85,15 +76,11 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
 
         def analysis_dialogues(dialogues_list):
             dialogues =  dialogues_list["item_list"]
-            # print(dialogues)
             for dialogue in dialogues:
                 dialog = dialogue["dialog"]
-                # print(dialog)
                 prompt = "Are the people talking about the trip or travel?Simply answer y or n"
                 res = self.llm.query(cs.llm.make_prompt(dialog, prompt))
-                # print(res)
                 if res.lower() == 'y':
-                    # print(dialog)
                     return dialog
 
         self.dialogue_input.batch(by_count=2).for_each(analysis_dialogues).batch(by_count=2).for_each(check_weather)
@@ -120,8 +107,3 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
             sent_messages.append(weather)
             self.input_weather_stream.add_item(weather)
         return sent_messages
-
-
-
-
-

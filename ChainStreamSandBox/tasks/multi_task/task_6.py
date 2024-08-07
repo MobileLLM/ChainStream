@@ -9,31 +9,31 @@ random.seed(6666)
 
 
 class CatFoodTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_message_stream = None
         self.input_video_stream = None
         self.gps_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "all gps data",
             "fields": {
-                "Street Address": "xxx,str"
+                "Street Address": "the street address information from the gps sensor,str"
             }
-        },{
+        }, {
             "stream_id": "all_video",
             "description": "video data",
             "fields": {
+                "images": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "reminder",
-                "description": "Reminder list of Refilling the cat food if the bowl is empty when I am not at home.("
-                               "Street Addresss:123 Main St)",
+                "stream_id": "cat_food_reminder",
+                "description": "A reminder list of refilling the cat food if the bowl is empty when I am not at "
+                               "home.(home street address:123 Main St)",
                 "fields": {
                     "reminder": "There is no cat food already. Please refill it."
                 }
@@ -49,7 +49,7 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.message_output = cs.get_stream(self, "reminder")
+        self.message_output = cs.get_stream(self, "cat_food_reminder")
         self.video_buffer = Buffer()
         self.llm = cs.llm.get_model("image")
 
@@ -68,7 +68,6 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
             for data in data_list:
                 prompt = "Please check if there is any cat food left in the cat bowl.Simply answer y or n."
                 res = self.llm.query(cs.llm.make_prompt(prompt,data))
-                # print("res", res)
                 if res.lower()== "n" :
                     self.message_output.add_item({
                         "reminder":"There is no cat food already. Please refill it."
@@ -79,9 +78,9 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.gps_stream = cs.stream.create_stream(self,'all_gps')
+        self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
-        self.output_message_stream = cs.stream.create_stream(self, 'reminder')
+        self.output_message_stream = cs.stream.create_stream(self, 'cat_food_reminder')
 
         self.output_record = []
 
@@ -94,13 +93,8 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         sent_messages = []
         for message in self.video_data:
             sent_messages.append(message)
-            self.input_video_stream.add_item(message)
+            self.input_video_stream.add_item({"images": message})
         for message in self.gps_data:
             sent_messages.append(message)
             self.gps_stream.add_item(message)
         return sent_messages
-
-
-
-
-

@@ -9,7 +9,7 @@ random.seed(6666)
 
 
 class ReadingLightTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10,eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -18,23 +18,24 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.input_light_stream = None
         self.adjust_light_stream = None
         self.is_reading_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_one_person",
             "description": "one_person perspective data",
             "fields": {
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
-        },{
+        }, {
             "stream_id": "all_gps",
             "description": "GPS data",
             "fields": {
-                "Street Address": "xxx,str"
+                "Street Address": "the street address information from the gps sensor,str",
+                "Navigation_endanger": "the detection of whether it is a dangerous road section,bool"
             }
-        },{
+        }, {
             "stream_id": "light_intensity",
-            "description": "A real-time light_intensity check",
+            "description": "A real-time light_intensity check information",
             "fields": {
-                "Light intensity outdoor": "xxx,float"
+                "Light intensity outdoor": "the light intensity information outdoor right now,float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -42,7 +43,7 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
                 "stream_id": "adjust_light",
                 "description": "A automatic command to adjust the light in the study",
                 "fields": {
-                    "Light intensity now": "xxx,float"
+                    "Light intensity indoor": "the light intensity information indoor right now,float"
                 }
             },
             {
@@ -81,7 +82,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
                     prompt = "Do you think the light_intensity is enough for reading books?If not,tell me the best light intensity."
                     res = self.llm.query(cs.llm.make_prompt(prompt,light_input["Light intensity outdoor"]))
                     self.command_output.add_item({
-                        "Light intensity now": res
+                        "Light intensity indoor": res
                     })
         self.light_input.batch(by_count=2).for_each(check_light)
         
@@ -94,12 +95,8 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
             data_list = one_person_data["item_list"]
             prompt = "Please check whether I am reading books.Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,one_person_data))
-            # print("res", res)
             if res.lower()== "y" :
-                self.is_reading.add_item("True")
-                # self.command_output.add_item({
-                #     "Light intensity":
-                # })
+                self.is_reading.add_item({"Status":"True"})
                 return one_person_data
             else:
                 return None
@@ -112,24 +109,20 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_light_stream = cs.stream.create_stream(self, 'light_intensity')
         self.adjust_light_stream = cs.stream.create_stream(self, 'adjust_light')
-        self.is_reading_stream = cs.stream.create_stream(self,'is_reading')
+        self.is_reading_stream = cs.stream.create_stream(self, 'is_reading')
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
+
         self.adjust_light_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
         sent_messages = []
         for message in self.video_data:
             sent_messages.append(message)
-            self.input_one_person_stream.add_item(message)
+            self.input_one_person_stream.add_item({"frame": message})
         for message in self.gps_data:
             sent_messages.append(message)
             self.input_gps_stream.add_item(message)
         return sent_messages
-
-
-
-
-

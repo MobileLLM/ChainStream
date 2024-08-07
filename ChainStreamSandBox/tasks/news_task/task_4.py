@@ -8,31 +8,29 @@ random.seed(6666)
 
 
 class NewsTask4(SingleAgentTaskConfigBase):
-    def __init__(self, news_number=50, eos_gap=4):
+    def __init__(self, news_number=50):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "All news messages",
+            "description": "All news items",
             "fields": {
-                "category": "name xxx, string",
-                "link": "link xxx, string",
-                "short_description":"text xxx, string"
+                "category": "the category of the news, string",
+                "link": "the website link that presents the news, string",
+                "short_description": "the short description of the news, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "extract_website",
-                "description": "An extraction of the website link from the entertainment news with their short "
+                "stream_id": "extract_entertainment_news_website",
+                "description": "A list of extraction of the entertainment news website links with their short "
                                "descriptions",
                 "fields": {
-                    "description": "xxx, string",
-                    "link": "xxx, string"
+                    "description": "the short description of the news, string",
+                    "link": "the website link that presents the news, string"
                 }
             }
         ])
@@ -45,7 +43,7 @@ class AgentExampleForNewsTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_news_task_4"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
-        self.news_output = cs.get_stream(self, "extract_website")
+        self.news_output = cs.get_stream(self, "extract_entertainment_news_website")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -69,7 +67,7 @@ class AgentExampleForNewsTask4(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_news_stream = cs.stream.create_stream(self, 'all_news')
-        self.output_news_stream = cs.stream.create_stream(self, 'extract_website')
+        self.output_news_stream = cs.stream.create_stream(self, 'extract_entertainment_news_website')
 
         self.output_record = []
 
@@ -84,8 +82,3 @@ class AgentExampleForNewsTask4(cs.agent.Agent):
             sent_messages.append(message)
             self.input_news_stream.add_item(message)
         return sent_messages
-
-
-
-
-

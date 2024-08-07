@@ -8,29 +8,27 @@ random.seed(6666)
 
 
 class ArxivTask2(SingleAgentTaskConfigBase):
-    def __init__(self, paper_number=10, eos_gap=4):
+    def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_arxiv",
-            "description": "All arxiv information",
+            "stream_id": "all_arxiv_with_EOS_tag",
+            "description": "All arxiv paper, xxx which is a dict like `{\"EOS\":\"This is an end tag\"}",
             "fields": {
-                "title": "name xxx, string",
-                "abstract": "text xxx, string"
+                "title": "the title of each arxiv article, string",
+                "abstract": "the abstract of each arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "research_method",
-                "description": "A list of research method on arxiv paper on math",
+                "stream_id": "arxiv_research_method",
+                "description": "A list of research methods for arxiv articles on math topics",
                 "fields": {
-                    "abstract": "xxx, string",
-                    "method": "xxx, string"
+                    "abstract": "the abstract of each arxiv article on math topic, string",
+                    "method": "the research method of each arxiv article on math topic, string"
                 }
             }
         ])
@@ -43,7 +41,7 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_arxiv_task_2"):
         super().__init__(agent_id)
         self.arxiv_input = cs.get_stream(self, "all_arxiv")
-        self.arxiv_output = cs.get_stream(self, "research_method")
+        self.arxiv_output = cs.get_stream(self, "arxiv_research_method")
 
         self.llm = cs.llm.get_model("Text")
 
@@ -51,21 +49,16 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
         def filter_topic(paper):
             prompt = "Is this paper on math? answer y or n"
             res = self.llm.query(cs.llm.make_prompt(paper['title'], prompt))
-            # print("filter_topic", res,paper)
             if res.lower() == 'y':
                 return paper
 
         def sum_on_paper(paper):
             paper_list = paper['item_list']
-            print(paper_list)
             prompt = "Summarize the research method of the papers here"
             for paper_item in paper_list:
-                print(paper_item)
                 title = paper_item.get('title', 'No Title')  
                 abstract = paper_item.get('abstract', '')  
-                print("sum_on_paper: query", abstract, prompt)
                 res = self.llm.query(cs.llm.make_prompt(abstract, prompt))
-                print("sum_on_paper", res)
                 self.arxiv_output.add_item({
                     "title": title,
                     "method": res
@@ -75,7 +68,7 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'research_method')
+        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_research_method')
 
         self.output_record = []
 

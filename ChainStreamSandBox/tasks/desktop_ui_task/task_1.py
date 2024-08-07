@@ -6,6 +6,7 @@ from AgentGenerator.io_model import StreamListDescription
 
 random.seed(6666)
 
+
 class ImageTask1(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
@@ -16,17 +17,15 @@ class ImageTask1(SingleAgentTaskConfigBase):
             "stream_id": "desktop_screenshot",
             "description": "All desktop ui images",
             "fields": {
-                "image_file": " xxx, PIL",
-                "xml_file": " xxx, xml"
+                "image_file": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_software",
-                "description": "Analyze the software I am using for work right now",
+                "description": "A series of software analysis for work right now",
                 "fields": {
-                    "screenshot_xml": "screenshot xml file, string",
-                    "analysis_result": "result of the analysis, string"
+                    "analysis_result": "The software used for work right now, string"
                 }
             }
         ])
@@ -44,9 +43,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         def analyze_screenshot(screenshot):
             prompt = "Analyze the software I am using for work right now,just tell me the name of the software"
             res = self.llm.query(cs.llm.make_prompt(prompt,screenshot['image_file']))
-            print("analyze_screenshot", res)
             self.analysis_output.add_item({
-                "screenshot_xml": screenshot['xml_file'], 
                 "analysis_result": res
             })
 
@@ -60,7 +57,6 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_record = []
 
         def record_output(data):
-            print("output task",data)
             self.output_record.append(data)
 
         self.output_ui_stream.for_each(record_output)
@@ -71,6 +67,3 @@ class AgentExampleForImageTask(cs.agent.Agent):
             processed_results.append(screenshot)
             self.input_ui_stream.add_item(screenshot)
         return processed_results
-
-    def stop_task(self, runtime):
-        pass

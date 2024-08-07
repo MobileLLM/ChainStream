@@ -8,31 +8,29 @@ random.seed(6666)
 
 
 class StockTask1(SingleAgentTaskConfigBase):
-    def __init__(self, number=200, eos_gap=4):
+    def __init__(self, number=200):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_stock_stream = None
         self.input_stock_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stock",
             "description": "All stock information",
             "fields": {
-                "symbol": "name xxx, string",
-                "open": "text xxx, string",
-                "close": "text xxx, string",
-                "volume": "text xxx, string"
+                "symbol": "the symbol of the stock, string",
+                "open": "the opening price of the stock, float",
+                "close": "the closing price of the stock, float",
+                "volume": "the trading volume of the stock, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "up_or_down",
-                "description": "A analysis of the up or down percentage of my stock(symbol MLM) with the volume",
+                "description": "A list of the change percentages with the volume of the MLM stock if it has fallen",
                 "fields": {
-                    "change_percentage": "xxx, float",
-                    "volume": "xxx, string"
+                    "change_percentage": "The percentage change in the stock price, float",
+                    "volume": "the trading volume of the stock, float"
                 }
             }
         ])

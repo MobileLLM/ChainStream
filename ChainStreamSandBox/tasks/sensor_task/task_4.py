@@ -8,29 +8,28 @@ random.seed(6666)
 
 
 class WeatherTask1(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=20, eos_gap=4):
+    def __init__(self, sensor_number=20):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
             "description": "All weather information",
             "fields": {
-                "Date_Time": "date xxx, string",
-                "Temperature_C": "temp xxx, float"
+                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                "Temperature_C": "temperature in degrees Celsius, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "clothing_recommendation",
-                "description": "Recommend the suitable clothing according to the temperature this month(May)",
+                "description": "A list of the recommendations of the suitable clothing according to the temperature "
+                               "in May",
                 "fields": {
-                    "temperature":"xxx,string",
-                    "clothing":"xxx,string"
+                    "temperature": "temperature in degrees Celsius,string",
+                    "clothing": "the clothing recommended,string"
                 }
             }
         ])
@@ -86,9 +85,3 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

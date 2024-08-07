@@ -9,7 +9,7 @@ random.seed(6666)
 
 
 class RemindDriverTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -18,38 +18,44 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.car_check_stream = None
         self.is_tired_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "GPS data",
             "fields": {
-                "Street Address": "xxx,str",
-                "Navigation_endanger":"xxx,bool"
+                "Street Address": "the street address information from the gps sensor,str",
+                "Navigation_endanger": "the detection of whether it is a dangerous road section,bool"
             }
-        },{
+        }, {
             "stream_id": "all_monitor",
             "description": "On-board driver surveillance camera",
             "fields": {
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
-        },{
+        }, {
             "stream_id": "music_data",
             "description": "All music data",
             "fields": {
-                "song_name": "xxx,string",
-                "singer": "xxx,string",
-                "type": "xxx,string",
-                "lyrics": "xxx,string"
+                "song_name": "the name of the song,string",
+                "singer": "the singer of the song,string",
+                "type": "the type of the song,string",
+                "lyrics": "the lyrics of the song,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "music_player",
-                "description": "A automatic and intelligent music player",
+                "description": "A rock n roll music player when the driver is tired in the dangerous road section",
                 "fields": {
-                    "song_name": "xxx,string",
-                    "singer": "xxx,string",
-                    "type": "xxx,string",
-                    "lyrics": "xxx,string"
+                    "song_name": "the name of the song,string",
+                    "singer": "the singer of the song,string",
+                    "lyrics": "the lyrics of the song,string"
+                }
+            },
+            {
+                "stream_id": "is_tired",
+                "description": "A check on whether the driver is tired or not",
+                "fields": {
+                    "Status": "Trur or False,bool"
                 }
             }
         ])
@@ -84,7 +90,7 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
             prompt = "Is the driver tired? Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
             if res.lower() == "y":
-                self.is_tired.add_item(True)
+                self.is_tired.add_item("Status":"True")
                 return three_person_data
             else:
                 return None
@@ -96,7 +102,6 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
                     self.music_output.add_item({
                         "song_name":data['song_name'],
                         "singer":data['singer'],
-                        "type":data['type'],
                         "lyrics":data['lyrics']
                     })
             return music_data
@@ -126,8 +131,3 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
             sent_messages.append(message)
             self.gps_stream.add_item(message)
         return sent_messages
-
-
-
-
-

@@ -5,43 +5,42 @@ from ChainStreamSandBox.raw_data import SMSData
 from ChainStreamSandBox.raw_data import StockData
 from AgentGenerator.io_model import StreamListDescription
 import time
+
 random.seed(6666)
 
 
 class MessageStockTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self, number=10):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.input_message_stream = None
         self.input_stock_stream = None
         self.stock_message_output = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_message",
             "description": "All message information",
             "fields": {
-                "sender": "name xxx, string",
-                "Content": "text xxx, string",
-                "id":"id xxx, int"
+                "sender": "the name of the message sender, string",
+                "Content": "the content of the message, string",
+                "id": "the id of the message sender, int"
             }
-        },{
+        }, {
             "stream_id": "all_stock",
             "description": "All stock messages",
             "fields": {
-                "open": "xxx, float",
-                "close": "xxx, float",
-                "symbol":"xxx,string"
+                "open": "the opening price of the stock, float",
+                "close": "the closing price of the stock, float",
+                "symbol": "the symbol of the stock,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "stock_output",
-                "description": "A message to remind me when the stock plummeted",
+                "description": "A list of messages to remind all the buyers when the stock plummeted",
                 "fields": {
-                    "stock": "xxx, string",
-                    "id": "xxx, int"
+                    "stock": "the symbol of the stock, string",
+                    "id": "the ids of all the stock buyers, int"
                 }
             }
         ])
@@ -61,25 +60,20 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
 
     def start(self):
         def save_message(message):
-            # print(message)
             self.message_buffer.append(message)
         self.message_input.for_each(save_message)
 
         def send_msg(stocks):
             stock_list = stocks["item_list"]
-            # print(stock)
             messages = self.message_buffer.pop_all()
-            # print("messages", messages)
             for message in messages:  
                 for stock in stock_list:  
-                    print(message["id"],stock["symbol"])
                     self.stock_output.add_item({
                         "stock": stock["symbol"], 
                         "id": message["id"]  
                     })
             return messages
         def analysis_stock(stock):
-            # print("stock",stock)
             open_price = stock['open']
             close_price = stock['close']
             if open_price != 0:
@@ -90,9 +84,7 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
             buffer = kwargs.get('buffer', Buffer())
             kwargs['buffer'] = buffer
             if len(buffer) < 2:
-                print("buffer is too short")
                 buffer.append(item)
-                print(buffer.get_all())
                 return None, kwargs
             else:
                 buffer.append(item)
@@ -124,8 +116,3 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
             self.input_stock_stream.add_item(stock)
             time.sleep(1)
         return sent_messages
-
-
-
-
-

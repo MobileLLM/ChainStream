@@ -8,21 +8,19 @@ random.seed(6666)
 
 
 class NewsTask2(SingleAgentTaskConfigBase):
-    def __init__(self, news_number=50, eos_gap=4):
+    def __init__(self, news_number=50):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "All news messages",
+            "description": "All news items",
             "fields": {
-                "category": "name xxx, string",
-                "date": "date xxx, string",
-                "short_description":"text xxx, string"
+                "category": "the category of the news, string",
+                "date": "ISO 8601 datetime format, string",
+                "short_description": "the short description of the news, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,8 +28,8 @@ class NewsTask2(SingleAgentTaskConfigBase):
                 "stream_id": "extract_characters",
                 "description": "A extraction of the characters from the politics news with the date",
                 "fields": {
-                    "characters": "name xxx, string",
-                    "date": "xxx, string"
+                    "characters": "the characters extracted from the political news, string",
+                    "date": "the date of the political news, string"
                 }
             }
         ])
@@ -59,9 +57,7 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
                 date = news.get('date')
                 prompt = "Extract the main characters of the news"
                 descriptions = [x.get('short_description', '') for x in news_list]
-                print("extract_from_dialogues: query", descriptions, prompt)
                 res = self.llm.query(cs.llm.make_prompt(descriptions, prompt))
-                print("extract_from_dialogues", res)
                 self.news_output.add_item({
                     "characters": res,
                     "date": date
@@ -87,8 +83,3 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
             sent_messages.append(message)
             self.input_news_stream.add_item(message)
         return sent_messages
-
-
-
-
-

@@ -9,7 +9,7 @@ random.seed(6666)
 
 
 class StudentInClassTask(SingleAgentTaskConfigBase):
-    def __init__(self, eos_gap=4):
+    def __init__(self):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -17,26 +17,25 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.warning_board_stream = None
         self.input_three_person_stream = None
         self.input_screenshot_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_screenshot",
-            "description": "screenshot data",
+            "description": "students screenshot data",
             "fields": {
-                "image_file": "xxx,str"
+                "image_file": "image file in the Jpeg format processed using PIL,string"
             }
-        },{
+        }, {
             "stream_id": "all_classroom",
-            "description": "Classroom surveillance camera",
+            "description": "classroom surveillance camera data",
             "fields": {
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "students_number",
-                "description": "An electronic blackboard used to record the number of students and student behaviors "
-                               "in the classroom in real time.",
+                "description": "An electronic blackboard used to record the number of students in the classroom.",
                 "fields": {
-                    "student_numbers": "xxx,string"
+                    "student_numbers": "the number of the students,string"
                 }
             },
             {
@@ -44,7 +43,7 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
                 "description": "An electronic blackboard used to warn the students who play their cellphones in the "
                                "class.",
                 "fields": {
-                    "warning_message": "xxx,string"
+                    "warning_message": "the warning message to the students who break discipline,string"
                 }
             }
         ])
@@ -64,7 +63,6 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         self.output_buffer = Buffer()
     def start(self):
         def count_number(three_person_data):
-            print(three_person_data)
             prompt = "How many students are in the classroom right now?Tell me the number."
             res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
             self.numbers_output.add_item({
@@ -72,7 +70,6 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
             })
             return res
         def analyze_screenshot(screenshot):
-            print(screenshot)
             prompt = "Analyze whether I'm looking at something that is not related to study.Simply answer y or n"
             res = self.llm.query(cs.llm.make_prompt(prompt,screenshot['image_file']))
             if res.lower() == "y":
@@ -93,19 +90,16 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
 
         def record_output(data):
             self.output_record.append(data)
+
         self.output_number_stream.for_each(record_output)
         self.warning_board_stream.for_each(record_output)
+
     def start_task(self, runtime) -> list:
         sent_messages = []
         for message in self.video_data:
             sent_messages.append(message)
-            self.input_three_person_stream.add_item(message)
+            self.input_three_person_stream.add_item({"frame": message})
         for message in self.screenshot_data:
             sent_messages.append(message)
             self.input_screenshot_stream.add_item(message)
         return sent_messages
-
-
-
-
-

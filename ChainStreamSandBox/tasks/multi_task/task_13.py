@@ -4,11 +4,12 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 import time
+
 random.seed(6666)
 
 
 class WaitingRoomTask(SingleAgentTaskConfigBase):
-    def __init__(self, number=10, eos_gap=4):
+    def __init__(self):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
@@ -16,16 +17,17 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
         self.input_indoor_stream = None
         self.patient_trigger = None
         self.output_message_stream = None
-        self.eos_gap = eos_gap
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_one_person_outdoor",
-            "description": "one_person perspective data",
+            "description": "one_person perspective data outdoor",
             "fields": {
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
-        },{
+        }, {
             "stream_id": "all_one_person_indoor",
-            "description": "one_person perspective data",
+            "description": "one_person perspective data indoor",
             "fields": {
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -38,7 +40,7 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
             },
             {
                 "stream_id": "patient_trigger",
-                "description": "A trigger when the patient exceeds a certain number",
+                "description": "A trigger when the patients exceed 5 in the waiting room",
                 "fields": {
                     "Status": "True or False"
                 }
@@ -75,7 +77,7 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
             prompt = "Please check how many patients are in the waiting room.Please only tell me the number."
             res = self.llm.query(cs.llm.make_prompt(prompt,outdoor_input))
             if res >= "5" :
-                self.patient_trigger.add_item("True")
+                self.patient_trigger.add_item({"Status":"True"})
                 return indoor_input
             else:
                 return None
@@ -99,14 +101,9 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         sent_messages = []
         for message in self.video_data1:
             sent_messages.append(message)
-            self.input_indoor_stream.add_item(message)
+            self.input_indoor_stream.add_item({"frame":message})
             time.sleep(1)
         for message in self.video_data2:
             sent_messages.append(message)
-            self.input_outdoor_stream.add_item(message)
+            self.input_outdoor_stream.add_item({"frame":message})
         return sent_messages
-
-
-
-
-

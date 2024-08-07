@@ -8,28 +8,26 @@ random.seed(6666)
 
 
 class HealthTask4(SingleAgentTaskConfigBase):
-    def __init__(self, sensor_number=80, eos_gap=4):
+    def __init__(self, sensor_number=80):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "All health information",
             "fields": {
-                "HeartRate": " xxx, float"
+                "HeartRate": "the heart rate data from the health sensor, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_rest",
-                "description": "Remind me to rest myself when my heart rate is over 85",
+                "description": "A list of reminders to take a rest when the heart rate is over 85",
                 "fields": {
-                    "Heart Rate":"xxx,string",
-                    "reminder":"Heart rate is too high!Remember to rest yourself!"
+                    "Heart Rate": "the heart rate data from the health sensor, float",
+                    "reminder": "Heart rate is too high!Remember to rest yourself!"
                 }
             }
         ])
@@ -77,9 +75,3 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
             sent_messages.append(message)
             self.input_sensor_stream.add_item(message)
         return sent_messages
-
-
-
-
-
-

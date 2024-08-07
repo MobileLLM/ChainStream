@@ -8,30 +8,28 @@ random.seed(6666)
 
 
 class NewsTask1(SingleAgentTaskConfigBase):
-    def __init__(self, news_number=30, eos_gap=4):
+    def __init__(self, news_number=30):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-
-        self.eos_gap = eos_gap
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "All news messages",
+            "description": "All news items",
             "fields": {
-                "category": "name xxx, string",
-                "date": "date xxx, string",
-                "short_description":"text xxx, string"
+                "category": "the category of the news, string",
+                "date": "ISO 8601 datetime format, string",
+                "short_description": "the short description of the news, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_from_dialogue",
-                "description": "A summary of the dialogues in conference from the news with the date",
+                "description": "A summary of the dialogues in conference from the politics news with the date",
                 "fields": {
-                    "conference": "name xxx, string",
-                    "summary": "sum xxx, string"
+                    "conference_date": "the date of the conference in the news, string",
+                    "summary": "the summary of the dialogues in conference from the news, string"
                 }
             }
         ])
@@ -59,9 +57,7 @@ class AgentExampleForNewsTask1(cs.agent.Agent):
                 date = news.get('date')
                 prompt = "Summarize the main idea of the dialogues in the conference"
                 descriptions = [x.get('short_description', '') for x in news_list]
-                print("sum_by_dialogues: query", descriptions, prompt)
                 res = self.llm.query(cs.llm.make_prompt(descriptions, prompt))
-                print("sum_by_dialogues", res)
                 self.news_output.add_item({
                     "conference_date": date,
                     "summary": res
@@ -87,8 +83,3 @@ class AgentExampleForNewsTask1(cs.agent.Agent):
             sent_messages.append(message)
             self.input_news_stream.add_item(message)
         return sent_messages
-
-
-
-
-
