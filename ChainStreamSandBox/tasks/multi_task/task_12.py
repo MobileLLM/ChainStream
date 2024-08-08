@@ -127,4 +127,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         for gps in self.gps_data:
             sent_info.append(gps)
             self.input_gps_stream.add_item(gps)
+        for _ in range(10):
+            light_intensity = random.uniform(0, 1000)
+            self.input_light_stream.add_item({"Light intensity outdoor": light_intensity})
         return sent_info
