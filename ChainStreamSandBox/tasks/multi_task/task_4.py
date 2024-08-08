@@ -19,13 +19,13 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.is_office_event = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "all gps data",
+            "description": "all of my gps information",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }
         }, {
             "stream_id": "all_ui",
-            "description": "all ui snapshots",
+            "description": "all of my ui snapshots",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL,string"
             }

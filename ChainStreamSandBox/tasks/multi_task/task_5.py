@@ -18,14 +18,14 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.input_dialogue_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_weather",
-            "description": "All weather messages",
+            "description": "All weather information",
             "fields": {
                 "Location": "the weather location, string",
                 "Temperature_C": "temperature in degrees Celsius, float"
             }
         }, {
-            "stream_id": "all_dialogue(every two pieces of dialogues are packaged as a batch)",
-            "description": "All dialogues recorder",
+            "stream_id": "all_dialogue",
+            "description": "All dialogues recorder(every two pieces of dialogues are packaged as a batch)",
             "fields": {
                 "dialog": "the dialogues information, string"
             }

@@ -19,7 +19,7 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.input_screenshot_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_screenshot",
-            "description": "students screenshot data",
+            "description": "students screenshot data in the class",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL,string"
             }
@@ -33,7 +33,7 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "students_number",
-                "description": "An electronic blackboard used to record the number of students in the classroom.",
+                "description": "An surveillance camera used to record the number of students in the classroom.",
                 "fields": {
                     "student_numbers": "the number of the students,string"
                 }

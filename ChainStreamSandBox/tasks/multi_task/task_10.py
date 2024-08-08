@@ -21,7 +21,7 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.fake = Faker()
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "GPS data for navigation of the driver",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str",
                 "Navigation_endanger": "the detection of whether it is a dangerous road section,bool"
@@ -34,7 +34,7 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
             }
         }, {
             "stream_id": "music_data",
-            "description": "All music data",
+            "description": "All car disk music data",
             "fields": {
                 "song_name": "the name of the song,string",
                 "singer": "the singer of the song,string",

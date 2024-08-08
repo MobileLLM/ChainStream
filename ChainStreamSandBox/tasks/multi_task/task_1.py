@@ -26,7 +26,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
             }
         }, {
             "stream_id": "all_gps",
-            "description": "all gps data",
+            "description": "all of my gps data",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }

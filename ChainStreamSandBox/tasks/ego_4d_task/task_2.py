@@ -14,8 +14,8 @@ class VideoTask2(SingleAgentTaskConfigBase):
         self.output_ui_stream = None
         self.input_ui_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "one_person_perspective_data",
-            "description": "All one person perspective images",
+            "stream_id": "first_person_perspective_data",
+            "description": "All first person perspective images",
             "fields": {
                 "images": "image file in the Jpeg format processed using PIL,string"
             }
@@ -23,9 +23,9 @@ class VideoTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_kitchen_risk",
-                "description": "A sequence that alerts that detect whether there is fire risk in the kitchen",
+                "description": "A sequence that alerts the potential risk in the kitchen",
                 "fields": {
-                    "analysis_result": "the alert that detect whether there is fire risk in the kitchen, string"}
+                    "analysis_result": "the alert that detect the potential risk in the kitchen, string"}
             }
         ])
         self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
@@ -34,23 +34,29 @@ import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
-        self.ego_input = cs.get_stream(self, "one_person_perspective_data")
+        self.ego_input = cs.get_stream(self, "first_person_perspective_data")
         self.analysis_output = cs.get_stream(self, "analysis_kitchen_risk")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def analysis_risk(ego_data):
-            prompt = "Detect whether I am in kitchen,just tell me y or n.If the answer if y,tell me whether there is "
-            "potential risk of fire in the kitchen"
+        def detect_kitchen(ego_data):
+            prompt = "Tell me whether I am cooking in the kitchen?Simply answer y or n."
+            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data))
+            if res.lower()=="y":
+                return ego_data
+            else
+                return None
+        def analyse_risk(ego_data):
+            prompt = "Tell me the potential risk in the kitchen"
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data))
             self.analysis_output.add_item({
                 "analysis_result": res
             })
-        self.ego_input.for_each(analysis_risk)
+        self.ego_input.for_each(detect_kitchen).for_each(analyse_risk)
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'one_person_perspective_data')
+        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_kitchen_risk')
 
         self.output_record = []

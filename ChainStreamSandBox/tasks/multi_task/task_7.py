@@ -19,13 +19,13 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "all gps data",
+            "description": "all of my gps data",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }
         },{
             "stream_id": "all_video",
-            "description": "video data",
+            "description": "all video data in the balcony with plants",
             "fields": {
                 "images": "image file in the Jpeg format processed using PIL,string"
             }

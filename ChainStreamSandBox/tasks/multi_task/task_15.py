@@ -22,14 +22,14 @@ class TripMusicTask(SingleAgentTaskConfigBase):
         self.is_listening_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "all of my GPS data",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,string",
                 "Location Properties": "the property of the location,string"
             }
         }, {
             "stream_id": "all_screenshot",
-            "description": "all cellphone screenshot data",
+            "description": "all of my cellphone screenshot",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL,string"
             }

@@ -22,9 +22,9 @@ class ShopStockTask(SingleAgentTaskConfigBase):
                 "Time": "the hour information,string"
             }
         }, {
-            "stream_id": "all_one_person_shop",
-            "description": "one_person perspective data(write a function that use the buffer module to store video "
-                           "frame items,every two for packaging as a batch)",
+            "stream_id": "all_first_person_shop",
+            "description": "first_person perspective data in the shop(write a function that use the buffer module to "
+                           "store video frame items,every two for packaging as a batch)",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
@@ -53,7 +53,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task14"):
         super().__init__(agent_id)
         self.clock_input = cs.get_stream(self, "clock")
-        self.shop_input = cs.get_stream(self, "all_one_person_shop")
+        self.shop_input = cs.get_stream(self, "all_first_person_shop")
         self.message_output = cs.get_stream(self, "output_messages")
         self.llm = cs.llm.get_model("image")
         self.work_trigger = cs.get_stream(self, "work_trigger")
@@ -95,7 +95,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_shop_stream = cs.stream.create_stream(self, 'all_one_person_shop')
+        self.input_shop_stream = cs.stream.create_stream(self, 'all_first_person_shop')
         self.clock_stream = cs.stream.create_stream(self, 'clock')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.work_trigger_stream = cs.stream.create_stream(self, 'work_trigger')

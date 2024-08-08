@@ -18,13 +18,13 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "all gps data",
+            "description": "all of my gps data",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }
         }, {
             "stream_id": "all_weather",
-            "description": "All weather messages",
+            "description": "All weather information",
             "fields": {
                 "Location": "the weather location, string",
                 "Temperature_C": "temperature in degrees Celsius, float",
@@ -34,8 +34,8 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "A list of commands of automatically closing the window(every two copies of weather data are packaged as "
-                               "a batch after judging the home street address from gps data)",
+                "description": "A list of commands of automatically closing the window(every two copies of weather "
+                               "data are packaged as a batch after judging the home street address from gps data)",
                 "fields": {
                     "action": "Close all the windows!"
                 }
