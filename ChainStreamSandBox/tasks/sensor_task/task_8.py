@@ -26,7 +26,9 @@ class HealthTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "remind_medicine",
                 "description": "A list of reminders to take some medicine when the systolic blood pressure is over "
-                               "120 and the diastolic blood pressure is over 70 ",
+                               "120 and the diastolic blood pressure is over 70(every two copies of health sensor "
+                               "data are packaged as a batch after filtering the systolic blood pressure which is "
+                               "over 120 and the diastolic blood pressure which is over 70)",
                 "fields": {
                     "SystolicBP": "the systolic blood pressure data from the health sensor,float",
                     "DiastolicBP": "the diastolic blood pressure data from the health sensor, float",
@@ -77,8 +79,8 @@ class AgentExampleForSensorTask8(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_health = []
+        for health in self.sensor_data:
+            sent_health.append(health)
+            self.input_sensor_stream.add_item(health)
+        return sent_health

@@ -16,7 +16,7 @@ class GithubTask1(SingleAgentTaskConfigBase):
         self.input_github_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information",
+            "description": "All github information(every three github repositories are packaged as a batch)",
             "fields": {
                 "stars_count": "the number of the stars received in the github repository, int",
                 "watchers": "the number of the watchers in the github repository, int",
@@ -63,7 +63,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 "watchers": watchers
             })
 
-        self.github_input.batch(by_count=10).for_each(count_stars).for_each(count_watchers)
+        self.github_input.batch(by_count=3).for_each(count_stars).for_each(count_watchers)
         '''
 
     def init_environment(self, runtime):
@@ -79,9 +79,9 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         sent_github = []
-        for message in self.github_data:
-            sent_github.append(message)
-            self.input_github_stream.add_item(message)
+        for github in self.github_data:
+            sent_github.append(github)
+            self.input_github_stream.add_item(github)
         return sent_github
 
 

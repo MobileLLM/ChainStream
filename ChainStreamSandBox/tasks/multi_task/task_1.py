@@ -34,8 +34,9 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding ads in the office.(street address:3127 "
-                               "Edgemont Boulevard)",
+                "description": "Replied list of emails,excluding ads in the office.(office street address:3127 "
+                               "Edgemont Boulevard,and every two emails are packaged as a batch after filtering out "
+                               "the ads))",
                 "fields": {
                     "content": "the content of the emails, string",
                     "tag": "Received!"
@@ -113,11 +114,11 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.email_data:
-            sent_messages.append(message)
-            self.input_email_stream.add_item(message)
+        sent_info = []
+        for email in self.email_data:
+            sent_info.append(email)
+            self.input_email_stream.add_item(email)
         for gps in self.gps_data:
-            sent_messages.append(gps)
+            sent_info.append(gps)
             self.input_gps_stream.add_item(gps)
-        return sent_messages
+        return sent_info

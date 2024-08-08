@@ -33,7 +33,8 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             }
         }, {
             "stream_id": "light_intensity",
-            "description": "A real-time light_intensity check information",
+            "description": "A real-time light_intensity check information,every two copies of light intensity data "
+                           "are packaged as a batch",
             "fields": {
                 "Light intensity outdoor": "the light intensity information outdoor right now,float"
             }
@@ -48,7 +49,8 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             },
             {
                 "stream_id": "is_reading",
-                "description": "Check whether the person is reading or not",
+                "description": "Check whether the person is reading or not,every two copies of video data are "
+                               "packaged as a batch after judging the home street address gps data",
                 "fields": {
                     "Status": "True or False"
                 }
@@ -118,11 +120,11 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.adjust_light_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_one_person_stream.add_item({"frame": message})
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.input_gps_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_one_person_stream.add_item({"frame": frame})
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.input_gps_stream.add_item(gps)
+        return sent_info

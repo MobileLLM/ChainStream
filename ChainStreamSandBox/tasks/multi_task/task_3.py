@@ -27,7 +27,8 @@ class StoreOpinionTest(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_output",
-                "description": "A list of the summary of the CEOs' opinions on Techtronic",
+                "description": "A list of the summary of the CEOs' opinions on Techtronic(the filtered Techtronic "
+                               "news is sent at regular intervals as a batch per second)",
                 "fields": {
                     "news": "the headline of the news event, string",
                     "summary": "the summary of the CEOs' opinions on Techtronic, string"
@@ -79,9 +80,9 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
         self.output_local_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.news_data:
-            sent_messages.append(message)
-            self.input_news_stream.add_item(message)
+        sent_info = []
+        for news in self.news_data:
+            sent_info.append(news)
+            self.input_news_stream.add_item(news)
             time.sleep(3)
-        return sent_messages
+        return sent_info

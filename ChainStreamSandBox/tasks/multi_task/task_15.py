@@ -126,14 +126,14 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         self.output_music_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.screenshot_data:
-            sent_messages.append(message)
-            self.input_screenshot_stream.add_item(message)
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.gps_stream.add_item(message)
-        for message in self.scene_data:
-            sent_messages.append(message)
-            self.scene_stream.add_item({"frame": message})
-        return sent_messages
+        sent_info = []
+        for frame in self.screenshot_data:
+            sent_info.append(frame)
+            self.input_screenshot_stream.add_item(frame)
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.gps_stream.add_item(gps)
+        for frame in self.scene_data:
+            sent_info.append(frame)
+            self.scene_stream.add_item({"frame": frame})
+        return sent_info

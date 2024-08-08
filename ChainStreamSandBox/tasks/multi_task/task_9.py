@@ -34,7 +34,8 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "A list of commands of automatically closing the window",
+                "description": "A list of commands of automatically closing the window(every two copies of weather data are packaged as "
+                               "a batch after judging the home street address from gps data)",
                 "fields": {
                     "action": "Close all the windows!"
                 }
@@ -89,11 +90,11 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         self.output_action_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.weather_data:
-            sent_messages.append(message)
-            self.input_weather_stream.add_item(message)
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.gps_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for weather in self.weather_data:
+            sent_info.append(weather)
+            self.input_weather_stream.add_item(weather)
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.gps_stream.add_item(gps)
+        return sent_info

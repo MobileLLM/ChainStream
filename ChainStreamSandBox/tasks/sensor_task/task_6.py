@@ -25,7 +25,9 @@ class WeatherTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_rainfall",
-                "description": "A list of reminders to wear rain boots outside if the precipitation is over 5 mm",
+                "description": "A list of reminders to wear rain boots outside if the precipitation is over 5 mm("
+                               "every two copies of weather data are packaged as a batch after filtering the "
+                               "precipitation which is over 5 mm)",
                 "fields": {
                     "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
                     "precipitation": "the precipitation of the city in mm, float",
@@ -47,8 +49,8 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
 
     def start(self):
         def filter_precipitation(weather):
-            humidity = weather['Precipitation_mm']
-            if humidity >= 5:
+            Precipitation = weather['Precipitation_mm']
+            if Precipitation >= 5:
                 return weather
 
         def reminder(weather_list):
@@ -75,8 +77,8 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_weather = []
+        for weather in self.sensor_data:
+            sent_weather.append(weather)
+            self.input_sensor_stream.add_item(weather)
+        return sent_weather

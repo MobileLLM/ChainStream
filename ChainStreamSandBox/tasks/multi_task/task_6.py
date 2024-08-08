@@ -33,7 +33,8 @@ class CatFoodTask(SingleAgentTaskConfigBase):
             {
                 "stream_id": "cat_food_reminder",
                 "description": "A reminder list of refilling the cat food if the bowl is empty when I am not at "
-                               "home.(home street address:123 Main St)",
+                               "home.(home street address:123 Main St,every two copies of video data are packaged as "
+                               "a batch after judging the home street address from gps data)",
                 "fields": {
                     "reminder": "There is no cat food already. Please refill it."
                 }
@@ -90,11 +91,11 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_video_stream.add_item({"images": message})
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.gps_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_video_stream.add_item({"images": frame})
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.gps_stream.add_item(gps)
+        return sent_info

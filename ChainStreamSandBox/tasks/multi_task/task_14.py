@@ -106,16 +106,16 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
+        sent_info = []
 
         clock_now = 9
         self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
         cou = 0
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_shop_stream.add_item({"frame": message})
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_shop_stream.add_item({"frame": frame})
             cou += 1
             if cou % 3 == 0:
                 clock_now += 1
                 self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
-        return sent_messages
+        return sent_info

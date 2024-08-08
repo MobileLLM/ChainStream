@@ -27,7 +27,8 @@ class EmailTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "purpose_of_work_email",
-                "description": "A list of purposes for each work-related email during June to December",
+                "description": "A list of purposes for each work-related email during June to December(every two "
+                               "emails are packaged as a batch after filtering the work-related topic)",
                 "fields": {
                     "work_emails": "the content of the work-related email, string",
                     "purpose": "the purpose of the work-related email sent by the sender, string"
@@ -90,8 +91,8 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.email_data:
-            sent_messages.append(message)
-            self.input_email_stream.add_item(message)
-        return sent_messages
+        sent_emails = []
+        for email in self.email_data:
+            sent_emails.append(email)
+            self.input_email_stream.add_item(email)
+        return sent_emails

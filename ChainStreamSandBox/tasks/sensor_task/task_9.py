@@ -24,7 +24,9 @@ class HealthTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_check",
-                "description": "A list of reminders to go to the hospital for a check when the blood sugar is over 8.4",
+                "description": "A list of reminders to go to the hospital for a check when the blood sugar is over "
+                               "8.4(every two copies of health sensor data are packaged as a batch after filtering "
+                               "the blood sugar which is over 8.4)",
                 "fields": {
                     "Blood_sugar": "the blood sugar data from the health sensor, float",
                     "reminder": "High blood sugar！You'd better go to the hospital to check your body!"
@@ -71,8 +73,8 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_health = []
+        for health in self.sensor_data:
+            sent_health.append(health)
+            self.input_sensor_stream.add_item(health)
+        return sent_health

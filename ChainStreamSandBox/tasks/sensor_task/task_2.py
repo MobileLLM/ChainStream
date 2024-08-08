@@ -26,7 +26,8 @@ class GPSTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "nearest_hotel",
-                "description": "A list of the hotel around according to the street address",
+                "description": "A list of the hotel around according to the street address(every two copies of "
+                               "location data are packaged as a batch after filtering hotel property type)",
                 "fields": {
                     "address": "the street address of my location",
                     "hotel": "the names of the hotels around,string"
@@ -77,8 +78,8 @@ class AgentExampleForSensorTask2(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_gps = []
+        for gps in self.sensor_data:
+            sent_gps.append(gps)
+            self.input_sensor_stream.add_item(gps)
+        return sent_gps

@@ -25,7 +25,8 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
             }
         }, {
             "stream_id": "all_one_person_indoor",
-            "description": "one_person perspective data indoor",
+            "description": "one_person perspective data indoor(the data is sent at regular intervals as a batch every "
+                           "five seconds)",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
@@ -98,12 +99,12 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data1:
-            sent_messages.append(message)
-            self.input_indoor_stream.add_item({"frame":message})
+        sent_info = []
+        for frame in self.video_data1:
+            sent_info.append(frame)
+            self.input_indoor_stream.add_item({"frame":frame})
             time.sleep(1)
-        for message in self.video_data2:
-            sent_messages.append(message)
-            self.input_outdoor_stream.add_item({"frame":message})
-        return sent_messages
+        for frame in self.video_data2:
+            sent_info.append(frame)
+            self.input_outdoor_stream.add_item({"frame":frame})
+        return sent_info

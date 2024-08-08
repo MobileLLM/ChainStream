@@ -25,7 +25,8 @@ class EmailTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_by_receiver",
-                "description": "A list of email summaries for each email sender, excluding ads",
+                "description": "A list of email summaries for each email sender, excluding ads(every two emails are "
+                               "packaged as a batch after filtering out the ads)",
                 "fields": {
                     "receiver": "the name of the email receiver, string",
                     "summary": "the summary of the email for each email receiver, string"
@@ -85,12 +86,12 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        received_messages = []
-        for message in self.email_data:
-            message['receiver'] = message['To']
-            received_messages.append(message)
-            self.input_email_stream.add_item(message)
-        return received_messages
+        received_emails = []
+        for email in self.email_data:
+            email['receiver'] = email['To']
+            received_emails.append(email)
+            self.input_email_stream.add_item(email)
+        return received_emails
 
 
 

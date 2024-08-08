@@ -26,7 +26,8 @@ class NewsTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "extract_characters",
-                "description": "A extraction of the characters from the politics news with the date",
+                "description": "A extraction of the characters from the politics news with the date(every two pieces "
+                               "of news are packaged as a batch after filtering the politics topic)",
                 "fields": {
                     "characters": "the characters extracted from the political news, string",
                     "date": "the date of the political news, string"
@@ -78,8 +79,8 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
         self.output_news_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.news_data:
-            sent_messages.append(message)
-            self.input_news_stream.add_item(message)
-        return sent_messages
+        sent_news = []
+        for news in self.news_data:
+            sent_news.append(news)
+            self.input_news_stream.add_item(news)
+        return sent_news

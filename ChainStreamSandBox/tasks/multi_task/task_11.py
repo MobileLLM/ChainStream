@@ -95,11 +95,11 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         self.warning_board_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_three_person_stream.add_item({"frame": message})
-        for message in self.screenshot_data:
-            sent_messages.append(message)
-            self.input_screenshot_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_three_person_stream.add_item({"frame": frame})
+        for frame in self.screenshot_data:
+            sent_info.append(frame)
+            self.input_screenshot_stream.add_item(frame)
+        return sent_info

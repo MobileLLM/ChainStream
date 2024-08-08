@@ -27,7 +27,8 @@ class NewsTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "extract_entertainment_news_website",
                 "description": "A list of extraction of the entertainment news website links with their short "
-                               "descriptions",
+                               "descriptions(every two pieces of news are packaged as a batch after filtering the "
+                               "entertainment topic)",
                 "fields": {
                     "description": "the short description of the news, string",
                     "link": "the website link that presents the news, string"
@@ -77,8 +78,8 @@ class AgentExampleForNewsTask4(cs.agent.Agent):
         self.output_news_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.news_data:
-            sent_messages.append(message)
-            self.input_news_stream.add_item(message)
-        return sent_messages
+        sent_news = []
+        for news in self.news_data:
+            sent_news.append(news)
+            self.input_news_stream.add_item(news)
+        return sent_news

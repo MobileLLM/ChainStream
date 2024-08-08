@@ -62,10 +62,8 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         processed_results = []
-        for shot in self.Sphar_data:
-            processed_results.append({"images": shot})
-            self.input_ui_stream.add_item(shot)
+        for frame in self.Sphar_data:
+            processed_results.append({"images": frame})
+            self.input_ui_stream.add_item(frame)
         return processed_results
 
-    def stop_task(self, runtime):
-        pass

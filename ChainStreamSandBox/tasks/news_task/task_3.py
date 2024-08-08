@@ -15,7 +15,7 @@ class NewsTask3(SingleAgentTaskConfigBase):
         self.output_news_stream = None
         self.input_news_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_news",
+            "stream_id": "all_USA_news",
             "description": "All news items",
             "fields": {
                 "category": "the category of the news, string",
@@ -27,7 +27,8 @@ class NewsTask3(SingleAgentTaskConfigBase):
             {
                 "stream_id": "USA_news_in_July",
                 "description": "A list of the extraction of the USA news in July with the headline and the category "
-                               "of them",
+                               "of them(every two pieces of news are packaged as a batch after filtering the USA news "
+                               "happened in July)",
                 "fields": {
                     "headline": "the headline of the news event, string",
                     "category": "the category of the news, string"
@@ -41,7 +42,7 @@ import chainstream as cs
 class AgentExampleForNewsTask3(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_news_task_3"):
         super().__init__(agent_id)
-        self.news_input = cs.get_stream(self, "all_news")
+        self.news_input = cs.get_stream(self, "all_USA_news")
         self.news_output = cs.get_stream(self, "USA_news_in_July")
         self.llm = cs.llm.get_model("Text")
 
@@ -69,7 +70,7 @@ class AgentExampleForNewsTask3(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_news_stream = cs.stream.create_stream(self, 'all_news')
+        self.input_news_stream = cs.stream.create_stream(self, 'all_USA_news')
         self.output_news_stream = cs.stream.create_stream(self, 'USA_news_in_July')
 
         self.output_record = []
@@ -80,8 +81,8 @@ class AgentExampleForNewsTask3(cs.agent.Agent):
         self.output_news_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.news_data:
-            sent_messages.append(message)
-            self.input_news_stream.add_item(message)
-        return sent_messages
+        sent_news = []
+        for news in self.news_data:
+            sent_news.append(news)
+            self.input_news_stream.add_item(news)
+        return sent_news

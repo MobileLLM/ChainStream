@@ -26,7 +26,8 @@ class NewsTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_from_dialogue",
-                "description": "A summary of the dialogues in conference from the politics news with the date",
+                "description": "A summary of the dialogues in conference from the politics news with the date(every "
+                               "two pieces of news are packaged as a batch after filtering the politics topic)",
                 "fields": {
                     "conference_date": "the date of the conference in the news, string",
                     "summary": "the summary of the dialogues in conference from the news, string"
@@ -78,8 +79,8 @@ class AgentExampleForNewsTask1(cs.agent.Agent):
         self.output_news_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.news_data:
-            sent_messages.append(message)
-            self.input_news_stream.add_item(message)
-        return sent_messages
+        sent_news = []
+        for news in self.news_data:
+            sent_news.append(news)
+            self.input_news_stream.add_item(news)
+        return sent_news

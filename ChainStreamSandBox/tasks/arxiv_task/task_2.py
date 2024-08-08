@@ -16,7 +16,7 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.input_paper_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv_with_EOS_tag",
-            "description": "All arxiv paper, xxx which is a dict like `{\"EOS\":\"This is an end tag\"}",
+            "description": "All arxiv paper",
             "fields": {
                 "title": "the title of each arxiv article, string",
                 "abstract": "the abstract of each arxiv article, string"
@@ -25,7 +25,8 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_research_method",
-                "description": "A list of research methods for arxiv articles on math topics",
+                "description": "A list of research methods for arxiv articles on math topic(every two articles are "
+                               "packaged as a batch after filtering the topic of math)",
                 "fields": {
                     "abstract": "the abstract of each arxiv article on math topic, string",
                     "method": "the research method of each arxiv article on math topic, string"
@@ -78,11 +79,11 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
         self.output_paper_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.paper_data:
-            sent_messages.append(message)
-            self.input_paper_stream.add_item(message)
-        return sent_messages
+        sent_papers = []
+        for paper in self.paper_data:
+            sent_papers.append(paper)
+            self.input_paper_stream.add_item(paper)
+        return sent_papers
 
 
 

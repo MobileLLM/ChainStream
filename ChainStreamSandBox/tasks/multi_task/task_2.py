@@ -106,13 +106,13 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         self.stock_message_output.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
+        sent_info = []
         for message in self.message_data:
-            sent_messages.append(message)
+            sent_info.append(message)
             self.input_message_stream.add_item(message)
             time.sleep(1)
         for stock in self.stock_data:
-            sent_messages.append(stock)
+            sent_info.append(stock)
             self.input_stock_stream.add_item(stock)
             time.sleep(1)
-        return sent_messages
+        return sent_info

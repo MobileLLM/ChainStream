@@ -26,7 +26,8 @@ class WeatherTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "take_clothes_down",
                 "description": "A list of reminders to take down clothes in the balcony if the wind speed is over 20 "
-                               "kmh",
+                               "kmh(every two copies of weather data are packaged as a batch after filtering the "
+                               "wind speed which is over 20 kmh)",
                 "fields": {
                     "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
                     "wind_speed_kmh": "the wind speed sensor in kmh, float",
@@ -76,8 +77,8 @@ class AgentExampleForSensorTask7(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_weather = []
+        for weather in self.sensor_data:
+            sent_weather.append(weather)
+            self.input_sensor_stream.add_item(weather)
+        return sent_weather

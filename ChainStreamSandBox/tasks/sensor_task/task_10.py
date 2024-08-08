@@ -24,7 +24,9 @@ class HealthTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_exercise",
-                "description": "A list of reminders to take some exercise when the BMI is 'Overweight' or 'Obese'",
+                "description": "A list of reminders to take some exercise when the BMI is 'Overweight' or 'Obese'("
+                               "every two copies of health sensor data are packaged as a batch after filtering the "
+                               "BMI which is 'Overweight' or 'Obese')",
                 "fields": {
                     "BMI": "the BMI category of the body check,string",
                     "reminder": "Exercise yourself!"
@@ -70,8 +72,8 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_health = []
+        for health in self.sensor_data:
+            sent_health.append(health)
+            self.input_sensor_stream.add_item(health)
+        return sent_health

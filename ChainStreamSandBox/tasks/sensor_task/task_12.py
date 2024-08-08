@@ -27,7 +27,8 @@ class HealthTask5(SingleAgentTaskConfigBase):
             {
                 "stream_id": "health_advice_for_engineers",
                 "description": "A list of the reasonable advice for the company's engineer according to their ages "
-                               "and sleeping time",
+                               "and sleeping time(every two copies of health sensor data are packaged as a batch "
+                               "after filtering the occupation which is 'Engineer')",
                 "fields": {
                     "age": "the age of the engineer,int",
                     "sleep_time": "the average sleep duration of the engineer,float",
@@ -81,8 +82,8 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_health = []
+        for health in self.sensor_data:
+            sent_health.append(health)
+            self.input_sensor_stream.add_item(health)
+        return sent_health
