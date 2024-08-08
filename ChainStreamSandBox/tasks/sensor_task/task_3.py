@@ -26,7 +26,8 @@ class GPSTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "street_of_school",
-                "description": "A list of the street addresses of all the 'K-12 School' around",
+                "description": "A list of the street addresses of all the 'K-12 School' around(every two copies of "
+                               "location data are packaged as a batch after filtering K-12 School property type)",
                 "fields": {
                     "address": "the street address of my location,string",
                     "school": "the names of the schools around,string"
@@ -77,8 +78,8 @@ class AgentExampleForSensorTask3(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_gps = []
+        for gps in self.sensor_data:
+            sent_gps.append(gps)
+            self.input_sensor_stream.add_item(gps)
+        return sent_gps

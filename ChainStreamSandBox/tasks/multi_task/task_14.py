@@ -17,13 +17,14 @@ class ShopStockTask(SingleAgentTaskConfigBase):
         self.work_trigger_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "clock",
-            "description": "the hour of the real-time clock data",
+            "description": "the hours of the real-time clock data updated per three frames of the video",
             "fields": {
                 "Time": "the hour information,string"
             }
         }, {
-            "stream_id": "all_one_person_shop",
-            "description": "one_person perspective data",
+            "stream_id": "all_first_person_shop",
+            "description": "first_person perspective data in the shop(write a function that use the buffer module to "
+                           "store video frame items,every two for packaging as a batch)",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
@@ -52,7 +53,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task14"):
         super().__init__(agent_id)
         self.clock_input = cs.get_stream(self, "clock")
-        self.shop_input = cs.get_stream(self, "all_one_person_shop")
+        self.shop_input = cs.get_stream(self, "all_first_person_shop")
         self.message_output = cs.get_stream(self, "output_messages")
         self.llm = cs.llm.get_model("image")
         self.work_trigger = cs.get_stream(self, "work_trigger")
@@ -94,7 +95,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_shop_stream = cs.stream.create_stream(self, 'all_one_person_shop')
+        self.input_shop_stream = cs.stream.create_stream(self, 'all_first_person_shop')
         self.clock_stream = cs.stream.create_stream(self, 'clock')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.work_trigger_stream = cs.stream.create_stream(self, 'work_trigger')
@@ -106,16 +107,16 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
+        sent_info = []
 
         clock_now = 9
         self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
         cou = 0
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_shop_stream.add_item({"frame": message})
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_shop_stream.add_item({"frame": frame})
             cou += 1
             if cou % 3 == 0:
                 clock_now += 1
                 self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
-        return sent_messages
+        return sent_info

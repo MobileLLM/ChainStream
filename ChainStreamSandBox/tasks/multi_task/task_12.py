@@ -13,27 +13,28 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
-        self.input_one_person_stream = None
+        self.input_first_person_stream = None
         self.input_gps_stream = None
         self.input_light_stream = None
         self.adjust_light_stream = None
         self.is_reading_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
-            "stream_id": "all_one_person",
-            "description": "one_person perspective data",
+            "stream_id": "all_first_person",
+            "description": "first_person perspective camera data in my study",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }, {
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "all of my GPS information",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str",
                 "Navigation_endanger": "the detection of whether it is a dangerous road section,bool"
             }
         }, {
             "stream_id": "light_intensity",
-            "description": "A real-time light_intensity check information",
+            "description": "A real-time light_intensity check information,every two copies of light intensity data "
+                           "are packaged as a batch",
             "fields": {
                 "Light intensity outdoor": "the light intensity information outdoor right now,float"
             }
@@ -48,7 +49,8 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             },
             {
                 "stream_id": "is_reading",
-                "description": "Check whether the person is reading or not",
+                "description": "Check whether the person is reading or not,every two copies of video data are "
+                               "packaged as a batch after judging the home street address gps data",
                 "fields": {
                     "Status": "True or False"
                 }
@@ -63,7 +65,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task12"):
         super().__init__(agent_id)
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.video_input = cs.get_stream(self, "all_one_person")
+        self.video_input = cs.get_stream(self, "all_first_person")
         self.command_output = cs.get_stream(self, "adjust_light")
         self.light_input = cs.get_stream(self, "light_intensity")
         self.is_reading = cs.get_stream(self, "is_reading")
@@ -88,16 +90,16 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         
         def check_place(gps_data):
             if gps_data["Street Address"] == "123 Main St":
-                one_person_data = self.video_buffer.pop_all()
-                return one_person_data
+                first_person_data = self.video_buffer.pop_all()
+                return first_person_data
 
-        def check_reading(one_person_data):
-            data_list = one_person_data["item_list"]
+        def check_reading(first_person_data):
+            data_list = first_person_data["item_list"]
             prompt = "Please check whether I am reading books.Simply answer y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,one_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data))
             if res.lower()== "y" :
                 self.is_reading.add_item({"Status":"True"})
-                return one_person_data
+                return first_person_data
             else:
                 return None
 
@@ -105,7 +107,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_one_person_stream = cs.stream.create_stream(self, 'all_one_person')
+        self.input_first_person_stream = cs.stream.create_stream(self, 'all_first_person')
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_light_stream = cs.stream.create_stream(self, 'light_intensity')
         self.adjust_light_stream = cs.stream.create_stream(self, 'adjust_light')
@@ -118,11 +120,14 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.adjust_light_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_one_person_stream.add_item({"frame": message})
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.input_gps_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_first_person_stream.add_item({"frame": frame})
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.input_gps_stream.add_item(gps)
+        for _ in range(10):
+            light_intensity = random.uniform(0, 1000)
+            self.input_light_stream.add_item({"Light intensity outdoor": light_intensity})
+        return sent_info

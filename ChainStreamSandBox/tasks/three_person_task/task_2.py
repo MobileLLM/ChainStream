@@ -14,7 +14,7 @@ class VideoTask5(SingleAgentTaskConfigBase):
         self.output_ui_stream = None
         self.input_ui_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "three_person",
+            "stream_id": "third_person",
             "description": "All third person perspective images",
             "fields": {
                 "images": "image file in the Jpeg format processed using PIL,string"
@@ -34,14 +34,14 @@ import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
-        self.surveillance_input = cs.get_stream(self, "three_person")
+        self.surveillance_input = cs.get_stream(self, "third_person")
         self.analysis_output = cs.get_stream(self, "analysis_violence")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def analyze_surveillance(three_person_data):
+        def analyze_surveillance(third_person_data):
             prompt = "Determine whether violence has occurred in the surveillance video?simply answer y or n.If the answer is y,Choose from several tags:['fighting','shooting','quarrel','others']"
-            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data))
             self.analysis_output.add_item({
                 "analysis_result": res
             })
@@ -50,7 +50,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'three_person')
+        self.input_ui_stream = cs.stream.create_stream(self, 'third_person')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_violence')
 
         self.output_record = []
@@ -62,10 +62,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         processed_results = []
-        for shot in self.Sphar_data:
-            processed_results.append({"images": shot})
-            self.input_ui_stream.add_item(shot)
+        for frame in self.Sphar_data:
+            processed_results.append({"images": frame})
+            self.input_ui_stream.add_item(frame)
         return processed_results
-
-    def stop_task(self, runtime):
-        pass

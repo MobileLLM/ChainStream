@@ -78,11 +78,11 @@ class AgentExampleForStockTask1(cs.agent.Agent):
         self.output_stock_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.stock_data:
-            sent_messages.append(message)
-            self.input_stock_stream.add_item(message)
-        return sent_messages
+        sent_stock = []
+        for stock in self.stock_data:
+            sent_stock.append(stock)
+            self.input_stock_stream.add_item(stock)
+        return sent_stock
 
 
 

@@ -18,14 +18,15 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
         self.patient_trigger = None
         self.output_message_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
-            "stream_id": "all_one_person_outdoor",
-            "description": "one_person perspective data outdoor",
+            "stream_id": "all_third_person_outdoor",
+            "description": "third_person perspective data outside the clinic",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }, {
-            "stream_id": "all_one_person_indoor",
-            "description": "one_person perspective data indoor",
+            "stream_id": "all_third_person_indoor",
+            "description": "third_person perspective data in the clinic(the data is sent at regular intervals as a "
+                           "batch every five seconds)",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
@@ -54,8 +55,8 @@ from chainstream.context import Buffer
 class AgentExampleForMultiTask13(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task13"):
         super().__init__(agent_id)
-        self.outdoor_input = cs.get_stream(self, "all_one_person_outdoor")
-        self.indoor_input = cs.get_stream(self, "all_one_person_indoor")
+        self.outdoor_input = cs.get_stream(self, "all_third_person_outdoor")
+        self.indoor_input = cs.get_stream(self, "all_third_person_indoor")
         self.message_output = cs.get_stream(self, "output_messages")
         self.patient_trigger = cs.get_stream(self, "patient_trigger")
         self.llm = cs.llm.get_model("image")
@@ -86,8 +87,8 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_indoor_stream = cs.stream.create_stream(self, 'all_one_person_indoor')
-        self.input_outdoor_stream = cs.stream.create_stream(self, 'all_one_person_outdoor')
+        self.input_indoor_stream = cs.stream.create_stream(self, 'all_third_person_indoor')
+        self.input_outdoor_stream = cs.stream.create_stream(self, 'all_third_person_outdoor')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.patient_trigger = cs.stream.create_stream(self, 'patient_trigger')
         self.output_record = []
@@ -98,12 +99,12 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data1:
-            sent_messages.append(message)
-            self.input_indoor_stream.add_item({"frame":message})
+        sent_info = []
+        for frame in self.video_data1:
+            sent_info.append(frame)
+            self.input_indoor_stream.add_item({"frame":frame})
             time.sleep(1)
-        for message in self.video_data2:
-            sent_messages.append(message)
-            self.input_outdoor_stream.add_item({"frame":message})
-        return sent_messages
+        for frame in self.video_data2:
+            sent_info.append(frame)
+            self.input_outdoor_stream.add_item({"frame":frame})
+        return sent_info

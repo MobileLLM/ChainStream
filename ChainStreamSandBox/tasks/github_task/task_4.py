@@ -16,7 +16,7 @@ class GithubTask4(SingleAgentTaskConfigBase):
         self.input_github_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information",
+            "description": "All github information(every three github repositories are packaged as a batch)",
             "fields": {
                 "pull_requests": "the number of the pull-requests of the github repository,int",
                 "languages_used": "The code language used in github, string",
@@ -61,7 +61,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 "name": name,
                 "languages_used": languages_used
             })
-        self.github_input.batch(by_count=10).for_each(count_pr).for_each(find_language)
+        self.github_input.batch(by_count=3).for_each(count_pr).for_each(find_language)
         '''
 
     def init_environment(self, runtime):
@@ -77,9 +77,9 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         sent_github = []
-        for message in self.github_data:
-            sent_github.append(message)
-            self.input_github_stream.add_item(message)
+        for github in self.github_data:
+            sent_github.append(github)
+            self.input_github_stream.add_item(github)
         return sent_github
 
 

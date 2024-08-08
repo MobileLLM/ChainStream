@@ -25,7 +25,9 @@ class WeatherTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_wet",
-                "description": "A list of reminders when the relative humidity exceeds 70%",
+                "description": "A list of reminders when the relative humidity exceeds 70%(every two copies of "
+                               "weather data are packaged as a batch after filtering the humidity percentage which is "
+                               "over 70%)",
                 "fields": {
                     "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
                     "humidity": "the percentage of the humidity,string",
@@ -76,8 +78,8 @@ class AgentExampleForSensorTask5(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_weather = []
+        for weather in self.sensor_data:
+            sent_weather.append(weather)
+            self.input_sensor_stream.add_item(weather)
+        return sent_weather

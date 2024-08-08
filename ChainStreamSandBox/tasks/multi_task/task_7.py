@@ -19,13 +19,13 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "all gps data",
+            "description": "all of my gps data",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }
         },{
             "stream_id": "all_video",
-            "description": "video data",
+            "description": "all video data in the balcony with plants",
             "fields": {
                 "images": "image file in the Jpeg format processed using PIL,string"
             }
@@ -34,7 +34,8 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
             {
                 "stream_id": "reminder",
                 "description": "A reminder list of watering the flowers after a period of time if I am not at home.("
-                               "home street address:123 Main St)",
+                               "home street address:123 Main St,every two copies of video data are packaged as "
+                               "a batch after judging not the home street address from gps data)",
                 "fields": {
                     "reminder": "You have not watered the flowers for a period of time. Please water the flowers."
                 }
@@ -91,12 +92,12 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
             time.sleep(2)
-            self.input_video_stream.add_item({"images": message})
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.gps_stream.add_item(message)
-        return sent_messages
+            self.input_video_stream.add_item({"images": frame})
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.gps_stream.add_item(gps)
+        return sent_info

@@ -19,13 +19,13 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.is_office_event = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "all gps data",
+            "description": "all of my gps information",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }
         }, {
             "stream_id": "all_ui",
-            "description": "all ui snapshots",
+            "description": "all of my ui snapshots",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL,string"
             }
@@ -102,11 +102,11 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.ui_data:
-            sent_messages.append(message)
-            self.input_ui_stream.add_item(message)
+        sent_info = []
+        for frame in self.ui_data:
+            sent_info.append(frame)
+            self.input_ui_stream.add_item(frame)
         for gps in self.gps_data:
-            sent_messages.append(gps)
+            sent_info.append(gps)
             self.input_gps_stream.add_item(gps)
-        return sent_messages
+        return sent_info

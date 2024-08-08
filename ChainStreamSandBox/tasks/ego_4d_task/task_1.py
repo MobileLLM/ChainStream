@@ -14,8 +14,8 @@ class VideoTask1(SingleAgentTaskConfigBase):
         self.output_ui_stream = None
         self.input_ui_stream = None
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "one_person_perspective_data",
-            "description": "All one person perspective images",
+            "stream_id": "first_person_perspective_data",
+            "description": "All first person perspective images",
             "fields": {
                 "images": "image file in the Jpeg format processed using PIL,string"
             }
@@ -34,13 +34,14 @@ import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
-        self.screenshot_input = cs.get_stream(self, "one_person_perspective_data")
+        self.screenshot_input = cs.get_stream(self, "first_person_perspective_data")
         self.analysis_output = cs.get_stream(self, "analysis_actions")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
         def analyze_screenshot(ego_data):
-            prompt = "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking','swimming','climbing','skating'],and just tell me what kind"
+            prompt = "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking',"
+            "'swimming','climbing','skating'],and just tell me what kind"
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data))
             self.analysis_output.add_item({
                 "analysis_result": res
@@ -50,7 +51,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'one_person_perspective_data')
+        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_actions')
 
         self.output_record = []
@@ -62,9 +63,9 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start_task(self, runtime) -> list:
         processed_results = []
-        for screenshot in self.ego_4d_data:
-            processed_results.append({"images": screenshot})
-            self.input_ui_stream.add_item(screenshot)
+        for frame in self.ego_4d_data:
+            processed_results.append({"images": frame})
+            self.input_ui_stream.add_item(frame)
         return processed_results
 
     def stop_task(self, runtime):

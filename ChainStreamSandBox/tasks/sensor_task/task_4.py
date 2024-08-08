@@ -26,7 +26,8 @@ class WeatherTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "clothing_recommendation",
                 "description": "A list of the recommendations of the suitable clothing according to the temperature "
-                               "in May",
+                               "in May,2024(every two copies of weather data are packaged as a batch after filtering "
+                               "the weather in May,2024)",
                 "fields": {
                     "temperature": "temperature in degrees Celsius,string",
                     "clothing": "the clothing recommended,string"
@@ -80,8 +81,8 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.sensor_data:
-            sent_messages.append(message)
-            self.input_sensor_stream.add_item(message)
-        return sent_messages
+        sent_weather = []
+        for weather in self.sensor_data:
+            sent_weather.append(weather)
+            self.input_sensor_stream.add_item(weather)
+        return sent_weather

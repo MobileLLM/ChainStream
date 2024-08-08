@@ -25,7 +25,8 @@ class EmailTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_email_reply",
-                "description": "Replied list of emails,excluding ads",
+                "description": "Replied list of emails,excluding ads(every two emails are packaged as a batch after "
+                               "filtering out the ads)",
                 "fields": {
                     "email": "the content of the email, string",
                     "tag": "Received!, string"
@@ -76,11 +77,11 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.email_data:
-            sent_messages.append(message)
-            self.input_email_stream.add_item(message)
-        return sent_messages
+        sent_emails = []
+        for email in self.email_data:
+            sent_emails.append(email)
+            self.input_email_stream.add_item(email)
+        return sent_emails
 
 
 

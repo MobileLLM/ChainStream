@@ -25,7 +25,8 @@ class ArxivTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_of_arxiv",
-                "description": "A list of summaries of each arxiv paper on computer science domain",
+                "description": "A list of summaries of each arxiv paper on computer science domain(every two articles "
+                               "are packaged as a batch after filtering the topic of computer science)",
                 "fields": {
                     "title": "the title of each arxiv article, string",
                     "summary": "the summary of each arxiv article on computer science, string"
@@ -77,11 +78,11 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
         self.output_paper_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.paper_data:
-            sent_messages.append(message)
-            self.input_paper_stream.add_item(message)
-        return sent_messages
+        sent_papers = []
+        for paper in self.paper_data:
+            sent_papers.append(paper)
+            self.input_paper_stream.add_item(paper)
+        return sent_papers
 
 
 

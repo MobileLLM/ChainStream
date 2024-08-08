@@ -4,7 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
-
+from faker import Faker
 random.seed(6666)
 
 
@@ -18,9 +18,10 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.car_check_stream = None
         self.is_tired_stream = None
+        self.fake = Faker()
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "GPS data",
+            "description": "GPS data for navigation of the driver",
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str",
                 "Navigation_endanger": "the detection of whether it is a dangerous road section,bool"
@@ -33,7 +34,7 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
             }
         }, {
             "stream_id": "music_data",
-            "description": "All music data",
+            "description": "All car disk music data",
             "fields": {
                 "song_name": "the name of the song,string",
                 "singer": "the singer of the song,string",
@@ -44,7 +45,9 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "music_player",
-                "description": "A rock n roll music player when the driver is tired in the dangerous road section",
+                "description": "A rock n roll music player when the driver is tired in the dangerous road section("
+                               "every two copies of music data are packaged as a batch after checking the status of "
+                               "the driver and the road condition",
                 "fields": {
                     "song_name": "the name of the song,string",
                     "singer": "the singer of the song,string",
@@ -55,7 +58,7 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
                 "stream_id": "is_tired",
                 "description": "A check on whether the driver is tired or not",
                 "fields": {
-                    "Status": "Trur or False,bool"
+                    "Status": "True or False,bool"
                 }
             }
         ])
@@ -123,11 +126,16 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         self.output_music_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.car_check_stream.add_item(message)
-        for message in self.gps_data:
-            sent_messages.append(message)
-            self.gps_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.car_check_stream.add_item(frame)
+        for gps in self.gps_data:
+            sent_info.append(gps)
+            self.gps_stream.add_item(gps)
+        for _ in range(10):
+            song_name = self.fake.word()
+            singer = self.fake.name()
+            lyrics = self.fake.text(max_nb_chars=100)
+            self.music_stream.add_item({"song_name":song_name,"singer":singer,"lyrics":lyrics})
+        return sent_info

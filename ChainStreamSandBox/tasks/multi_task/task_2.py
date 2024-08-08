@@ -19,7 +19,7 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.stock_message_output = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_message",
-            "description": "All message information",
+            "description": "SMS contact information for all stock buyers",
             "fields": {
                 "sender": "the name of the message sender, string",
                 "Content": "the content of the message, string",
@@ -37,7 +37,9 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "stock_output",
-                "description": "A list of messages to remind all the buyers when the stock plummeted",
+                "description": "A list of messages to remind all the buyers when the stock plummeted(write a function "
+                               "that use the buffer module to store stock items, every two for packaging as a batch "
+                               "after calculating the change_percentage for stocks)",
                 "fields": {
                     "stock": "the symbol of the stock, string",
                     "id": "the ids of all the stock buyers, int"
@@ -106,13 +108,13 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         self.stock_message_output.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
+        sent_info = []
         for message in self.message_data:
-            sent_messages.append(message)
+            sent_info.append(message)
             self.input_message_stream.add_item(message)
             time.sleep(1)
         for stock in self.stock_data:
-            sent_messages.append(stock)
+            sent_info.append(stock)
             self.input_stock_stream.add_item(stock)
             time.sleep(1)
-        return sent_messages
+        return sent_info

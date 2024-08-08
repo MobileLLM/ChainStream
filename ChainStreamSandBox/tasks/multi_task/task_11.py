@@ -19,7 +19,7 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.input_screenshot_stream = None
         self.input_stream_description1 = StreamListDescription(streams=[{
             "stream_id": "all_screenshot",
-            "description": "students screenshot data",
+            "description": "students screenshot data in the class",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL,string"
             }
@@ -33,7 +33,7 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "students_number",
-                "description": "An electronic blackboard used to record the number of students in the classroom.",
+                "description": "An surveillance camera used to record the number of students in the classroom.",
                 "fields": {
                     "student_numbers": "the number of the students,string"
                 }
@@ -95,11 +95,11 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         self.warning_board_stream.for_each(record_output)
 
     def start_task(self, runtime) -> list:
-        sent_messages = []
-        for message in self.video_data:
-            sent_messages.append(message)
-            self.input_three_person_stream.add_item({"frame": message})
-        for message in self.screenshot_data:
-            sent_messages.append(message)
-            self.input_screenshot_stream.add_item(message)
-        return sent_messages
+        sent_info = []
+        for frame in self.video_data:
+            sent_info.append(frame)
+            self.input_three_person_stream.add_item({"frame": frame})
+        for frame in self.screenshot_data:
+            sent_info.append(frame)
+            self.input_screenshot_stream.add_item(frame)
+        return sent_info
