@@ -18,7 +18,7 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.input_light_stream = None
         self.adjust_light_stream = None
         self.is_reading_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_first_person",
             "description": "first_person perspective camera data in my study",
             "fields": {

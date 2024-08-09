@@ -17,7 +17,7 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.input_message_stream = None
         self.input_stock_stream = None
         self.stock_message_output = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_message",
             "description": "SMS contact information for all stock buyers",
             "fields": {

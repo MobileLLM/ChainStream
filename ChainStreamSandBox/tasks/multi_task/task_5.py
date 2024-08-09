@@ -16,7 +16,7 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.output_message_stream = None
         self.input_weather_stream = None
         self.input_dialogue_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
             "description": "All weather information",
             "fields": {

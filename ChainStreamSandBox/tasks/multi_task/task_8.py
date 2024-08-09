@@ -16,7 +16,7 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.output_warning_stream = None
         self.input_video_stream = None
         self.gps_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_video",
             "description": "all video data in my kitchen",
             "fields": {

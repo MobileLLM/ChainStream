@@ -17,7 +17,7 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.output_message_stream = None
         self.input_video_stream = None
         self.gps_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {

@@ -17,7 +17,7 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.warning_board_stream = None
         self.input_three_person_stream = None
         self.input_screenshot_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_screenshot",
             "description": "students screenshot data in the class",
             "fields": {

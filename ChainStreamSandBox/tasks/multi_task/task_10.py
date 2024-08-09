@@ -19,7 +19,7 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.car_check_stream = None
         self.is_tired_stream = None
         self.fake = Faker()
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "GPS data for navigation of the driver",
             "fields": {
@@ -93,7 +93,7 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
             prompt = "Is the driver tired? Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
             if res.lower() == "y":
-                self.is_tired.add_item("Status":"True")
+                self.is_tired.add_item({"Status":"True"})
                 return three_person_data
             else:
                 return None
@@ -129,7 +129,7 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         sent_info = []
         for frame in self.video_data:
             sent_info.append(frame)
-            self.car_check_stream.add_item(frame)
+            self.car_check_stream.add_item({"frame":frame})
         for gps in self.gps_data:
             sent_info.append(gps)
             self.gps_stream.add_item(gps)

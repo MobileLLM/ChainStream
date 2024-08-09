@@ -17,7 +17,7 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
         self.input_indoor_stream = None
         self.patient_trigger = None
         self.output_message_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_third_person_outdoor",
             "description": "third_person perspective data outside the clinic",
             "fields": {

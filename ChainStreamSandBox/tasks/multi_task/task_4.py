@@ -17,7 +17,7 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.input_ui_stream = None
         self.input_gps_stream = None
         self.is_office_event = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps information",
             "fields": {

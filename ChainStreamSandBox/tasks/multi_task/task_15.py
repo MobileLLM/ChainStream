@@ -20,7 +20,7 @@ class TripMusicTask(SingleAgentTaskConfigBase):
         self.is_travel_stream = None
         self.scene_stream = None
         self.is_listening_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my GPS data",
             "fields": {

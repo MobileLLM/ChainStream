@@ -16,7 +16,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.output_action_stream = None
         self.input_weather_stream = None
         self.gps_stream = None
-        self.input_stream_description1 = StreamListDescription(streams=[{
+        self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {
