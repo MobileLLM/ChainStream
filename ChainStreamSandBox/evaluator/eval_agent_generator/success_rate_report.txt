@@ -1,0 +1,55 @@
+Method: one-shot-1-time
+Tasks processed: 49
+Agent started successfully: 5
+Success rate: 10.20%
+
+Method: one-shot-3-times
+Tasks processed: 49
+Agent started successfully: 6
+Success rate: 12.24%
+
+Method: one-shot-5-times
+Tasks processed: 49
+Agent started successfully: 11
+Success rate: 22.45%
+
+Method: react-one-time
+Tasks processed: 50
+Agent started successfully: 43
+Success rate: 86.00%
+
+Method: react-two-times
+Tasks processed: 50
+Agent started successfully: 47
+Success rate: 94.00%
+
+Method: two-shot-1-time
+Tasks processed: 48
+Agent started successfully: 2
+Success rate: 4.17%
+
+Method: two-shot-3-times
+Tasks processed: 48
+Agent started successfully: 7
+Success rate: 14.58%
+
+Method: two-shot-5-times
+Tasks processed: 48
+Agent started successfully: 9
+Success rate: 18.75%
+
+Method: zero-shot-1-time
+Tasks processed: 50
+Agent started successfully: 0
+Success rate: 0.00%
+
+Method: zero-shot-3-times
+Tasks processed: 50
+Agent started successfully: 0
+Success rate: 0.00%
+
+Method: zero-shot-5-times
+Tasks processed: 50
+Agent started successfully: 0
+Success rate: 0.00%
+
