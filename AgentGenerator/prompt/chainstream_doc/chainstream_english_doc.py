@@ -49,14 +49,13 @@ You can use other common Python libraries to fulfill your processing requirement
 
 The returned code should follow PEP8 standards.
 
-Now I will give you a specific example to demonstrate how you should use ChainStream to complete an Agent. Suppose you want to summarize all the emails sent by each sender, excluding advertisements. You can provide an Agent like this:
 
 ---
 '''
 
 english_examples = [
     '''
-    
+    Now I will give you a specific example to demonstrate how you should use ChainStream to complete an Agent. Suppose you want to summarize all the emails sent by each sender, excluding advertisements. You can provide an Agent like this:   
 import chainstream as cs
 
 class AgentExampleForEmailTask1(cs.agent.Agent):
@@ -100,38 +99,53 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         self.email_input.for_each(filter_ads).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
     ''',
     '''
-    Now I will give you another example:Suppose you want to filter the temperatures for May and recommend clothing to users based on the temperatures. You can provide an Agent like this:
+    Now I will give you another example:Suppose you are reading a book at home, if it's getting dark outside, there is an auto-generated command that can adjust the lighting in the room. You can provide an Agent like this:
 
 import chainstream as cs
-import pandas as pd
-
-class AgentExampleForSensorTask4(cs.agent.Agent):
-    def __init__(self, agent_id="agent_example_for_weather_task_1"):
+from chainstream.context import Buffer
+class AgentExampleForMultiTask12(cs.agent.Agent):
+    def __init__(self, agent_id="agent_example_for_multi_task12"):
         super().__init__(agent_id)
-        self.sensor_input = cs.get_stream(self, "all_weather")
-        self.sensor_output = cs.get_stream(self, "clothing_recommendation")
-        self.llm = cs.llm.get_model("Text")
-
+        self.gps_input = cs.get_stream(self, "all_gps")
+        self.video_input = cs.get_stream(self, "all_first_person")
+        self.command_output = cs.get_stream(self, "adjust_light")
+        self.light_input = cs.get_stream(self, "light_intensity")
+        self.is_reading = cs.get_stream(self, "is_reading")
+        self.llm = cs.llm.get_model("image")
+        self.video_buffer = Buffer()
+    
     def start(self):
-        def filter_date(weather):
-            date_str = weather.get('Date_Time')
-            date = pd.to_datetime(date_str, format='%Y/%m/%d %H:%M:%S', errors='coerce')
-            if pd.isna(date):
-                return None
-            if date.year == 2024 and date.month == 5:
-                return weather
+        def save_video(video_data):
+            self.video_buffer.append(video_data)
+        self.video_input.for_each(save_video)
 
-        def recommend_clothing(weather_list):
-            for weather in weather_list['item_list']:
-                temperature = weather.get('Temperature_C')
-                if temperature is not None:
-                    prompt = "Recommend the suitable clothing today according to the temperature."
-                    res = self.llm.query(cs.llm.make_prompt(str(temperature), prompt))
-                    self.sensor_output.add_item({
-                        "temperature": temperature,
-                        "clothing": res
+        def check_light(light_inputs):
+            light_input = light_inputs["item_list"]
+            if self.is_reading == "True":
+                for light in light_input:
+                    prompt = "Do you think the light_intensity is enough for reading books?If not,tell me the best light intensity."
+                    res = self.llm.query(cs.llm.make_prompt(prompt,light_input["Light intensity outdoor"]))
+                    self.command_output.add_item({
+                        "Light intensity indoor": res
                     })
-        self.sensor_input.for_each(filter_date).batch(by_count=2).for_each(recommend_clothing)
+        self.light_input.batch(by_count=2).for_each(check_light)
+        
+        def check_place(gps_data):
+            if gps_data["Street Address"] == "123 Main St":
+                first_person_data = self.video_buffer.pop_all()
+                return first_person_data
+
+        def check_reading(first_person_data):
+            data_list = first_person_data["item_list"]
+            prompt = "Please check whether I am reading books.Simply answer y or n."
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data))
+            if res.lower()== "y" :
+                self.is_reading.add_item({"Status":"True"})
+                return first_person_data
+            else:
+                return None
+
+        self.video_input.for_each(check_place).batch(by_count=2).for_each(check_reading)
     '''
 ]
 
