@@ -17,7 +17,7 @@ class VideoTask4(SingleAgentTaskConfigBase):
             "stream_id": "third_person",
             "description": "All third person perspective images",
             "fields": {
-                "images": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -42,7 +42,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         def analyze_surveillance(third_person_data):
             prompt = " Analyze if there is anything unusual on the road?simply answer y or n.If the answer is y,judge"
             " the type of the accident from the tags:[car_accident,collapse,fire,others]."
-            res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res
             })
@@ -64,6 +64,6 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def start_task(self, runtime) -> list:
         processed_results = []
         for frame in self.Sphar_data:
-            processed_results.append({"images": frame})
-            self.input_ui_stream.add_item(frame)
+            processed_results.append(frame)
+            self.input_ui_stream.add_item({"frame": frame})
         return processed_results

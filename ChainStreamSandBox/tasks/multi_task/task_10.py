@@ -5,6 +5,7 @@ from ChainStreamSandBox.raw_data import GPSData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 from faker import Faker
+
 random.seed(6666)
 
 
@@ -91,7 +92,7 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
 
         def check_tiredness(three_person_data):
             prompt = "Is the driver tired? Simply answer y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data["frame"]))
             if res.lower() == "y":
                 self.is_tired.add_item({"Status":"True"})
                 return three_person_data
@@ -129,7 +130,7 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         sent_info = []
         for frame in self.video_data:
             sent_info.append(frame)
-            self.car_check_stream.add_item({"frame":frame})
+            self.car_check_stream.add_item({"frame": frame})
         for gps in self.gps_data:
             sent_info.append(gps)
             self.gps_stream.add_item(gps)
@@ -137,5 +138,5 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
             song_name = self.fake.word()
             singer = self.fake.name()
             lyrics = self.fake.text(max_nb_chars=100)
-            self.music_stream.add_item({"song_name":song_name,"singer":singer,"lyrics":lyrics})
+            self.music_stream.add_item({"song_name": song_name, "singer": singer, "lyrics": lyrics})
         return sent_info

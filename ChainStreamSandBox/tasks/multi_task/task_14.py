@@ -70,13 +70,11 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         def check_empty_stock(shop_inputs):
             shop_input = shop_inputs["item_list"]
             if self.work_trigger == "True":
-                prompt = "Are there any shelves out of stock?Simply answer y or n.If y,tell me the name of the goods."
-                res1 = self.llm.query(cs.llm.make_prompt(prompt,shop_input))
-                if res1.lower()=="y":
-                    prompt = "Tell me the name of the shelf in short supply."
-                    res2 = self.llm.query(cs.llm.make_prompt(prompt,res1))
+                prompt = "Are there any shelves out of stock?Simply answer y or n"
+                res = self.llm.query(cs.llm.make_prompt(prompt,shop_input["frame"]))
+                if res.lower()=="y":
                     self.message_output.add_item({
-                    "Notion": res2
+                    "Notion": "Short of goods,please stock up on time!"
                     })
             return shop_inputs
         def example_func(item, kwargs):

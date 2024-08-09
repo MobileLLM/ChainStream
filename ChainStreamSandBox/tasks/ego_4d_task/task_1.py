@@ -17,7 +17,7 @@ class VideoTask1(SingleAgentTaskConfigBase):
             "stream_id": "first_person_perspective_data",
             "description": "All first person perspective images",
             "fields": {
-                "images": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -42,7 +42,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         def analyze_screenshot(ego_data):
             prompt = "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking',"
             "'swimming','climbing','skating'],and just tell me what kind"
-            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             self.analysis_output.add_item({
                 "analysis_result": res
             })
@@ -64,8 +64,8 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def start_task(self, runtime) -> list:
         processed_results = []
         for frame in self.ego_4d_data:
-            processed_results.append({"images": frame})
-            self.input_ui_stream.add_item(frame)
+            processed_results.append(frame)
+            self.input_ui_stream.add_item({"frame": frame})
         return processed_results
 
     def stop_task(self, runtime):

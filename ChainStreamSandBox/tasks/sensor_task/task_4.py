@@ -38,8 +38,7 @@ class WeatherTask1(SingleAgentTaskConfigBase):
         self.sensor_data = WeatherData().get_weather(sensor_number)
         self.agent_example = '''
 import chainstream as cs
-import pandas as pd
-
+from datetime import datetime
 class AgentExampleForSensorTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_weather_task_1"):
         super().__init__(agent_id)
@@ -50,11 +49,10 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
     def start(self):
         def filter_date(weather):
             date_str = weather.get('Date_Time')
-            date = pd.to_datetime(date_str, format='%Y/%m/%d %H:%M:%S', errors='coerce')
-            if pd.isna(date):
-                return None
+            date = datetime.strptime(date_str, '%Y/%m/%d %H:%M')
             if date.year == 2024 and date.month == 5:
                 return weather
+            return None  
 
         def recommend_clothing(weather_list):
             for weather in weather_list['item_list']:

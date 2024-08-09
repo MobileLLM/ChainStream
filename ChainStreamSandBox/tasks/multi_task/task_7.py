@@ -27,7 +27,7 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
             "stream_id": "all_video",
             "description": "all video data in the balcony with plants",
             "fields": {
-                "images": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -69,7 +69,7 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
             data_list = three_person_data["item_list"]
             for data in data_list:
                 prompt = "Please check if the flowers are watered.Simply answer y or n."
-                res = self.llm.query(cs.llm.make_prompt(prompt,data))
+                res = self.llm.query(cs.llm.make_prompt(prompt,data["frame"]))
                 if res.lower()== "n" :
                     self.message_output.add_item({
                         "reminder":"You have not watered the flowers for a period of time. Please water the flowers."
@@ -96,7 +96,7 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
         for frame in self.video_data:
             sent_info.append(frame)
             time.sleep(2)
-            self.input_video_stream.add_item({"images": frame})
+            self.input_video_stream.add_item({"frame": frame})
         for gps in self.gps_data:
             sent_info.append(gps)
             self.gps_stream.add_item(gps)

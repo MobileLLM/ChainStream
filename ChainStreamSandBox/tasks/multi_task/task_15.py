@@ -101,7 +101,7 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         def recommend_music(scene_input):
             if self.is_listening == "True" and self.is_travel == "True":
                 prompt = "Recommend me a music that matches the current scene."
-                res = self.llm.query(cs.llm.make_prompt(prompt,scene_input))
+                res = self.llm.query(cs.llm.make_prompt(prompt,scene_input["frame"]))
                 self.music_output.add_item({
                     "Music":res
                 })

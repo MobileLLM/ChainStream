@@ -96,7 +96,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         def check_reading(first_person_data):
             data_list = first_person_data["item_list"]
             prompt = "Please check whether I am reading books.Simply answer y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()== "y" :
                 self.is_reading.add_item({"Status":"True"})
                 return first_person_data

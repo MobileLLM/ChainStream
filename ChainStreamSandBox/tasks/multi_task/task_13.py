@@ -67,7 +67,7 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
             indoor_input = indoor_inputs["item_list"]
             if self.patient_trigger == "True":
                 prompt = "Have the doctor come back?Simply answer y or n."
-                res = self.llm.query(cs.llm.make_prompt(prompt,indoor_input))
+                res = self.llm.query(cs.llm.make_prompt(prompt,indoor_input["frame"]))
                 if res.lower()=="n":
                     self.message_output.add_item({
                     "Notion": "There are patients who are waiting for a period of time."
@@ -76,7 +76,7 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
 
         def check_number(outdoor_input):
             prompt = "Please check how many patients are in the waiting room.Please only tell me the number."
-            res = self.llm.query(cs.llm.make_prompt(prompt,outdoor_input))
+            res = self.llm.query(cs.llm.make_prompt(prompt,outdoor_input["frame"]))
             if res >= "5" :
                 self.patient_trigger.add_item({"Status":"True"})
                 return indoor_input
@@ -102,9 +102,9 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         sent_info = []
         for frame in self.video_data1:
             sent_info.append(frame)
-            self.input_indoor_stream.add_item({"frame":frame})
+            self.input_indoor_stream.add_item({"frame": frame})
             time.sleep(1)
         for frame in self.video_data2:
             sent_info.append(frame)
-            self.input_outdoor_stream.add_item({"frame":frame})
+            self.input_outdoor_stream.add_item({"frame": frame})
         return sent_info

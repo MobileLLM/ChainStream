@@ -64,7 +64,7 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
     def start(self):
         def count_number(three_person_data):
             prompt = "How many students are in the classroom right now?Tell me the number."
-            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data["frame"]))
             self.numbers_output.add_item({
                 "student_numbers": res
             })

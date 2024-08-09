@@ -26,7 +26,7 @@ class CatFoodTask(SingleAgentTaskConfigBase):
             "stream_id": "all_video",
             "description": "all video data in the cat room",
             "fields": {
-                "images": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -68,7 +68,7 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
             data_list = three_person_data["item_list"]
             for data in data_list:
                 prompt = "Please check if there is any cat food left in the cat bowl.Simply answer y or n."
-                res = self.llm.query(cs.llm.make_prompt(prompt,data))
+                res = self.llm.query(cs.llm.make_prompt(prompt,data["frame"]))
                 if res.lower()== "n" :
                     self.message_output.add_item({
                         "reminder":"There is no cat food already. Please refill it."
@@ -94,7 +94,7 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         sent_info = []
         for frame in self.video_data:
             sent_info.append(frame)
-            self.input_video_stream.add_item({"images": frame})
+            self.input_video_stream.add_item({"frame": frame})
         for gps in self.gps_data:
             sent_info.append(gps)
             self.gps_stream.add_item(gps)

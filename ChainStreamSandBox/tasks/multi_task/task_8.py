@@ -20,7 +20,7 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
             "stream_id": "all_video",
             "description": "all video data in my kitchen",
             "fields": {
-                "images": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }, {
             "stream_id": "all_gps",
@@ -67,7 +67,7 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         def check_stove(three_person_data):
             data_list = three_person_data["item_list"]
             prompt = "Please check whether the gas stove is turned on or not.Simply answer y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data))
+            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data["frame"]))
             if res.lower()== "y" :
                 self.message_output.add_item({
                     "alarm":"You have not turned off the stove.Please notice!"
@@ -93,7 +93,7 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         sent_info = []
         for frame in self.video_data:
             sent_info.append(frame)
-            self.input_video_stream.add_item({"images": frame})
+            self.input_video_stream.add_item({"frame": frame})
         for gps in self.gps_data:
             sent_info.append(gps)
             self.gps_stream.add_item(gps)
