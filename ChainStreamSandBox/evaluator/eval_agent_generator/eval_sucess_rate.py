@@ -1,10 +1,13 @@
 from collections import defaultdict
 from ChainStreamSandBox.evaluator.evaluator_base import EvaluatorBase
+
+
 class EvaluatorSuccessRate(EvaluatorBase):
     def __init__(self, base_folder_path):
         super().__init__()
         self.base_folder_path = base_folder_path
-    def calculate_success_rate(self,result_output_path):
+
+    def calculate_success_rate(self, result_output_path):
         results = []
         task_data_dict, task_folder = self.get_data_from_task_reports(self.base_folder_path)
         for folder_name, task_data in task_data_dict.items():
@@ -25,6 +28,7 @@ class EvaluatorSuccessRate(EvaluatorBase):
                       f"Success rate: {success_rate:.2f}%\n")
             results.append(result)
         self.dump_eval_report(results, result_output_path)
+
 
 if __name__ == "__main__":
     base_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result'

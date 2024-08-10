@@ -1,9 +1,11 @@
 import json
 import os
 
+
 class EvaluatorBase:
     def __init__(self):
         pass
+
     # def load_sandbox_logs(self, log_paths: list):
     #     log_data = []
     #     for log_path in log_paths:
@@ -35,13 +37,14 @@ class EvaluatorBase:
                                 if "Task" in part:
                                     task_name = part
                                     break
-                            with open(file_path, 'r', encoding='utf-8') as file:
-                                data = json.load(file)
+                            with open(file_path, 'r', encoding='utf-8') as f:
+                                data = json.load(f)
                                 if task_name not in task_data:
                                     task_data[task_name] = []
                                 task_data[task_name].append(data)
                 all_task_data[subdir] = task_data
         return all_task_data, task_folders
+
     def evaluate_similarity(self, s1, s2):
         if len(s1) < len(s2):
             return self.evaluate_similarity(s2, s1)
@@ -62,11 +65,14 @@ class EvaluatorBase:
         max_distance = max(len(s1), len(s2))
         similarity = 1 - distance / max_distance
         return similarity
+
     def dump_eval_report(self, results: list, output_name: str):
         with open(output_name, 'w', encoding='utf-8') as f:
             for result in results:
                 f.write(result + '\n')
 
+
 if __name__ == '__main__':
-    Evaluator_base =  EvaluatorBase()
-    Evaluator_base.get_data_from_task_reports(r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result')
+    Evaluator_base = EvaluatorBase()
+    Evaluator_base.get_data_from_task_reports(
+        r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result')
