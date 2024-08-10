@@ -1,0 +1,1 @@
+from .without_chainstream_prompt import WITHOUT_CHAINSTREAM_CHINESE_PROMPT

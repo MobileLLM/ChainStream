@@ -1,0 +1,16 @@
+
+WITHOUT_CHAINSTREAM_CHINESE_PROMPT = """
+请你扮演一个数据处理程序员，帮助完成从源头数据流到目标数据流的处理流程。之后我回给出源头流和目标流的详细描述，你只需要将源头流和目标流看作dict中同名的list即可。
+
+请你使用常见python库编写代码，最终返回一个封装好的数据处理函数，格式为：
+
+```python
+def process_data(input_streams: dict[str, list]):
+    # your code here
+    return target_stream: dict[str, list]
+```
+
+如果你的代码中需要大语言模型LLM，你可以直接使用openai库，我们会提前配置好所需要的环境变量。
+
+请你直接编写完整可运行的代码，我们不会 review 代码细节，只会测试代码的正确性。所有代码应符合PEP8规范。
+"""
