@@ -220,11 +220,14 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
             if stream_id is None:
                 tmp_prompt = f"Your code passed the sandbox test! Please debug your agent code throught the `INPUT` command to see if it can handle the input and output correctly."
             else:
-                tmp_inandout = {
-                    "input_stream_items": error['input_stream_item'],
-                    "output_stream_items": error['output_stream_output']
-                }
-                tmp_prompt = f"There's your input and output record, please check it: {tmp_inandout}"
+                try:
+                    tmp_inandout = {
+                        "input_stream_items": error['input_stream_item'],
+                        "output_stream_items": error['output_stream_output']
+                    }
+                    tmp_prompt = f"There's your input and output record, please check it: {tmp_inandout}"
+                except Exception as e:
+                    raise RuntimeError("Failed to get the input and output record. Please check the code and try again.")
 
         return tmp_prompt
 

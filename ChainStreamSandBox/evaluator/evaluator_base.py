@@ -46,6 +46,8 @@ class EvaluatorBase:
         return all_task_data, task_folders
 
     def evaluate_similarity(self, s1, s2):
+        if s1 is None or s2 is None:
+            raise ValueError("Strings cannot be None")
         if len(s1) < len(s2):
             return self.evaluate_similarity(s2, s1)
         if len(s2) == 0:

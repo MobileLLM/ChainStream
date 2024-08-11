@@ -77,22 +77,25 @@ class BatchInterfaceBase:
 
     def _start(self):
         pbar = tqdm.tqdm(total=len(self.task_list) * self.repeat_time)
+        try:
+            for i in range(self.repeat_time):
+                for task_name, task in self.task_list.items():
+                    if self.run_times > 1:
+                        success_times = 0
+                        for log in self.test_log['task_log'][task_name]:
+                            if log['error_msg'] == "success":
+                                success_times += 1
+                        if success_times >= len(self.test_log['task_log'][task_name]):
+                            continue
+                    pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
+                    self._one_task_step(task)
+                    pbar.update(1)
 
-        for i in range(self.repeat_time):
-            for task_name, task in self.task_list.items():
-                if self.run_times > 1:
-                    success_times = 0
-                    for log in self.test_log['task_log'][task_name]:
-                        if log['error_msg'] == "success":
-                            success_times += 1
-                    if success_times >= len(self.test_log['task_log'][task_name]):
-                        continue
-                pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
-                self._one_task_step(task)
-                pbar.update(1)
-
-        self.test_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-        self._save_log()
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            self.test_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+            self._save_log()
 
     def _save_log(self):
         with open(os.path.join(self.report_path_base, 'test_log.json'), 'w') as f:
