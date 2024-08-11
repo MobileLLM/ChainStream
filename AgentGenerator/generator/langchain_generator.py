@@ -1,10 +1,10 @@
 from AgentGenerator.utils.llm_utils import TextGPTModel
 from AgentGenerator.generator.generator_base import AgentGeneratorBase
 from AgentGenerator.io_model import StreamListDescription
-from AgentGenerator.prompt.without_chainstream_prompt import WITHOUT_CHAINSTREAM_CHINESE_PROMPT
+from AgentGenerator.prompt.without_chainstream_prompt import LANGCHAIN_CHAINSTREAM_ENGLISH_PROMPT
 
 
-class AgentGeneratorWithoutChainstream(AgentGeneratorBase):
+class LangChainGenerator(AgentGeneratorBase):
     def __init__(self, model_name='gpt-4o'):
         super().__init__()
         self.model_name = model_name
@@ -12,7 +12,7 @@ class AgentGeneratorWithoutChainstream(AgentGeneratorBase):
 
     def generate_agent_impl(self, chainstream_doc: str, input_and_output_prompt: str) -> str:
         input_and_output_prompt = "\n".join(input_and_output_prompt.split("\n")[:-3])
-        prompt = f"{WITHOUT_CHAINSTREAM_CHINESE_PROMPT}\n{input_and_output_prompt}\n\nCode:\n"
+        prompt = f"{LANGCHAIN_CHAINSTREAM_ENGLISH_PROMPT}\n{input_and_output_prompt}\n\nCode:\n"
 
         print(f"Prompt: {prompt}")
 
@@ -26,7 +26,7 @@ class AgentGeneratorWithoutChainstream(AgentGeneratorBase):
 
 
 if __name__ == "__main__":
-    agent_generator = AgentGeneratorWithoutChainstream()
+    agent_generator = LangChainGenerator()
     agent_code = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
