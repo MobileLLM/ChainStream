@@ -1,3 +1,3 @@
-from .sandbox import SandBox
+from ChainStreamSandBox.sandbox.chainstreamsandbox import ChainStreamSandBox
 
-__all__ = ["SandBox"]
+__all__ = ["ChainStreamSandBox"]
