@@ -13,6 +13,11 @@ Tasks processed: 49
 Agent started successfully: 11
 Success rate: 22.45%
 
+Method: our-work-1-time
+Tasks processed: 50
+Agent started successfully: 37
+Success rate: 74.00%
+
 Method: react-one-time
 Tasks processed: 50
 Agent started successfully: 43
