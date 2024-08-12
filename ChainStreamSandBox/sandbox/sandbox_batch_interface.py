@@ -1,6 +1,6 @@
 import traceback
 
-from ChainStreamSandBox.sandbox.chainstreamsandbox import ChainStreamSandBox
+from ChainStreamSandBox.sandbox.chainstream_sandbox import ChainStreamSandBox
 import datetime
 import os
 import json
