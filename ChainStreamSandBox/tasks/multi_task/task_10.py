@@ -4,7 +4,6 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
-from faker import Faker
 
 random.seed(6666)
 
@@ -19,7 +18,6 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.car_check_stream = None
         self.is_tired_stream = None
-        self.fake = Faker()
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "GPS data for navigation of the driver",
@@ -134,9 +132,14 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         for gps in self.gps_data:
             sent_info.append(gps)
             self.gps_stream.add_item(gps)
-        for _ in range(10):
-            song_name = self.fake.word()
-            singer = self.fake.name()
-            lyrics = self.fake.text(max_nb_chars=100)
-            self.music_stream.add_item({"song_name": song_name, "singer": singer, "lyrics": lyrics})
         return sent_info
+
+if __name__ == '__main__':
+    from faker import Faker
+    fake = Faker()
+    task = RemindDriverTask()
+    for _ in range(10):
+        song_name = fake.word()
+        singer = fake.name()
+        lyrics = fake.text(max_nb_chars=100)
+        task.music_stream.add_item({"song_name": song_name, "singer": singer, "lyrics": lyrics})

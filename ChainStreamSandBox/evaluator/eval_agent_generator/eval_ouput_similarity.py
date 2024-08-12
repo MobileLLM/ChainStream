@@ -1,9 +1,7 @@
 import json
 from ChainStreamSandBox.evaluator.evaluator_base import EvaluatorBase
-
-
 class EvalOutputSimilarity(EvaluatorBase):
-    def __init__(self, base_folder):
+    def __init__(self,base_folder):
         super().__init__()
         self.base_folder = base_folder
 
@@ -11,9 +9,14 @@ class EvalOutputSimilarity(EvaluatorBase):
         output = data.get("output_stream_output", {})
         status = output.get("status", "")
         if status == "[OK] Task completed":
-            return json.dumps(output.get("data", []), ensure_ascii=False)
-        return json.dumps([], ensure_ascii=False)
-
+            data = output.get("data", "")
+            if isinstance(data, list):
+                if not data:
+                    data_string = ""
+                    return json.dumps(data_string, ensure_ascii=False)
+                else:
+                    return json.dumps(data, ensure_ascii=False)
+        return json.dumps("", ensure_ascii=False)
     def calculate_output_similarity(self, agent_by_human_path, result_output_path):
         agent_by_human_data_dict, task_folder1 = self.get_data_from_task_reports(agent_by_human_path)
         result_output = {}
@@ -38,10 +41,8 @@ class EvalOutputSimilarity(EvaluatorBase):
                              for (folder_name1, task_name), similarity in result_output.items()]
         self.dump_eval_report(formatted_results, result_output_path)
 
-
 if __name__ == '__main__':
-    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result'
-    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\agent_by_human'
+    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\agent_by_human_new'
+    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\result-new'
     evaluator_output = EvalOutputSimilarity(result_folder_path)
-    evaluator_output.calculate_output_similarity(agent_by_human_path,
-                                                 result_output_path='./result_similarity_output.txt')
+    evaluator_output.calculate_output_similarity(agent_by_human_path,result_output_path='./result_similarity_report.txt')
