@@ -1,4 +1,4 @@
-from ChainStreamSandBox.sandbox_batch_interface import SandboxBatchInterface
+from ChainStreamSandBox.sandbox.sandbox_batch_interface import SandboxBatchInterface
 from AgentGenerator import ReactGeneratorForStarting
 from ChainStreamSandBox.tasks import get_task_batch
 

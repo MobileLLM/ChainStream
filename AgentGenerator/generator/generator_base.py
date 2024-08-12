@@ -1,4 +1,4 @@
-from ChainStreamSandBox import SandBox
+from ChainStreamSandBox import ChainStreamSandBox
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.stream_selector import StreamSelectorBase
 from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc, chainstream_english_doc, chainstream_english_doc_with_1_example, chainstream_english_doc_with_2_example
@@ -64,6 +64,6 @@ class AgentGeneratorBase:
 class ReactAgentGenerator(AgentGeneratorBase):
     def __init__(self, runtime=None):
         super().__init__(runtime)
-        self.sandbox_class = SandBox
+        self.sandbox_class = ChainStreamSandBox
 
 

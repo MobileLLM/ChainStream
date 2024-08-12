@@ -48,35 +48,29 @@ class InitializeError(SandboxError):
         super().__init__(message)
         self.error_message = "Error while initializing agent"
 
-
-class SandBox:
+class SandboxBase:
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
-                 raise_exception=True, only_init_agent=False):
-        from chainstream.runtime import cs_server
-        cs_server.init(server_type='core')
-        cs_server.start()
-
-        start_sandbox_recording()
+                 raise_exception=True, only_init_agent=False, sandbox_type=None):
+        self.sandbox_type = sandbox_type
 
         self.raise_exception = raise_exception
 
-        self.runtime = cs_server.get_chainstream_core()
         self.task = task
         self.agent_code = agent_code
         self.agent_instance = None
 
         self.only_init_agent = only_init_agent
 
-        self.agent_instance = Agent("sandbox_tmp_agent")
-
         if self.only_init_agent:
             self.result = {'sandbox_info': {
                 'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'sandbox_type': self.sandbox_type,
                 'agent_code': self.agent_code
             }}
         else:
             self.result = {'sandbox_info': {
                 'sandbox_init_time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'sandbox_type': self.sandbox_type,
                 'task_name': self.task.task_id,
                 'agent_code': self.agent_code
             }}
@@ -86,74 +80,29 @@ class SandBox:
         else:
             self.save_path = None
 
-    def start_test_agent(self, return_report_path=False):
-        try:
-            self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            if self.task is not None:
-                self.task.init_environment(self.runtime)
+    def prepare_environment(self):
+        raise NotImplementedError("Subclasses must implement prepare_environment")
 
-            res = self._start_agent()
+    def start_agent(self) -> object:
+        raise NotImplementedError("Subclasses must implement start_agent")
 
-            if res is not None:
-                self.result['start_agent'] = res
-                raise StartError(res)
+    def start_task(self) -> list:
+        raise NotImplementedError("Subclasses must implement start_task")
 
-            if not self.only_init_agent:
-                try:
-                    sent_item = self.task.start_task(self.runtime)
-                except Exception as e:
-                    self.result['start_task'] = {
-                        "error_message": "[ERROR]" + str(e),
-                        "traceback": traceback.format_exc(),
-                        "error_type": str(type(e))
-                    }
-                    if self.raise_exception:
-                        raise RunningError(traceback.format_exc())
-                else:
-                    self.result['start_task'] = "[OK]"
-                    self.result['input_stream_item'] = self._process_item_list_to_str(sent_item)
+    def wait_task_finish(self):
+        raise NotImplementedError("Subclasses must implement wait_task_finish")
 
-                # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
-                # we only want to init the task environment and start the agent, then start the stream and record all output
-                # into a file. self.task.evaluate_task(self.runtime)
+    def get_output_list(self) -> list:
+        raise NotImplementedError("Subclasses must implement get_output_list")
 
-                self.runtime.wait_all_stream_clear()
+    def get_runtime_report(self) -> dict:
+        raise NotImplementedError("Subclasses must implement get_runtime_report")
 
-                tmp_output = self.task.record_output()
-                # print("before record output", tmp_output)
-                tmp_output['data'] = self._process_item_list_to_str(tmp_output['data'])
-                self.result['output_stream_output'] = tmp_output
+    def get_error_msg(self) -> dict:
+        raise NotImplementedError("Subclasses must implement get_error_msg")
 
-                self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-                # self.result['runtime_report'] = self.runtime.get_agent_report(self.agent_instance.agent_id)
-                from chainstream.sandbox_recorder import SANDBOX_RECORDER
-                report = SANDBOX_RECORDER.get_event_recordings()
-                self.result['runtime_report'] = report
-
-        except Exception as e:
-            self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.result['sandbox_info']['sandbox_error'] = {
-                "error_message": "[ERROR]" + e.error_message,
-                "traceback": str(e),
-                "error_type": str(type(e))
-            }
-            if self.raise_exception:
-                raise e
-        finally:
-
-            self.result['error_message'] = self.runtime.get_error_history()
-
-            report_path = self._save_result(self.result)
-            # print("Sandbox result saved to " + self.save_path)
-
-            self.runtime.shutdown()
-            reset_chainstream_server()
-
-            if return_report_path:
-                print("Sandbox result saved to ", report_path)
-                return report_path
-            return self.result
+    def stop_runtime(self):
+        raise NotImplementedError("Subclasses must implement stop_runtime")
 
     def _process_item_list_to_str(self, item_list):
         str_sent_item = []
@@ -171,6 +120,134 @@ class SandBox:
                 raise RunningError("Unsupported item type: "+ str(type(item)))
 
         return str_sent_item
+
+    def _save_result(self, result):
+        file_path = None
+        if self.save_path is not None:
+            if not os.path.exists(self.save_path):
+                os.makedirs(self.save_path)
+            if self.agent_instance is not None and hasattr(self.agent_instance, 'agent_id'):
+                file_path = os.path.join(
+                    self.save_path,
+                    datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.task.task_id + "_" +
+                    self.agent_instance.agent_id + ".json"
+                )
+            else:
+                file_path = os.path.join(
+                    self.save_path,
+                    datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.task.task_id + "_" +
+                    "agent_instance_not_found" + ".json"
+                )
+            with open(file_path, 'w') as f:
+                json.dump(result, f, indent=4)
+        return file_path
+
+    def start_test_agent(self, return_report_path=False):
+        try:
+            self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if self.task is not None:
+                self.prepare_environment()
+
+            res = self.start_agent()
+
+            if res is not None:
+                self.result['start_agent'] = res
+                raise StartError(res)
+
+            if not self.only_init_agent:
+                try:
+                    sent_item = self.start_task()
+                except Exception as e:
+                    self.result['start_task'] = {
+                        "error_message": "[ERROR]" + str(e),
+                        "traceback": traceback.format_exc(),
+                        "error_type": str(type(e))
+                    }
+                    if self.raise_exception:
+                        raise RunningError(traceback.format_exc())
+                else:
+                    self.result['start_task'] = "[OK]"
+                    self.result['input_stream_item'] = self._process_item_list_to_str(sent_item)
+
+                # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
+                # we only want to init the task environment and start the agent, then start the stream and record all output
+                # into a file. self.task.evaluate_task(self.runtime)
+
+                self.wait_task_finish()
+
+                tmp_output = self.get_output_list()
+                # print("before record output", tmp_output)
+                tmp_output['data'] = self._process_item_list_to_str(tmp_output['data'])
+                self.result['output_stream_output'] = tmp_output
+
+                self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                report = self.get_runtime_report()
+                self.result['runtime_report'] = report
+
+        except Exception as e:
+            self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.result['sandbox_info']['sandbox_error'] = {
+                "error_message": "[ERROR]" + e.error_message,
+                "traceback": str(e),
+                "error_type": str(type(e))
+            }
+            if self.raise_exception:
+                raise e
+        finally:
+            self.result['error_message'] = self.get_error_msg()
+
+            report_path = self._save_result(self.result)
+            # print("Sandbox result saved to " + self.save_path)
+
+            self.stop_runtime()
+
+            if return_report_path:
+                print("Sandbox result saved to ", report_path)
+                return report_path
+            return self.result
+
+
+class ChainStreamSandBox(SandboxBase):
+    def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
+                 raise_exception=True, only_init_agent=False):
+        super().__init__(task, agent_code, save_result=save_result, save_path=save_path, raise_exception=raise_exception, only_init_agent=only_init_agent, sandbox_type="chainstream")
+        from chainstream.runtime import cs_server
+        cs_server.init(server_type='core')
+        cs_server.start()
+
+        start_sandbox_recording()
+
+        self.runtime = cs_server.get_chainstream_core()
+
+        self.agent_instance = Agent("sandbox_tmp_agent")
+
+    def prepare_environment(self):
+        self.task.init_environment(self.runtime)
+
+    def start_agent(self) -> object:
+        return self._start_agent()
+
+    def start_task(self) -> list:
+        return self.task.start_task(self.runtime)
+
+    def wait_task_finish(self):
+        self.runtime.wait_all_stream_clear()
+
+    def get_output_list(self) -> list:
+        return self.task.record_output()
+
+    def get_runtime_report(self) -> dict:
+        from chainstream.sandbox_recorder import SANDBOX_RECORDER
+        report = SANDBOX_RECORDER.get_event_recordings()
+        return report
+
+    def get_error_msg(self) -> dict:
+        self.runtime.get_error_history()
+
+    def stop_runtime(self):
+        self.runtime.shutdown()
+        reset_chainstream_server()
 
     def _start_agent(self):
         try:
@@ -237,41 +314,9 @@ class SandBox:
     def get_agent(self):
         return self.agent_instance
 
-    def _save_result(self, result):
-        file_path = None
-        if self.save_path is not None:
-            if not os.path.exists(self.save_path):
-                os.makedirs(self.save_path)
-            if self.agent_instance is not None and hasattr(self.agent_instance, 'agent_id'):
-                file_path = os.path.join(
-                    self.save_path,
-                    datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.task.task_id + "_" +
-                    self.agent_instance.agent_id + ".json"
-                )
-            else:
-                file_path = os.path.join(
-                    self.save_path,
-                    datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.task.task_id + "_" +
-                    "agent_instance_not_found" + ".json"
-                )
-            with open(file_path, 'w') as f:
-                json.dump(result, f, indent=4)
-        return file_path
-
-    # def __del__(self):
-    #     try:
-    #         self.runtime.shutdown()
-    #     except Exception as e:
-    #         print("Error while shutting down runtime:", e)
-    #     try:
-    #         reset_chainstream_server()
-    #         print("Sandbox object deleted")
-    #     except Exception as e:
-    #         print("Error while resetting chainstream server:", e)
-
 
 if __name__ == "__main__":
-    from tasks import ALL_TASKS
+    from ChainStreamSandBox.tasks import ALL_TASKS
 
     Config = ALL_TASKS['EmailTask1']
 
@@ -315,7 +360,7 @@ class EmailSummaryAgent(Agent):
         self.email_stream.unregister_all(self)
     '''
     config = Config()
-    oj = SandBox(config, agent_file, save_result=True, only_init_agent=False)
+    oj = ChainStreamSandBox(config, agent_file, save_result=True, only_init_agent=False)
 
     res = oj.start_test_agent(return_report_path=True)
     print(res)
