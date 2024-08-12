@@ -1,6 +1,6 @@
 import traceback
 
-from ChainStreamSandBox.sandbox.chainstream_sandbox import ChainStreamSandBox
+from ChainStreamSandBox.sandbox import get_sandbox_class
 import datetime
 import os
 import json
@@ -9,7 +9,12 @@ import inspect
 
 
 class BatchInterfaceBase:
-    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None):
+    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None, sandbox_type=None):
+        if sandbox_type is None:
+            raise ValueError("Please specify the sandbox_type for the batch interface")
+        self.sandbox_type = sandbox_type
+
+
         self.task_list = task_list
 
         self.start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -119,7 +124,8 @@ class BatchInterfaceBase:
             if not os.path.exists(os.path.join(self.report_path_base, "task_reports")):
                 os.makedirs(os.path.join(self.report_path_base, "task_reports"))
 
-            sandbox = ChainStreamSandBox(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"), raise_exception=False, only_init_agent=False)
+            sandbox_class = get_sandbox_class(self.sandbox_type)
+            sandbox = sandbox_class(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"), raise_exception=False, only_init_agent=False)
             report_path = sandbox.start_test_agent(return_report_path=True)
             tmp_task_log['report_path'] = report_path
         except Exception as e:
@@ -137,8 +143,8 @@ class BatchInterfaceBase:
 
 
 class SandboxBatchInterface(BatchInterfaceBase):
-    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None):
-        super().__init__(task_list, repeat_time, result_path, task_log_path)
+    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None, sandbox_type=None):
+        super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type)
 
     def start(self):
         self._start()

@@ -4,7 +4,7 @@ from AgentGenerator import CoTGenerator
 
 class EvalCoTGenerator(SandboxBatchInterface):
     def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
-        super().__init__(task_list, repeat_time, result_path, task_log_path)
+        super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task) -> str:
         generator = CoTGenerator()
