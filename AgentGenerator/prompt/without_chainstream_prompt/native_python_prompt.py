@@ -1,0 +1,33 @@
+
+NATIVE_PYTHON_CHAINSTREAM_CHINESE_PROMPT = """
+请你扮演一个数据处理程序员，帮助完成从源头数据流到目标数据流的处理流程。之后我回给出源头流和目标流的详细描述，你只需要将源头流和目标流看作dict中同名的list即可。
+
+请你使用常见python库编写代码，最终返回一个封装好的数据处理函数，格式为：
+
+```python
+def process_data(input_streams: dict[str, list]):
+    # your code here
+    return target_stream: dict[str, list]
+```
+
+如果你的代码中需要大语言模型LLM，你可以直接使用openai库，我们会提前配置好所需要的环境变量。
+
+请你直接编写完整可运行的代码，我们不会 review 代码细节，只会测试代码的正确性。所有代码应符合PEP8规范。
+"""
+
+NATIVE_PYTHON_CHAINSTREAM_ENGLISH_PROMPT = """
+Please act as a data processing programmer and help complete the processing workflow from the source data streams to the target data streams. I will provide detailed descriptions of the source and target streams later; for now, you can treat the source and target streams as lists with the same name in a dictionary.
+
+Please write the code using common Python libraries and return a wrapped data processing function in the following format:
+
+```python
+def process_data(input_streams: dict[str, list]):
+    # your code here
+    return target_stream: dict[str, list]
+```
+
+If your code requires a large language model (LLM), you can directly use the `openai` library, and we will have the necessary environment variables pre-configured.
+
+Please write fully functional code directly. We will not review the code details but will test the correctness of the code. All code should adhere to PEP8 standards.
+
+"""
