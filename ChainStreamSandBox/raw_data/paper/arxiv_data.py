@@ -7,8 +7,7 @@ random.seed(42)
 
 class ArxivData:
     def __init__(self):
-        self.data_path = 'arxiv-random-selected.json'
-        self.data_path = os.path.join(os.path.dirname(__file__), self.data_path)
+        self.data_path = os.path.join(os.path.dirname(__file__), 'arxiv-random-selected.json')
 
         self.paper_data = self._load_data()
 

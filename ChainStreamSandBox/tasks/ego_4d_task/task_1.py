@@ -43,6 +43,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
             prompt = "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking',"
             "'swimming','climbing','skating'],and just tell me what kind"
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
+            
             self.analysis_output.add_item({
                 "analysis_result": res
             })

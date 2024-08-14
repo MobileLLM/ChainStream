@@ -1,9 +1,9 @@
-from tasks.task_config_base import SingleAgentTaskConfigBase
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 
 
-class GPSLongitudeConfig(SingleAgentTaskConfigBase):
+class OldGPSTask8(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -15,38 +15,36 @@ class GPSLongitudeConfig(SingleAgentTaskConfigBase):
         )
         self.gps_data = GPSData().get_gps(10)
         self.agent_example = '''
-        import chainstream as cs
-        from chainstream.llm import get_model
-        class testAgent(cs.agent.Agent):
-            def __init__(self):
-                super().__init__("test_gps_agent")
-                self.input_stream = cs.get_stream("all_gps")
-                self.output_stream = cs.get_stream("cs_gps")
-                self.llm = get_model(["text"])
-            def start(self):
-                def process_gps(gps):
-                    gps_longitude = gps["CapitalLongitude"]        
-                    self.output_stream.add_item(gps_longitude)
-                self.input_stream.for_each(self, process_gps)
-
-            def stop(self):
-                self.input_stream.unregister_all(self)
+import chainstream as cs
+from chainstream.llm import get_model
+class testAgent(cs.agent.Agent):
+    def __init__(self):
+        super().__init__("test_gps_agent")
+        self.input_stream = cs.get_stream(self,"all_gps")
+        self.output_stream = cs.get_stream(self,"cs_gps")
+        self.llm = get_model("Text")
+    def start(self):
+        def process_gps(gps):
+            gps_longitude = gps["CapitalLongitude"]        
+            self.output_stream.add_item(str(gps_longitude))
+        self.input_stream.for_each(process_gps)
         '''
 
     def init_environment(self, runtime):
-        self.input_gps_stream = cs.stream.create_stream('all_gps')
-        self.output_gps_stream = cs.stream.create_stream('cs_gps')
+        self.input_gps_stream = cs.stream.create_stream(self,'all_gps')
+        self.output_gps_stream = cs.stream.create_stream(self,'cs_gps')
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_gps_stream.for_each(self, record_output)
+        self.output_gps_stream.for_each(record_output)
 
     def start_task(self, runtime):
+        gps_list = []
         for info in self.gps_data:
             self.input_gps_stream.add_item(info)
+            gps_list.append(info)
+        return gps_list
 
 
-if __name__ == '__main__':
-    config = GPSLongitudeConfig()

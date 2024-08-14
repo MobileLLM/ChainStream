@@ -2,10 +2,11 @@ from ChainStreamSandBox.raw_data.three_person_video.sphar import video_list
 import os
 import PIL.Image as Image
 
+
 class SpharData:
     def __init__(self):
         self.video_list = video_list
-        self.frame_path_base = r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\raw_data\three_person_video\sphar\video_frame"
+        self.frame_path_base = os.path.join(os.path.dirname(__file__), "sphar", "video_frame")
 
         self.video_frame_data = []
 
@@ -64,6 +65,7 @@ class SpharData:
             'okutama_2'
         ]
         return self._load_frames(video_ids)
+
 
 if __name__ == '__main__':
     data = SpharData()

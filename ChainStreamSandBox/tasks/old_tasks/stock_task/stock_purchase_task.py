@@ -1,12 +1,7 @@
-import os
-import csv
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
-from datetime import datetime
-from tasks.task_config_base import SingleAgentTaskConfigBase
 from ChainStreamSandBox.raw_data import StockData
-
-csv.field_size_limit(2 ** 31 - 1)
 
 random.seed(6666)
 
@@ -24,46 +19,40 @@ class StockPurchaseConfig(SingleAgentTaskConfigBase):
         )
         self.stock_data = StockData().get_stocks(10)
         self.agent_example = '''
-        import chainstream as cs
-        from chainstream.llm import get_model
-        class testAgent(cs.agent.Agent):
-            def __init__(self):
-                super().__init__("test_news_agent")
-                self.input_stream = cs.get_stream("all_stocks")
-                self.output_stream = cs.get_stream("cs_stocks")
-                self.llm = get_model(["text"])
-            def start(self):
-                def process_stocks(stocks):
-                    prompt = "Based on the information received on several stock markets, please recommend the best day to invest in which stock to maximize profit.Just tell me the date and the symbol of the stock"
-                    prompt = [
-                        {
-                            "role": "user",
-                            "content": prompt+str(stocks)
-                        }
-                    ]
-                    response = self.llm.query(prompt)
-                    print(response)
-                    self.output_stream.add_item(response)
-                self.input_stream.for_each(self, process_stocks)
+import chainstream as cs
+from chainstream.llm import get_model
+class testAgent(cs.agent.Agent):
+    def __init__(self):
+        super().__init__("test_news_agent")
+        self.input_stream = cs.get_stream("all_stocks")
+        self.output_stream = cs.get_stream("cs_stocks")
+        self.llm = get_model(["text"])
+    def start(self):
+        def process_stocks(stocks):
+            prompt = "Based on the information received on several stock markets, please recommend the best day to invest in which stock to maximize profit.Just tell me the date and the symbol of the stock"
+            response = self.llm.query(cs.llm.make_prompt(prompt,str(stocks)))
+            self.output_stream.add_item(response)
+        self.input_stream.for_each(process_stocks)
         
-            def stop(self):
-                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
-        self.input_stock_stream = cs.stream.create_stream('all_stocks')
-        self.output_stock_stream = cs.stream.create_stream('cs_stocks')
+        self.input_stock_stream = cs.stream.create_stream(self, 'all_stocks')
+        self.output_stock_stream = cs.stream.create_stream(self, 'cs_stocks')
 
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_stock_stream.for_each(self, record_output)
+        self.output_stock_stream.for_each(record_output)
 
     def start_task(self, runtime):
+        stock_list = []
         for stock in self.stock_data:
             self.input_stock_stream.add_item(stock)
+            stock_list.append(stock)
+        return stock_list
 
 
 if __name__ == '__main__':

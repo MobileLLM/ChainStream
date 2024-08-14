@@ -1,6 +1,4 @@
-from tasks.task_config_base import SingleAgentTaskConfigBase
-import os
-import json
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SMSData
@@ -8,7 +6,7 @@ from ChainStreamSandBox.raw_data import SMSData
 random.seed(6666)
 
 
-class MessageTimeConfig(SingleAgentTaskConfigBase):
+class OldMessageTask5(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -22,38 +20,39 @@ class MessageTimeConfig(SingleAgentTaskConfigBase):
 
         self.sms_data = SMSData().get_random_message()
         self.agent_example = '''
-        import chainstream as cs
-        class testAgent(cs.agent.Agent):
-            def __init__(self):
-                super().__init__("test_message_agent")
-                self.input_stream = cs.get_stream("all_sms")
-                self.output_stream = cs.get_stream("cs_sms")
+import chainstream as cs
+class testAgent(cs.agent.Agent):
+    def __init__(self):
+        super().__init__("test_message_agent")
+        self.input_stream = cs.get_stream(self,"all_sms")
+        self.output_stream = cs.get_stream(self,"cs_sms")
+
+    def start(self):
+        def process_sms(sms):
+            sms_time = sms["time"]
+            sms_text = sms["text"]
+            self.output_stream.add_item(sms_text+" : "+sms_time)
+        self.input_stream.for_each(process_sms)
         
-            def start(self):
-                def process_sms(sms):
-                    sms_time = sms["time"]
-                    sms_text = sms["text"]
-                    self.output_stream.add_item(sms_text+" : "+sms_time)
-                self.input_stream.for_each(self, process_sms)
-        
-            def stop(self):
-                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
-        self.input_sms_stream = cs.stream.create_stream('all_sms')
-        self.output_sms_stream = cs.stream.create_stream('cs_sms')
+        self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
+        self.output_sms_stream = cs.stream.create_stream(self, 'cs_sms')
 
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_sms_stream.for_each(self, record_output)
+        self.output_sms_stream.for_each(record_output)
 
     def start_task(self, runtime):
+        message_list = []
         for message in self.sms_data:
             self.input_sms_stream.add_item(message)
+            message_list.append(message)
+        return message_list
 
 
 if __name__ == '__main__':

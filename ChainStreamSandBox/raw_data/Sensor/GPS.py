@@ -1,12 +1,13 @@
 import csv
 import random
 import os
+
 random.seed(42)
 
 
 class GPSData:
     def __init__(self):
-        self.data_path = os.path.join(os.path.dirname(__file__),'gps.csv')
+        self.data_path = os.path.join(os.path.dirname(__file__), 'gps.csv')
 
         self.gps_data = []
         self._load_data()
@@ -15,7 +16,8 @@ class GPSData:
         with open(self.data_path, "r") as f:
             csv_reader = csv.DictReader(f)
             headers = csv_reader.fieldnames
-            expected_headers = ['CountryName', 'CapitalName', 'CapitalLatitude', 'CapitalLongitude', 'CountryCode', 'ContinentName']
+            expected_headers = ['CountryName', 'CapitalName', 'CapitalLatitude', 'CapitalLongitude', 'CountryCode',
+                                'ContinentName']
             if not all(header in headers for header in expected_headers):
                 raise ValueError("CSV headers do not match expected columns")
 

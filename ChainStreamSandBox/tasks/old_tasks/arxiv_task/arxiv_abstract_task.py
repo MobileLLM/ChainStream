@@ -1,4 +1,4 @@
-from tasks.task_config_base import SingleAgentTaskConfigBase
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
@@ -6,7 +6,7 @@ from ChainStreamSandBox.raw_data import ArxivData
 random.seed(6666)
 
 
-class ArxivAbstractConfig(SingleAgentTaskConfigBase):
+class OldArxivTask1(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
@@ -21,50 +21,41 @@ class ArxivAbstractConfig(SingleAgentTaskConfigBase):
 
         self.paper_data = ArxivData().get_random_papers(paper_number)
         self.agent_example = '''
-        import chainstream as cs
-        from chainstream.llm import get_model
-        class testAgent(cs.agent.Agent):
-            def __init__(self):
-                super().__init__("test_arxiv_agent")
-                self.input_stream = cs.get_stream("all_arxiv")
-                self.output_stream = cs.get_stream("cs_arxiv")
-                self.llm = get_model(["text"])
-            def start(self):
-                def process_paper(paper):
-                    paper_content = paper["abstract"]     
-                    prompt = "Is this abstract related to edge LLM agent? Say 'yes' or 'no'."
-                    prompt = [
-                        {
-                            "role": "user",
-                            "content": prompt+paper_content
-                        }
-                    ]
-                    response = self.llm.query(prompt)
-                    print(response)
-                    if response == 'Yes':
-                        self.output_stream.add_item(paper)
-                self.input_stream.for_each(self, process_paper)
-        
-            def stop(self):
-                self.input_stream.unregister_all(self)
+import chainstream as cs
+class testAgent(cs.agent.Agent):
+    def __init__(self,agent_id ="test_arxiv_agent"):
+        super().__init__(agent_id)
+        self.input_stream = cs.get_stream(self,"all_arxiv")
+        self.output_stream = cs.get_stream(self,"cs_arxiv")
+        self.llm = cs.llm.get_model("Text")
+    def start(self):
+        def process_paper(paper):
+            paper_content = paper["abstract"]     
+            prompt = "Is this abstract related to edge LLM agent? Say 'yes' or 'no'."
+            response = self.llm.query(cs.llm.make_prompt(paper_content, prompt))
+            if response == 'Yes':
+                self.output_stream.add_item(paper)
+            return paper
+        self.input_stream.for_each(process_paper)
+    
 
         '''
 
     def init_environment(self, runtime):
-        self.input_paper_stream = cs.stream.create_stream('all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream('cs_arxiv')
+        self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
+        self.output_paper_stream = cs.stream.create_stream(self, 'cs_arxiv')
 
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_paper_stream.for_each(self, record_output)
+        self.output_paper_stream.for_each(record_output)
 
-    def start_task(self, runtime):
+    def start_task(self, runtime) -> list:
+        sent_paper = []
         for message in self.paper_data:
             self.input_paper_stream.add_item(message)
+            sent_paper.append(message)
+        return sent_paper
 
-
-if __name__ == '__main__':
-    config = ArxivAbstractConfig()
