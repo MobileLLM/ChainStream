@@ -11,7 +11,7 @@ import datetime
 from chainstream.sandbox_recorder import start_sandbox_recording
 from chainstream.agent.base_agent import Agent
 from chainstream.stream import create_stream
-from .sandbox_base import SandboxBase
+from sandbox_base import SandboxBase
 
 
 class ChainStreamSandBox(SandboxBase):
@@ -31,8 +31,26 @@ class ChainStreamSandBox(SandboxBase):
     def prepare_environment(self):
         self.task.init_environment(self.runtime)
 
-    def start_agent(self) -> object:
-        return self._start_agent()
+    def import_and_init(self, module):
+        class_object = None
+        # globals().update(namespace)
+        for name, obj in module.__dict__.items():
+            if isinstance(obj, type) and not obj.__name__ == "Agent" and issubclass(obj, Agent):
+                class_object = obj
+                break
+
+        if class_object is not None:
+            try:
+                self.agent_instance = class_object()
+            except Exception as e:
+                traceback.print_exc()
+                raise InitializeError(traceback.format_exc())
+        else:
+            raise FindAgentError(traceback.format_exc())
+        try:
+            self.agent_instance.start()
+        except Exception as e:
+            raise StartError(traceback.format_exc())
 
     def start_task(self) -> list:
         return self.task.start_task(self.runtime)
@@ -54,59 +72,6 @@ class ChainStreamSandBox(SandboxBase):
     def stop_runtime(self):
         self.runtime.shutdown()
         reset_chainstream_server()
-
-    def _start_agent(self):
-        try:
-            # namespace = {}
-            try:
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.py') as temp_file:
-                    temp_file.write(self.agent_code.encode('utf-8'))
-                    temp_file_path = temp_file.name
-
-                module_name = os.path.splitext(os.path.basename(temp_file_path))[0]
-                spec = importlib.util.spec_from_file_location(module_name, temp_file_path)
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-
-                os.remove(temp_file_path)
-
-                # exec(self.agent_code, globals(), namespace)
-
-            except Exception as e:
-                raise ExecError(traceback.format_exc())
-
-            class_object = None
-            # globals().update(namespace)
-            for name, obj in module.__dict__.items():
-                if isinstance(obj, type) and not obj.__name__ == "Agent" and issubclass(obj, Agent):
-                    class_object = obj
-                    break
-
-            if class_object is not None:
-                try:
-                    self.agent_instance = class_object()
-                except Exception as e:
-                    traceback.print_exc()
-                    raise InitializeError(traceback.format_exc())
-            else:
-                raise FindAgentError(traceback.format_exc())
-            try:
-                self.agent_instance.start()
-            except Exception as e:
-                raise StartError(traceback.format_exc())
-
-        except Exception as e:
-            self.result['start_agent'] = {
-                "error_message": "[ERROR]" + e.error_message,
-                "traceback": str(e),
-                "error_type": str(type(e))
-            }
-            if self.raise_exception:
-                raise RunningError("Error while starting agent: " + str(e))
-            return str(e)
-        else:
-            self.result['start_agent'] = "[OK]"
-            return None
 
     def create_stream(self, stream_description):
         from AgentGenerator.io_model import StreamDescription
