@@ -52,13 +52,13 @@ class ChainStreamSandBox(SandboxBase):
         except Exception as e:
             raise StartError(traceback.format_exc())
 
-    def start_task(self) -> list:
+    def start_task(self) -> dict:
         return self.task.start_task(self.runtime)
 
     def wait_task_finish(self):
         self.runtime.wait_all_stream_clear()
 
-    def get_output_list(self) -> list:
+    def get_output_list(self) -> dict:
         return self.task.record_output()
 
     def get_runtime_report(self) -> dict:

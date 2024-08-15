@@ -1,7 +1,9 @@
-from .sandbox_base import *
+from sandbox_base import *
 import os
 from chainstream.agent.base_agent import Agent
+from chainstream.function.agent_function import AgentFunction
 from chainstream.stream import get_stream
+from chainstream.sandbox_recorder import start_sandbox_recording
 
 class TmpInputRecordAgent(Agent):
     def __init__(self, stream_ids):
@@ -42,7 +44,7 @@ class NativePythonSandbox(SandboxBase):
 
         self.runtime = cs_server.get_chainstream_core()
 
-        self.all_input_stream_ids = [stream_description.stream_id for stream_description in self.task.input_stream_descriptions]
+        self.all_input_stream_ids = [stream_description.stream_id for stream_description in self.task.input_stream_description.streams]
         self.input_recorder = None
 
         self.code_instance = None
@@ -60,14 +62,14 @@ class NativePythonSandbox(SandboxBase):
     def import_and_init(self, module):
         func_object = None
         for name, obj in module.__dict__.items():
-            if inspect.isclass(obj) and obj.__name__ == "process_data":
+            if callable(obj) and name == "process_data":
                 func_object = obj
                 break
         if func_object is None:
-            raise
+            raise ExecError("process_data function not found in the module")
         else:
             try:
-                self.code_instance = func_object()
+                self.code_instance = func_object
             except Exception as e:
                 traceback.print_exc()
                 raise InitializeError(traceback.format_exc())
@@ -84,6 +86,18 @@ class NativePythonSandbox(SandboxBase):
     def get_output_list(self) -> list:
         try:
             output_list = self.code_instance(self.all_input_data)
+            for stream_id, record in output_list.items():
+                if len(record) == 0:
+                    output_list[stream_id] = {
+                        "status": "[ERROR] No output message found",
+                        "data": []
+                    }
+
+                else:
+                    output_list[stream_id] = {
+                        "status": "[OK] Task completed",
+                        "data": record
+                    }
             return output_list
         except Exception as e:
             traceback.print_exc()
@@ -99,3 +113,27 @@ class NativePythonSandbox(SandboxBase):
         self.runtime.shutdown()
         reset_chainstream_server()
 
+
+if __name__ == "__main__":
+    from ChainStreamSandBox.tasks import ALL_TASKS
+
+    Config = ALL_TASKS['EmailTask1']
+
+    agent_file = '''
+def process_data(input_dict):
+    print(input_dict)
+    output_dict = {
+        "summary_by_sender" : input_dict["all_emails"]
+    }
+    return output_dict
+    '''
+    config = Config()
+    oj = NativePythonSandbox(config, agent_file, save_result=True, only_init_agent=False)
+
+    res = oj.start_test_agent(return_report_path=True)
+    print(res)
+
+    # if res['start_agent'] != "[OK]":
+    #     print("\n\nError while starting agent:", res['start_agent']['error_message'])
+    #     for line in res['start_agent']['traceback'].split('\n'):
+    #         print(line)

@@ -29,27 +29,41 @@ class TaskConfigBase(cs.agent.Agent):
     def init_environment(self, runtime):
         raise RuntimeError("Not implemented")
 
-    def start_task(self, runtime) -> list:
+    def start_task(self, runtime) -> dict:
         raise RuntimeError("Not implemented")
 
-    def record_output(self):
+    def record_output(self) -> dict:
         raise RuntimeError("Not implemented")
 
 
 class SingleAgentTaskConfigBase(TaskConfigBase):
     def __init__(self):
         super().__init__()
-        self.output_record = []
+        self.output_record = {}
 
-    def record_output(self):
+    def record_output(self) -> dict:
         # print(self.output_record)
-        if len(self.output_record) == 0:
-            return {
-                "status": "[ERROR] No output message found",
-                "data": []
-            }
-        else:
-            return {
-                "status": "[OK] Task completed",
-                "data": self.output_record
-            }
+
+        # if len(self.output_record) == 0:
+        #     return {
+        #         "status": "[ERROR] No output message found",
+        #         "data": []
+        #     }
+        # else:
+        #     return {
+        #         "status": "[OK] Task completed",
+        #         "data": self.output_record
+        #     }
+        for stream_id, record in self.output_record.items():
+            if len(record) == 0:
+                self.output_record[stream_id] = {
+                    "status": "[ERROR] No output message found",
+                    "data": []
+                }
+
+            else:
+                self.output_record[stream_id] = {
+                    "status": "[OK] Task completed",
+                    "data": record
+                }
+        return self.output_record

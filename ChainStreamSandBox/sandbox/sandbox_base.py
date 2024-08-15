@@ -85,13 +85,13 @@ class SandboxBase:
     def import_and_init(self, module):
         raise NotImplementedError("Subclasses must implement import_and_init")
 
-    def start_task(self) -> list:
+    def start_task(self) -> dict:
         raise NotImplementedError("Subclasses must implement start_task")
 
     def wait_task_finish(self):
         raise NotImplementedError("Subclasses must implement wait_task_finish")
 
-    def get_output_list(self) -> list:
+    def get_output_list(self) -> dict:
         raise NotImplementedError("Subclasses must implement get_output_list")
 
     def get_runtime_report(self) -> dict:
@@ -201,8 +201,9 @@ class SandboxBase:
                         raise RunningError(traceback.format_exc())
                 else:
                     self.result['start_task'] = "[OK]"
-                    self.result['input_stream_item'] = self._process_item_list_to_str(sent_item)
-
+                    self.result["input_stream_item"] = {}
+                    for stream_id, data_items in sent_item.items():
+                        self.result["input_stream_item"][stream_id] = self._process_item_list_to_str(data_items)
                 # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
                 # we only want to init the task environment and start the agent, then start the stream and record all output
                 # into a file. self.task.evaluate_task(self.runtime)
@@ -211,7 +212,9 @@ class SandboxBase:
 
                 tmp_output = self.get_output_list()
                 # print("before record output", tmp_output)
-                tmp_output['data'] = self._process_item_list_to_str(tmp_output['data'])
+
+                for stream_id, data_items in tmp_output.items():
+                    tmp_output[stream_id]['data'] = self._process_item_list_to_str(data_items['data'])
                 self.result['output_stream_output'] = tmp_output
 
                 self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

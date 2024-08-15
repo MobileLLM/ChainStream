@@ -414,7 +414,7 @@ class BaseStream(StreamInterface):
             # print(call_from.filename)
             tmp_caller_instance = current_frame.f_back.f_back.f_back.f_locals.get('self', None)
             # print("tmp_caller_instance", tmp_caller_instance)
-            if tmp_caller_instance.__class__.__name__ == "ChainStreamSandBox":
+            if tmp_caller_instance.__class__.__name__ in ["ChainStreamSandBox", "NativePythonSandbox", "LangChainSandbox"]:
                 func_id = "__[sandbox]__"
             else:
                 func_id = tmp_caller_instance.func_id

@@ -78,18 +78,18 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_email')
         self.output_paper_stream = cs.stream.create_stream(self, 'summary_by_sender')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record["summary_by_sender"].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_emails = []
+    def start_task(self, runtime) -> dict:
+        sent_emails = {"all_email": []}
         for email in self.paper_data:
             email['sender'] = email['From']
-            sent_emails.append(email)
+            sent_emails['all_email'].append(email)
             self.input_paper_stream.add_item(email)
         return sent_emails
 
