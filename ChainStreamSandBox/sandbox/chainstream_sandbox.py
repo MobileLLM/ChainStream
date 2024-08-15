@@ -11,7 +11,7 @@ import datetime
 from chainstream.sandbox_recorder import start_sandbox_recording
 from chainstream.agent.base_agent import Agent
 from chainstream.stream import create_stream
-from sandbox_base import SandboxBase
+from sandbox_base import *
 
 
 class ChainStreamSandBox(SandboxBase):
