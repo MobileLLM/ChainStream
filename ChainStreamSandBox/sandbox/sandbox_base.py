@@ -83,8 +83,11 @@ class SandboxBase:
     def prepare_environment(self):
         raise NotImplementedError("Subclasses must implement prepare_environment")
 
-    def start_agent(self) -> object:
-        raise NotImplementedError("Subclasses must implement start_agent")
+    # def start_agent(self) -> object:
+    #     raise NotImplementedError("Subclasses must implement start_agent")
+
+    def import_and_init(self, module):
+        raise NotImplementedError("Subclasses must implement import_and_init")
 
     def start_task(self) -> list:
         raise NotImplementedError("Subclasses must implement start_task")
@@ -142,13 +145,48 @@ class SandboxBase:
                 json.dump(result, f, indent=4)
         return file_path
 
+    def _start_agent(self):
+        try:
+            # namespace = {}
+            try:
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.py') as temp_file:
+                    temp_file.write(self.agent_code.encode('utf-8'))
+                    temp_file_path = temp_file.name
+
+                module_name = os.path.splitext(os.path.basename(temp_file_path))[0]
+                spec = importlib.util.spec_from_file_location(module_name, temp_file_path)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+
+                os.remove(temp_file_path)
+
+                # exec(self.agent_code, globals(), namespace)
+
+            except Exception as e:
+                raise ExecError(traceback.format_exc())
+
+            self.import_and_init(module)
+
+        except Exception as e:
+            self.result['start_agent'] = {
+                "error_message": "[ERROR]" + e.error_message,
+                "traceback": str(e),
+                "error_type": str(type(e))
+            }
+            if self.raise_exception:
+                raise RunningError("Error while starting agent: " + str(e))
+            return str(e)
+        else:
+            self.result['start_agent'] = "[OK]"
+            return None
+
     def start_test_agent(self, return_report_path=False):
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if self.task is not None:
                 self.prepare_environment()
 
-            res = self.start_agent()
+            res = self._start_agent()
 
             if res is not None:
                 self.result['start_agent'] = res

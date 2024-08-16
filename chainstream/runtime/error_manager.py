@@ -4,7 +4,8 @@ import traceback
 import enum
 import sys
 
-logging.basicConfig(filename='error.log', level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
+# logging.basicConfig(filename='error.log', level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
 
 
 # ERROR_TYPES = ["function_error", "stream_error", "agent_error", "llm_error", "runtime_error", "other_error"]
