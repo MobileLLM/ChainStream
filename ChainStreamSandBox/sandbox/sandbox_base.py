@@ -9,7 +9,6 @@ import json
 import datetime
 
 from chainstream.agent.base_agent import Agent
-from chainstream.function.agent_function import AgentFunction
 from chainstream.stream import get_stream
 from chainstream.sandbox_recorder import start_sandbox_recording
 
@@ -50,6 +49,7 @@ class InitializeError(SandboxError):
     def __init__(self, message):
         super().__init__(message)
         self.error_message = "Error while initializing agent"
+
 
 class SandboxBase:
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
@@ -123,7 +123,7 @@ class SandboxBase:
             elif isinstance(item, list):
                 str_sent_item.append([str(i) for i in item])
             else:
-                raise RunningError("Unsupported item type: "+ str(type(item)))
+                raise RunningError("Unsupported item type: " + str(type(item)))
 
         return str_sent_item
 
@@ -211,12 +211,12 @@ class SandboxBase:
                         raise RunningError(traceback.format_exc())
                 else:
                     self.result['start_task'] = "[OK]"
-                    self.result["input_stream_item"] = {}
+                    self.result["input_stream_items"] = {}
                     for stream_id, data_items in sent_item.items():
                         self.result["input_stream_item"][stream_id] = self._process_item_list_to_str(data_items)
                 # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
-                # we only want to init the task environment and start the agent, then start the stream and record all output
-                # into a file. self.task.evaluate_task(self.runtime)
+                # we only want to init the task environment and start the agent, then start the stream and record all
+                # output into a file. self.task.evaluate_task(self.runtime)
 
                 self.wait_task_finish()
 
@@ -225,7 +225,7 @@ class SandboxBase:
 
                 for stream_id, data_items in tmp_output.items():
                     tmp_output[stream_id]['data'] = self._process_item_list_to_str(data_items['data'])
-                self.result['output_stream_output'] = tmp_output
+                self.result['output_stream_items'] = tmp_output
 
                 self.result['sandbox_info']['sandbox_end_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -268,9 +268,12 @@ class TmpInputRecordAgent(Agent):
     def start(self):
         def get_func(tmp_stream_id):
             tmp_stream = self.stream_list[tmp_stream_id]
+
             def record_input_func(item):
                 tmp_stream.append(item)
+
             return record_input_func
+
         for stream_id in self.stream_ids:
             self.stream_list[stream_id].for_each(get_func(stream_id))
 
@@ -296,7 +299,8 @@ class BatchSandbox(SandboxBase):
 
         self.api_func_name = api_func_name
 
-        self.all_input_stream_ids = [stream_description.stream_id for stream_description in self.task.input_stream_description.streams]
+        self.all_input_stream_ids = [stream_description.stream_id for stream_description in
+                                     self.task.input_stream_description.streams]
         self.input_recorder = None
 
         self.code_instance = None
@@ -359,12 +363,11 @@ class BatchSandbox(SandboxBase):
             raise RunningError(traceback.format_exc())
 
     def get_runtime_report(self) -> dict:
-        return "Native Python does not support runtime report"
+        return {"Note": "Native Python does not support runtime report"}
 
     def get_error_msg(self) -> dict:
-        return "Native Python does not support runtime report"
+        return {"Note": "Native Python does not support error message"}
 
     def stop_runtime(self):
         self.runtime.shutdown()
         reset_chainstream_server()
-

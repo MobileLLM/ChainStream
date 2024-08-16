@@ -1,6 +1,7 @@
 import importlib.util
 import ast
 
+
 def extract_imports(code: str):
     tree = ast.parse(code)
     imported_modules = set()
@@ -14,9 +15,9 @@ def extract_imports(code: str):
 
     return list(imported_modules)
 
+
 def check_library_installed(library_names: list) -> bool:
     for library in library_names:
-        if not check_library_installed_single(library):
+        if not importlib.util.find_spec(library):
             raise ImportError(f"{library} is not installed.")
     return True
-

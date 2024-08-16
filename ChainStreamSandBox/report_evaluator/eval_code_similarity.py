@@ -1,41 +1,58 @@
-from ChainStreamSandBox.evaluator.evaluator_base import EvaluatorBase
-from ChainStreamSandBox.tasks import get_task_batch
+from ChainStreamSandBox.report_evaluator.evaluator_base import EvaluatorBase
+from ChainStreamSandBox.report_evaluator.utils import *
+import os
 
 
 class EvalCodeSimilarity(EvaluatorBase):
-    def __init__(self, base_folder):
-        super().__init__()
-        self.base_folder = base_folder
-        self.task_list = get_task_batch()
+    def __init__(self, reference_log, candidate_log, save_name="code_similarity_result",
+                 save_folder=os.path.dirname(os.path.abspath(__file__))):
+        super().__init__([reference_log, candidate_log], save_name, save_folder)
+        self.reference_log = reference_log
+        self.candidate_log = candidate_log
 
-    def calculate_code_similarity(self, result_output_path):
-        task_data_dict, task_folder = self.get_data_from_task_reports(self.base_folder)
-        task_similarities = {}
-        for folder_name, task_data in task_data_dict.items():
-            for task_name, data_list in task_data.items():
-                if task_name in self.task_list:
-                    task_instance = self.task_list[task_name]()
-                    print("task_name:", task_name, end="\t")
-                    if hasattr(task_instance, 'agent_example'):
-                        print("has agent_example")
-                        agent_example = task_instance.agent_example
-                        for json_data in data_list:
-                            agent_code2 = json_data.get("sandbox_info", {}).get("agent_code", "")
+        self.reference_report = self.reports[reference_log]
+        self.candidate_report = self.reports[candidate_log]
 
-                            if agent_code2 == "" or agent_code2 is None:
-                                print(f"{task_name}, agent_code2 is empty")
-                                continue
-                            similarity_score = self.evaluate_similarity(agent_example, agent_code2)
-                            key = (folder_name, task_name)
-                            if key not in task_similarities:
-                                task_similarities[key] = similarity_score
-                            else:
-                                task_similarities[key] = max(task_similarities[key], similarity_score)
-                    else:
-                        print("does not have agent_example")
-        formatted_results = [f"Folder: {folder_name}, Task Name: {task_name}, Max Similarity: {similarity:.4f}"
-                             for (folder_name, task_name), similarity in task_similarities.items()]
-        self.dump_eval_report(formatted_results, result_output_path)
+    def calculate_code_similarity(self, first_n: list | int = None):
+        if first_n is None:
+            first_n = [1, 3, 5]
+        if not isinstance(first_n, list) or not isinstance(first_n, int):
+            raise ValueError("first_n should be a list or an integer")
+        if isinstance(first_n, int):
+            first_n = [first_n]
+
+        for N in first_n:
+            code_similarity = {}
+            for task, reports in self.candidate_report.items():
+                task_code_similarity = {
+                    "bleu": 0,
+                    "edit_distance": 0,
+                    "codebleu": 0,
+                }
+                reference_code = self.reference_report[task][0]['sandbox_info']['agent_code']
+                for report in reports[:N]:
+                    candidate_code = report['sandbox_info']['agent_code']
+                    task_code_similarity['bleu'] = max(task_code_similarity['bleu'],
+                                                       cal_str_bleu_similarity(reference_code, candidate_code))
+                    task_code_similarity['edit_distance'] = max(task_code_similarity['edit_distance'],
+                                                                cal_str_edit_distance_similarity(reference_code,
+                                                                                                 candidate_code))
+                    task_code_similarity['codebleu'] = max(task_code_similarity['codebleu'],
+                                                           cal_code_bleu_similarity(reference_code, candidate_code))
+                    code_similarity[task] = task_code_similarity
+            avg_code_similarity = {
+                "bleu": sum([code_similarity[task]['bleu'] for task in code_similarity]) / len(code_similarity),
+                "edit_distance": sum([code_similarity[task]['edit_distance'] for task in code_similarity]) / len(
+                    code_similarity),
+                "codebleu": sum([code_similarity[task]['codebleu'] for task in code_similarity]) / len(code_similarity),
+            }
+            self.eval_results['eval_result'] = {
+                "reference_code": self.reference_report,
+                "candidate_code": self.candidate_report,
+                "first_n": first_n,
+                "avg_code_similarity": avg_code_similarity,
+                "code_similarity": code_similarity,
+            }
 
 
 if __name__ == "__main__":

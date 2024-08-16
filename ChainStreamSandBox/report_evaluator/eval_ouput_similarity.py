@@ -1,48 +1,49 @@
-import json
-from ChainStreamSandBox.evaluator.evaluator_base import EvaluatorBase
-class EvalOutputSimilarity(EvaluatorBase):
-    def __init__(self,base_folder):
-        super().__init__()
-        self.base_folder = base_folder
+import os
+from ChainStreamSandBox.report_evaluator.evaluator_base import EvaluatorBase
 
-    def get_output_string(self, data):
-        output = data.get("output_stream_output", {})
-        status = output.get("status", "")
-        if status == "[OK] Task completed":
-            data = output.get("data", "")
-            if isinstance(data, list):
-                if not data:
-                    data_string = ""
-                    return json.dumps(data_string, ensure_ascii=False)
-                else:
-                    return json.dumps(data, ensure_ascii=False)
-        return json.dumps("", ensure_ascii=False)
-    def calculate_output_similarity(self, agent_by_human_path, result_output_path):
-        agent_by_human_data_dict, task_folder1 = self.get_data_from_task_reports(agent_by_human_path)
-        result_output = {}
-        current_data_dict, task_folder2 = self.get_data_from_task_reports(self.base_folder)
-        for folder_name1, task_data1 in agent_by_human_data_dict.items():
-            for folder_name2, task_data2 in current_data_dict.items():
-                for task_name in task_data1:
-                    if task_name in task_data2:
-                        data1_list = task_data1[task_name]
-                        data2_list = task_data2[task_name]
-                        for data1 in data1_list:
-                            output_1_str = self.get_output_string(data1)
-                            for data2 in data2_list:
-                                output_2_str = self.get_output_string(data2)
-                                similarity_score = self.evaluate_similarity(output_1_str, output_2_str)
-                                key = (folder_name1, task_name)
-                                if key not in result_output:
-                                    result_output[key] = similarity_score
-                                else:
-                                    result_output[key] = max(result_output[key], similarity_score)
-        formatted_results = [f"Folder: {folder_name1}, Task Name: {task_name}, Max Similarity: {similarity:.4f}"
-                             for (folder_name1, task_name), similarity in result_output.items()]
-        self.dump_eval_report(formatted_results, result_output_path)
+
+class EvalOutputSimilarity(EvaluatorBase):
+    def __init__(self, reference_log, candidate_log, save_name="output_similarity_result",
+                 save_folder=os.path.dirname(os.path.abspath(__file__))):
+        super().__init__([reference_log, candidate_log], save_name, save_folder)
+        self.reference_log = reference_log
+        self.candidate_log = candidate_log
+
+        self.reference_reports = self.reports['reference_log']
+        self.candidate_reports = self.reports['candidate_log']
+
+    def calculate_output_similarity(self, first_n: list | int = None):
+        if first_n is None:
+            first_n = [1, 3, 5]
+        if not isinstance(first_n, list) or not isinstance(first_n, int):
+            raise ValueError("first_n should be a list or an integer")
+        if isinstance(first_n, int):
+            first_n = [first_n]
+
+        for N in first_n:
+            output_similarity = {}
+            for task, reports in self.candidate_reports.items():
+                task_output_similarity = {
+                    "str_metric": 0,
+                    "list_metric": {
+                        "bleu": 0,
+                        "ed": 0,
+                        # "llm": 0,
+                    }
+                }
+                reference_outputs = self.reference_reports[task][0]["output_stream_output"]
+                for report in reports:
+                    candidate_outputs = report["output_stream_output"]
+                    pre_stream_output_similarity = {}
+                    for stream_name, output in candidate_outputs.items():
+                        pass
+                        # TODO: stop here to sleep
+
+
 
 if __name__ == '__main__':
     result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\agent_by_human_new'
     agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\result-new'
     evaluator_output = EvalOutputSimilarity(result_folder_path)
-    evaluator_output.calculate_output_similarity(agent_by_human_path,result_output_path='./result_similarity_report.txt')
+    evaluator_output.calculate_output_similarity(agent_by_human_path,
+                                                 result_output_path='./result_similarity_report.txt')

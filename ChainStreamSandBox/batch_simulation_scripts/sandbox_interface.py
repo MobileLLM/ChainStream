@@ -14,7 +14,6 @@ class BatchInterfaceBase:
             raise ValueError("Please specify the sandbox_type for the batch interface")
         self.sandbox_type = sandbox_type
 
-
         self.task_list = task_list
 
         self.start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -66,7 +65,7 @@ class BatchInterfaceBase:
             "repeat_time": self.repeat_time,
             "generator": self._set_generator_log(),
             "test_description": [self._get_test_description()],
-            "task_log": {
+            "task_reports": {
                 xx: []
                 for xx in self.task_list
             }
@@ -87,10 +86,10 @@ class BatchInterfaceBase:
                 for task_name, task in self.task_list.items():
                     if self.run_times > 1:
                         success_times = 0
-                        for log in self.test_log['task_log'][task_name]:
+                        for log in self.test_log['task_reports'][task_name]:
                             if log['error_msg'] == "success":
                                 success_times += 1
-                        if success_times >= len(self.test_log['task_log'][task_name]):
+                        if success_times >= len(self.test_log['task_reports'][task_name]):
                             continue
                     pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
                     self._one_task_step(task)
@@ -125,7 +124,8 @@ class BatchInterfaceBase:
                 os.makedirs(os.path.join(self.report_path_base, "task_reports"))
 
             sandbox_class = get_sandbox_class(self.sandbox_type)
-            sandbox = sandbox_class(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"), raise_exception=False, only_init_agent=False)
+            sandbox = sandbox_class(task, agent_code, save_path=os.path.join(self.report_path_base, "task_reports"),
+                                    raise_exception=False, only_init_agent=False)
             report_path = sandbox.start_test_agent(return_report_path=True)
             tmp_task_log['report_path'] = report_path
         except Exception as e:
@@ -135,7 +135,7 @@ class BatchInterfaceBase:
             tmp_task_log['error_msg'] = "success"
         finally:
             tmp_task_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-            self.test_log['task_log'][task.task_id].append(tmp_task_log)
+            self.test_log['task_reports'][task.task_id].append(tmp_task_log)
 
     def get_agent_for_specific_task(self, task) -> str:
         raise NotImplementedError(

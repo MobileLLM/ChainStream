@@ -2,6 +2,7 @@ from sandbox_base import BatchSandbox
 from utils import extract_imports, check_library_installed
 import os
 
+
 class LangChainSandbox(BatchSandbox):
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
                  raise_exception=True, only_init_agent=False):
@@ -52,4 +53,3 @@ def process_data(input_dict):
     #     print("\n\nError while starting agent:", res['start_agent']['error_message'])
     #     for line in res['start_agent']['traceback'].split('\n'):
     #         print(line)
-

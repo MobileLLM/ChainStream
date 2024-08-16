@@ -1,33 +1,43 @@
-from collections import defaultdict
-from ChainStreamSandBox.evaluator.evaluator_base import EvaluatorBase
+from ChainStreamSandBox.report_evaluator.evaluator_base import EvaluatorBase
+from ChainStreamSandBox.report_evaluator.utils import *
+import os
 
 
 class EvaluatorSuccessRate(EvaluatorBase):
-    def __init__(self, base_folder_path):
-        super().__init__()
-        self.base_folder_path = base_folder_path
+    def __init__(self, log_path, save_name="success_rate_result",
+                 save_folder=os.path.dirname(os.path.abspath(__file__))):
+        super().__init__(log_path, save_name, save_folder)
 
-    def calculate_success_rate(self, result_output_path):
-        results = []
-        task_data_dict, task_folder = self.get_data_from_task_reports(self.base_folder_path)
-        for folder_name, task_data in task_data_dict.items():
-            task_success_status = defaultdict(bool)
-            unique_tasks = set()
-            for task_name, data_list in task_data.items():
-                unique_tasks.add(task_name)
-                for json_data in data_list:
-                    start_agent_status = json_data.get('start_agent', '')
-                    if start_agent_status == "[OK]":
-                        task_success_status[task_name] = True
-            success_count = sum(task_success_status.values())
-            total_task_count = len(unique_tasks)
-            success_rate = (success_count / total_task_count) * 100 if total_task_count > 0 else 0
-            result = (f"Method: {folder_name}\n"
-                      f"Tasks processed: {total_task_count}\n"
-                      f"Agent started successfully: {success_count}\n"
-                      f"Success rate: {success_rate:.2f}%\n")
-            results.append(result)
-        self.dump_eval_report(results, result_output_path)
+    def calculate_success_rate(self, first_n: list | int = None):
+        if first_n is None:
+            first_n = [1, 3, 5]
+        if not isinstance(first_n, list) or not isinstance(first_n, int):
+            raise ValueError("first_n should be a list or an integer")
+        if isinstance(first_n, int):
+            first_n = [first_n]
+
+        for log_path, all_reports in self.reports.items():
+            for N in first_n:
+                success_result = {}
+                for task, reports in all_reports.items():
+                    is_success = False
+                    for reports in reports[:N]:
+                        if reports.get('start_agent', '') == '[OK]':
+                            is_success = True
+                            break
+                    success_result[task] = is_success
+
+                success_count = sum(success_result.values())
+                total_task_count = len(success_result)
+                success_rate = (success_count / total_task_count) * 100 if total_task_count > 0 else 0
+                self.eval_results['eval_result'] = {
+                    'log_path': log_path,
+                    'first_n': first_n,
+                    'success_rate': success_rate,
+                    'success_count': success_count,
+                    'total_task_count': total_task_count,
+                    'success_details': success_result
+                }
 
 
 if __name__ == "__main__":
