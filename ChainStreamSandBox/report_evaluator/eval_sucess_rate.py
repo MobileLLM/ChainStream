@@ -31,6 +31,6 @@ class EvaluatorSuccessRate(EvaluatorBase):
 
 
 if __name__ == "__main__":
-    base_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result'
+    base_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\result-new'
     evaluator_success_rate = EvaluatorSuccessRate(base_folder_path)
     evaluator_success_rate.calculate_success_rate(result_output_path="./success_rate_report.txt")

@@ -1,12 +1,12 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 
 class WifiData:
     def __init__(self):
-        self.data_path = "wifi.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'wifi.csv')
 
         self.wifi_data = []
         self._load_data()

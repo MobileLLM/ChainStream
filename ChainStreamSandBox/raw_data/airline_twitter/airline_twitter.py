@@ -1,12 +1,12 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 
 class AirlineTwitterData:
     def __init__(self):
-        self.data_path = "Airline_Tweets.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'Airline_Tweets.csv')
 
         self.airline_data = []
         self._load_data()

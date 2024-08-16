@@ -1,52 +1,66 @@
-from tasks.task_config_base import SingleAgentTaskConfigBase
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
+from AgentGenerator.io_model import StreamListDescription
 
 
-class BuildingNaturalGasConfig(SingleAgentTaskConfigBase):
+class OldGPSTask3(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
         self.output_landmark_stream = None
         self.input_landmark_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_landmarks' and process the values corresponding to the 'NaturalGas(therms)' key in the landmark dictionary: "
-            "Add the NaturalGas(therms) number to the output stream 'cs_landmarks'."
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_landmarks",
+            "description": "A list of landmarks information",
+            "fields": {
+                "Electricity(kWh)": "The electricity consumed by the landmark,float",
+                "GHGEmissions(MetricTonsCO2e)": "The green house gas emissions by the landmark,float",
+                "NaturalGas(therms)": "The natural gas emissions by the landmark,float",
+
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "landmarks_natural_gas",
+                "description": "A list of the calculation of the natural gas emissions by the landmark",
+                "fields": {
+                    "natural_gas": "The natural gas emissions by the landmark,float"}
+            }
+        ])
         self.landmark_data = LandmarkData().get_landmarks(10)
         self.agent_example = '''
-        import chainstream as cs
-        from chainstream.llm import get_model
-        class testAgent(cs.agent.Agent):
-            def __init__(self):
-                super().__init__("test_landmark_agent")
-                self.input_stream = cs.get_stream("all_landmarks")
-                self.output_stream = cs.get_stream("cs_landmarks")
-                self.llm = get_model(["text"])
-            def start(self):
-                def process_landmark(landmark):
-                    NaturalGas(therms) = landmark["NaturalGas(therms)"]        
-                    self.output_stream.add_item(NaturalGas(therms))
-                self.input_stream.for_each(self, process_landmark)
+import chainstream as cs
+from chainstream.llm import get_model
+class testAgent(cs.agent.Agent):
+    def __init__(self):
+        super().__init__("test_landmark_agent")
+        self.input_stream = cs.get_stream(self,"all_landmarks")
+        self.output_stream = cs.get_stream(self,"landmarks_natural_gas")
+        self.llm = get_model("Text")
+    def start(self):
+        def process_landmark(landmark):
+            NaturalGas = landmark["NaturalGas(therms)"]        
+            self.output_stream.add_item({
+                "natural_gas":NaturalGas
+            })
+        self.input_stream.for_each(process_landmark)
 
-            def stop(self):
-                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
-        self.input_landmark_stream = cs.stream.create_stream('all_landmarks')
-        self.output_landmark_stream = cs.stream.create_stream('cs_landmarks')
+        self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
+        self.output_landmark_stream = cs.stream.create_stream(self, 'landmarks_natural_gas')
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_landmark_stream.for_each(self, record_output)
+        self.output_landmark_stream.for_each(record_output)
 
     def start_task(self, runtime):
+        gps_list = []
         for info in self.landmark_data:
             self.input_landmark_stream.add_item(info)
-
-
-if __name__ == '__main__':
-    config = BuildingNaturalGasConfig()
+            gps_list.append(info)
+        return gps_list

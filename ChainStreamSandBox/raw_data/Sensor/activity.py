@@ -1,9 +1,10 @@
 import csv
 import random
-
+import os
+random.seed(498)
 class ActivityData:
     def __init__(self):
-        self.data_path = "activity.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'activity.csv')
         self.activity_data = []
         self._load_data()
 

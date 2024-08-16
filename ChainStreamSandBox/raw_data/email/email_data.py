@@ -37,7 +37,7 @@ def _parse_email(email_text):
 
 class EmailData:
     def __init__(self):
-        self.data_path = "selected_email.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'selected_email.csv')
 
         self.data_path = os.path.join(os.path.dirname(__file__), self.data_path)
 

@@ -1,11 +1,11 @@
 import csv
 import random
-
+import os
 random.seed(42)
 
 class GitHubData:
     def __init__(self):
-        self.data_path = r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\raw_data\github\github.csv"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'github.csv')
 
         self.github_data = []
         self._load_data()

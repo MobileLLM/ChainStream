@@ -1,12 +1,12 @@
 import json
 import random
-
+import os
 random.seed(42)
 
 
 class NewsData:
     def __init__(self):
-        self.data_path = r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\raw_data\news\News.json"
+        self.data_path = os.path.join(os.path.dirname(__file__), 'News.json')
         self.news_articles = []
         self._load_data()
 

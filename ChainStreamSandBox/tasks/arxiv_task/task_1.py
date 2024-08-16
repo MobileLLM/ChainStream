@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
-
+import time
 random.seed(6666)
 
 
@@ -63,7 +63,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
                     "title": title,
                     "summary": res
                 })
-        self.arxiv_input.for_each(filter_topic).batch(by_count=2).for_each(sum_on_paper)
+        self.arxiv_input.for_each(filter_topic).batch(by_time=2).for_each(sum_on_paper)
         '''
 
     def init_environment(self, runtime):
@@ -82,6 +82,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
         for paper in self.paper_data:
             sent_papers.append(paper)
             self.input_paper_stream.add_item(paper)
+            time.sleep(1)
         return sent_papers
 
 

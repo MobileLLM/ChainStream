@@ -35,19 +35,23 @@ import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
-        self.ego_input = cs.get_stream(self, "first_person_perspective_data")
+        self.first_person_input = cs.get_stream(self, "first_person_perspective_data")
         self.analysis_output = cs.get_stream(self, "analysis_topic")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def analysis_risk(ego_data):
-            prompt = "Detect whether I am in a meeting,just tell me y or n.If the answer is y,tell me what topic we are"
-            "talking about based on the image."
+        def detect_scenario(first_person_data):
+            prompt = "Detect whether I am in a meeting,just tell me y or n."
+            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data["frame"]))
+            if res.lower()=="y":
+                return first_person_data
+        def analysis_topic(first_person_data):
+            prompt = "Tell me what topic we are talking about based on the image."
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res
             })
-        self.ego_input.for_each(analysis_risk)
+        self.first_person_input.for_each(detect_scenario).for_each(analysis_topic)
         '''
 
     def init_environment(self, runtime):

@@ -1,52 +1,67 @@
-from tasks.task_config_base import SingleAgentTaskConfigBase
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
+from AgentGenerator.io_model import StreamListDescription
 
 
-class GPSCountryConfig(SingleAgentTaskConfigBase):
+class OldGPSTask6(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
         self.output_gps_stream = None
         self.input_gps_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_gps' and process the values corresponding to the 'CountryName' key in the gps dictionary: "
-            "Add the gps country name to the output stream 'cs_gps'."
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_gps",
+            "description": "A list of the gps data",
+            "fields": {
+                "CapitalName": "The capital city to which the location belongs,string",
+                "ContinentName": "The continent to which the location belongs,string",
+                "CountryName": "The country to which the location belongs,string",
+                "CapitalLatitude": "The capital latitude of the location,float",
+                "CapitalLongitude": "The capital longitude of the location,float",
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "gps_country",
+                "description": "A list of the country name extracted from the gps data",
+                "fields": {
+                    "gps_country": "The name of the country to which the location belongs,string"}
+            }
+        ])
         self.gps_data = GPSData().get_gps(10)
         self.agent_example = '''
-        import chainstream as cs
-        from chainstream.llm import get_model
-        class testAgent(cs.agent.Agent):
-            def __init__(self):
-                super().__init__("test_gps_agent")
-                self.input_stream = cs.get_stream("all_gps")
-                self.output_stream = cs.get_stream("cs_gps")
-                self.llm = get_model(["text"])
-            def start(self):
-                def process_gps(gps):
-                    gps_country = gps["CountryName"]        
-                    self.output_stream.add_item(gps_country)
-                self.input_stream.for_each(self, process_gps)
+import chainstream as cs
+from chainstream.llm import get_model
+class testAgent(cs.agent.Agent):
+    def __init__(self):
+        super().__init__("test_gps_agent")
+        self.input_stream = cs.get_stream(self,"all_gps")
+        self.output_stream = cs.get_stream(self,"gps_country")
+        self.llm = get_model("Text")
+    def start(self):
+        def process_gps(gps):
+            gps_country = gps["CountryName"]        
+            self.output_stream.add_item({
+                "gps_country":gps_country
+            })
+        self.input_stream.for_each(process_gps)
 
-            def stop(self):
-                self.input_stream.unregister_all(self)
         '''
 
     def init_environment(self, runtime):
-        self.input_gps_stream = cs.stream.create_stream('all_gps')
-        self.output_gps_stream = cs.stream.create_stream('cs_gps')
+        self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
+        self.output_gps_stream = cs.stream.create_stream(self, 'gps_country')
         self.output_record = []
 
         def record_output(data):
             self.output_record.append(data)
 
-        self.output_gps_stream.for_each(self, record_output)
+        self.output_gps_stream.for_each(record_output)
 
     def start_task(self, runtime):
+        gps_list = []
         for info in self.gps_data:
             self.input_gps_stream.add_item(info)
-
-
-if __name__ == '__main__':
-    config = GPSCountryConfig()
+            gps_list.append(info)
+        return gps_list
