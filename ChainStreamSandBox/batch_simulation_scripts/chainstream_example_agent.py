@@ -1,4 +1,4 @@
-from sandbox_batch_interface import SandboxBatchInterface
+from sandbox_interface import SandboxBatchInterface
 from ChainStreamSandBox.tasks import get_task_batch
 import os
 

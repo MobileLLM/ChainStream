@@ -1,4 +1,4 @@
-from sandbox_batch_interface import SandboxBatchInterface
+from sandbox_interface import SandboxBatchInterface
 from AgentGenerator import CoTGenerator
 
 
