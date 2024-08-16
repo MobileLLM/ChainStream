@@ -2,7 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
-
+from AgentGenerator.io_model import StreamListDescription
 
 random.seed(6666)
 
@@ -14,12 +14,27 @@ class OldArxivTask9(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_arxiv'. "
-            "Process the value corresponding to the 'abstract' key in the paper dictionary: "
-            "Assign a problem tag from the predefined list ('Optimization', 'Classification', 'Regression', 'Clustering', 'Generation', 'Other') to the paper's abstract using an LLM. "
-            "Add the paper's title followed by the assigned tag to the output stream 'cs_arxiv'."
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_arxiv",
+            "description": "A list of arxiv articles",
+            "fields": {
+                "abstract": "The abstract of the arxiv article,string",
+                "title": "The title of the arxiv article,string"
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "arxiv_problems_tags",
+                "description": "A list of arxiv articles with their problems chosen from ['Optimization', "
+                               "'Classification', 'Regression', 'Clustering', 'Generation','Other'] to be solved "
+                               "based on their abstracts",
+                "fields": {
+                    "title": "The title of the arxiv article,string",
+                    "problems": "The problems to be solved of the arxiv article,string"
+                }
+            }
+        ])
+
 
         self.paper_data = ArxivData().get_random_papers(paper_number)
         self.agent_example = '''
@@ -30,7 +45,7 @@ class TestAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self,"all_arxiv")
-        self.output_stream = cs.get_stream(self,"cs_arxiv")
+        self.output_stream = cs.get_stream(self,"arxiv_problems_tags")
         self.llm = get_model("Text")
 
     def start(self):
@@ -41,16 +56,17 @@ class TestAgent(cs.agent.Agent):
                 problems_tags = ['Optimization', 'Classification', 'Regression', 'Clustering', 'Generation','Other']
                 prompt = "Give you an abstract of a paper: {}. What tag would you like to add to this paper? Choose from the following: {}".format(paper_content, ', '.join(problems_tags))
                 response = self.llm.query(cs.llm.make_prompt(prompt))
-                print(paper_title+" : "+response)
-                self.output_stream.add_item(paper_title+" : "+response)
+                self.output_stream.add_item({
+                    "title":paper_title,
+                    "problems":response
+                })
 
         self.input_stream.for_each(process_paper)
         '''
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'cs_arxiv')
-        self.clock_stream = cs.stream.create_stream(self, 'clock_every_day')
+        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_problems_tags')
 
         self.output_record = []
 

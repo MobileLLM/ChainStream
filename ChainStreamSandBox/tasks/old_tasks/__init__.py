@@ -10,7 +10,6 @@ from .arxiv_task.arxiv_problems_task import OldArxivTask9
 from .arxiv_task.arxiv_stage_task import OldArxivTask10
 from .arxiv_task.arxiv_topic_task import OldArxivTask11
 from .arxiv_task.arxiv_website_task import OldArxivTask12
-from .daily_dialogue_task.dialogue_daily_task import OldDialogueTask1
 from .daily_dialogue_task.dialogue_emotion_task import OldDialogueTask2
 from .daily_dialogue_task.dialogue_identity_task import OldDialogueTask3
 from .daily_dialogue_task.dialogue_place_task import OldDialogueTask4
@@ -89,3 +88,6 @@ from .wifi_task.wifi_mac_address_task import OldWifiTask2
 from .wifi_task.wifi_signal_strength_task import OldWifiTask3
 from .wifi_task.wifi_SSID_task import OldWifiTask4
 from .wifi_task.wifi_vendor_task import OldWifiTask5
+from .stock_task.stock_purchase_task import OldStockTask2
+from .stock_task.stock_sell_task import OldStockTask3
+from .stock_task.stock_most_volume_task import OldStockTask4

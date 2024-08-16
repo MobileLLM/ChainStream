@@ -1,6 +1,7 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import HealthData
+from AgentGenerator.io_model import StreamListDescription
 
 
 class OldHealthTask1(SingleAgentTaskConfigBase):
@@ -9,11 +10,32 @@ class OldHealthTask1(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_health_stream = None
         self.input_health_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_health' and process the values corresponding to the 'Physical "
-            "Activity Level' key in the health dictionary: "
-            "Add the activity level to the output stream 'cs_health'."
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_health",
+            "description": "A list of health information",
+            "fields": {
+                "Physical Activity Level": "The level of the physical activity,int",
+                "BS": "The blood sugar check,float",
+                "BMI Category": "The checked BMI category,string",
+                "BodyTemp": "The checked body temperature,float",
+                "Daily Steps": "The steps calculated daily,int",
+                "DiastolicBP": "The diastolic blood pressure detected,float",
+                "SystolicBP": "The systolic blood pressure detected,float",
+                "HeartRate": "The heart rate detected,int",
+                "Sleep Disorder": "The type of the sleep disorder,string",
+                "Sleep Duration": "The duration the sleeping time,float",
+                "Quality of Sleep": "The evaluation of the quality of sleep,int",
+                "Stress Level": "The level of stress detected,int"
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "activity_level",
+                "description": "A list of the physical activity level",
+                "fields": {
+                    "activity_level": "The level of the physical activity,int"}
+            }
+        ])
         self.health_data = HealthData().get_health_data(10)
         self.agent_example = '''
 import chainstream as cs
@@ -22,18 +44,20 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"cs_health")
+        self.output_stream = cs.get_stream(self,"activity_level")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
             Physical_Activity_Level = health["Physical Activity Level"]        
-            self.output_stream.add_item(str(Physical_Activity_Level))
+            self.output_stream.add_item({
+                "activity_level":Physical_Activity_Level
+                })
         self.input_stream.for_each(process_health)
         '''
 
     def init_environment(self, runtime):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_health_stream = cs.stream.create_stream(self, 'cs_health')
+        self.output_health_stream = cs.stream.create_stream(self, 'activity_level')
         self.output_record = []
 
         def record_output(data):
@@ -47,6 +71,3 @@ class testAgent(cs.agent.Agent):
             self.input_health_stream.add_item(info)
             health_list.append(info)
         return health_list
-
-
-

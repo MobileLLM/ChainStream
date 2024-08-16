@@ -139,7 +139,6 @@ from .old_tasks import OldArxivTask9
 from .old_tasks import OldArxivTask10
 from .old_tasks import OldArxivTask11
 from .old_tasks import OldArxivTask12
-from .old_tasks import OldDialogueTask1
 from .old_tasks import OldDialogueTask2
 from .old_tasks import OldDialogueTask3
 from .old_tasks import OldDialogueTask4
@@ -218,6 +217,9 @@ from .old_tasks import OldWifiTask2
 from .old_tasks import OldWifiTask3
 from .old_tasks import OldWifiTask4
 from .old_tasks import OldWifiTask5
+from .old_tasks import OldStockTask2
+from .old_tasks import OldStockTask3
+from .old_tasks import OldStockTask4
 ALL_TASKS = {
     EmailTask1.__name__: EmailTask1,
     EmailTask2.__name__: EmailTask2,
@@ -281,7 +283,6 @@ ALL_TASKS = {
     OldArxivTask10.__name__: OldArxivTask10,
     OldArxivTask11.__name__: OldArxivTask11,
     OldArxivTask12.__name__: OldArxivTask12,
-    OldDialogueTask1.__name__: OldDialogueTask1,
     OldDialogueTask2.__name__: OldDialogueTask2,
     OldDialogueTask3.__name__: OldDialogueTask3,
     OldDialogueTask4.__name__: OldDialogueTask4,
@@ -359,7 +360,10 @@ ALL_TASKS = {
     OldWifiTask2.__name__: OldWifiTask2,
     OldWifiTask3.__name__: OldWifiTask3,
     OldWifiTask4.__name__: OldWifiTask4,
-    OldWifiTask5.__name__: OldWifiTask5
+    OldWifiTask5.__name__: OldWifiTask5,
+    OldStockTask2.__name__: OldStockTask2,
+    OldStockTask3.__name__: OldStockTask3,
+    OldStockTask4.__name__: OldStockTask4
 
 }
 

@@ -48,7 +48,6 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
 
     def start(self):
         def count_stars(github_dicts):
-            # all_github = []
             github_list = github_dicts['item_list']
             sorted_dicts = sorted(github_list, key=lambda x: x['stars_count'], reverse=True)
             top_10_dicts = sorted_dicts[:10]

@@ -2,7 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
-
+from AgentGenerator.io_model import StreamListDescription
 random.seed(6666)
 
 
@@ -13,12 +13,29 @@ class OldActivityTask3(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_activity_stream = None
         self.input_activity_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream all_activities,append each activity to an internal list,sort this "
-            "list in descending order by 'Calories_Burned', and for each activity, extract and format the 'Date', "
-            "'activity', and 'Calories_Burned' values, then add the formatted string to the output stream "
-            "cs_activities. "
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_activities",
+            "description": "A list of activities records(every five copies of activities data are packaged as a "
+                           "batch)",
+            "fields": {
+                "Total_Distance": "The total distance statistic recorded,float",
+                "Date": "The date of the activities recorded,string",
+                "activity": "The specific activity,string",
+                "Calories_Burned": "The calories burned in the activity,float",
+                "Fairly_Active_Minutes": "The minutes of the activities,float"
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "calories_burned_most",
+                "description": "A list of records of the most calories-burned activities",
+                "fields": {
+                    "Date": "The date of the activities recorded,string",
+                    "Activity": "The specific activity,string",
+                    "Calories_Burned": "The calories burned in the activity,float"
+                }
+            }
+        ])
 
         self.activity_data = ActivityData().get_random_activity_data()
         self.agent_example = '''
@@ -27,7 +44,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("calories_agent")
         self.input_stream = cs.get_stream(self,"all_activities")
-        self.output_stream = cs.get_stream(self,"cs_activities")
+        self.output_stream = cs.get_stream(self,"calories_burned_most")
 
     def start(self):
         def process_activity(activity_dict):
@@ -37,16 +54,18 @@ class ActivityDistanceAgent(cs.agent.Agent):
                 date = activity.get("Date", "Unknown Date")
                 motion = activity.get("activity", "Unknown Motion")
                 calories_burned = activity.get("Calories_Burned", 0)
-                output = f"Date: {date}, Motion: {motion}, Calories Burned: {calories_burned}"
-                print(output)
-                self.output_stream.add_item(output)
+                self.output_stream.add_item({
+                    "Date":date,
+                    "Activity":motion,
+                    "Calories_Burned": calories_burned
+                })
         
-        self.input_stream.batch(by_count=90).for_each(process_activity)
+        self.input_stream.batch(by_count=5).for_each(process_activity)
         '''
 
     def init_environment(self, runtime):
         self.input_activity_stream = cs.stream.create_stream(self, 'all_activities')
-        self.output_activity_stream = cs.stream.create_stream(self, 'cs_activities')
+        self.output_activity_stream = cs.stream.create_stream(self, 'calories_burned_most')
         self.output_record = []
 
         def record_output(data):

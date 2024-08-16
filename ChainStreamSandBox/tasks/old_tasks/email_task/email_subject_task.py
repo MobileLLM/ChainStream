@@ -2,7 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 import random
 from ChainStreamSandBox.raw_data import EmailData
-
+from AgentGenerator.io_model import StreamListDescription
 random.seed(6666)
 
 
@@ -12,10 +12,24 @@ class OldEmailTask6(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_email_stream = None
         self.input_email_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_emails' and process the value corresponding to the 'Subject' key in the email dictionary: "
-            "Add the email subject to the output stream 'cs_emails'."
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_emails",
+            "description": "A list of emails",
+            "fields": {
+                "Subject": "The subject of the email,string",
+                "Content": "The content of the email,string",
+                "From": "The sender of the email,string",
+                "To": "The receiver of the email,string"
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "emails_subject",
+                "description": "A list of emails with the extraction of the subject",
+                "fields": {
+                    "email_subject": "The subject of the email,string"}
+            }
+        ])
 
         self.email_data = EmailData().get_emails(10)
         self.agent_example = '''
@@ -25,18 +39,20 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_email_agent")
         self.input_stream = cs.get_stream(self,"all_emails")
-        self.output_stream = cs.get_stream(self,"cs_emails")
+        self.output_stream = cs.get_stream(self,"emails_subject")
         self.llm = get_model("Text")
     def start(self):
         def process_email(email):
             email_subject = email["Subject"]           
-            self.output_stream.add_item(email_subject)
+            self.output_stream.add_item({
+            "email_subject":email_subject
+            })
         self.input_stream.for_each(process_email)
         '''
 
     def init_environment(self, runtime):
         self.input_email_stream = cs.stream.create_stream(self, 'all_emails')
-        self.output_email_stream = cs.stream.create_stream(self, 'cs_emails')
+        self.output_email_stream = cs.stream.create_stream(self, 'emails_subject')
 
         self.output_record = []
 

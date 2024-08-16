@@ -1,6 +1,7 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import WeatherData
+from AgentGenerator.io_model import StreamListDescription
 
 
 class OldWeatherTask3(SingleAgentTaskConfigBase):
@@ -9,11 +10,29 @@ class OldWeatherTask3(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_weather_stream = None
         self.input_weather_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_weather' and process the values corresponding to the "
-            "'Temperature_C' key in the weather dictionary: Add the temperature information to the output stream "
-            "'cs_weather'. "
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_weather",
+            "description": "A list of the weather information",
+            "fields": {
+                "Location": "The location of the zone,string",
+                "Date_Time": "The time of the zone,string",
+                "Temperature_C": "The temperature of the zone,float",
+                "Humidity_pct": "The humidity percentage of the zone,float",
+                "Precipitation_mm": "The precipitation of the zone,float",
+                "Wind_Speed_kmh": "The wind speed of the zone,float"
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "weather_temperature",
+                "description": "A list of the temperature of the zones",
+                "fields": {
+                    "temperature": "The temperature of the zone,float",
+                    "location": "The location of the zone,string",
+                    "time": "The time of the zone,string"
+                }
+            }
+        ])
         self.weather_data = WeatherData().get_weather(10)
         self.agent_example = '''
 import chainstream as cs
@@ -21,17 +40,23 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.get_stream(self,"cs_weather")
+        self.output_stream = cs.get_stream(self,"weather_temperature")
     def start(self):
         def process_weather(weather):
-            Temperature_C = weather["Temperature_C"]        
-            self.output_stream.add_item(str(Temperature_C))
+            Temperature_C = weather["Temperature_C"]
+            location = weather["Location"]
+            time = weather["Date_Time"]            
+            self.output_stream.add_item({
+                "temperature":Temperature_C,
+                "location":location,
+                "time":time
+            })
         self.input_stream.for_each(process_weather)
         '''
 
     def init_environment(self, runtime):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
-        self.output_weather_stream = cs.stream.create_stream(self, 'cs_weather')
+        self.output_weather_stream = cs.stream.create_stream(self, 'weather_temperature')
         self.output_record = []
 
         def record_output(data):
@@ -45,4 +70,3 @@ class testAgent(cs.agent.Agent):
             self.input_weather_stream.add_item(info)
             weather_list.append(info)
         return weather_list
-

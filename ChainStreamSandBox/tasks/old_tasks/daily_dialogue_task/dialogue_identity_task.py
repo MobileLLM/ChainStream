@@ -1,6 +1,7 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DialogData
+from AgentGenerator.io_model import StreamListDescription
 
 
 class OldDialogueTask3(SingleAgentTaskConfigBase):
@@ -9,12 +10,23 @@ class OldDialogueTask3(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_dialogue_stream = None
         self.input_dialogue_stream = None
-        self.task_description = (
-            "Retrieve data from the input stream 'all_dialogues'. "
-            "Process the value corresponding to the 'text' key in each dialogue for analysis: "
-            "Analyze the roles of the characters involved and their relationships using an LLM."
-            "Add the dialogue ID followed by the analysis results to the output stream 'cs_dialogues'."
-        )
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_dialogues",
+            "description": "A list of dialogues record",
+            "fields": {
+                "id": "The id of the speaker,string",
+                "dialog": "The dialogues contents,string",
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "dialogues_identity",
+                "description": "A list of dialogues record with the analysis of the relationship among the speakers",
+                "fields": {
+                    "dialogues_id": "The id of the speaker,string",
+                    "individuals_relationship": "The relationship analysed from the conversation,string"}
+            }
+        ])
 
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
         self.agent_example = '''
@@ -24,23 +36,26 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_dialogues")
-        self.output_stream = cs.get_stream(self,"cs_dialogues")
+        self.output_stream = cs.get_stream(self,"dialogues_identity")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
         def process_dialogues(dialogues):
             dialogues_id = dialogues["id"]
             dialogues_text = dialogues["dialog"]
-            prompt = "Analyze the roles of the characters in the following dialogues. Identify the individuals involved and their respective roles or relationships."
+            prompt = "Analyze the roles of the characters in the following dialogues. Identify the individuals' respective roles or relationships."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
-            self.output_stream.add_item({"dialogues_id":dialogues_id,"individuals":response})
+            self.output_stream.add_item({
+            "dialogues_id":dialogues_id,
+            "individuals_relationship":response
+            })
 
         self.input_stream.for_each(process_dialogues)
         '''
 
     def init_environment(self, runtime):
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
-        self.output_dialogue_stream = cs.stream.create_stream(self, 'cs_dialogues')
+        self.output_dialogue_stream = cs.stream.create_stream(self, 'dialogues_identity')
 
         self.output_record = []
 
@@ -55,5 +70,3 @@ class testAgent(cs.agent.Agent):
             self.input_dialogue_stream.add_item(dialogue)
             dialogue_list.append(dialogue)
         return dialogue_list
-
-
