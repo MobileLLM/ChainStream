@@ -47,8 +47,8 @@ class EvalCodeSimilarity(EvaluatorBase):
                 "codebleu": sum([code_similarity[task]['codebleu'] for task in code_similarity]) / len(code_similarity),
             }
             self.eval_results['eval_result'] = {
-                "reference_code": self.reference_report,
-                "candidate_code": self.candidate_report,
+                "reference_log": self.reference_log,
+                "candidate_log": self.candidate_log,
                 "first_n": first_n,
                 "avg_code_similarity": avg_code_similarity,
                 "code_similarity": code_similarity,
