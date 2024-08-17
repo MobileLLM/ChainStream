@@ -7,7 +7,7 @@ from AgentGenerator.io_model import StreamListDescription
 class FewShotGenerator(AgentGeneratorBase):
     def __init__(self, model_name="gpt-4o"):
         super().__init__()
-        self.model = TextGPTModel(model_name)
+        self.llm = TextGPTModel(model_name)
         self.max_token_len = 4096
 
     # TODO: need new parameters for few-shot generation
@@ -34,7 +34,7 @@ class FewShotGenerator(AgentGeneratorBase):
                 "content": base_prompt
             }
         ]
-        response = self.model.query(prompt)
+        response = self.llm.query(prompt)
         return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
     def _get_system_prompt(self):
@@ -56,7 +56,7 @@ class FewShotGenerator(AgentGeneratorBase):
 
 if __name__ == "__main__":
     agent_generator = FewShotGenerator()
-    agent_code = agent_generator.generate_agent(
+    agent_code, latency, tokens = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
             "description": "A list of email summaries grouped by each email sender for pre 3 emails, excluding advertisement emails",
@@ -75,3 +75,5 @@ if __name__ == "__main__":
         }])
     )
     print(agent_code)
+    print(latency)
+    print(tokens)
