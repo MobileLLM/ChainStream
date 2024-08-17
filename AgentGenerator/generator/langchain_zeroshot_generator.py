@@ -4,7 +4,7 @@ from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.prompt.without_chainstream_prompt import LANGCHAIN_CHAINSTREAM_ENGLISH_PROMPT
 
 
-class LangChainGenerator(AgentGeneratorBase):
+class LangChainZeroshotGenerator(AgentGeneratorBase):
     def __init__(self, model_name='gpt-4o'):
         super().__init__()
         self.model_name = model_name
@@ -26,7 +26,7 @@ class LangChainGenerator(AgentGeneratorBase):
 
 
 if __name__ == "__main__":
-    agent_generator = LangChainGenerator()
+    agent_generator = LangChainZeroshotGenerator()
     agent_code, latency, tokens = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

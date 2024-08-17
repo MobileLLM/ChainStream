@@ -56,7 +56,7 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
         return self.input_items
 
 
-class ReactGeneratorForDebugging(ReactAgentGenerator):
+class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(ReactAgentGenerator):
     """
         React with sandbox starting error ability
     """
@@ -233,7 +233,7 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
 
 
 if __name__ == '__main__':
-    generator = ReactGeneratorForDebugging()
+    generator = ChainstreamFeedbackGuidedAgentGeneratorForDebugging()
     agent_code, latency, tokens = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

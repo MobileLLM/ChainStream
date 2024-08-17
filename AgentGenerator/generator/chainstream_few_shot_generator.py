@@ -4,7 +4,7 @@ from AgentGenerator.generator.generator_base import AgentGeneratorBase
 from AgentGenerator.io_model import StreamListDescription
 
 
-class FewShotGenerator(AgentGeneratorBase):
+class ChainStreamFewShotGenerator(AgentGeneratorBase):
     def __init__(self, model_name="gpt-4o"):
         super().__init__()
         self.llm = TextGPTModel(model_name)
@@ -55,7 +55,7 @@ class FewShotGenerator(AgentGeneratorBase):
 
 
 if __name__ == "__main__":
-    agent_generator = FewShotGenerator()
+    agent_generator = ChainStreamFewShotGenerator()
     agent_code, latency, tokens = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

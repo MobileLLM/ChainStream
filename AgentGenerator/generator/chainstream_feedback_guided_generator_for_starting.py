@@ -6,7 +6,7 @@ from AgentGenerator.prompt import PromptSelector
 import datetime
 
 
-class ReactGeneratorForStarting(ReactAgentGenerator):
+class ChainstreamFeedbackGuidedGeneratorForStarting(ReactAgentGenerator):
     """
         React with sandbox starting error ability
     """
@@ -132,7 +132,7 @@ class ReactGeneratorForStarting(ReactAgentGenerator):
 
 
 if __name__ == '__main__':
-    generator = ReactGeneratorForStarting()
+    generator = ChainstreamFeedbackGuidedGeneratorForStarting()
     agent_code, latency, tokens = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
