@@ -118,7 +118,7 @@ class BatchInterfaceBase:
             "end_time": None,
             "error_msg": None,
         }
-        agent_code = self.get_agent_for_specific_task(task)
+        agent_code, latency, tokens = self.get_agent_for_specific_task(task)
         try:
             if not os.path.exists(os.path.join(self.report_path_base, "task_reports")):
                 os.makedirs(os.path.join(self.report_path_base, "task_reports"))
@@ -134,6 +134,11 @@ class BatchInterfaceBase:
         else:
             tmp_task_log['error_msg'] = "success"
         finally:
+            tmp_task_log['latency'] = latency
+            tmp_task_log['tokens'] = {
+                "prompt_tokens": tokens[0],
+                "completion_tokens": tokens[1],
+            } if tokens is not None else None
             tmp_task_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
             self.test_log['task_reports'][task.task_id].append(tmp_task_log)
 
@@ -149,6 +154,6 @@ class SandboxBatchInterface(BatchInterfaceBase):
     def start(self):
         self._start()
 
-    def get_agent_for_specific_task(self, task) -> str:
+    def get_agent_for_specific_task(self, task) -> object:
         raise NotImplementedError(
             "Please implement get_agent_for_specific_task() method in your BatchInterfaceBase subclass")

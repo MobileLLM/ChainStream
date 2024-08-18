@@ -56,7 +56,7 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
         return self.input_items
 
 
-class ReactGeneratorForDebugging(ReactAgentGenerator):
+class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(ReactAgentGenerator):
     """
         React with sandbox starting error ability
     """
@@ -233,8 +233,8 @@ class ReactGeneratorForDebugging(ReactAgentGenerator):
 
 
 if __name__ == '__main__':
-    generator = ReactGeneratorForDebugging()
-    agent_code = generator.generate_agent(
+    generator = ChainstreamFeedbackGuidedAgentGeneratorForDebugging()
+    agent_code, latency, tokens = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
             "description": "A list of email summaries grouped by each email sender for pre 3 emails, excluding advertisement emails",
@@ -254,3 +254,5 @@ if __name__ == '__main__':
     )
 
     print(agent_code)
+    print(latency)
+    print(tokens)

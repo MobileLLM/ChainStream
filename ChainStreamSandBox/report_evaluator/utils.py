@@ -62,19 +62,50 @@ def cal_item_similarity(dict1, dict2, fields, similarity_func=None, hard_fields=
     return final_score / len(fields)
 
 
-def cal_list_similarity(list1, list2, fields, similarity_func=None, hard_fields=False):
-    len1, len2 = len(list1), len(list2)
-    dp = [[0] * (len2 + 1) for _ in range(len1 + 1)]
+def cal_list_similarity(list1, list2, fields, list_mode=None, similarity_func=None, hard_fields=False):
+    if list_mode == "dict":
+        len1, len2 = len(list1), len(list2)
+        dp = [[0] * (len2 + 1) for _ in range(len1 + 1)]
 
-    for i in range(len1 + 1):
-        for j in range(len2 + 1):
-            tmp_sum = dp[i - 1][j - 1] + cal_item_similarity(
-                list1[i - 1],
-                list2[j - 1],
-                fields,
-                similarity_func,
-                hard_fields
-            ) if i > 0 and j > 0 else 0
-            dp[i][j] = max(dp[i - 1][j], dp[i][j - 1], tmp_sum)
+        for i in range(len1 + 1):
+            for j in range(len2 + 1):
+                tmp_sum = dp[i - 1][j - 1] + cal_item_similarity(
+                    list1[i - 1],
+                    list2[j - 1],
+                    fields,
+                    similarity_func,
+                    hard_fields
+                ) if i > 0 and j > 0 else 0
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1], tmp_sum)
 
-    return dp[len1][len2] / len1
+        return dp[len1][len2] / len1
+    elif list_mode == "str":
+        if similarity_func == "bleu":
+            return cal_str_bleu_similarity(str(list1), str(list2))
+        elif similarity_func == "ed":
+            return cal_str_edit_distance_similarity(str(list1), str(list2))
+        else:
+            raise ValueError(f"Invalid similarity function: {similarity_func}")
+    else:
+        raise ValueError(f"Invalid list function: {list_mode}")
+
+
+def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, similarity_func=None, hard_fields=False, len_weight=False):
+    total_score = 0.0
+    len_weight_total_score = 0.0
+    stream_similarity = {}
+    for stream_name, output1 in stream_list1.items():
+        output2 = stream_list2.get(stream_name, None)
+        if output2 is None:
+            continue
+        fields = output1[0].keys()
+        tmp_score = cal_list_similarity(output1, output2, fields, list_mode=list_mode, similarity_func=similarity_func,
+                                        hard_fields=hard_fields)
+        stream_similarity[stream_name] = tmp_score
+        total_score += tmp_score
+        len_weight_total_score += tmp_score * len(output1)
+    if not len_weight:
+        avg_stream_score = total_score / len(stream_list1)
+    else:
+        avg_stream_score = len_weight_total_score / sum(len(output) for output in stream_list1.values())
+    return avg_stream_score, stream_similarity

@@ -58,6 +58,9 @@ class BaseOpenAI:
     def query(self, *args, **kwargs):
         raise RuntimeError("must implement query method")
 
+    def get_token_count(self):
+        return self.prompt_tokens, self.completion_tokens
+
 
 class TextGPTModel(BaseOpenAI):
     def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):

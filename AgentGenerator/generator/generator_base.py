@@ -3,6 +3,7 @@ from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.stream_selector import StreamSelectorBase
 from AgentGenerator.prompt.chainstream_doc import chainstream_chinese_doc, chainstream_english_doc, chainstream_english_doc_with_1_example, chainstream_english_doc_with_2_example
 from AgentGenerator.prompt import REACT_PROMPT_ONLY_START
+import datetime
 
 
 class AgentGeneratorBase:
@@ -19,7 +20,7 @@ class AgentGeneratorBase:
         self.output_description = None
         self.input_description = None
 
-    def generate_agent(self, output_description, input_description=None, use_selector=False) -> str:
+    def generate_agent(self, output_description, input_description=None, use_selector=False) -> (str, int):
         self.output_description = output_description
         self.input_description = input_description
 
@@ -40,7 +41,11 @@ class AgentGeneratorBase:
 
         # basic_prompt = f"{chainstream_chinese_doc}\n{input_and_output_prompt}"
 
-        return self.generate_agent_impl(chainstream_english_doc, input_and_output_prompt)
+        start_time = datetime.datetime.now()
+        code = self.generate_agent_impl(chainstream_english_doc, input_and_output_prompt)
+        end_time = datetime.datetime.now()
+
+        return code, (end_time - start_time).total_seconds(), self.get_llm_token_count()
 
     # def generate_agent_impl(self, input_description: [StreamListDescription, None], output_description:
     # StreamListDescription) -> str: raise NotImplementedError("Agent generator must implement generate_agent_impl
@@ -49,6 +54,11 @@ class AgentGeneratorBase:
     def generate_agent_impl(self, chainstream_doc: str, input_and_output_prompt: str) -> str:
         raise NotImplementedError("Agent generator must implement generate_agent_impl function.")
 
+    def get_llm_token_count(self):
+        if hasattr(self, "llm"):
+            return self.llm.get_token_count()
+        return None
+
     def generate_agent_for_runtime(self, output_description: StreamListDescription):
         if self.runtime is None or self.stream_selector is None:
             raise ValueError("Runtime and stream selector must be provided for agent generation in runtime mode.")
@@ -56,7 +66,7 @@ class AgentGeneratorBase:
         # TODO: this API is still under development
         stream_list = self.runtime.get_stream_description_list()
 
-        agent = self.generate_agent(output_description, input_description=stream_list, use_selector=True)
+        agent, _, _ = self.generate_agent(output_description, input_description=stream_list, use_selector=True)
 
         return agent
 

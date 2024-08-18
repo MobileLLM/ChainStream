@@ -4,11 +4,11 @@ from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.prompt.without_chainstream_prompt import LANGCHAIN_CHAINSTREAM_ENGLISH_PROMPT
 
 
-class LangChainGenerator(AgentGeneratorBase):
+class LangChainZeroshotGenerator(AgentGeneratorBase):
     def __init__(self, model_name='gpt-4o'):
         super().__init__()
         self.model_name = model_name
-        self.model = TextGPTModel(model_name)
+        self.llm = TextGPTModel(model_name)
 
     def generate_agent_impl(self, chainstream_doc: str, input_and_output_prompt: str) -> str:
         input_and_output_prompt = "\n".join(input_and_output_prompt.split("\n")[:-3])
@@ -21,13 +21,13 @@ class LangChainGenerator(AgentGeneratorBase):
             "content": prompt,
         }]
 
-        response = self.model.query(prompt)
+        response = self.llm.query(prompt)
         return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
 
 if __name__ == "__main__":
-    agent_generator = LangChainGenerator()
-    agent_code = agent_generator.generate_agent(
+    agent_generator = LangChainZeroshotGenerator()
+    agent_code, latency, tokens = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
             "description": "A list of email summaries grouped by each email sender for pre 3 emails, excluding advertisement emails",
@@ -46,3 +46,5 @@ if __name__ == "__main__":
         }])
     )
     print(agent_code)
+    print(latency)
+    print(tokens)
