@@ -1,135 +1,41 @@
-from AgentGenerator.generator.generator_base import ReactAgentGenerator
+from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGenerator
 from AgentGenerator.io_model import StreamListDescription
-from AgentGenerator.utils import TextGPTModel
-from AgentGenerator.prompt import REACT_PROMPT_WITH_RUNNING
-from AgentGenerator.prompt import PromptSelector
-from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-from chainstream.stream import create_stream, get_stream
-import datetime
+from AgentGenerator.prompt import get_base_prompt
 import ast
 
 
-class FakeTaskConfig(SingleAgentTaskConfigBase):
-    def __init__(self, input_description=None, output_description=None):
-        super().__init__()
-        from chainstream.runtime import cs_server_core
-        self.input_stream = None
-        self.output_stream = None
-        self.input_description = input_description
-        self.output_description = output_description
-        self.input_items = None
-        self.runtime = cs_server_core
-
-    def set_input_items(self, items):
-        """
-        items = {
-            "stream_id": "stream_id",
-            "items": []
-        }
-        :param items:
-        :return:
-        """
-        self.input_items = items
-
-    def init_environment(self, runtime):
-        for stream in self.input_description.streams:
-            create_stream(self, stream.stream_id)
-        for stream in self.output_description.streams:
-            self.output_stream = create_stream(self, stream.stream_id)
-        # self.input_stream = create_stream(self, self.input_description.stream_id)
-        # self.output_stream = create_stream(self, self.output_description.stream_id)
-
-        def record_output(record):
-            self.output_record.append(record)
-
-        self.output_stream.for_each(record_output)
-
-    def start_task(self, runtime):
-        for item in self.input_items:
-            try:
-                tmp_input_stream = get_stream(self, item['stream_id'])
-            except Exception as e:
-                raise Exception(f"Can not find input stream {item['stream_id']}, error: {e}")
-            for i in item['items']:
-                tmp_input_stream.add_item(i)
-
-        return self.input_items
-
-
-class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(ReactAgentGenerator):
-    """
-        React with sandbox starting error ability
-    """
-
+class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(FeedbackGuidedAgentGenerator):
     def __init__(self, max_loop=10):
-        super().__init__()
+        super().__init__(max_loop=max_loop, sandbox_type="chainstream")
         self.answer = None
-        self.llm = TextGPTModel()
 
-        self.max_loop = max_loop
+    def get_base_prompt(self, output_stream, input_stream) -> str:
+        return get_base_prompt(output_stream, input_stream,
+                               framework_name='chainstream',
+                               example_number=0,
+                               mission_name='stream',
+                               command_name='feedback_guided_with_running',
+                               need_feedback_example=False)
 
-    def generate_agent_impl(self, chainstream_doc, input_and_output_prompt, react_prompt=None) -> str:
-        if react_prompt is None:
-            react_prompt = REACT_PROMPT_WITH_RUNNING
-
-        prompt = f"Doc: {chainstream_doc}\nMission: {input_and_output_prompt}\nInstructions: {react_prompt}\n"
-
-        n_calls = 0
-        n_badcalls = 0
-
-        done = False
-
-        # print(f"First Prompt: {prompt}")
-
-        last_agent_code = None
-        for i in range(1, self.max_loop):
-            n_calls += 1
-            thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
-
-            try:
-                if thought_action.strip().endswith("Observation:"):
-                    thought_action = thought_action.strip()[:-len("Observation:")]
-                thought, action = thought_action.strip().split(f"\nAction {i}: ")
-
-            except Exception as e:
-                print('ohh...', thought_action)
-                n_badcalls += 1
-                n_calls += 1
-                thought = thought_action.strip().split('\n')[0]
-                action = self._query_llm(prompt + f"Thought {i}: {thought}\nAction {i}:", stop=[f"\n"]).strip()
-
-            error_prompt, done, entity = self.step(action, last_code=last_agent_code)
-            if entity is not None:
-                last_agent_code = entity
-
-            error = error_prompt.replace('\\n', '')
-            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nObservation {i}: {error}\n"
-            prompt += step_str
-            # print(f"Step: {i}, prompt: {prompt}")
-
-            if done:
-                break
-        if not done:
-            error_prompt, done, entity = self.step("FINISH<<>>")
-            if entity is not None:
-                last_agent_code = entity
-
-        return last_agent_code
-
-    def _query_llm(self, prompt, stop=None):
-
-        prompt = [
-            {
-                "role": "system",
-                "content": prompt,
-                "stop": stop
-            }
-        ]
-        response = self.llm.query(prompt)
-
-        print(
-            f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
-        return response
+    def process_sandbox_feedback(self, sandbox_feedback, has_input=None):
+        if sandbox_feedback['start_agent'] != "[OK]":
+            tmp_prompt = f"After starting the code, the sandbox reported: {sandbox_feedback['start_agent']}"
+        elif len(sandbox_feedback['error_message']['function_error']) > 0:
+            tmp_prompt = f"The code can successfully start in the sandbox, means that the `Agent.__init__` and `Agent.start` are correct. However, when running the agent the sandbox reported register lisenter function error: {error['error_message']['function_error']}. Please check your code and try again."
+        else:
+            if has_input is None:
+                tmp_prompt = f"Your code passed the sandbox test! Please debug your agent code throught the `INPUT` command to see if it can handle the input and output correctly."
+            else:
+                try:
+                    tmp_inandout = {
+                        "input_stream_items": sandbox_feedback['input_stream_item'],
+                        "output_stream_items": sandbox_feedback['output_stream_output']
+                    }
+                    tmp_prompt = f"There's your input and output record, please check it: {tmp_inandout}"
+                except Exception as e:
+                    raise RuntimeError(
+                        "Failed to get the input and output record. Please check the code and try again.")
+        return tmp_prompt
 
     def step(self, action, last_code=None) -> (str, bool, str):
         done = False
@@ -184,52 +90,6 @@ class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(ReactAgentGenerator):
 
         return obs, done, tmp_agent_code
 
-    def sandbox_exec(self, agent_code, stream_id=None, items=None) -> str:
-        if stream_id is None:
-            sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
-
-            try:
-                for stream in self.input_description.streams:
-                    sandbox.create_stream(stream)
-                for stream in self.output_description.streams:
-                    sandbox.create_stream(stream)
-            except Exception as e:
-                print(f"Error creating streams: {e}")
-                raise e
-
-            error = sandbox.start_test_agent()
-
-        else:
-            tmp_task = FakeTaskConfig(input_description=self.input_description, output_description=self.output_description)
-            tmp_task.set_input_items([{
-                "stream_id": stream_id,
-                "items": items
-            }])
-
-            sandbox = self.sandbox_class(tmp_task, agent_code, save_result=False)
-
-            error = sandbox.start_test_agent()
-
-        # del sandbox
-        # if error['start_agent']：
-        if error['start_agent'] != "[OK]":
-            tmp_prompt = f"After starting the code, the sandbox reported: {error['start_agent']}"
-        elif len(error['error_message']['function_error']) > 0:
-            tmp_prompt = f"The code can successfully start in the sandbox, means that the `Agent.__init__` and `Agent.start` are correct. However, when running the agent the sandbox reported register lisenter function error: {error['error_message']['function_error']}. Please check your code and try again."
-        else:
-            if stream_id is None:
-                tmp_prompt = f"Your code passed the sandbox test! Please debug your agent code throught the `INPUT` command to see if it can handle the input and output correctly."
-            else:
-                try:
-                    tmp_inandout = {
-                        "input_stream_items": error['input_stream_item'],
-                        "output_stream_items": error['output_stream_output']
-                    }
-                    tmp_prompt = f"There's your input and output record, please check it: {tmp_inandout}"
-                except Exception as e:
-                    raise RuntimeError("Failed to get the input and output record. Please check the code and try again.")
-
-        return tmp_prompt
 
 
 if __name__ == '__main__':

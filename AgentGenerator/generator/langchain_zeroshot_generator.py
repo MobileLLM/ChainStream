@@ -1,28 +1,20 @@
 from AgentGenerator.utils.llm_utils import TextGPTModel
-from AgentGenerator.generator.generator_base import AgentGeneratorBase
+from AgentGenerator.generator.generator_base import DirectAgentGenerator
 from AgentGenerator.io_model import StreamListDescription
-from AgentGenerator.prompt.without_chainstream_prompt import LANGCHAIN_CHAINSTREAM_ENGLISH_PROMPT
+from AgentGenerator.prompt import get_base_prompt
 
 
-class LangChainZeroshotGenerator(AgentGeneratorBase):
+class LangChainZeroshotGenerator(DirectAgentGenerator):
     def __init__(self, model_name='gpt-4o'):
         super().__init__()
-        self.model_name = model_name
-        self.llm = TextGPTModel(model_name)
 
-    def generate_agent_impl(self, chainstream_doc: str, input_and_output_prompt: str) -> str:
-        input_and_output_prompt = "\n".join(input_and_output_prompt.split("\n")[:-3])
-        prompt = f"{LANGCHAIN_CHAINSTREAM_ENGLISH_PROMPT}\n{input_and_output_prompt}\n\nCode:\n"
-
-        print(f"Prompt: {prompt}")
-
-        prompt = [{
-            "role": "system",
-            "content": prompt,
-        }]
-
-        response = self.llm.query(prompt)
-        return response.replace("'''", " ").replace("```", " ").replace("python", "")
+    def get_base_prompt(self, output_stream, input_stream) -> str:
+        return get_base_prompt(input_stream, output_stream,
+                               framework_name='langchain',
+                               example_number=0,
+                               mission_name='batch',
+                               command_name='few_shot',
+                               need_feedback_example=False)
 
 
 if __name__ == "__main__":

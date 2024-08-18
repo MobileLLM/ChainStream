@@ -1,5 +1,4 @@
 import os.path
-import time
 import traceback
 import tempfile
 import importlib.util
@@ -342,7 +341,7 @@ class BatchSandbox(SandboxBase):
     def run_func(self, all_input_data) -> dict:
         raise NotImplementedError("run_func method is not implemented yet")
 
-    def get_output_list(self) -> list:
+    def get_output_list(self) -> dict:
         try:
             output_list = self.run_func(self.all_input_data)
             for stream_id, record in output_list.items():

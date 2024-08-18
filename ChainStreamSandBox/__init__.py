@@ -1,3 +1,14 @@
 from ChainStreamSandBox.sandbox.chainstream_sandbox import ChainStreamSandBox
+from ChainStreamSandBox.sandbox.langchain_sandbox import LangChainSandbox
+from ChainStreamSandBox.sandbox.native_python_sandbox import NativePythonSandbox
 
-__all__ = ["ChainStreamSandBox"]
+
+def get_sandbox_class(sandbox_type):
+    if sandbox_type == "chainstream":
+        return ChainStreamSandBox
+    elif sandbox_type == "langchain":
+        return LangChainSandbox
+    elif sandbox_type == "native_python":
+        return NativePythonSandbox
+    else:
+        raise ValueError("Invalid sandbox type")

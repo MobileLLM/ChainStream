@@ -1,15 +1,3 @@
-import os.path
-import time
-import traceback
-import tempfile
-import importlib.util
-
-from chainstream.runtime import reset_chainstream_server
-import json
-import datetime
-
-from chainstream.sandbox_recorder import start_sandbox_recording
-from chainstream.agent.base_agent import Agent
 from chainstream.stream import create_stream
 from sandbox_base import *
 
@@ -67,7 +55,7 @@ class ChainStreamSandBox(SandboxBase):
         return report
 
     def get_error_msg(self) -> dict:
-        self.runtime.get_error_history()
+        return self.runtime.get_error_history()
 
     def stop_runtime(self):
         self.runtime.shutdown()

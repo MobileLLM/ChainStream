@@ -1,82 +1,30 @@
-from AgentGenerator.generator.generator_base import ReactAgentGenerator
+from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGenerator
 from AgentGenerator.io_model import StreamListDescription
-from AgentGenerator.utils import TextGPTModel
-from AgentGenerator.prompt import REACT_PROMPT_ONLY_START
-from AgentGenerator.prompt import PromptSelector
-import datetime
+from AgentGenerator.prompt import get_base_prompt
 
 
-class ChainstreamFeedbackGuidedGeneratorForStarting(ReactAgentGenerator):
+class ChainstreamFeedbackGuidedGeneratorForStarting(FeedbackGuidedAgentGenerator):
     """
         React with sandbox starting error ability
     """
-    def __init__(self, max_loop=10):
-        super().__init__()
+
+    def __init__(self, max_loop=10, sandbox_type='chainstream'):
+        super().__init__(max_loop=max_loop, sandbox_type=sandbox_type)
         self.answer = None
-        self.llm = TextGPTModel()
 
-        self.max_loop = max_loop
+    def get_base_prompt(self, output_stream, input_stream) -> str:
+        return get_base_prompt(output_stream, input_stream,
+                               framework_name='chainstream',
+                               example_number=0,
+                               mission_name="stream",
+                               command_name="feedback_guided_only_start",
+                               need_feedback_example=False
+                               )
 
-    def generate_agent_impl(self, chainstream_doc, input_and_output_prompt, react_prompt=None) -> str:
-        if react_prompt is None:
-            react_prompt = REACT_PROMPT_ONLY_START
+    def process_sandbox_feedback(self, sandbox_feedback):
+        return sandbox_feedback
 
-        prompt = f"Doc: {chainstream_doc}\nMission: {input_and_output_prompt}\nInstructions: {react_prompt}\n"
-
-        n_calls = 0
-        n_badcalls = 0
-
-        done = False
-
-        # print(f"First Prompt: {prompt}")
-
-        last_agent_code = None
-        for i in range(1, self.max_loop):
-            n_calls += 1
-            thought_action = self._query_llm(prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
-
-            try:
-                thought, action = thought_action.strip().split(f"\nAction {i}: ")
-            except Exception as e:
-                print('ohh...', thought_action)
-                n_badcalls += 1
-                n_calls += 1
-                thought = thought_action.strip().split('\n')[0]
-                action = self._query_llm(prompt + f"Thought {i}: {thought}\nAction {i}:", stop=[f"\n"]).strip()
-
-            error_prompt, done, entity = self.step(action)
-            if entity is not None:
-                last_agent_code = entity
-
-            error = error_prompt.replace('\\n', '')
-            step_str = f"Thought {i}: {thought}\nAction {i}: {action}\nObservation {i}: {error}\n"
-            prompt += step_str
-            # print(f"Step: {i}, prompt: {prompt}")
-
-            if done:
-                break
-        if not done:
-            error_prompt, done, entity = self.step("FINISH<<>>")
-            if entity is not None:
-                last_agent_code = entity
-
-        return last_agent_code
-
-    def _query_llm(self, prompt, stop=None):
-
-        prompt = [
-            {
-                "role": "system",
-                "content": prompt,
-                "stop": stop
-            }
-        ]
-        response = self.llm.query(prompt)
-
-        print(f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
-        return response
-
-    def step(self, action) -> (str, bool,str):
+    def step(self, action, last_code=None) -> (str, bool, str):
         done = False
 
         code_num = action.count("CODE<<")
@@ -106,29 +54,10 @@ class ChainstreamFeedbackGuidedGeneratorForStarting(ReactAgentGenerator):
         elif action.startswith("THINK<<") and action.endswith(">>"):
             obs = "Nice thought."
         else:
-            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, THINK<<`your_thought`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(action)
+            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, THINK<<`your_thought`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(
+                action)
 
         return obs, done, tmp_agent_code
-
-    def sandbox_exec(self, agent_code) -> str:
-        sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
-
-        try:
-            for stream in self.input_description.streams:
-                sandbox.create_stream(stream)
-            for stream in self.output_description.streams:
-                sandbox.create_stream(stream)
-        except Exception as e:
-            print(f"Error creating streams: {e}")
-            raise e
-
-        error = sandbox.start_test_agent()
-
-        # del sandbox
-
-        tmp_prompt = f"After executing the code, the sandbox reported: {error['start_agent']}"
-
-        return tmp_prompt
 
 
 if __name__ == '__main__':
