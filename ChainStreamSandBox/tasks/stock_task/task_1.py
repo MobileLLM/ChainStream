@@ -70,21 +70,16 @@ class AgentExampleForStockTask1(cs.agent.Agent):
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
         self.output_stock_stream = cs.stream.create_stream(self, 'up_or_down')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['up_or_down'].append(data)
 
         self.output_stock_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_stock = []
+    def start_task(self, runtime) -> dict:
+        sent_stock = {'all_stock': []}
         for stock in self.stock_data:
-            sent_stock.append(stock)
+            sent_stock['all_stock'].append(stock)
             self.input_stock_stream.add_item(stock)
         return sent_stock
-
-
-
-
-

@@ -94,19 +94,21 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         self.output_message_stream = cs.stream.create_stream(self, 'auto_reminder')
         self.is_office_event = cs.stream.create_stream(self, 'is_office_event')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['auto_reminder'].append(data)
+            self.output_record['is_office_event'].append(data)
 
         self.output_message_stream.for_each(record_output)
+        self.is_office_event.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_ui': [], 'all_gps': []}
         for frame in self.ui_data:
-            sent_info.append(frame)
+            sent_info['all_ui'].append(frame)
             self.input_ui_stream.add_item(frame)
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.input_gps_stream.add_item(gps)
         return sent_info

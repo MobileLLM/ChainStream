@@ -80,14 +80,45 @@ from .email_task import EmailTask1
 from .email_task import EmailTask2
 from .email_task import EmailTask3
 from .email_task import EmailTask4
+from .email_task import OldEmailTask1
+from .email_task import OldEmailTask2
+from .email_task import OldEmailTask3
+from .email_task import OldEmailTask4
+from .email_task import OldEmailTask5
+from .email_task import OldEmailTask6
+from .email_task import OldEmailTask7
 from .news_task import NewsTask1
 from .news_task import NewsTask2
 from .news_task import NewsTask3
 from .news_task import NewsTask4
+from .news_task import NewsTask5
+from .news_task import OldNewsTask1
+from .news_task import OldNewsTask2
+from .news_task import OldNewsTask3
+from .news_task import OldNewsTask4
+from .news_task import OldNewsTask5
+from .news_task import OldNewsTask6
+from .news_task import OldNewsTask7
+from .news_task import OldNewsTask8
 from .stock_task import StockTask1
+from .stock_task import OldStockTask2
+from .stock_task import OldStockTask3
+from .stock_task import OldStockTask4
 from .arxiv_task import ArxivTask1
 from .arxiv_task import ArxivTask2
 from .arxiv_task import ArxivTask3
+from .arxiv_task import OldArxivTask1
+from .arxiv_task import OldArxivTask2
+from .arxiv_task import OldArxivTask3
+from .arxiv_task import OldArxivTask4
+from .arxiv_task import OldArxivTask5
+from .arxiv_task import OldArxivTask6
+from .arxiv_task import OldArxivTask7
+from .arxiv_task import OldArxivTask8
+from .arxiv_task import OldArxivTask9
+from .arxiv_task import OldArxivTask10
+from .arxiv_task import OldArxivTask11
+from .arxiv_task import OldArxivTask12
 from .sensor_task import GPSTask1
 from .sensor_task import GPSTask2
 from .sensor_task import GPSTask3
@@ -100,6 +131,46 @@ from .sensor_task import HealthTask2
 from .sensor_task import HealthTask3
 from .sensor_task import HealthTask4
 from .sensor_task import HealthTask5
+from .sensor_task import OldGPSTask1
+from .sensor_task import OldGPSTask2
+from .sensor_task import OldGPSTask3
+from .sensor_task import OldGPSTask4
+from .sensor_task import OldGPSTask5
+from .sensor_task import OldGPSTask6
+from .sensor_task import OldGPSTask7
+from .sensor_task import OldGPSTask8
+from .sensor_task import OldGPSTask9
+from .sensor_task import OldGPSTask10
+from .sensor_task import OldGPSTask11
+from .sensor_task import OldGPSTask12
+from .sensor_task import OldGPSTask13
+from .sensor_task import OldGPSTask14
+from .sensor_task import OldHealthTask1
+from .sensor_task import OldHealthTask2
+from .sensor_task import OldHealthTask3
+from .sensor_task import OldHealthTask4
+from .sensor_task import OldHealthTask5
+from .sensor_task import OldHealthTask6
+from .sensor_task import OldHealthTask7
+from .sensor_task import OldHealthTask8
+from .sensor_task import OldHealthTask9
+from .sensor_task import OldHealthTask10
+from .sensor_task import OldHealthTask11
+from .sensor_task import OldHealthTask12
+from .sensor_task import OldHealthTask13
+from .sensor_task import OldHealthTask14
+from .sensor_task import OldHealthTask15
+from .sensor_task import OldWeatherTask1
+from .sensor_task import OldWeatherTask2
+from .sensor_task import OldWeatherTask3
+from .sensor_task import OldWeatherTask4
+from .sensor_task import OldWeatherTask5
+from .sensor_task import OldWeatherTask6
+from .sensor_task import OldWifiTask1
+from .sensor_task import OldWifiTask2
+from .sensor_task import OldWifiTask3
+from .sensor_task import OldWifiTask4
+from .sensor_task import OldWifiTask5
 from .desktop_ui_task import ImageTask1
 from .ego_4d_task import VideoTask1
 from .ego_4d_task import VideoTask2
@@ -111,11 +182,32 @@ from .github_task import GithubTask1
 from .github_task import GithubTask2
 from .github_task import GithubTask3
 from .github_task import GithubTask4
+from .daily_dialogue_task import OldDialogueTask2
+from .daily_dialogue_task import OldDialogueTask3
+from .daily_dialogue_task import OldDialogueTask4
+from .daily_dialogue_task import OldDialogueTask5
+from .daily_dialogue_task import OldDialogueTask6
+from .sms_task import OldMessageTask1
+from .sms_task import OldMessageTask2
+from .sms_task import OldMessageTask3
+from .sms_task import OldMessageTask4
+from .sms_task import OldMessageTask5
+from .twitter_task import OldTweetTask1
+from .twitter_task import OldTweetTask2
+from .twitter_task import OldTweetTask3
+from .twitter_task import OldTweetTask4
+from .twitter_task import OldTweetTask5
+from .twitter_task import OldTweetTask6
+from .twitter_task import OldTweetTask7
+from .twitter_task import OldTweetTask8
+from .twitter_task import OldTweetTask9
+from .activity_task import OldActivityTask1
+from .activity_task import OldActivityTask2
+from .activity_task import OldActivityTask3
+from .activity_task import OldActivityTask4
 from .multi_task import EmailTaskTest
 from .multi_task import MessageStockTask
-from .multi_task import MessageStockTask
 from .multi_task import WorkReminderTask
-from .multi_task import StoreOpinionTest
 from .multi_task import CatFoodTask
 from .multi_task import TravelTask
 from .multi_task import WaterFlowerTask
@@ -127,99 +219,7 @@ from .multi_task import ReadingLightTask
 from .multi_task import WaitingRoomTask
 from .multi_task import ShopStockTask
 from .multi_task import TripMusicTask
-from .old_tasks import OldArxivTask1
-from .old_tasks import OldArxivTask2
-from .old_tasks import OldArxivTask3
-from .old_tasks import OldArxivTask4
-from .old_tasks import OldArxivTask5
-from .old_tasks import OldArxivTask6
-from .old_tasks import OldArxivTask7
-from .old_tasks import OldArxivTask8
-from .old_tasks import OldArxivTask9
-from .old_tasks import OldArxivTask10
-from .old_tasks import OldArxivTask11
-from .old_tasks import OldArxivTask12
-from .old_tasks import OldDialogueTask2
-from .old_tasks import OldDialogueTask3
-from .old_tasks import OldDialogueTask4
-from .old_tasks import OldDialogueTask5
-from .old_tasks import OldDialogueTask6
-from .old_tasks import OldEmailTask1
-from .old_tasks import OldEmailTask2
-from .old_tasks import OldEmailTask3
-from .old_tasks import OldEmailTask4
-from .old_tasks import OldEmailTask5
-from .old_tasks import OldEmailTask6
-from .old_tasks import OldEmailTask7
-from .old_tasks import OldGPSTask1
-from .old_tasks import OldGPSTask2
-from .old_tasks import OldGPSTask3
-from .old_tasks import OldGPSTask4
-from .old_tasks import OldGPSTask5
-from .old_tasks import OldGPSTask6
-from .old_tasks import OldGPSTask7
-from .old_tasks import OldGPSTask8
-from .old_tasks import OldGPSTask9
-from .old_tasks import OldGPSTask10
-from .old_tasks import OldGPSTask11
-from .old_tasks import OldGPSTask12
-from .old_tasks import OldGPSTask13
-from .old_tasks import OldGPSTask14
-from .old_tasks import OldNewsTask1
-from .old_tasks import OldNewsTask2
-from .old_tasks import OldNewsTask3
-from .old_tasks import OldNewsTask4
-from .old_tasks import OldNewsTask5
-from .old_tasks import OldNewsTask6
-from .old_tasks import OldNewsTask7
-from .old_tasks import OldNewsTask8
-from .old_tasks import OldMessageTask1
-from .old_tasks import OldMessageTask2
-from .old_tasks import OldMessageTask3
-from .old_tasks import OldMessageTask4
-from .old_tasks import OldMessageTask5
-from .old_tasks import OldTweetTask1
-from .old_tasks import OldTweetTask2
-from .old_tasks import OldTweetTask3
-from .old_tasks import OldTweetTask4
-from .old_tasks import OldTweetTask5
-from .old_tasks import OldTweetTask6
-from .old_tasks import OldTweetTask7
-from .old_tasks import OldTweetTask8
-from .old_tasks import OldTweetTask9
-from .old_tasks import OldActivityTask1
-from .old_tasks import OldActivityTask2
-from .old_tasks import OldActivityTask3
-from .old_tasks import OldActivityTask4
-from .old_tasks import OldHealthTask1
-from .old_tasks import OldHealthTask2
-from .old_tasks import OldHealthTask3
-from .old_tasks import OldHealthTask4
-from .old_tasks import OldHealthTask5
-from .old_tasks import OldHealthTask6
-from .old_tasks import OldHealthTask7
-from .old_tasks import OldHealthTask8
-from .old_tasks import OldHealthTask9
-from .old_tasks import OldHealthTask10
-from .old_tasks import OldHealthTask11
-from .old_tasks import OldHealthTask12
-from .old_tasks import OldHealthTask13
-from .old_tasks import OldHealthTask14
-from .old_tasks import OldHealthTask15
-from .old_tasks import OldWeatherTask1
-from .old_tasks import OldWeatherTask2
-from .old_tasks import OldWeatherTask3
-from .old_tasks import OldWeatherTask4
-from .old_tasks import OldWeatherTask5
-from .old_tasks import OldWeatherTask6
-from .old_tasks import OldWifiTask1
-from .old_tasks import OldWifiTask2
-from .old_tasks import OldWifiTask3
-from .old_tasks import OldWifiTask4
-from .old_tasks import OldWifiTask5
-from .old_tasks import OldStockTask2
-from .old_tasks import OldStockTask3
-from .old_tasks import OldStockTask4
+
 ALL_TASKS = {
     EmailTask1.__name__: EmailTask1,
     EmailTask2.__name__: EmailTask2,
@@ -229,6 +229,7 @@ ALL_TASKS = {
     NewsTask2.__name__: NewsTask2,
     NewsTask3.__name__: NewsTask3,
     NewsTask4.__name__: NewsTask4,
+    NewsTask5.__name__: NewsTask5,
     StockTask1.__name__: StockTask1,
     ArxivTask1.__name__: ArxivTask1,
     ArxivTask2.__name__: ArxivTask2,
@@ -258,7 +259,6 @@ ALL_TASKS = {
     GithubTask4.__name__: GithubTask4,
     EmailTaskTest.__name__: EmailTaskTest,
     MessageStockTask.__name__: MessageStockTask,
-    StoreOpinionTest.__name__: StoreOpinionTest,
     WorkReminderTask.__name__: WorkReminderTask,
     TravelTask.__name__: TravelTask,
     CatFoodTask.__name__: CatFoodTask,

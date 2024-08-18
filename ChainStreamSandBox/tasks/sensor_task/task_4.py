@@ -71,16 +71,16 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_sensor_stream = cs.stream.create_stream(self, 'clothing_recommendation')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['clothing_recommendation'].append(data)
 
         self.output_sensor_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_weather = []
+    def start_task(self, runtime) -> dict:
+        sent_weather = {'all_weather': []}
         for weather in self.sensor_data:
-            sent_weather.append(weather)
+            sent_weather['all_weather'].append(weather)
             self.input_sensor_stream.add_item(weather)
         return sent_weather

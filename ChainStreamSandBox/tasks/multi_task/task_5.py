@@ -93,19 +93,19 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogue')
         self.output_message_stream = cs.stream.create_stream(self, 'weather_report')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['weather_report'].append(data)
 
         self.output_message_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_weather': [], 'all_dialogue': []}
         for dialogue in self.dialogue_data:
-            sent_info.append(dialogue)
+            sent_info['all_dialogue'].append(dialogue)
             self.input_dialogue_stream.add_item(dialogue)
         for weather in self.weather_data:
-            sent_info.append(weather)
+            sent_info['all_weather'].append(weather)
             self.input_weather_stream.add_item(weather)
         return sent_info

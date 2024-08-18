@@ -68,17 +68,17 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
         self.output_github_stream = cs.stream.create_stream(self, 'language_from_most_pr')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['language_from_most_pr'].append(data)
 
         self.output_github_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_github = []
+    def start_task(self, runtime) -> dict:
+        sent_github = {'all_github': []}
         for github in self.github_data:
-            sent_github.append(github)
+            sent_github['all_github'].append(github)
             self.input_github_stream.add_item(github)
         return sent_github
 

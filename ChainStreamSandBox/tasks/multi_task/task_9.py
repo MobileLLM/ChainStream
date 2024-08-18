@@ -82,19 +82,19 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_action_stream = cs.stream.create_stream(self, 'auto_close_window')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['auto_close_window'].append(data)
 
         self.output_action_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_gps': [], 'all_weather': []}
         for weather in self.weather_data:
-            sent_info.append(weather)
+            sent_info['all_weather'].append(weather)
             self.input_weather_stream.add_item(weather)
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.gps_stream.add_item(gps)
         return sent_info

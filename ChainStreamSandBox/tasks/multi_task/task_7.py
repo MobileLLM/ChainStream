@@ -23,7 +23,7 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
             "fields": {
                 "Street Address": "the street address information from the gps sensor,str"
             }
-        },{
+        }, {
             "stream_id": "all_video",
             "description": "all video data in the balcony with plants",
             "fields": {
@@ -84,20 +84,20 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
         self.output_message_stream = cs.stream.create_stream(self, 'reminder')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['reminder'].append(data)
 
         self.output_message_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_gps': [], 'all_video': []}
         for frame in self.video_data:
-            sent_info.append(frame)
+            sent_info['all_video'].append(frame)
             time.sleep(2)
             self.input_video_stream.add_item({"frame": frame})
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.gps_stream.add_item(gps)
         return sent_info

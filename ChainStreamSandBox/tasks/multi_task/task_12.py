@@ -112,22 +112,25 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.input_light_stream = cs.stream.create_stream(self, 'light_intensity')
         self.adjust_light_stream = cs.stream.create_stream(self, 'adjust_light')
         self.is_reading_stream = cs.stream.create_stream(self, 'is_reading')
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['adjust_light'].append(data)
+            self.output_record['is_reading'].append(data)
 
         self.adjust_light_stream.for_each(record_output)
+        self.is_reading_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_first_person': [], 'all_gps': [], 'light_intensity': []}
         for frame in self.video_data:
-            sent_info.append(frame)
+            sent_info['all_first_person'].append(frame)
             self.input_first_person_stream.add_item({"frame": frame})
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.input_gps_stream.add_item(gps)
         for _ in range(10):
             light_intensity = random.uniform(0, 1000)
+            sent_info['light_intensity'].append(light_intensity)
             self.input_light_stream.add_item({"Light intensity outdoor": light_intensity})
         return sent_info

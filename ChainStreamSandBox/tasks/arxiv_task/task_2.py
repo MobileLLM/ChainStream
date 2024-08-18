@@ -71,17 +71,17 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
         self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_research_method')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['arxiv_research_method'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_papers = []
+    def start_task(self, runtime) -> dict:
+        sent_papers = {'all_arxiv': []}
         for paper in self.paper_data:
-            sent_papers.append(paper)
+            sent_papers['all_arxiv'].append(paper)
             self.input_paper_stream.add_item(paper)
         return sent_papers
 

@@ -65,16 +65,16 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_health')
         self.output_sensor_stream = cs.stream.create_stream(self, 'remind_check')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['remind_check'].append(data)
 
         self.output_sensor_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_health = []
+    def start_task(self, runtime) -> dict:
+        sent_health = {'all_health': []}
         for health in self.sensor_data:
-            sent_health.append(health)
+            sent_health['all_health'].append(health)
             self.input_sensor_stream.add_item(health)
         return sent_health

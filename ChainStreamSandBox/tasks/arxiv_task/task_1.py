@@ -4,6 +4,8 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 import time
+from ..task_tag import Difficulty_Task_tag, TaskTag
+
 random.seed(6666)
 
 
@@ -14,6 +16,10 @@ class ArxivTask1(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
+        # self.task_tag = {
+        #     "difficulty": Difficultly_Task_tag.EASY,
+        # }
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.EASY)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
             "description": "All arxiv paper",
@@ -70,22 +76,17 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
         self.output_paper_stream = cs.stream.create_stream(self, 'summary_of_arxiv')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['summary_of_arxiv'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_papers = []
+    def start_task(self, runtime) -> dict:
+        sent_papers = {'all_arxiv': []}
         for paper in self.paper_data:
-            sent_papers.append(paper)
+            sent_papers['all_arxiv'].append(paper)
             self.input_paper_stream.add_item(paper)
             time.sleep(1)
         return sent_papers
-
-
-
-
-

@@ -82,19 +82,19 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
         self.output_warning_stream = cs.stream.create_stream(self, 'alarm_message')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['alarm_message'].append(data)
 
         self.output_warning_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_gps': [], 'all_video': []}
         for frame in self.video_data:
-            sent_info.append(frame)
+            sent_info['all_video'].append(frame)
             self.input_video_stream.add_item({"frame": frame})
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.gps_stream.add_item(gps)
         return sent_info

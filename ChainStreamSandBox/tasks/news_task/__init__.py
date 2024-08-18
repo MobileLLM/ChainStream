@@ -2,3 +2,12 @@ from .task_1 import NewsTask1
 from .task_2 import NewsTask2
 from .task_3 import NewsTask3
 from .task_4 import NewsTask4
+from .task_5 import NewsTask5
+from .news_authors_task import OldNewsTask1
+from .news_category_task import OldNewsTask2
+from .news_date_task import OldNewsTask3
+from .news_description_task import OldNewsTask4
+from .news_link_task import OldNewsTask5
+from .news_people_task import OldNewsTask6
+from .news_place_task import OldNewsTask7
+from .news_title_task import OldNewsTask8

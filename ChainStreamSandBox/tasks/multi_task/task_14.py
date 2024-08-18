@@ -97,24 +97,27 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         self.clock_stream = cs.stream.create_stream(self, 'clock')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.work_trigger_stream = cs.stream.create_stream(self, 'work_trigger')
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['output_messages'].append(data)
+            self.output_record['work_trigger'].append(data)
 
         self.output_message_stream.for_each(record_output)
+        self.work_trigger_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_first_person_shop': [], 'clock': []}
 
         clock_now = 9
-        self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
+        self.clock_stream.add_item({"time": 2024 / 8 / 15 / clock_now})
         cou = 0
         for frame in self.video_data:
-            sent_info.append(frame)
+            sent_info['all_first_person_shop'].append(frame)
             self.input_shop_stream.add_item({"frame": frame})
             cou += 1
             if cou % 3 == 0:
                 clock_now += 1
-                self.clock_stream.add_item({"time": 2023 / 1 / 23 / clock_now})
+                sent_info['clock'].append({"time": 2024 / 8 / 15 / clock_now})
+                self.clock_stream.add_item({"time": 2024 / 8 / 15 / clock_now})
         return sent_info

@@ -118,22 +118,26 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         self.is_travel_stream = cs.stream.create_stream(self, 'is_travel')
         self.scene_stream = cs.stream.create_stream(self, 'all_scene')
         self.is_listening_stream = cs.stream.create_stream(self, 'is_listening')
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['auto_play_music'].append(data)
+            self.output_record['is_travel'].append(data)
+            self.output_record['is_listening'].append(data)
 
         self.output_music_stream.for_each(record_output)
+        self.is_travel_stream.for_each(record_output)
+        self.is_listening_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_gps': [], 'all_screenshot': [], 'all_scene': []}
         for frame in self.screenshot_data:
-            sent_info.append(frame)
+            sent_info['all_screenshot'].append(frame)
             self.input_screenshot_stream.add_item(frame)
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.gps_stream.add_item(gps)
         for frame in self.scene_data:
-            sent_info.append(frame)
+            sent_info['all_scene'].append(frame)
             self.scene_stream.add_item({"frame": frame})
         return sent_info

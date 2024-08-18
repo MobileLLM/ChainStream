@@ -73,16 +73,17 @@ class AgentExampleForNewsTask3(cs.agent.Agent):
         self.input_news_stream = cs.stream.create_stream(self, 'all_USA_news')
         self.output_news_stream = cs.stream.create_stream(self, 'USA_news_in_July')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['USA_news_in_July'].append(data)
 
         self.output_news_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_news = []
+    def start_task(self, runtime) -> dict:
+        sent_news = {'all_USA_news': []}
         for news in self.news_data:
-            sent_news.append(news)
+            sent_news['all_USA_news'].append(news)
             self.input_news_stream.add_item(news)
         return sent_news
+

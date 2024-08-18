@@ -1,0 +1,5 @@
+from .dialogue_emotion_task import OldDialogueTask2
+from .dialogue_identity_task import OldDialogueTask3
+from .dialogue_place_task import OldDialogueTask4
+from .dialogue_time_task import OldDialogueTask5
+from .dialogue_topic_task import OldDialogueTask6

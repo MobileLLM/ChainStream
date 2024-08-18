@@ -117,25 +117,29 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         self.music_stream = cs.stream.create_stream(self, 'music_data')
         self.output_music_stream = cs.stream.create_stream(self, 'auto_play_music')
         self.is_tired_stream = cs.stream.create_stream(self, 'is_tired')
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['auto_play_music'].append(data)
+            self.output_record['is_tired'].append(data)
 
         self.output_music_stream.for_each(record_output)
+        self.is_tired_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_gps': [], 'all_monitor': []}
         for frame in self.video_data:
-            sent_info.append(frame)
+            sent_info['all_monitor'].append(frame)
             self.car_check_stream.add_item({"frame": frame})
         for gps in self.gps_data:
-            sent_info.append(gps)
+            sent_info['all_gps'].append(gps)
             self.gps_stream.add_item(gps)
         return sent_info
 
+
 if __name__ == '__main__':
     from faker import Faker
+
     fake = Faker()
     task = RemindDriverTask()
     for _ in range(10):

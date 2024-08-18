@@ -54,16 +54,16 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.input_ui_stream = cs.stream.create_stream(self, 'third_person')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_traffic')
 
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['analysis_traffic'].append(data)
 
         self.output_ui_stream.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        processed_results = []
+    def start_task(self, runtime) -> dict:
+        processed_results = {'third_person': []}
         for frame in self.Sphar_data:
-            processed_results.append(frame)
+            processed_results['third_person'].append(frame)
             self.input_ui_stream.add_item({"frame": frame})
         return processed_results

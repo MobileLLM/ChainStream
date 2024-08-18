@@ -91,20 +91,22 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.input_outdoor_stream = cs.stream.create_stream(self, 'all_third_person_outdoor')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.patient_trigger = cs.stream.create_stream(self, 'patient_trigger')
-        self.output_record = []
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record.append(data)
+            self.output_record['output_messages'].append(data)
+            self.output_record['patient_trigger'].append(data)
 
         self.output_message_stream.for_each(record_output)
+        self.patient_trigger.for_each(record_output)
 
-    def start_task(self, runtime) -> list:
-        sent_info = []
+    def start_task(self, runtime) -> dict:
+        sent_info = {'all_third_person_indoor': [], 'all_third_person_outdoor': []}
         for frame in self.video_data1:
-            sent_info.append(frame)
+            sent_info['all_third_person_indoor'].append(frame)
             self.input_indoor_stream.add_item({"frame": frame})
             time.sleep(1)
         for frame in self.video_data2:
-            sent_info.append(frame)
+            sent_info['all_third_person_outdoor'].append(frame)
             self.input_outdoor_stream.add_item({"frame": frame})
         return sent_info
