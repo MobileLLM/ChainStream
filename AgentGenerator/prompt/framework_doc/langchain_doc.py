@@ -32,7 +32,7 @@ If your code requires a large language model (LLM), you can directly use the `op
 import os
 from langchain.llms import OpenAI
 
-openai_base_url = os.environ.get('OPENAI_URL')
+openai_base_url = os.environ.get('OPENAI_API_URL')
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 
 def process_data(input_streams: dict[str, list]):

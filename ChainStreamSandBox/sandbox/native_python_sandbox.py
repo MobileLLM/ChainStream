@@ -1,4 +1,7 @@
-from sandbox_base import BatchSandbox
+if __name__ == '__main__':
+    from sandbox_base import BatchSandbox
+else:
+    from .sandbox_base import BatchSandbox
 import os
 
 

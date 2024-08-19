@@ -1,7 +1,13 @@
-from .cot_based import COT_BASED_PROMPT
-from .few_shot_based import FEW_SHOT_BASED_PROMPT
-from .feedback_guided_based import FEEDBACK_GUIDED_EXAMPLE, FEEDBACK_GUIDED_PROMPT_ONLY_START, \
-    FEEDBACK_GUIDED_PROMPT_WITH_RUNNING
+if __name__ == '__main__':
+    from cot_based import COT_BASED_PROMPT
+    from few_shot_based import FEW_SHOT_BASED_PROMPT
+    from feedback_guided_based import FEEDBACK_GUIDED_EXAMPLE, FEEDBACK_GUIDED_PROMPT_ONLY_START, \
+        FEEDBACK_GUIDED_PROMPT_WITH_RUNNING
+else:
+    from .cot_based import COT_BASED_PROMPT
+    from .few_shot_based import FEW_SHOT_BASED_PROMPT
+    from .feedback_guided_based import FEEDBACK_GUIDED_EXAMPLE, FEEDBACK_GUIDED_PROMPT_ONLY_START, \
+        FEEDBACK_GUIDED_PROMPT_WITH_RUNNING
 
 
 def get_command_prompt(command_type, need_example=None):
@@ -21,3 +27,10 @@ def get_command_prompt(command_type, need_example=None):
             return FEEDBACK_GUIDED_PROMPT_WITH_RUNNING
     else:
         raise ValueError("Invalid command type")
+
+
+if __name__ == '__main__':
+    print(get_command_prompt("cot"), end="\n*************\n")
+    print(get_command_prompt("few_shot"), end="\n*************\n")
+    print(get_command_prompt("feedback_guided_only_start", False), end="\n*************\n")
+    print(get_command_prompt("feedback_guided_with_running", False), end="\n*************\n")

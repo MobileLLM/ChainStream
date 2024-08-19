@@ -1,5 +1,9 @@
-from sandbox_base import BatchSandbox
-from utils import check_library_installed
+if __name__ == '__main__':
+    from sandbox_base import BatchSandbox
+    from utils import check_library_installed
+else:
+    from .sandbox_base import BatchSandbox
+    from .utils import check_library_installed
 import os
 
 

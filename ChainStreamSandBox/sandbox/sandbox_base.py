@@ -11,7 +11,10 @@ from chainstream.agent.base_agent import Agent
 from chainstream.stream import get_stream
 from chainstream.sandbox_recorder import start_sandbox_recording
 
-from utils import extract_imports
+if __name__ == '__main__':
+    from utils import extract_imports
+else:
+    from .utils import extract_imports
 
 
 class SandboxError(Exception):

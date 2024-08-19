@@ -1,6 +1,11 @@
-from mission_prompt import get_mission_prompt
-from command_prompt import get_command_prompt
-from framework_doc import get_framework_doc
+if __name__ == '__main__':
+    from mission_prompt import get_mission_prompt
+    from command_prompt import get_command_prompt
+    from framework_doc import get_framework_doc
+else:
+    from .mission_prompt import get_mission_prompt
+    from .command_prompt import get_command_prompt
+    from .framework_doc import get_framework_doc
 
 from typing import Literal
 
