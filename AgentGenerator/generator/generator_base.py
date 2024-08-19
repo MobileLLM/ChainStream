@@ -86,7 +86,9 @@ class DirectAgentGenerator(AgentGeneratorBase):
         super().__init__()
 
     def generate_agent_impl(self, output_stream, input_stream) -> str:
-        prompt = self.get_base_prompt()
+        prompt = self.get_base_prompt(output_stream, input_stream)
+
+        print(f"Prompt: {prompt}")
 
         prompt = [
             {
@@ -94,6 +96,7 @@ class DirectAgentGenerator(AgentGeneratorBase):
                 "content": prompt
             }
         ]
+
         response = self.llm.query(prompt)
         return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
