@@ -1,4 +1,5 @@
 from .activity_over_5km_task import OldActivityTask1
 from .activity_over_30min_task import OldActivityTask2
 from .calories_most_task import OldActivityTask3
-from .steps_over_5k import OldActivityTask4
+from .steps_over_5k_task import OldActivityTask4
+from .personal_activity import OldActivityTask5

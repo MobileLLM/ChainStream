@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -14,6 +14,8 @@ class OldArxivTask10(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Work,
+                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
             "description": "A list of arxiv articles",
@@ -59,9 +61,9 @@ class TestAgent(cs.agent.Agent):
                 prompt = "Give you an abstract of a paper: {} and the version of this paper:{}. What tag would you like to add to this paper? Choose from the following: {}".format(paper_content,paper_versions, ', '.join(stage_tags))
                 response = self.llm.query(cs.llm.make_prompt(prompt))
                 self.output_stream.add_item({
-                    "title":paper_title,
-                    "version":paper_versions,
-                    "stage":response
+                    "title": paper_title,
+                    "version": paper_versions,
+                    "stage": response
                 })
 
         self.input_stream.for_each(process_paper)

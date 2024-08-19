@@ -182,6 +182,12 @@ from .github_task import GithubTask1
 from .github_task import GithubTask2
 from .github_task import GithubTask3
 from .github_task import GithubTask4
+from .github_task import OldGithubTask1
+from .github_task import OldGithubTask2
+from .github_task import OldGithubTask3
+from .github_task import OldGithubTask4
+from .github_task import OldGithubTask5
+from .github_task import OldGithubTask6
 from .daily_dialogue_task import OldDialogueTask2
 from .daily_dialogue_task import OldDialogueTask3
 from .daily_dialogue_task import OldDialogueTask4
@@ -205,6 +211,7 @@ from .activity_task import OldActivityTask1
 from .activity_task import OldActivityTask2
 from .activity_task import OldActivityTask3
 from .activity_task import OldActivityTask4
+from .activity_task import OldActivityTask5
 from .multi_task import EmailTaskTest
 from .multi_task import MessageStockTask
 from .multi_task import WorkReminderTask

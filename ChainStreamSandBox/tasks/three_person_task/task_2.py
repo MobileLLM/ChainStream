@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -13,6 +13,8 @@ class VideoTask5(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_ui_stream = None
         self.input_ui_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
+                                scene=Scene_Task_tag.Shop, modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "third_person",
             "description": "All third person perspective images",

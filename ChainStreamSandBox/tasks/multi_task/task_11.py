@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import DesktopData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -17,6 +18,9 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.warning_board_stream = None
         self.input_three_person_stream = None
         self.input_screenshot_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Work,
+                                scene=Scene_Task_tag.School,
+                                modality=[Modality_Task_tag.Video, Modality_Task_tag.Image])
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_screenshot",
             "description": "students screenshot data in the class",

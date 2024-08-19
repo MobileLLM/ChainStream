@@ -4,7 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 import time
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -17,6 +17,8 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
         self.input_indoor_stream = None
         self.patient_trigger = None
         self.output_message_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Health,
+                                scene=Scene_Task_tag.Hospital, modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_third_person_outdoor",
             "description": "third_person perspective data outside the clinic",

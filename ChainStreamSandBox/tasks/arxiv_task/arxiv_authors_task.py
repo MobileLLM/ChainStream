@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -14,12 +14,14 @@ class OldArxivTask4(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Work,
+                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
             "description": "A list of arxiv articles",
             "fields": {
-                "authors": "The authors of the arxiv article,string",
-                "title": "The title of the arxiv article,string"
+                "authors": "The authors of the arxiv article, string",
+                "title": "The title of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,9 +29,9 @@ class OldArxivTask4(SingleAgentTaskConfigBase):
                 "stream_id": "authors_number",
                 "description": "A list of arxiv articles with calculated numbers of the authors",
                 "fields": {
-                    "title": "The title of the arxiv article,string",
-                    "authors": "The authors of the arxiv article,string",
-                    "number": "The number of authors of the arxiv article,int"}
+                    "title": "The title of the arxiv article, string",
+                    "authors": "The authors of the arxiv article, string",
+                    "number": "The number of authors of the arxiv article, int"}
             }
         ])
 
@@ -40,8 +42,8 @@ from chainstream.llm import get_model
 class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
-        self.input_stream = cs.get_stream(self,"all_arxiv")
-        self.output_stream = cs.get_stream(self,"authors_number")
+        self.input_stream = cs.get_stream(self, "all_arxiv")
+        self.output_stream = cs.get_stream(self, "authors_number")
         self.llm = get_model("Text")
     def start(self):
         def process_paper(paper):
@@ -50,9 +52,9 @@ class testAgent(cs.agent.Agent):
             prompt = "Now I give you the information on the authors of these papers. How many authors does this paper have? Please just provide the number of authors."
             response = self.llm.query(cs.llm.make_prompt(prompt,paper_authors))
             self.output_stream.add_item({
-                    "title":paper_title,
-                    "authors":paper_authors,
-                    "number":response
+                    "title": paper_title,
+                    "authors": paper_authors,
+                    "number": response
                 })
         self.input_stream.for_each(process_paper)
         '''

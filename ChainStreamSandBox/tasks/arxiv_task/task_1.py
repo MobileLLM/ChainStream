@@ -4,7 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 import time
-from ..task_tag import Difficulty_Task_tag, TaskTag
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -16,10 +16,8 @@ class ArxivTask1(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-        # self.task_tag = {
-        #     "difficulty": Difficultly_Task_tag.EASY,
-        # }
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.EASY)
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Work,
+                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
             "description": "All arxiv paper",
