@@ -1,0 +1,80 @@
+from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
+import random
+import chainstream as cs
+from ChainStreamSandBox.raw_data import ActivityData
+from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
+random.seed(6666)
+
+
+class OldActivityTask5(SingleAgentTaskConfigBase):
+    def __init__(self):
+        super().__init__()
+        self.output_record = None
+        self.clock_stream = None
+        self.output_activity_stream = None
+        self.input_activity_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
+                                scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
+        self.input_stream_description = StreamListDescription(streams=[{
+            "stream_id": "all_activities",
+            "description": "A list of activities records",
+            "fields": {
+                "activity": "The specific activity, string",
+                "user": "The user id, string"
+            }
+        }])
+        self.output_stream_description = StreamListDescription(streams=[
+            {
+                "stream_id": "group_by_user",
+                "description": "A list of activities records when more than 5km",
+                "fields": {
+                    "users_activities": "A dict that records the activities of each user, dict"}
+            }
+        ])
+
+        self.activity_data = ActivityData().get_random_activity_data()
+        self.agent_example = '''
+import chainstream as cs
+
+class ActivityDistanceAgent(cs.agent.Agent):
+    def __init__(self):
+        super().__init__("activity_distance_agent")
+        self.input_stream = cs.get_stream(self, "all_activities")
+        self.output_stream = cs.get_stream(self, "group_by_user")
+
+    def start(self):
+        def group_by_user(activities_list):
+            activities = activities_list['item_list']
+            user_group = {}
+            for activity in activities:
+                if activity['user'] not in user_group:
+                    user_group[activity['user']] = [activity[activity]]
+                else:
+                    user_group[activity['user']].append(activity[activity])
+            self.output_stream.add_item({
+                "users_activities": user_group
+            })
+            return list(user_group.values())
+            
+        self.input_stream.batch(by_count=2).for_each(group_by_user)
+
+        '''
+
+    def init_environment(self, runtime):
+        self.input_activity_stream = cs.stream.create_stream(self, 'all_activities')
+        self.output_activity_stream = cs.stream.create_stream(self, 'group_by_user')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['group_by_user'].append(data)
+
+        self.output_activity_stream.for_each(record_output)
+
+    def start_task(self, runtime) -> dict:
+        activity_dict = {'all_activities': []}
+        for activity in self.activity_data:
+            self.input_activity_stream.add_item(activity)
+            activity_dict['all_activities'].append(activity)
+        return activity_dict
+
