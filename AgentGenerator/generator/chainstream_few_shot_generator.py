@@ -16,6 +16,8 @@ class ChainStreamFewShotGenerator(DirectAgentGenerator):
                                need_feedback_example=False
                                )
 
+    def process_response(self, response) -> str:
+        return response.replace("'''", " ").replace("```", " ").replace("python", "")
 
 
 if __name__ == "__main__":

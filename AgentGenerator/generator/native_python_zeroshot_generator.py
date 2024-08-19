@@ -30,6 +30,9 @@ class NativePythonZeroShotGenerator(DirectAgentGenerator):
                                command_name="few_shot",
                                need_feedback_example=False)
 
+    def process_response(self, response) -> str:
+        return response.replace("'''", " ").replace("```", " ").replace("python", "")
+
 
 if __name__ == "__main__":
     agent_generator = NativePythonZeroShotGenerator()

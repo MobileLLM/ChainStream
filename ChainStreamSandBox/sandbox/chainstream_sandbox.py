@@ -17,7 +17,7 @@ class ChainStreamSandBox(SandboxBase):
 
         self.runtime = cs_server.get_chainstream_core()
 
-        self.agent_instance = None
+        self.agent_instance = Agent("sandbox_tmp_agent")
 
     def prepare_environment(self):
         self.task.init_environment(self.runtime)

@@ -21,8 +21,8 @@ class ChainstreamFeedbackGuidedGeneratorForStarting(FeedbackGuidedAgentGenerator
                                need_feedback_example=False
                                )
 
-    def process_sandbox_feedback(self, sandbox_feedback):
-        return sandbox_feedback
+    def process_sandbox_feedback(self, sandbox_feedback, has_input=None):
+        return f"After executing the code, the sandbox reported: {sandbox_feedback['start_agent']}"
 
     def step(self, action, last_code=None) -> (str, bool, str):
         done = False

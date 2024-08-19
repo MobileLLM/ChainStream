@@ -5,6 +5,7 @@ from AgentGenerator.utils.llm_utils import TextGPTModel
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 from chainstream.stream import create_stream, get_stream
 import datetime
+import os
 
 
 class AgentGeneratorBase:
@@ -98,10 +99,15 @@ class DirectAgentGenerator(AgentGeneratorBase):
         ]
 
         response = self.llm.query(prompt)
-        return response.replace("'''", " ").replace("```", " ").replace("python", "")
+        print(f"Response: {response}", end="\n****************\n")
+
+        return self.process_response(response)
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         raise NotImplementedError("Agent generator must implement get_base_prompt function.")
+
+    def process_response(self, response) -> str:
+        raise NotImplementedError("Agent generator must implement process_response() function.")
 
 
 class FakeTaskConfig(SingleAgentTaskConfigBase):
@@ -157,9 +163,11 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
                     all_input_items[item['stream_id']] = []
             except Exception as e:
                 raise Exception(f"Can not find input stream {item['stream_id']}, error: {e}")
-            for i in item['items']:
-                tmp_input_stream.add_item(i)
-                all_input_items[item['stream_id']].append(i)
+            # for i in item['items']:
+            #     tmp_input_stream.add_item(i)
+            #     all_input_items[item['stream_id']].append(i)
+            tmp_input_stream.add_item(item['item'])
+            all_input_items[item['stream_id']].append(item['item'])
 
         return all_input_items
 
@@ -185,6 +193,8 @@ class FeedbackGuidedAgentGenerator(AgentGeneratorBase):
         ]
         response = self.llm.query(prompt)
 
+        # os.system('clear')
+        # print("\033c", end="")
         print(
             f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
         return response
@@ -206,8 +216,8 @@ class FeedbackGuidedAgentGenerator(AgentGeneratorBase):
             thought_action = self._query_llm(all_prompt + f"Thought {i}:", stop=[f"\nObservation {i}:"])
 
             try:
-                if thought_action.strip().endswith("Observation:"):
-                    thought_action = thought_action.strip()[:-len("Observation:")]
+                if thought_action.strip().endswith(f"Observation {i}:"):
+                    thought_action = thought_action.strip()[:-len(f"Observation {i}:")]
                 thought, action = thought_action.strip().split(f"\nAction {i}: ")
 
             except Exception as e:

@@ -23,7 +23,7 @@ class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(FeedbackGuidedAgentGen
         elif len(sandbox_feedback['error_message']['function_error']) > 0:
             tmp_prompt = f"The code can successfully start in the sandbox, means that the `Agent.__init__` and `Agent.start` are correct. However, when running the agent the sandbox reported register lisenter function error: {error['error_message']['function_error']}. Please check your code and try again."
         else:
-            if has_input is None:
+            if has_input is None or has_input == False:
                 tmp_prompt = f"Your code passed the sandbox test! Please debug your agent code throught the `INPUT` command to see if it can handle the input and output correctly."
             else:
                 try:
@@ -58,6 +58,8 @@ class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(FeedbackGuidedAgentGen
                 entity = entity.strip()
                 if entity.startswith("```python") and entity.endswith("```"):
                     entity = entity[len("```python"):-3].strip()
+                if entity.startswith("```python") and entity.endswith("``"):
+                    entity = entity[len("```python"):-2].strip()
                 tmp_agent_code = entity
                 obs = self.sandbox_exec(entity)
         elif action.startswith("FINISH<<") and action.endswith(">>"):
@@ -66,30 +68,26 @@ class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(FeedbackGuidedAgentGen
             done = True
             obs = f"Episode finished. The answer is: {answer}"
         elif action.startswith("INPUT<<") and action.endswith(">>"):
-            input = action.strip()[len("INPUT<<"):-2]
             try:
-                stream_id = input.split(",")[0]
-                if stream_id.startswith("`") and stream_id.endswith("`"):
-                    stream_id = stream_id[1:-1]
-                items = input.split(",", 1)[1]
+                items = action.strip()[len("INPUT<<"):-2]
+                if items.startswith("```") and items.endswith("```"):
+                    items = items[3:-3].strip()
                 items = ast.literal_eval(items)
-            except Exception as e:
-                # obs = f"[FormatError] Invalid input format. The input should be in the format of `stream_id item1 item2...`, you can't provide more than one input stream at a time. Please check your response format and try again."
-                obs = f"[INPUTError] get input error: {e}"
-            else:
                 if last_code is None:
                     obs = "[Error] Can not find your agent code"
                 else:
-                    obs = self.sandbox_exec(last_code, stream_id, items)
+                    obs = self.sandbox_exec(last_code, items)
+            except Exception as e:
+                # obs = f"[FormatError] Invalid input format. The input should be in the format of `stream_id item1 item2...`, you can't provide more than one input stream at a time. Please check your response format and try again."
+                obs = f"[INPUTError] get input error: {e}"
 
         elif action.startswith("THINK<<") and action.endswith(">>"):
             obs = "Nice thought."
         else:
-            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, INPUT<<`stream_id`, `[item1 item2...]`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format. Please check your response format and try again.".format(
-                action)
+            obs = "[FormatError] Invalid action format. The action should be in the format of CODE<<`agent_code`>>, INPUT<<`items`>>, or FINISH<<`your_answer`>>, you can't provide more than one code or finish action at a time, and also can's provide the Observation in the action format, got {action}. Please check your response format and try again.".format(
+                action=action)
 
         return obs, done, tmp_agent_code
-
 
 
 if __name__ == '__main__':

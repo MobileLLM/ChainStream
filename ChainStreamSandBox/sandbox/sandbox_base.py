@@ -148,7 +148,8 @@ class SandboxBase:
                 )
             with open(file_path, 'w') as f:
                 json.dump(result, f, indent=4)
-        return os.path.abspath(file_path)
+            return os.path.abspath(file_path)
+        return None
 
     def _start_agent(self):
         try:
