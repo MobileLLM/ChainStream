@@ -19,7 +19,8 @@ def _check_and_load_task_report(report_path):
                 'runtime_report', 'error_message']
     for key in key_list:
         if key not in report_data:
-            raise ValueError(f"Key {key} not found in report {report_path}")
+            print(f"Key {key} not found in report {report_path}")
+            # raise ValueError(f"Key {key} not found in report {report_path}")
     return report_data
 
 
@@ -35,7 +36,7 @@ class EvaluatorBase:
             "eval_log_path_list": self.log_path_list,
             "eval_class_name": self.__class__.__name__,
             "integrity_check_result": {},
-            "eval_results": {}
+            "eval_result": {}
         }
 
         self.reports = self._check_and_load_task_reports()
@@ -66,9 +67,12 @@ class EvaluatorBase:
                         task_report_count[task]["all"] += 1
                     if "error_msg" in report and report["error_msg"] == "success":
                         tmp_rel_path = os.path.relpath(report["report_path"], os.path.dirname(log_path))
-                        tmp_rel_path = os.sep.join(tmp_rel_path.split(os.sep)[2:])
+                        if tmp_rel_path.startswith(".."):
+                            tmp_rel_path = os.sep.join(tmp_rel_path.split(os.sep)[2:])
                         tmp_report_path = os.path.join(os.path.dirname(log_path), tmp_rel_path)
                         task_report_data[task].append(_check_and_load_task_report(tmp_report_path))
+                        # TODO: check report format
+                        # task_report_data[task].append(tmp_report_path)
 
                         task_report_count[task]["success"] += 1
 

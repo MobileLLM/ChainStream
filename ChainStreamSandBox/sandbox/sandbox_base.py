@@ -148,7 +148,7 @@ class SandboxBase:
                 )
             with open(file_path, 'w') as f:
                 json.dump(result, f, indent=4)
-        return file_path
+        return os.path.abspath(file_path)
 
     def _start_agent(self):
         try:
@@ -215,7 +215,7 @@ class SandboxBase:
                     self.result['start_task'] = "[OK]"
                     self.result["input_stream_items"] = {}
                     for stream_id, data_items in sent_item.items():
-                        self.result["input_stream_item"][stream_id] = self._process_item_list_to_str(data_items)
+                        self.result["input_stream_items"][stream_id] = self._process_item_list_to_str(data_items)
                 # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
                 # we only want to init the task environment and start the agent, then start the stream and record all
                 # output into a file. self.task.evaluate_task(self.runtime)

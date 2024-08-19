@@ -38,6 +38,17 @@ def cal_code_bleu_similarity(reference: str, candidate: str):
     return result['codebleu']
 
 
+def cal_code_bleu_similarity_huggingface(reference: str, candidate: str):
+    import evaluate
+    metric = evaluate.load("dvitel/codebleu")
+
+    # prediction = "def add ( a , b ) :\n return a + b"
+    # reference = "def sum ( first , second ) :\n return second + first"
+
+    result = metric.compute([reference], [candidate], lang="python")
+    return result['codebleu']
+
+
 def cal_str_edit_distance_similarity(s1, s2):
     return Levenshtein.ratio(s1, s2)
 
@@ -90,7 +101,8 @@ def cal_list_similarity(list1, list2, fields, list_mode=None, similarity_func=No
         raise ValueError(f"Invalid list function: {list_mode}")
 
 
-def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, similarity_func=None, hard_fields=False, len_weight=False):
+def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, similarity_func=None, hard_fields=False,
+                                len_weight=False):
     total_score = 0.0
     len_weight_total_score = 0.0
     stream_similarity = {}
@@ -109,3 +121,14 @@ def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, simi
     else:
         avg_stream_score = len_weight_total_score / sum(len(output) for output in stream_list1.values())
     return avg_stream_score, stream_similarity
+
+
+if __name__ == '__main__':
+    import evaluate
+
+    metric = evaluate.load("dvitel/codebleu")
+
+    prediction = "def add ( a , b ) :\n return a + b"
+    reference = "def sum ( first , second ) :\n return second + first"
+
+    result = metric.compute([reference], [prediction], lang="python", weights=(0.25, 0.25, 0.25, 0.25))
