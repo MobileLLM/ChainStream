@@ -1,5 +1,5 @@
 from chainstream.stream import create_stream
-from sandbox_base import *
+from ChainStreamSandBox.sandbox.sandbox_base import *
 
 
 class ChainStreamSandBox(SandboxBase):

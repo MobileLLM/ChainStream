@@ -8,15 +8,18 @@ class EvaluatorSuccessRate(EvaluatorBase):
                  save_folder=os.path.dirname(os.path.abspath(__file__))):
         super().__init__(log_path, save_name, save_folder)
 
-    def calculate_success_rate(self, first_n: list | int = None):
+    def calculate_success_rate(self, first_n: list | int | None = None):
         if first_n is None:
             first_n = [1, 3, 5]
-        if not isinstance(first_n, list) or not isinstance(first_n, int):
+        if not isinstance(first_n, list) and not isinstance(first_n, int):
             raise ValueError("first_n should be a list or an integer")
         if isinstance(first_n, int):
             first_n = [first_n]
 
+        self.eval_results['eval_result'] = {}
         for log_path, all_reports in self.reports.items():
+
+            self.eval_results['eval_result'][log_path] = {}
             for N in first_n:
                 success_result = {}
                 for task, reports in all_reports.items():
@@ -30,17 +33,19 @@ class EvaluatorSuccessRate(EvaluatorBase):
                 success_count = sum(success_result.values())
                 total_task_count = len(success_result)
                 success_rate = (success_count / total_task_count) * 100 if total_task_count > 0 else 0
-                self.eval_results['eval_result'] = {
+                self.eval_results['eval_result'][log_path][N] = {
                     'log_path': log_path,
-                    'first_n': first_n,
+                    'first_n': N,
                     'success_rate': success_rate,
                     'success_count': success_count,
                     'total_task_count': total_task_count,
                     'success_details': success_result
                 }
 
+        self._save_results()
+
 
 if __name__ == "__main__":
-    base_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\result-new'
+    base_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\test\test_log.json'
     evaluator_success_rate = EvaluatorSuccessRate(base_folder_path)
-    evaluator_success_rate.calculate_success_rate(result_output_path="./success_rate_report.txt")
+    evaluator_success_rate.calculate_success_rate()

@@ -1,6 +1,6 @@
-from .cot_based import COT_BASED_PROMPT
-from few_shot_based import FEW_SHOT_BASED_PROMPT
-from feedback_guided_based import FEEDBACK_GUIDED_EXAMPLE, FEEDBACK_GUIDED_PROMPT_ONLY_START, \
+from AgentGenerator.prompt.command_prompt.cot_based import COT_BASED_PROMPT
+from AgentGenerator.prompt.command_prompt.few_shot_based import FEW_SHOT_BASED_PROMPT
+from AgentGenerator.prompt.command_prompt.feedback_guided_based import FEEDBACK_GUIDED_EXAMPLE, FEEDBACK_GUIDED_PROMPT_ONLY_START, \
     FEEDBACK_GUIDED_PROMPT_WITH_RUNNING
 
 

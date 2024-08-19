@@ -1,5 +1,5 @@
-from sandbox_base import BatchSandbox
-from utils import check_library_installed
+from ChainStreamSandBox.sandbox.sandbox_base import BatchSandbox
+from ChainStreamSandBox.sandbox.utils import check_library_installed
 import os
 
 
