@@ -1,5 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel
+from typing import Optional
 
 
 class Difficulty_Task_tag(Enum):
@@ -39,7 +40,7 @@ class Modality_Task_tag(Enum):
 
 
 class TaskTag(BaseModel):
-    difficulty = None
-    domain = None
-    modality = None
-    scene = None
+    difficulty: Optional[str] = None
+    domain: Optional[str] = None
+    modality: Optional[str] = None
+    scene: Optional[str] = None
