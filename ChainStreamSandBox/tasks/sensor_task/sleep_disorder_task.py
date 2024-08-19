@@ -2,6 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import HealthData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 
 class OldHealthTask11(SingleAgentTaskConfigBase):
@@ -10,6 +11,8 @@ class OldHealthTask11(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_health_stream = None
         self.input_health_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Health,
+                                scene=Scene_Task_tag.Home, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "A list of health information",

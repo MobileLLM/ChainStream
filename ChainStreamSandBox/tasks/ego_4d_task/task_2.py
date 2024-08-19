@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -13,6 +13,8 @@ class VideoTask2(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_ui_stream = None
         self.input_ui_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
+                                scene=Scene_Task_tag.Home, modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
             "description": "All first person perspective images",

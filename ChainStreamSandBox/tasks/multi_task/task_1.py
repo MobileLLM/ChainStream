@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -17,6 +18,9 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.input_email_stream = None
         self.input_gps_stream = None
         self.is_office_event = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
+                                domain=[Domain_Task_tag.Work, Domain_Task_tag.Location],
+                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",

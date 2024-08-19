@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from ChainStreamSandBox.raw_data import GPSData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -16,6 +17,9 @@ class CatFoodTask(SingleAgentTaskConfigBase):
         self.output_message_stream = None
         self.input_video_stream = None
         self.gps_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
+                                domain=[Domain_Task_tag.Living, Domain_Task_tag.Location],
+                                scene=Scene_Task_tag.Home, modality=[Modality_Task_tag.Text, Modality_Task_tag.Video])
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps data",

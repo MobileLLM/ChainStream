@@ -2,6 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 
 class OldGPSTask12(SingleAgentTaskConfigBase):
@@ -10,6 +11,8 @@ class OldGPSTask12(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_landmark_stream = None
         self.input_landmark_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Location,
+                                scene=Scene_Task_tag.Travel, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
             "description": "A list of landmarks information",

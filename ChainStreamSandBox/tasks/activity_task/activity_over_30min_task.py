@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -14,15 +14,17 @@ class OldActivityTask2(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_activity_stream = None
         self.input_activity_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
+                                scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
             "description": "A list of activities records",
             "fields": {
-                "Total_Distance": "The total distance statistic recorded,float",
-                "Date": "The date of the activities recorded,string",
-                "activity": "The specific activity,string",
-                "Calories_Burned": "The calories burned in the activity,float",
-                "Fairly_Active_Minutes": "The minutes of the activities,float"
+                "Total_Distance": "The total distance statistic recorded, float",
+                "Date": "The date of the activities recorded, string",
+                "activity": "The specific activity, string",
+                "Calories_Burned": "The calories burned in the activity, float",
+                "Fairly_Active_Minutes": "The minutes of the activities, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,9 +32,9 @@ class OldActivityTask2(SingleAgentTaskConfigBase):
                 "stream_id": "activity_over_30min",
                 "description": "A list of records when the activities are more than 30 minutes",
                 "fields": {
-                    "Date": "the date when doing activities more than 30 minutes,string",
-                    "Activity": "The specific activity,string",
-                    "Active_minutes": "The minutes of the activities,float"}
+                    "Date": "the date when doing activities more than 30 minutes, string",
+                    "Activity": "The specific activity, string",
+                    "Active_minutes": "The minutes of the activities, float"}
             }
         ])
 
@@ -43,8 +45,8 @@ import chainstream as cs
 class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_time_agent")
-        self.input_stream = cs.get_stream(self,"all_activities")
-        self.output_stream = cs.get_stream(self,"activity_over_30min")
+        self.input_stream = cs.get_stream(self, "all_activities")
+        self.output_stream = cs.get_stream(self, "activity_over_30min")
 
     def start(self):
         def process_activity(activity):
@@ -53,8 +55,8 @@ class ActivityDistanceAgent(cs.agent.Agent):
                 date = activity.get("Date", "Unknown Date")
                 motion = activity.get("activity", "Unknown Motion")
                 self.output_stream.add_item({
-                    "Date":date,
-                    "Activity":motion,
+                    "Date": date,
+                    "Activity": motion,
                     "Active_minutes": Fairly_Active_Minutes
                 })
 

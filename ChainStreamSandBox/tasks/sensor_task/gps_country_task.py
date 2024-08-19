@@ -2,6 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 
 class OldGPSTask6(SingleAgentTaskConfigBase):
@@ -10,6 +11,8 @@ class OldGPSTask6(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_gps_stream = None
         self.input_gps_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Location,
+                                scene=Scene_Task_tag.Travel, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "A list of the gps data",

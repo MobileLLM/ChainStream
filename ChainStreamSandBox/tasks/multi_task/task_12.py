@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -18,6 +19,9 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.input_light_stream = None
         self.adjust_light_stream = None
         self.is_reading_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
+                                domain=[Domain_Task_tag.Living, Domain_Task_tag.Weather],
+                                scene=Scene_Task_tag.Home, modality=[Modality_Task_tag.Text, Modality_Task_tag.Video])
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_first_person",
             "description": "first_person perspective camera data in my study",

@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -18,6 +19,10 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.car_check_stream = None
         self.is_tired_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
+                                domain=[Domain_Task_tag.Activity, Domain_Task_tag.Location],
+                                scene=Scene_Task_tag.Traffic,
+                                modality=[Modality_Task_tag.Text, Modality_Task_tag.Video])
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "GPS data for navigation of the driver",

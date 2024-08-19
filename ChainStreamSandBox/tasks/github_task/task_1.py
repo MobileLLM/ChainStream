@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GitHubData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -14,6 +14,8 @@ class GithubTask1(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Work,
+                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
             "description": "All github information(every three github repositories are packaged as a batch)",

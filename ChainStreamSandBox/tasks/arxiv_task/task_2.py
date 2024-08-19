@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -14,6 +14,8 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Work,
+                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv_with_EOS_tag",
             "description": "All arxiv paper",

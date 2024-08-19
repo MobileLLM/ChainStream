@@ -5,6 +5,7 @@ from ChainStreamSandBox.raw_data import GPSData
 from ChainStreamSandBox.raw_data import DesktopData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -20,6 +21,10 @@ class TripMusicTask(SingleAgentTaskConfigBase):
         self.is_travel_stream = None
         self.scene_stream = None
         self.is_listening_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
+                                domain=[Domain_Task_tag.Activity, Domain_Task_tag.Location],
+                                scene=Scene_Task_tag.Travel,
+                                modality=[Modality_Task_tag.Text, Modality_Task_tag.Video, Modality_Task_tag.Image])
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my GPS data",

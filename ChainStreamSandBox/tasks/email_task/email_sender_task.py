@@ -3,6 +3,7 @@ import chainstream as cs
 import random
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -12,6 +13,8 @@ class OldEmailTask5(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_email_stream = None
         self.input_email_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Interpersonal_relationship,
+                                scene=Scene_Task_tag.Other, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_emails",
             "description": "A list of emails",

@@ -3,7 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SMSData
 from AgentGenerator.io_model import StreamListDescription
-
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -13,23 +13,25 @@ class OldMessageTask2(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_sms_stream = None
         self.input_sms_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Interpersonal_relationship,
+                                scene=Scene_Task_tag.Other, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_news",
-            "description": "A list of news information",
+            "stream_id": "all_sms",
+            "description": "A list of messages information",
             "fields": {
-                "text": "The content of the news,string",
-                "language": "The language of the news,string",
-                "time": "The time of the news,string"
+                "text": "The content of the message,string",
+                "language": "The language of the message,string",
+                "time": "The time of the message,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_emotion",
-                "description": "A list of the analysis of the emotion of the news chosen from positive, negative, "
+                "description": "A list of the analysis of the emotion of the messages chosen from positive, negative, "
                                "neutral and other based on the text",
                 "fields": {
-                    "content": "The content of the news,string",
-                    "emotion": "The analysis of the emotion of the news,string"
+                    "content": "The content of the message,string",
+                    "emotion": "The analysis of the emotion of the message,string"
                 }
             }
         ])

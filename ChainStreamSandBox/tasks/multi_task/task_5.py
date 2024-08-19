@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import DialogData
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 
 random.seed(6666)
 
@@ -16,6 +17,9 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.output_message_stream = None
         self.input_weather_stream = None
         self.input_dialogue_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
+                                domain=[Domain_Task_tag.Interpersonal_relationship, Domain_Task_tag.Weather],
+                                scene=Scene_Task_tag.Other, modality=[Modality_Task_tag.Text, Modality_Task_tag.Audio])
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
             "description": "All weather information",

@@ -3,6 +3,7 @@ import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
+from ..task_tag import *
 random.seed(6666)
 
 
@@ -13,15 +14,17 @@ class OldActivityTask4(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_activity_stream = None
         self.input_activity_stream = None
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
+                                scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
             "description": "A list of activities records",
             "fields": {
-                "Steps": "The steps calculated in the activity,int",
-                "Date": "The date of the activities recorded,string",
-                "activity": "The specific activity,string",
-                "Calories_Burned": "The calories burned in the activity,float",
-                "Fairly_Active_Minutes": "The minutes of the activities,float"
+                "Steps": "The steps calculated in the activity, int",
+                "Date": "The date of the activities recorded, string",
+                "activity": "The specific activity, string",
+                "Calories_Burned": "The calories burned in the activity, float",
+                "Fairly_Active_Minutes": "The minutes of the activities, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,9 +32,9 @@ class OldActivityTask4(SingleAgentTaskConfigBase):
                 "stream_id": "steps_over_5k",
                 "description": "A list of records of the activities which are over 5000 steps",
                 "fields": {
-                    "Date": "The date of the activities recorded,string",
-                    "Activity": "The specific activity,string",
-                    "Steps": "The steps calculated in the activity,int"
+                    "Date": "The date of the activities recorded, string",
+                    "Activity": "The specific activity, string",
+                    "Steps": "The steps calculated in the activity, int"
                 }
             }
         ])
@@ -43,8 +46,8 @@ import chainstream as cs
 class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_steps_agent")
-        self.input_stream = cs.get_stream(self,"all_activities")
-        self.output_stream = cs.get_stream(self,"steps_over_5k")
+        self.input_stream = cs.get_stream(self, "all_activities")
+        self.output_stream = cs.get_stream(self, "steps_over_5k")
 
     def start(self):
         def process_activity(activity):
@@ -53,8 +56,8 @@ class ActivityDistanceAgent(cs.agent.Agent):
                 date = activity.get("Date", "Unknown Date")
                 motion = activity.get("activity", "Unknown Motion")
                 self.output_stream.add_item({
-                    "Date":date,
-                    "Activity":motion,
+                    "Date": date,
+                    "Activity": motion,
                     "Steps": Steps
                 })
 
