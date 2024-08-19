@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+import time
 random.seed(6666)
 
 
@@ -18,7 +19,7 @@ class OldActivityTask5(SingleAgentTaskConfigBase):
                                 scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A list of activities records",
+            "description": "A list of activities records(",
             "fields": {
                 "activity": "The specific activity, string",
                 "user": "The user id, string"
@@ -27,7 +28,7 @@ class OldActivityTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "group_by_user",
-                "description": "A list of activities records when more than 5km",
+                "description": "A list of each user's activities packaged in batches of 2 seconds",
                 "fields": {
                     "users_activities": "A dict that records the activities of each user, dict"}
             }
@@ -49,15 +50,15 @@ class ActivityDistanceAgent(cs.agent.Agent):
             user_group = {}
             for activity in activities:
                 if activity['user'] not in user_group:
-                    user_group[activity['user']] = [activity[activity]]
+                    user_group[activity['user']] = [activity['activity']]
                 else:
-                    user_group[activity['user']].append(activity[activity])
+                    user_group[activity['user']].append(activity['activity'])
             self.output_stream.add_item({
-                "users_activities": user_group
+                "users_activities": str(user_group)
             })
             return list(user_group.values())
             
-        self.input_stream.batch(by_count=2).for_each(group_by_user)
+        self.input_stream.batch(by_time=2).for_each(group_by_user)
 
         '''
 
@@ -76,5 +77,6 @@ class ActivityDistanceAgent(cs.agent.Agent):
         for activity in self.activity_data:
             self.input_activity_stream.add_item(activity)
             activity_dict['all_activities'].append(activity)
+            time.sleep(1)
         return activity_dict
 

@@ -57,7 +57,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 "stars": stars_count
             })
 
-        self.github_input.batch.for_each(github_stars_extraction)
+        self.github_input.for_each(github_stars_extraction)
         '''
 
     def init_environment(self, runtime):

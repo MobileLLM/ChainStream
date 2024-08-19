@@ -58,7 +58,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 "created_date": created_date
             })
 
-        self.github_input.batch.for_each(github_date_extraction)
+        self.github_input.for_each(github_date_extraction)
         '''
 
     def init_environment(self, runtime):

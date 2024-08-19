@@ -57,7 +57,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 "language": language
             })
 
-        self.github_input.batch.for_each(github_language_extraction)
+        self.github_input.for_each(github_language_extraction)
         '''
 
     def init_environment(self, runtime):

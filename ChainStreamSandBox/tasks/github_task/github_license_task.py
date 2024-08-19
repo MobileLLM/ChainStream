@@ -24,16 +24,16 @@ class OldGithubTask6(SingleAgentTaskConfigBase):
                 "watchers": "the number of the watchers in the github repository, int",
                 "name": "the name of the github repository, string",
                 "primary_language": "the primary programming language of the github repository, string",
-                "license": "the license of the github repository, string"
+                "licence": "the licence of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "github_license",
-                "description": "A list of the licenses of the github repositories",
+                "stream_id": "github_licence",
+                "description": "A list of the licences of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
-                    "license": "the license of the github repository, string"
+                    "licence": "the licence of the github repository, string"
                 }
             }
         ])
@@ -46,29 +46,29 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "github_license")
+        self.github_output = cs.get_stream(self, "github_licence")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def github_license_extraction(github_dict):
-            license = github_dict['license']
+        def github_licence_extraction(github_dict):
+            licence = github_dict['licence']
             name = github_dict['name']
             self.github_output.add_item({
                 "name": name,
-                "license": license
+                "licence": licence
             })
 
-        self.github_input.batch.for_each(github_license_extraction)
+        self.github_input.for_each(github_licence_extraction)
         '''
 
     def init_environment(self, runtime):
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
-        self.output_github_stream = cs.stream.create_stream(self, 'github_license')
+        self.output_github_stream = cs.stream.create_stream(self, 'github_licence')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['github_license'].append(data)
+            self.output_record['github_licence'].append(data)
 
         self.output_github_stream.for_each(record_output)
 
