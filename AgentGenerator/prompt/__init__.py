@@ -1,7 +1,6 @@
-from .prompt_selector import PromptSelector
-from .mission_prompt import get_mission_prompt
-from .command_prompt import get_command_prompt
-from .framework_doc import get_framework_doc
+from mission_prompt import get_mission_prompt
+from command_prompt import get_command_prompt
+from framework_doc import get_framework_doc
 
 from typing import Literal
 
@@ -17,9 +16,33 @@ def get_base_prompt(output_stream,
                     mission_name: mission_type = None,
                     command_name: command_type = None,
                     need_feedback_example=None):
-
     tmp_framework_prompt = get_framework_doc(framework_name, example_number)
     tmp_mission_prompt = get_mission_prompt(output_stream, input_stream, mission_name, framework_name)
     tmp_command_prompt = get_command_prompt(command_name, need_feedback_example)
 
     return tmp_framework_prompt + tmp_mission_prompt + tmp_command_prompt
+
+
+if __name__ == '__main__':
+    print("chainstream, stream, few_shot",
+          get_base_prompt('output_stream', 'input_stream', 'chainstream', 0, 'stream', 'few_shot'))
+    print("chainstream, stream, feedback_guided_only_start",
+          get_base_prompt('output_stream', 'input_stream', 'chainstream', 0, 'stream', "feedback_guided_only_start"))
+    print("chainstream, stream, feedback_guided_with_running",
+          get_base_prompt('output_stream', 'input_stream', 'chainstream', 0, 'stream', "feedback_guided_with_running"))
+
+    print("langchain, batch, batch",
+          get_base_prompt('output_stream', 'input_stream', 'langchain', 0, 'batch', 'few_shot'))
+    print("langchain, batch, feedback_guided_only_start",
+          get_base_prompt('output_stream', 'input_stream', 'langchain', 0, 'batch', "feedback_guided_only_start"))
+    print("langchain, batch, feedback_guided_with_running",
+          get_base_prompt('output_stream', 'input_stream', 'langchain', 0, 'batch', "feedback_guided_with_running"))
+
+    print("native_python, batch, few_shot",
+          get_base_prompt('output_stream', 'input_stream', 'native_python', 0, 'batch', 'few_shot'))
+    print("native_python, batch, feedback_guided_only_start",
+          get_base_prompt('output_stream', 'input_stream', 'native_python', 0, 'batch', "feedback_guided_only_start"))
+    print("native_python, batch, feedback_guided_with_running",
+          get_base_prompt('output_stream', 'input_stream', 'native_python', 0, 'batch', "feedback_guided_with_running"))
+
+    print("native_gpt, gpt, cot", get_base_prompt('output_stream', 'input_stream', 'native_gpt', 0, 'gpt', 'few_shot'))
