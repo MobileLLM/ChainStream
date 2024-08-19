@@ -1,5 +1,5 @@
 from sandbox_base import BatchSandbox
-from utils import extract_imports, check_library_installed
+from utils import check_library_installed
 import os
 
 

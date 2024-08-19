@@ -1,5 +1,5 @@
 from AgentGenerator.generator.generator_base import AgentGeneratorBase
-from AgentGenerator.prompt.without_chainstream_prompt import NATIVE_GPT_PROMPT
+from AgentGenerator.prompt import get_base_prompt
 
 base_code = """
 from openai import OpenAI
