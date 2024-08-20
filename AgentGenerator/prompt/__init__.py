@@ -11,7 +11,7 @@ from typing import Literal
 
 framework_type = Literal['chainstream', 'langchain', "native_python", "native_gpt"]
 mission_type = Literal['batch', 'gpt', 'stream']
-command_type = Literal['cot', 'few_shot', 'feedback_guided_only_start', 'feedback_guided_with_running']
+command_type = Literal['cot', 'few_shot', 'feedback_guided_only_start', 'feedback_guided_with_running', 'feedback_guided_with_real_task']
 
 
 def get_base_prompt(output_stream,

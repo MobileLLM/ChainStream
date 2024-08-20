@@ -1,9 +1,9 @@
-from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGenerator
+from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGeneratorWithoutTask
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.prompt import get_base_prompt
 
 
-class NativePythonFeedbackGuidedGenerator(FeedbackGuidedAgentGenerator):
+class NativePythonFeedbackGuidedGenerator(FeedbackGuidedAgentGeneratorWithoutTask):
     def __init__(self, max_loop=10, sandbox_type="native_python"):
         super().__init__(max_loop=max_loop, sandbox_type=sandbox_type)
 

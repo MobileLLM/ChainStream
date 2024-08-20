@@ -1,10 +1,10 @@
-from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGenerator
+from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGeneratorWithoutTask
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.prompt import get_base_prompt
 import ast
 
 
-class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(FeedbackGuidedAgentGenerator):
+class ChainstreamFeedbackGuidedAgentGeneratorForDebugging(FeedbackGuidedAgentGeneratorWithoutTask):
     def __init__(self, max_loop=10):
         super().__init__(max_loop=max_loop, sandbox_type="chainstream")
         self.answer = None

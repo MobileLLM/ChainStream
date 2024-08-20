@@ -1,9 +1,9 @@
-from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGenerator
+from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGeneratorWithoutTask
 from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.prompt import get_base_prompt
 
 
-class ChainstreamFeedbackGuidedGeneratorForStarting(FeedbackGuidedAgentGenerator):
+class ChainstreamFeedbackGuidedGeneratorForStarting(FeedbackGuidedAgentGeneratorWithoutTask):
     """
         React with sandbox starting error ability
     """

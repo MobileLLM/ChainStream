@@ -25,8 +25,10 @@ class AgentGeneratorBase:
 
         self.model_name = model_name
         self.llm = TextGPTModel(model_name)
+        self.task = None
 
-    def generate_agent(self, output_description, input_description=None, use_selector=False) -> (str, int):
+    def generate_agent(self, output_description, input_description=None, use_selector=False, task=None) -> (str, int):
+        self.task = task
         self.output_description = output_description
         self.input_description = input_description
 
@@ -172,7 +174,7 @@ class FakeTaskConfig(SingleAgentTaskConfigBase):
         return all_input_items
 
 
-class FeedbackGuidedAgentGenerator(AgentGeneratorBase):
+class FeedbackGuidedAgentGeneratorWithoutTask(AgentGeneratorBase):
     def __init__(self, runtime=None, max_loop=20, sandbox_type="chainstream"):
         super().__init__(runtime)
         self.sandbox_type = sandbox_type
@@ -248,8 +250,8 @@ class FeedbackGuidedAgentGenerator(AgentGeneratorBase):
 
         return last_agent_code
 
-    def sandbox_exec(self, agent_code, stream_items=None):
-        if stream_items is None:
+    def sandbox_exec(self, agent_code, stream_items=None, use_real_task=False):
+        if stream_items is None and use_real_task is False:
             sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
 
             try:
@@ -265,14 +267,147 @@ class FeedbackGuidedAgentGenerator(AgentGeneratorBase):
             sandbox_feedback = sandbox.start_test_agent()
 
         else:
-            tmp_task = FakeTaskConfig(input_description=self.input_description,
-                                      output_description=self.output_description)
+            if use_real_task:
+                tmp_task = self.task
+            else:
+                tmp_task = FakeTaskConfig(input_description=self.input_description,
+                                          output_description=self.output_description)
             # tmp_task.set_input_items([{
             #     "stream_id": stream_id,
             #     "items": items
             # }])
 
-            tmp_task.set_input_items(stream_items)
+                tmp_task.set_input_items(stream_items)
+
+            sandbox = self.sandbox_class(tmp_task, agent_code, save_result=False)
+
+            sandbox_feedback = sandbox.start_test_agent()
+
+        feedback_prompt = self.process_sandbox_feedback(sandbox_feedback, has_input=True if stream_items is not None else False)
+
+        return feedback_prompt
+
+    def get_base_prompt(self, output_stream, input_stream) -> str:
+        raise NotImplementedError("Agent generator must implement get_base_prompt function.")
+
+    def process_sandbox_feedback(self, sandbox_feedback, has_input=None):
+        raise NotImplementedError("Agent generator must implement process_sandbox_feedback() function.")
+
+
+class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
+    def __init__(self, runtime=None, max_loop=20, sandbox_type="chainstream"):
+        super().__init__(runtime)
+        self.sandbox_type = sandbox_type
+        self.sandbox_class = get_sandbox_class(sandbox_type)
+
+        self.max_loop = max_loop
+
+        self.history = None
+
+    def _query_llm(self, prompt, stop=None):
+
+        prompt = [
+            {
+                "role": "system",
+                "content": prompt,
+                "stop": stop
+            }
+        ]
+        response = self.llm.query(prompt)
+
+        # os.system('clear')
+        # print("\033c", end="")
+        print(
+            f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
+        return response
+
+    def step(self, action) -> (str, bool):
+        raise NotImplementedError("Agent generator must implement step() function.")
+
+    def generate_agent_impl(self, output_stream, input_stream) -> str:
+        all_prompt = self.get_base_prompt(output_stream, input_stream)
+
+        n_calls = 0
+        n_badcalls = 0
+        done = False
+
+        last_agent_code = None
+
+        for i in range(self.max_loop):
+            n_calls += 1
+            thought_code = self._query_llm(all_prompt + f"Thought {i}:", stop=[f"\nObservation {i}:", f"\nFinish."])
+            if f"\nObservation {i}:" in thought_code:
+                thought_code = thought_code.strip().split(f"\nObservation {i}:")[0].strip()
+
+            try:
+                if thought_code.endswith(f"Finish."):
+                    tmp_thought_code = thought_code.strip()[:-len(f"Finish.")]
+                    if f"\nCode {i}:" in tmp_thought_code:
+                        thought, code = tmp_thought_code.strip().split(f"\nCode {i}:")
+                        last_agent_code = code
+                    all_prompt += thought_code.strip()
+                    self.history = all_prompt
+                    done = True
+                    break
+
+                if thought_code.endswith(f"Observation {i}:"):
+                    thought_code = thought_code.strip()[:-len(f"Observation {i}:")]
+                thought, code = thought_code.strip().split(f"\nCode {i}:")
+
+            except Exception as e:
+                print('ohh...', thought_code)
+                n_badcalls += 1
+                n_calls += 1
+                thought = thought_code.strip().split('\n')[0]
+                code = self._query_llm(all_prompt + f"Thought {i}: {thought}\nCode {i}:", stop=[f"\n"]).strip()
+
+            last_agent_code = code
+
+            error_prompt, done = self.step(code)
+
+            error = error_prompt.replace('\\n', '')
+            step_str = f"Thought {i}: {thought}\nCode {i}: {code}\nObservation {i}: {error}\n"
+            all_prompt += step_str
+
+            self.history = all_prompt
+
+            # print(f"Step: {i}, prompt: {prompt}")
+
+            if done:
+                break
+        if not done:
+            error_prompt, done = self.step("Finish.")
+
+        return last_agent_code
+
+    def sandbox_exec(self, agent_code, stream_items=None, use_real_task=False):
+        if stream_items is None and use_real_task is False:
+            sandbox = self.sandbox_class(None, agent_code, only_init_agent=True, save_result=False)
+
+            try:
+                if self.sandbox_type == "chainstream":
+                    for stream in self.input_description.streams:
+                        sandbox.create_stream(stream)
+                    for stream in self.output_description.streams:
+                        sandbox.create_stream(stream)
+            except Exception as e:
+                print(f"Error creating streams: {e}")
+                raise e
+
+            sandbox_feedback = sandbox.start_test_agent()
+
+        else:
+            if use_real_task:
+                tmp_task = self.task
+            else:
+                tmp_task = FakeTaskConfig(input_description=self.input_description,
+                                          output_description=self.output_description)
+            # tmp_task.set_input_items([{
+            #     "stream_id": stream_id,
+            #     "items": items
+            # }])
+
+                tmp_task.set_input_items(stream_items)
 
             sandbox = self.sandbox_class(tmp_task, agent_code, save_result=False)
 
