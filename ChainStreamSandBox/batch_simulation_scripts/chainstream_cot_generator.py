@@ -1,5 +1,5 @@
 from sandbox_interface import SandboxBatchInterface
-from AgentGenerator import CoTGenerator
+from AgentGenerator import ChainStreamCoTGenerator
 
 
 class EvalCoTGenerator(SandboxBatchInterface):
@@ -7,7 +7,7 @@ class EvalCoTGenerator(SandboxBatchInterface):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task):
-        generator = CoTGenerator()
+        generator = ChainStreamCoTGenerator()
         # TODO: fix this para with a new output description
         agent, latency, tokens = generator.generate_agent(task, task)
         return agent, latency, tokens

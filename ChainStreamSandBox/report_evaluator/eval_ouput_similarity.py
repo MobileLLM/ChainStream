@@ -10,13 +10,13 @@ class EvalOutputSimilarity(EvaluatorBase):
         self.reference_log = reference_log
         self.candidate_log = candidate_log
 
-        self.reference_reports = self.reports['reference_log']
-        self.candidate_reports = self.reports['candidate_log']
+        self.reference_reports = self.reports[reference_log]
+        self.candidate_reports = self.reports[candidate_log]
 
     def calculate_output_similarity(self, first_n: list | int | None = None):
         if first_n is None:
             first_n = [1, 3, 5]
-        if not isinstance(first_n, list) or not isinstance(first_n, int):
+        if not isinstance(first_n, list) and not isinstance(first_n, int):
             raise ValueError("first_n should be a list or an integer")
         if isinstance(first_n, int):
             first_n = [first_n]
@@ -49,101 +49,101 @@ class EvalOutputSimilarity(EvaluatorBase):
                         # "llm": {"score": 0, "output": None, "report_init_time": None},
                     }
                 }
-                reference_outputs = self.reference_reports[task][0]["output_stream_output"]
+                reference_outputs = self.reference_reports[task][0]["output_stream_items"]
 
                 for report in reports[:N]:
-                    candidate_outputs = report["output_stream_output"]
+                    candidate_outputs = report["output_stream_items"]
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
                                                     similarity_func="bleu", len_weight=True)
-                    if tmp_score > task_output_similarity["str_metric"]["len_weighted_bleu"]["score"]:
-                        task_output_similarity["str_metric"]["len_weighted_bleu"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["str_metric"]["len_weighted_bleu"]["score"]:
+                        task_output_similarity["str_metric"]["len_weighted_bleu"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["len_weighted_bleu"]["output"] = candidate_outputs
                         task_output_similarity["str_metric"]["len_weighted_bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
                                                     similarity_func="ed", len_weight=True)
-                    if tmp_score > task_output_similarity["str_metric"]["len_weighted_ed"]["score"]:
-                        task_output_similarity["str_metric"]["len_weighted_ed"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["str_metric"]["len_weighted_ed"]["score"]:
+                        task_output_similarity["str_metric"]["len_weighted_ed"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["len_weighted_ed"]["output"] = candidate_outputs
                         task_output_similarity["str_metric"]["len_weighted_ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str", similarity_func="bleu", len_weight=False)
-                    if tmp_score > task_output_similarity["str_metric"]["str_metric"]["score"]:
-                        task_output_similarity["str_metric"]["str_metric"]["score"] = tmp_score
-                        task_output_similarity["str_metric"]["str_metric"]["output"] = candidate_outputs
-                        task_output_similarity["str_metric"]["str_metric"]["report_init_time"] = report['sandbox_info'][
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str", similarity_func="bleu", len_weight=False)
+                    if avg_stream_score > task_output_similarity["str_metric"]["bleu"]["score"]:
+                        task_output_similarity["str_metric"]["bleu"]["score"] = avg_stream_score
+                        task_output_similarity["str_metric"]["bleu"]["output"] = candidate_outputs
+                        task_output_similarity["str_metric"]["bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str", similarity_func="ed", len_weight=False)
-                    if tmp_score > task_output_similarity["str_metric"]["ed"]["score"]:
-                        task_output_similarity["str_metric"]["ed"]["score"] = tmp_score
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str", similarity_func="ed", len_weight=False)
+                    if avg_stream_score > task_output_similarity["str_metric"]["ed"]["score"]:
+                        task_output_similarity["str_metric"]["ed"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["ed"]["output"] = candidate_outputs
                         task_output_similarity["str_metric"]["ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="bleu", hard_fields=True, len_weight=True)
-                    if tmp_score > task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["score"]:
-                        task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["score"]:
+                        task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["output"] = candidate_outputs
                         task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="ed", hard_fields=True, len_weight=True)
-                    if tmp_score > task_output_similarity["hard_list_metric"]["len_weighted_ed"]["score"]:
-                        task_output_similarity["hard_list_metric"]["len_weighted_ed"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["hard_list_metric"]["len_weighted_ed"]["score"]:
+                        task_output_similarity["hard_list_metric"]["len_weighted_ed"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["len_weighted_ed"]["output"] = candidate_outputs
                         task_output_similarity["hard_list_metric"]["len_weighted_ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="bleu", hard_fields=True, len_weight=False)
-                    if tmp_score > task_output_similarity["hard_list_metric"]["bleu"]["score"]:
-                        task_output_similarity["hard_list_metric"]["bleu"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["hard_list_metric"]["bleu"]["score"]:
+                        task_output_similarity["hard_list_metric"]["bleu"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["bleu"]["output"] = candidate_outputs
                         task_output_similarity["hard_list_metric"]["bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="ed", hard_fields=True, len_weight=False)
-                    if tmp_score > task_output_similarity["hard_list_metric"]["ed"]["score"]:
-                        task_output_similarity["hard_list_metric"]["ed"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["hard_list_metric"]["ed"]["score"]:
+                        task_output_similarity["hard_list_metric"]["ed"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["ed"]["output"] = candidate_outputs
                         task_output_similarity["hard_list_metric"]["ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="bleu", hard_fields=False, len_weight=True)
-                    if tmp_score > task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["score"]:
-                        task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["score"]:
+                        task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["output"] = candidate_outputs
                         task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="ed", hard_fields=False, len_weight=True)
-                    if tmp_score > task_output_similarity["soft_list_metric"]["len_weighted_ed"]["score"]:
-                        task_output_similarity["soft_list_metric"]["len_weighted_ed"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["soft_list_metric"]["len_weighted_ed"]["score"]:
+                        task_output_similarity["soft_list_metric"]["len_weighted_ed"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["len_weighted_ed"]["output"] = candidate_outputs
                         task_output_similarity["soft_list_metric"]["len_weighted_ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="bleu", hard_fields=False, len_weight=False)
-                    if tmp_score > task_output_similarity["soft_list_metric"]["bleu"]["score"]:
-                        task_output_similarity["soft_list_metric"]["bleu"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["soft_list_metric"]["bleu"]["score"]:
+                        task_output_similarity["soft_list_metric"]["bleu"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["bleu"]["output"] = candidate_outputs
                         task_output_similarity["soft_list_metric"]["bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    tmp_score = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
                                                     similarity_func="ed", hard_fields=False, len_weight=False)
-                    if tmp_score > task_output_similarity["soft_list_metric"]["ed"]["score"]:
-                        task_output_similarity["soft_list_metric"]["ed"]["score"] = tmp_score
+                    if avg_stream_score > task_output_similarity["soft_list_metric"]["ed"]["score"]:
+                        task_output_similarity["soft_list_metric"]["ed"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["ed"]["output"] = candidate_outputs
                         task_output_similarity["soft_list_metric"]["ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
@@ -199,7 +199,7 @@ class EvalOutputSimilarity(EvaluatorBase):
 
 
 if __name__ == '__main__':
-    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\agent_by_human_new'
-    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\scripts\result\result-new'
+    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\test\test_log.json'
+    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\test\test_log.json'
     evaluator_output = EvalOutputSimilarity(agent_by_human_path, result_folder_path)
     evaluator_output.calculate_output_similarity()

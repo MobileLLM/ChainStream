@@ -74,7 +74,7 @@ def cal_item_similarity(dict1, dict2, fields, similarity_func=None, hard_fields=
 
 
 def cal_list_similarity(list1, list2, fields, list_mode=None, similarity_func=None, hard_fields=False):
-    if list_mode == "dict":
+    if list_mode == "list":
         len1, len2 = len(list1), len(list2)
         dp = [[0] * (len2 + 1) for _ in range(len1 + 1)]
 
@@ -110,8 +110,9 @@ def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, simi
         output2 = stream_list2.get(stream_name, None)
         if output2 is None:
             continue
-        fields = output1[0].keys()
-        tmp_score = cal_list_similarity(output1, output2, fields, list_mode=list_mode, similarity_func=similarity_func,
+        print(output1)
+        fields = output1['data'][0].keys()
+        tmp_score = cal_list_similarity(output1['data'], output2['data'], fields, list_mode=list_mode, similarity_func=similarity_func,
                                         hard_fields=hard_fields)
         stream_similarity[stream_name] = tmp_score
         total_score += tmp_score
