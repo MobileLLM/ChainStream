@@ -19,8 +19,8 @@ class LangChainSandbox(BatchSandbox):
 
         try:
             env_vars = {
-                "OPENAI_API_KEY": "your-openai-api-key",
-                "OPENAI_API_BASE": "https://api.openai.com/v1"
+                "OPENAI_API_KEY": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9",
+                "OPENAI_API_BASE": "https://api.openai-proxy.org/v1"
             }
 
             os.environ.update(env_vars)
@@ -33,25 +33,80 @@ class LangChainSandbox(BatchSandbox):
         return output_dict
 
 
-if __name__ == "__main__":
-    from ChainStreamSandBox.tasks import ALL_TASKS
+def tmp_func():
+    import os
+    from langchain.llms import OpenAI
 
-    Config = ALL_TASKS['EmailTask1']
-
-    agent_file = '''
-def process_data(input_dict):
-    import tensorflow
-    print(input_dict)
-    output_dict = {
-        "summary_by_sender" : input_dict["all_email"]
+    env_vars = {
+        "OPENAI_API_KEY": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9",
+        "OPENAI_BASE_URL": "https://api.openai-proxy.org/v1"
     }
-    return output_dict
-    '''
-    config = Config()
-    oj = LangChainSandbox(config, agent_file, save_result=True, only_init_agent=False)
 
-    res = oj.start_test_agent(return_report_path=True)
-    print(res)
+    os.environ.update(env_vars)
+
+    openai_base_url = os.environ.get('OPENAI_BASE_URL')
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+    print(openai_base_url)
+    print(openai_api_key)
+
+    def process_data(input_streams: dict[str, list]):
+        llm = OpenAI(base_url=openai_base_url, api_key=openai_api_key, model_name="gpt-4")
+
+        target_streams = {
+            'all_health': [],
+            'remind_check': []
+        }
+
+        health_data = input_streams.get('health_sensor_data', [])
+
+        for data in health_data:
+            blood_sugar = data.get('BS')
+            target_streams['all_health'].append({'BS': blood_sugar})
+
+            if blood_sugar > 8.4:
+                target_streams['remind_check'].append({
+                    'Blood_sugar': blood_sugar,
+                    'reminder': "High blood sugar！You'd better go to the hospital to check your body!"
+                })
+
+        return target_streams
+
+    # Example input
+    input_streams = {
+        'health_sensor_data': [
+            {'BS': 7.5},
+            {'BS': 8.5},
+            {'BS': 9.0},
+            {'BS': 5.6}
+        ]
+    }
+
+    # Process data
+    processed_streams = process_data(input_streams)
+    print(processed_streams)
+
+
+if __name__ == "__main__":
+    #     from ChainStreamSandBox.tasks import ALL_TASKS
+    #
+    #     Config = ALL_TASKS['EmailTask1']
+    #
+    #     agent_file = '''
+    # def process_data(input_dict):
+    #     import tensorflow
+    #     print(input_dict)
+    #     output_dict = {
+    #         "summary_by_sender" : input_dict["all_email"]
+    #     }
+    #     return output_dict
+    #     '''
+    #     config = Config()
+    #     oj = LangChainSandbox(config, agent_file, save_result=True, only_init_agent=False)
+    #
+    #     res = oj.start_test_agent(return_report_path=True)
+    #     print(res)
+
+    tmp_func()
 
     # if res['start_agent'] != "[OK]":
     #     print("\n\nError while starting agent:", res['start_agent']['error_message'])

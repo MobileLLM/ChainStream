@@ -16,8 +16,8 @@ class NativePythonSandbox(BatchSandbox):
 
         try:
             env_vars = {
-                "OPENAI_API_KEY": "your-openai-api-key",
-                "OPENAI_API_BASE": "https://api.openai.com/v1"
+                "OPENAI_API_KEY": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9",
+                "OPENAI_BASE_URL": "https://api.openai-proxy.org/v1"
             }
 
             os.environ.update(env_vars)

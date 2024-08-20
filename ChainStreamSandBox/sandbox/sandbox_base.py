@@ -270,10 +270,10 @@ class TmpInputRecordAgent(Agent):
 
     def start(self):
         def get_func(tmp_stream_id):
-            tmp_stream = self.stream_list[tmp_stream_id]
+            tmp_stream_record = self.input_records[tmp_stream_id]
 
             def record_input_func(item):
-                tmp_stream.append(item)
+                tmp_stream_record.append(item)
 
             return record_input_func
 

@@ -1,10 +1,12 @@
 from sandbox_interface import SandboxBatchInterface
 from AgentGenerator import NativePythonZeroShotGenerator
 from ChainStreamSandBox.tasks import get_task_batch
+import os
+
 
 class NativePythonBatchZeroshotEvaluator(SandboxBatchInterface):
-    def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
-        super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
+    def __init__(self, task_list, repeat_time=1, result_path='./result', task_log_path=None):
+        super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="native_python")
 
     def get_agent_for_specific_task(self, task):
         generator = NativePythonZeroShotGenerator()
