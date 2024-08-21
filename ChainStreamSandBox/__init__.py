@@ -1,6 +1,6 @@
 from ChainStreamSandBox.sandbox.chainstream_sandbox import ChainStreamSandBox
-from ChainStreamSandBox.sandbox.langchain_sandbox import LangChainSandbox
-from ChainStreamSandBox.sandbox.native_python_sandbox import NativePythonSandbox
+from ChainStreamSandBox.sandbox.batch_langchain_sandbox import LangChainSandbox
+from ChainStreamSandBox.sandbox.batch_native_python_sandbox import NativePythonSandbox
 
 
 def get_sandbox_class(sandbox_type):

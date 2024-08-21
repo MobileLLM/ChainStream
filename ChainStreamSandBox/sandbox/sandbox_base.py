@@ -14,7 +14,7 @@ from chainstream.sandbox_recorder import start_sandbox_recording
 if __name__ == '__main__':
     from utils import extract_imports
 else:
-    from .utils import extract_imports
+    from utils import extract_imports
 
 
 class SandboxError(Exception):

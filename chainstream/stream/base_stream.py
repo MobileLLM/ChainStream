@@ -8,6 +8,7 @@ import inspect
 from threading import Event
 from ..context import Buffer
 from ..function import AgentFunction, BatchFunction
+from .stream_interface import StreamInOutInterface
 import os
 from typing import Callable
 import inspect
@@ -114,12 +115,19 @@ class BaseStream(StreamInterface):
         self.queue = queue.Queue()
         self.thread = threading.Thread(target=self.process_item)
 
+        self.recv_queue_list = []
+
         self.is_running = False
 
         self.recorder = StreamRecorder(self.metaData, self.queue)
 
         from chainstream.runtime import cs_server_core
         cs_server_core.register_stream(self)
+
+    def create_stream_interface(self):
+        new_recv_queue = queue.Queue()
+        self.recv_queue_list.append(new_recv_queue)
+        return StreamInOutInterface(new_recv_queue, self)
 
     def for_each(self, agent, listener_func, to_stream=None):
         listener_func = AgentFunction(agent, listener_func)
@@ -374,6 +382,7 @@ class BaseStream(StreamInterface):
     def add_item(self, agent, item):
         self.logger.debug(f'stream {self.metaData.stream_id} send an item type: {type(item)}')
         self.queue.put(item)
+        # print(f"[STREAM] add item stream {self.metaData.stream_id} add item: {item}")
         call_from = inspect.stack()[2]
         # for i in call_from:
         #     print(i)
@@ -414,7 +423,8 @@ class BaseStream(StreamInterface):
             # print(call_from.filename)
             tmp_caller_instance = current_frame.f_back.f_back.f_back.f_locals.get('self', None)
             # print("tmp_caller_instance", tmp_caller_instance)
-            if tmp_caller_instance.__class__.__name__ in ["ChainStreamSandBox", "NativePythonSandbox", "LangChainSandbox"]:
+            if tmp_caller_instance.__class__.__name__ in ["ChainStreamSandBox", "NativePythonSandbox",
+                                                          "LangChainSandbox", "StreamInterfaceSandBox"]:
                 func_id = "__[sandbox]__"
             else:
                 func_id = tmp_caller_instance.func_id
@@ -438,11 +448,16 @@ class BaseStream(StreamInterface):
     def process_item(self):
         while True:
             item = self.queue.get()
+            # print(f"[STREAM] process item stream {self.metaData.stream_id}] process item: {item}]")
             if item is self.STOP_SIGNAL:
                 break
             if item is not None:
                 self.logger.debug(f'stream {self.metaData.stream_id} process an item type: {type(item)}')
                 self.is_clear.clear()
+                for recv_queue in self.recv_queue_list:
+                    recv_queue.put(item)
+                    self.recorder.record_send_item("fake_agent_for_stream_interface",
+                                                   "fake_listener_func_for_stream_interface")
                 for agent_, listener_func_ in self.listeners:
                     listener_func_(item)
                     self.recorder.record_send_item(agent_, listener_func_.func_id)

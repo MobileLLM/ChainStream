@@ -106,7 +106,7 @@ class StreamManager(StreamAnalyzer):
             if all(stream.is_clear.is_set() for stream in self.streams.values()):
                 # print("All streams are clear")
                 return True
-            time.sleep(1)
+            time.sleep(5)
 
     def shutdown(self):
 

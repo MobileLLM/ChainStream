@@ -37,7 +37,6 @@ if __name__ == "__main__":
 
     agent_file = '''
 def process_data(input_dict):
-    import tensorflow
     print(input_dict)
     output_dict = {
         "summary_by_sender" : input_dict["all_email"]

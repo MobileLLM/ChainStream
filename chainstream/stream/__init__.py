@@ -1,6 +1,5 @@
 import inspect
 
-
 available_streams = {}
 
 stream_manager = None
@@ -16,6 +15,28 @@ def reset_stream():
 
     available_streams = {}
     stream_manager = None
+
+
+def get_stream_interface(stream_id):
+    global available_streams
+    global stream_manager
+
+    if stream_id is None:
+        raise ValueError("stream_id should not be None")
+    if not isinstance(stream_id, str):
+        raise ValueError(f"stream_id should be a string, not {type(stream_id)}")
+
+    if stream_manager is not None:
+        try:
+            stream = stream_manager.get_stream(stream_id)
+        except KeyError:
+            raise KeyError(f"stream_id {stream_id} not found in stream_manager")
+        except Exception as e:
+            raise e
+
+        stream_interface = stream.create_stream_interface()
+
+        return stream_interface
 
 
 def get_stream(agent, stream_id):

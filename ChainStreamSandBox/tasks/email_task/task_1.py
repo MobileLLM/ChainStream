@@ -92,6 +92,7 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         for email in self.email_data:
             email['sender'] = email['From']
             sent_emails['all_email'].append(email)
+            # print("[TASK] task sent email to agent:", email)
             self.input_email_stream.add_item(email)
         return sent_emails
 
