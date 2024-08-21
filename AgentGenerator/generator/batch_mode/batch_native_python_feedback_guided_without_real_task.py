@@ -3,13 +3,13 @@ from AgentGenerator.io_model import StreamListDescription
 from AgentGenerator.prompt import get_base_prompt
 
 
-class NativePythonFeedbackGuidedGenerator(FeedbackGuidedAgentGeneratorWithoutTask):
+class NativePythonFeedbackGuidedGeneratorWithoutRealTask(FeedbackGuidedAgentGeneratorWithoutTask):
     def __init__(self, max_loop=10, sandbox_type="native_python"):
         super().__init__(max_loop=max_loop, sandbox_type=sandbox_type)
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(output_stream, input_stream,
-                               framework_name="native_python",
+                               framework_name="batch_native_python",
                                example_number=0,
                                mission_name="batch",
                                command_name="feedback_guided_only_start",
@@ -55,7 +55,7 @@ class NativePythonFeedbackGuidedGenerator(FeedbackGuidedAgentGeneratorWithoutTas
 
 
 if __name__ == '__main__':
-    generator = NativePythonFeedbackGuidedGenerator()
+    generator = NativePythonFeedbackGuidedGeneratorWithoutRealTask()
     agent_code, latency, tokens = generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

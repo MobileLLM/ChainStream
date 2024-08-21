@@ -10,7 +10,7 @@ class LangChainZeroshotGenerator(DirectAgentGenerator):
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(input_stream, output_stream,
-                               framework_name='langchain',
+                               framework_name='batch_langchain',
                                example_number=0,
                                mission_name='batch',
                                command_name='few_shot',

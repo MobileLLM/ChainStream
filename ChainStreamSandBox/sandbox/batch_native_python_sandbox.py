@@ -5,7 +5,7 @@ else:
 import os
 
 
-class NativePythonSandbox(BatchSandbox):
+class NativePythonBatchSandbox(BatchSandbox):
     def __init__(self, task, agent_code, save_result=True, save_path=os.path.join(os.path.dirname(__file__), 'results'),
                  raise_exception=True, only_init_agent=False):
         super().__init__(task, agent_code, save_result=save_result, save_path=save_path,
@@ -44,7 +44,7 @@ def process_data(input_dict):
     return output_dict
     '''
     config = Config()
-    oj = NativePythonSandbox(config, agent_file, save_result=True, only_init_agent=False)
+    oj = NativePythonBatchSandbox(config, agent_file, save_result=True, only_init_agent=False)
 
     res = oj.start_test_agent(return_report_path=True)
     print(res)

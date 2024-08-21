@@ -10,7 +10,7 @@ class NativePythonZeroShotGenerator(DirectAgentGenerator):
 
     # def generate_agent_impl(self, chainstream_doc: str, input_and_output_prompt: str) -> str:
     #     input_and_output_prompt = "\n".join(input_and_output_prompt.split("\n")[:-3])
-    #     prompt = f"{NATIVE_PYTHON_CHAINSTREAM_ENGLISH_PROMPT}\n{input_and_output_prompt}\n\nCode:\n"
+    #     prompt = f"{BATCH_NATIVE_PYTHON_ENGLISH_PROMPT}\n{input_and_output_prompt}\n\nCode:\n"
     #
     #     print(f"Prompt: {prompt}")
     #
@@ -24,7 +24,7 @@ class NativePythonZeroShotGenerator(DirectAgentGenerator):
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(output_stream, input_stream,
-                               framework_name="native_python",
+                               framework_name="batch_native_python",
                                example_number=0,
                                mission_name="batch",
                                command_name="few_shot",
