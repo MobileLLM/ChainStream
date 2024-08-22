@@ -124,6 +124,7 @@ class BaseStream(StreamInterface):
         from chainstream.runtime import cs_server_core
         cs_server_core.register_stream(self)
 
+
     def create_stream_interface(self):
         new_recv_queue = queue.Queue()
         self.recv_queue_list.append(new_recv_queue)

@@ -21,7 +21,7 @@ def reset_chainstream_server():
     del cs_server, cs_server_core
     cs_server = ChainStreamServer()
     cs_server_core = cs_server.get_chainstream_core()
-    print('ChainStream server reset')
+    # print('ChainStream server reset')
 
 
 def platform():

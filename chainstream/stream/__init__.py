@@ -127,7 +127,7 @@ def create_stream(agent, stream_id, type=None):
             try:
                 stream = BaseStream(stream_id, create_by_agent_file=create_by_agent_file)
             except KeyError as e:
-                raise KeyError(e)
+                raise KeyError(f"Failed to create stream with id {stream_id}: {str(e)}")
             except Exception as e:
                 raise e
         else:

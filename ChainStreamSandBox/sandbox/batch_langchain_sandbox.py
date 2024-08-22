@@ -19,8 +19,8 @@ class LangChainBatchSandbox(BatchSandbox):
 
         try:
             env_vars = {
-                "OPENAI_API_KEY": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9",
-                "OPENAI_API_BASE": "https://api.openai-proxy.org/v1"
+                    "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
+                    "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
             }
 
             os.environ.update(env_vars)
@@ -38,8 +38,8 @@ def tmp_func():
     from langchain.llms import OpenAI
 
     env_vars = {
-        "OPENAI_API_KEY": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9",
-        "OPENAI_BASE_URL": "https://api.openai-proxy.org/v1"
+            "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
+            "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
     }
 
     os.environ.update(env_vars)

@@ -6,6 +6,7 @@ import os
 import json
 import tqdm
 import inspect
+from typing_extensions import Literal
 
 
 class BatchInterfaceBase:
@@ -22,7 +23,7 @@ class BatchInterfaceBase:
             self.run_times = 1
 
             tmp_name = input("给这次的log路径取名，尽量是英文:")
-            self.report_path_base = os.path.join(result_path, self.start_time+"_"+tmp_name)
+            self.report_path_base = os.path.join(result_path, self.start_time + "_" + tmp_name)
             if not os.path.exists(self.report_path_base):
                 os.makedirs(self.report_path_base)
 
@@ -92,10 +93,12 @@ class BatchInterfaceBase:
                                 success_times += 1
                         # if success_times >= len(self.test_log['task_reports'][task_name]):
                         if success_times > i:
+                            pbar.update(1)
                             continue
                     pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
                     self._one_task_step(task)
                     pbar.update(1)
+                    self._save_log()
 
         except Exception as e:
             print(f"ReRun Error: {e}")
@@ -120,7 +123,15 @@ class BatchInterfaceBase:
             "end_time": None,
             "error_msg": None,
         }
-        agent_code, latency, tokens = self.get_agent_for_specific_task(task)
+        loop_count, history = None, None
+        tmp_return = self.get_agent_for_specific_task(task)
+        if len(tmp_return) == 3:
+            agent_code, latency, tokens = tmp_return
+        elif len(tmp_return) == 5:
+            agent_code, latency, tokens, loop_count, history = tmp_return
+        else:
+            raise ValueError(f"The return of get_agent_for_specific_task() should be a tuple of (agent_code, latency, tokens) or (agent_code, latency, tokens, _), but got {tmp_return}")
+
         try:
             if not os.path.exists(os.path.join(self.report_path_base, "task_reports")):
                 os.makedirs(os.path.join(self.report_path_base, "task_reports"))
@@ -137,6 +148,8 @@ class BatchInterfaceBase:
             tmp_task_log['error_msg'] = "success"
         finally:
             tmp_task_log['latency'] = latency
+            tmp_task_log['loop_count'] = loop_count
+            tmp_task_log['history'] = history
             tmp_task_log['tokens'] = {
                 "prompt_tokens": tokens[0],
                 "completion_tokens": tokens[1],
@@ -149,8 +162,12 @@ class BatchInterfaceBase:
             "Please implement get_agent_for_specific_task() method in your BatchInterfaceBase subclass")
 
 
+SandboxType = Literal["chainstream", "native_python_batch", "langchain_batch", "stream_interface"]
+
+
 class SandboxBatchInterface(BatchInterfaceBase):
-    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None, sandbox_type=None):
+    def __init__(self, task_list, repeat_time=5, result_path='result', task_log_path=None,
+                 sandbox_type: SandboxType = None):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type)
 
     def start(self):

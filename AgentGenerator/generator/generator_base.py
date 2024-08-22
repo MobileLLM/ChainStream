@@ -27,6 +27,11 @@ class AgentGeneratorBase:
         self.llm = TextGPTModel(model_name, timeout=60, retry=8)
         self.task = None
 
+        self.verbose = False
+
+    def set_verbose(self, verbose):
+        self.verbose = verbose
+
     def generate_agent(self, output_description, input_description=None, use_selector=False, task=None) -> (str, int):
         self.task = task
         self.output_description = output_description
@@ -55,6 +60,8 @@ class AgentGeneratorBase:
         code = self.generate_agent_impl(output_stream, input_stream)
         end_time = datetime.datetime.now()
 
+        if hasattr(self, "loop_count") and hasattr(self, "history"):
+            return code, (end_time - start_time).total_seconds(), self.get_llm_token_count(), self.loop_count, self.history
         return code, (end_time - start_time).total_seconds(), self.get_llm_token_count()
 
     # def generate_agent_impl(self, input_description: [StreamListDescription, None], output_description:
@@ -91,7 +98,8 @@ class DirectAgentGenerator(AgentGeneratorBase):
     def generate_agent_impl(self, output_stream, input_stream) -> str:
         prompt = self.get_base_prompt(output_stream, input_stream)
 
-        print(f"Prompt: {prompt}")
+        if self.verbose:
+            print(f"Prompt: {prompt}")
 
         prompt = [
             {
@@ -101,7 +109,9 @@ class DirectAgentGenerator(AgentGeneratorBase):
         ]
 
         response = self.llm.query(prompt)
-        print(f"Response: {response}", end="\n****************\n")
+
+        if self.verbose:
+            print(f"Response: {response}", end="\n****************\n")
 
         return self.process_response(response)
 
@@ -295,14 +305,18 @@ class FeedbackGuidedAgentGeneratorWithoutTask(AgentGeneratorBase):
 
 
 class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
-    def __init__(self, runtime=None, max_loop=20, sandbox_type="chainstream"):
+    def __init__(self, runtime=None, max_loop=20, sandbox_type="chainstream", only_print_last=False):
         super().__init__(runtime)
         self.sandbox_type = sandbox_type
         self.sandbox_class = get_sandbox_class(sandbox_type)
 
         self.max_loop = max_loop
 
+        self.loop_count = 0
+
         self.history = None
+
+        self.only_print_last = only_print_last
 
     def _query_llm(self, prompt, stop=None):
 
@@ -317,8 +331,13 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
 
         # os.system('clear')
         # print("\033c", end="")
-        print(
-            f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
+
+        if self.verbose:
+            if self.only_print_last:
+                print(f"Loop: {self.loop_count}")
+            else:
+                print(
+                    f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
         return response
 
     def step(self, action) -> (str, bool):
@@ -335,6 +354,7 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
 
         for i in range(self.max_loop):
             n_calls += 1
+            self.loop_count += 1
             thought_code = self._query_llm(all_prompt + f"Thought {i}:", stop=[f"\nObservation {i}:", f"\nFinish."])
             if f"\nObservation {i}:" in thought_code:
                 thought_code = thought_code.strip().split(f"\nObservation {i}:")[0].strip()
@@ -361,6 +381,9 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
                 thought = thought_code.strip().split('\n')[0]
                 code = self._query_llm(all_prompt + f"Thought {i}: {thought}\nCode {i}:", stop=[f"\n"]).strip()
 
+            if code.startswith("```python") and code.endswith("```"):
+                code = code[len("```python"):-len("```")]
+
             last_agent_code = code
 
             error_prompt, done = self.step(code)
@@ -377,6 +400,13 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
                 break
         if not done:
             error_prompt, done = self.step("Finish.")
+
+        last_agent_code = last_agent_code.strip()
+        if last_agent_code.startswith("```python") and last_agent_code.endswith("```"):
+            last_agent_code = last_agent_code[len("```python"):-len("```")].strip()
+
+        if self.only_print_last and self.verbose:
+            print(self.history.split("Thought 0:")[-1])
 
         return last_agent_code
 
