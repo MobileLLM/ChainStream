@@ -22,9 +22,21 @@ class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGenerator
 
     def process_sandbox_feedback(self, sandbox_feedback, has_input=None):
         if sandbox_feedback['start_agent'] != "[OK]":
-            return f"After executing the code, the sandbox reported: {sandbox_feedback['start_agent']}"
+            feedback = f"After executing the code, the sandbox reported: {sandbox_feedback['start_agent']}."
+            if "stdout" in sandbox_feedback and "starting" in sandbox_feedback["stdout"] and sandbox_feedback["stdout"]["starting"] is not None:
+                if sandbox_feedback["stdout"]["starting"] in [" ", "\n", ""]:
+                    feedback += f" The stdout is empty."
+                else:
+                    feedback += f" And the stdout is: {sandbox_feedback['stdout']['starting']}"
+            return feedback
         else:
-            return f"Your code can run without any error. The output of the code is: {sandbox_feedback['output_stream_items']}"
+            feedback = f"Your code can run without any error. The output of the code is: {sandbox_feedback['output_stream_items']}"
+            if "stdout" in sandbox_feedback and "running" in sandbox_feedback["stdout"] and sandbox_feedback["stdout"]["running"] is not None:
+                if sandbox_feedback["stdout"]["running"] in [" ", "\n", ""]:
+                    feedback += f" The stdout is empty."
+                else:
+                    feedback += f" And the stdout is: {sandbox_feedback['stdout']['running']}"
+            return feedback
 
     def step(self, code) -> (str, bool):
         done = False
@@ -42,14 +54,16 @@ class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGenerator
 
 
 if __name__ == '__main__':
-    from ChainStreamSandBox.tasks.email_task.task_1 import EmailTask1
+    from ChainStreamSandBox.tasks import ALL_TASKS
     generator = ChainstreamFeedbackGuidedGeneratorForRealTask()
-    task =EmailTask1()
-    agent_code, latency, tokens = generator.generate_agent(
+    task = ALL_TASKS["ArxivTask3"]()
+    haha = generator.generate_agent(
         task.output_stream_description,
         input_description=task.input_stream_description,
         task=task,
     )
+
+    agent_code, latency, tokens = haha[0], haha[1], haha[2]
 
     print(agent_code)
     print(latency)

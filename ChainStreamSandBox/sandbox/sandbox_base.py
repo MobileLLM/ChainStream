@@ -11,6 +11,9 @@ from chainstream.agent.base_agent import Agent
 from chainstream.stream import get_stream
 from chainstream.sandbox_recorder import start_sandbox_recording
 
+import io
+import sys
+
 if __name__ == '__main__':
     from utils import extract_imports
 else:
@@ -152,6 +155,7 @@ class SandboxBase:
         return None
 
     def _start_agent(self):
+        # starting_captured_output = None
         try:
             # namespace = {}
             try:
@@ -173,7 +177,19 @@ class SandboxBase:
             except Exception as e:
                 raise ExecError(traceback.format_exc())
 
-            self.import_and_init(module)
+            original_stdout = sys.stdout
+            global_output_buffer = io.StringIO()
+            try:
+                sys.stdout = global_output_buffer
+                self.import_and_init(module)
+                tmp_starting_captured_output = global_output_buffer.getvalue()
+            except Exception as e:
+                raise InitializeError(traceback.format_exc())
+            else:
+                self.result["stdout"] = {"starting": tmp_starting_captured_output}
+            finally:
+                sys.stdout = original_stdout
+                global_output_buffer.close()
 
         except Exception as e:
             self.result['start_agent'] = {
@@ -202,8 +218,15 @@ class SandboxBase:
                 raise StartError(res)
 
             if not self.only_init_agent:
+                original_stdout = sys.stdout
+                global_output_buffer = io.StringIO()
                 try:
+                    sys.stdout = global_output_buffer
+
                     sent_item = self.start_task()
+
+                    running_captured_output = global_output_buffer.getvalue()
+
                 except Exception as e:
                     self.result['start_task'] = {
                         "error_message": "[ERROR]" + str(e),
@@ -213,10 +236,16 @@ class SandboxBase:
                     if self.raise_exception:
                         raise RunningError(traceback.format_exc())
                 else:
+                    self.result["stdout"]["running"] = running_captured_output
+
                     self.result['start_task'] = "[OK]"
                     self.result["input_stream_items"] = {}
                     for stream_id, data_items in sent_item.items():
                         self.result["input_stream_items"][stream_id] = self._process_item_list_to_str(data_items)
+                finally:
+                    sys.stdout = original_stdout
+                    global_output_buffer.close()
+
                 # we delete this line because we want decouple the evaluation process from the sandbox. In sandbox,
                 # we only want to init the task environment and start the agent, then start the stream and record all
                 # output into a file. self.task.evaluate_task(self.runtime)

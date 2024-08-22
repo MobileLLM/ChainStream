@@ -27,7 +27,7 @@ class AgentGeneratorBase:
         self.llm = TextGPTModel(model_name, timeout=60, retry=8)
         self.task = None
 
-        self.verbose = False
+        self.verbose = True
 
     def set_verbose(self, verbose):
         self.verbose = verbose
@@ -350,7 +350,7 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
         n_badcalls = 0
         done = False
 
-        last_agent_code = None
+        self.last_agent_code = None
 
         for i in range(self.max_loop):
             n_calls += 1
@@ -364,7 +364,7 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
                     tmp_thought_code = thought_code.strip()[:-len(f"Finish.")]
                     if f"\nCode {i}:" in tmp_thought_code:
                         thought, code = tmp_thought_code.strip().split(f"\nCode {i}:")
-                        last_agent_code = code
+                        self.last_agent_code = code
                     all_prompt += thought_code.strip()
                     self.history = all_prompt
                     done = True
@@ -384,7 +384,7 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
             if code.startswith("```python") and code.endswith("```"):
                 code = code[len("```python"):-len("```")]
 
-            last_agent_code = code
+            self.last_agent_code = code
 
             error_prompt, done = self.step(code)
 
@@ -401,14 +401,14 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
         if not done:
             error_prompt, done = self.step("Finish.")
 
-        last_agent_code = last_agent_code.strip()
-        if last_agent_code.startswith("```python") and last_agent_code.endswith("```"):
-            last_agent_code = last_agent_code[len("```python"):-len("```")].strip()
+        self.last_agent_code = self.last_agent_code.strip()
+        if self.last_agent_code.startswith("```python") and self.last_agent_code.endswith("```"):
+            self.last_agent_code = self.last_agent_code[len("```python"):-len("```")].strip()
 
         if self.only_print_last and self.verbose:
             print(self.history.split("Thought 0:")[-1])
 
-        return last_agent_code
+        return self.last_agent_code
 
     def sandbox_exec(self, agent_code, stream_items=None, use_real_task=False):
         if stream_items is None and use_real_task is False:
