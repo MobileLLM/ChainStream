@@ -24,7 +24,7 @@ class AgentGeneratorBase:
         self.input_description = None
 
         self.model_name = model_name
-        self.llm = TextGPTModel(model_name)
+        self.llm = TextGPTModel(model_name, timeout=60, retry=8)
         self.task = None
 
     def generate_agent(self, output_description, input_description=None, use_selector=False, task=None) -> (str, int):
