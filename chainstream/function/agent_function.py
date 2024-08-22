@@ -44,7 +44,7 @@ class AgentFunction:
                 "output_stream_id": self.output_stream.stream_id if self.output_stream is not None else None,
             }
             cs_server_core.record_error(ErrorType.FUNCTION_ERROR.value, error_message=error_msg, error_traceback=traceback.format_exc())
-            raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
+            # raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
         if self.output_stream is not None and result is not None:
             self.output_stream.add_item(result)
 

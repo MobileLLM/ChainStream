@@ -9,7 +9,7 @@ class EvalFeedbackGuidedGeneratorForRealTask(SandboxBatchInterface):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task, verbose=True, only_print_last=False):
-        generator = ChainstreamFeedbackGuidedGeneratorForRealTask(max_loop=15, only_print_last=only_print_last)
+        generator = ChainstreamFeedbackGuidedGeneratorForRealTask(max_loop=10, only_print_last=only_print_last)
         generator.set_verbose(verbose)
         # TODO: fix this para with a new output description
         agent, latency, tokens, loop_count, history = generator.generate_agent(task.output_stream_description, task.input_stream_description,
