@@ -57,7 +57,8 @@ def cal_item_similarity(dict1, dict2, fields, similarity_func=None, hard_fields=
     final_score = 0.0
     for field in fields:
         if field not in dict1:
-            raise ValueError(f"Field {field} not in dict")
+            # raise ValueError(f"Field {field} not in dict")
+            continue
         if field not in dict2:
             if hard_fields:
                 return 0
@@ -111,12 +112,13 @@ def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, simi
         if output2 is None:
             continue
         print(output1)
-        fields = output1['data'][0].keys()
-        tmp_score = cal_list_similarity(output1['data'], output2['data'], fields, list_mode=list_mode, similarity_func=similarity_func,
-                                        hard_fields=hard_fields)
-        stream_similarity[stream_name] = tmp_score
-        total_score += tmp_score
-        len_weight_total_score += tmp_score * len(output1)
+        if 'data' in output1 and len(output1['data']) > 0:
+            fields = output1['data'][0].keys()
+            tmp_score = cal_list_similarity(output1['data'], output2['data'], fields, list_mode=list_mode, similarity_func=similarity_func,
+                                            hard_fields=hard_fields)
+            stream_similarity[stream_name] = tmp_score
+            total_score += tmp_score
+            len_weight_total_score += tmp_score * len(output1)
     if not len_weight:
         avg_stream_score = total_score / len(stream_list1)
     else:

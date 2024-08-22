@@ -49,7 +49,10 @@ class EvalOutputSimilarity(EvaluatorBase):
                         # "llm": {"score": 0, "output": None, "report_init_time": None},
                     }
                 }
-                reference_outputs = self.reference_reports[task][0]["output_stream_items"]
+                if "output_stream_items" in self.reference_reports[task][0]:
+                    reference_outputs = self.reference_reports[task][0]["output_stream_items"]
+                else:
+                    continue
 
                 for report in reports[:N]:
                     candidate_outputs = report["output_stream_items"]
@@ -199,7 +202,7 @@ class EvalOutputSimilarity(EvaluatorBase):
 
 
 if __name__ == '__main__':
-    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\test\test_log.json'
-    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\test\test_log.json'
+    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-43-43_human-written\test_log.json'
+    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-43-43_human-written\test_log.json'
     evaluator_output = EvalOutputSimilarity(agent_by_human_path, result_folder_path)
     evaluator_output.calculate_output_similarity()
