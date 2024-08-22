@@ -44,12 +44,12 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def start(self):
         def detect_scenario(first_person_data):
             prompt = "Detect whether I am in a meeting,just tell me y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data["frame"]))
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
                 return first_person_data
         def analysis_topic(first_person_data):
             prompt = "Tell me what topic we are talking about based on the image."
-            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data["frame"]))
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res
             })
