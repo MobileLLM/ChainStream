@@ -101,6 +101,7 @@ class BatchInterfaceBase:
                     self._save_log()
 
         except Exception as e:
+            print(traceback.format_exc())
             print(f"ReRun Error: {e}")
         finally:
             self.test_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")

@@ -21,7 +21,7 @@ GPT_CONFIG = {
 
 
 class BaseOpenAI:
-    def __init__(self, model='gpt-4', model_type='text', temperature=0.7, verbose=True, retry=3,
+    def __init__(self, model='gpt-4o', model_type='text', temperature=0.7, verbose=True, retry=3,
                  timeout=15, identifier=""):
         self.prompt_tokens = 0
         self.completion_tokens = 0

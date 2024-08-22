@@ -21,7 +21,7 @@ GPT_CONFIG = {
 
 
 class BaseOpenAI:
-    def __init__(self, model='gpt-3.5-turbo-1106', model_type='text', temperature=0.7, verbose=True, retry=3,
+    def __init__(self, model='gpt-4o', model_type='text', temperature=0.7, verbose=True, retry=3,
                  timeout=15, identifier=""):
         self.prompt_tokens = 0
         self.completion_tokens = 0
@@ -79,7 +79,7 @@ class BaseOpenAI:
 
 
 class TextGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-3.5-turbo-1106', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
+    def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 
