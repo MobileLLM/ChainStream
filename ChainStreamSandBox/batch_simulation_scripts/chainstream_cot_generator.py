@@ -1,6 +1,6 @@
 from sandbox_interface import SandboxBatchInterface
-from AgentGenerator import ChainStreamCoTGenerator
-fixfrom ChainStreamSandBox.tasks import get_task_batch
+from AgentGenerator.generator.stream_mode.chainstream_cot_generator import ChainStreamCoTGenerator
+from ChainStreamSandBox.tasks import get_task_batch
 
 
 class EvalCoTGenerator(SandboxBatchInterface):
