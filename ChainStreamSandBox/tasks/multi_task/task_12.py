@@ -20,8 +20,8 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.adjust_light_stream = None
         self.is_reading_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=[Domain_Task_tag.Living, Domain_Task_tag.Weather],
-                                scene=Scene_Task_tag.Home, modality=[Modality_Task_tag.Text, Modality_Task_tag.Video])
+                                domain=str([Domain_Task_tag.Living, Domain_Task_tag.Weather]),
+                                scene=Scene_Task_tag.Home, modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_first_person",
             "description": "first_person perspective camera data in my study",

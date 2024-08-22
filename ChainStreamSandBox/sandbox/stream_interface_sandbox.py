@@ -1,4 +1,4 @@
-from sandbox_base import *
+from .sandbox_base import *
 import threading
 from threading import Event
 import time

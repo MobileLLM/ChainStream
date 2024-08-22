@@ -20,9 +20,9 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.car_check_stream = None
         self.is_tired_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=[Domain_Task_tag.Activity, Domain_Task_tag.Location],
+                                domain=str([Domain_Task_tag.Activity, Domain_Task_tag.Location]),
                                 scene=Scene_Task_tag.Traffic,
-                                modality=[Modality_Task_tag.Text, Modality_Task_tag.Video])
+                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "GPS data for navigation of the driver",
