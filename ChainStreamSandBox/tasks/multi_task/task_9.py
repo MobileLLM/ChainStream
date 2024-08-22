@@ -18,7 +18,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.input_weather_stream = None
         self.gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=[Domain_Task_tag.Living, Domain_Task_tag.Weather],
+                                domain=str([Domain_Task_tag.Living, Domain_Task_tag.Weather]),
                                 scene=Scene_Task_tag.Home, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",

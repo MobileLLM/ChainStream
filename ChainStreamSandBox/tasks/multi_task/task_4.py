@@ -19,7 +19,7 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.input_gps_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Work,
-                                scene=Scene_Task_tag.Office, modality=[Modality_Task_tag.Text, Modality_Task_tag.Image])
+                                scene=Scene_Task_tag.Office, modality=str([Modality_Task_tag.Text, Modality_Task_tag.Image]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps information",

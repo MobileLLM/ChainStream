@@ -74,7 +74,7 @@ class EvalCodeSimilarity(EvaluatorBase):
 
 
 if __name__ == "__main__":
-    path1 = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-19_23-15-20/test_log.json'
-    path2 = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-19_23-15-33/test_log.json'
+    path1 = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-43-43_human-written\test_log.json'
+    path2 = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-32-30_langchain-zero-shot\test_log.json'
     evaluator_code = EvalCodeSimilarity(path1, path2)
     evaluator_code.calculate_code_similarity()
