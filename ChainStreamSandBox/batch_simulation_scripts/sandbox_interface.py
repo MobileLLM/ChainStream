@@ -91,14 +91,14 @@ class BatchInterfaceBase:
                             if log['error_msg'] == "success":
                                 success_times += 1
                         # if success_times >= len(self.test_log['task_reports'][task_name]):
-                        if success_times >= self.repeat_time:
+                        if success_times > i:
                             continue
                     pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
                     self._one_task_step(task)
                     pbar.update(1)
 
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"ReRun Error: {e}")
         finally:
             self.test_log['end_time'] = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
             self._save_log()

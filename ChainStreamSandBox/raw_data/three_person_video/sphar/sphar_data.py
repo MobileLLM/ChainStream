@@ -1,4 +1,4 @@
-from ChainStreamSandBox.raw_data.three_person_video.sphar import video_list
+from ChainStreamSandBox.raw_data.three_person_video.sphar.video_list import video_list
 import os
 import PIL.Image as Image
 
@@ -6,7 +6,7 @@ import PIL.Image as Image
 class SpharData:
     def __init__(self):
         self.video_list = video_list
-        self.frame_path_base = os.path.join(os.path.dirname(__file__), "sphar", "video_frame")
+        self.frame_path_base = os.path.join(os.path.dirname(__file__), "video_frame")
 
         self.video_frame_data = []
 
