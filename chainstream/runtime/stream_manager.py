@@ -101,12 +101,19 @@ class StreamManager(StreamAnalyzer):
         return edges
 
     def wait_all_stream_clear(self):
+        from chainstream.llm import check_has_model_working
         # TODO: use threading.Event to wait for all streams to be clear
+        count = 5
         while True:
-            if all(stream.is_clear.is_set() for stream in self.streams.values()):
-                # print("All streams are clear")
-                return True
-            time.sleep(5)
+            print(f"count: {count}")
+            if all(stream.is_clear.is_set() for stream in self.streams.values()) and not check_has_model_working():
+                # print(f"coundown {count}")
+                count -= 1
+                if count == 0:
+                    return True
+            else:
+                count = 5
+            time.sleep(1)
 
     def shutdown(self):
 

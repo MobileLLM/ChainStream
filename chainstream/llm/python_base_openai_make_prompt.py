@@ -9,6 +9,8 @@ import collections
 import logging
 from pathlib import Path
 
+from threading import Event
+
 from io import BytesIO
 from PIL import Image
 
@@ -28,6 +30,9 @@ class BaseOpenAI:
         self.history = collections.OrderedDict()
 
         self.model = model
+
+        self.is_working = Event()
+        self.is_working.clear()
 
         if model_type in ['text', 'image', 'audio']:
             self.model_type = model_type
@@ -59,14 +64,20 @@ class BaseOpenAI:
         res = None
         error = None
         try:
+            self.is_working.set()
             res = self.query_impl(*args, **kwargs)
+            self.is_working.clear()
             # print(res)
         except Exception as e:
+            if self.is_working.is_set():
+                self.is_working.clear()
             error = e
             raise e
         else:
             return res
         finally:
+            if self.is_working.is_set():
+                self.is_working.clear()
             from chainstream.sandbox_recorder import SANDBOX_RECORDER
             import inspect
             if SANDBOX_RECORDER is not None:

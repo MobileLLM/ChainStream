@@ -15,6 +15,15 @@ def reset_model_instances():
     _model_instances = {}
 
 
+def check_has_model_working():
+    global _model_instances
+    for k in list(_model_instances.keys()):
+        if _model_instances[k].is_working.is_set():
+            return True
+    return False
+
+
+
 def get_model(llm_type=['text']):
     '''
     name: list of model llm_type, e.g. ['text', 'image', 'audio']
