@@ -105,7 +105,7 @@ class StreamManager(StreamAnalyzer):
         # TODO: use threading.Event to wait for all streams to be clear
         count = 5
         while True:
-            print(f"count: {count}")
+            # print(f"count: {count}")
             if all(stream.is_clear.is_set() for stream in self.streams.values()) and not check_has_model_working():
                 # print(f"coundown {count}")
                 count -= 1

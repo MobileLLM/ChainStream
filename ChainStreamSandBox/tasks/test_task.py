@@ -17,37 +17,46 @@ if __name__ == '__main__':
     agent = """
 import chainstream
 from chainstream.agent import Agent
-from chainstream.stream import get_stream
+from chainstream.stream import get_stream, create_stream
 from chainstream.llm import get_model, make_prompt
-class ActionDetectionAgent(Agent):
-    def __init__(self, agent_id: str = "action_detection_agent"):
+from typing import Dict, Union, List
+
+class NewsSummaryAgent(Agent):
+    def __init__(self, agent_id: str = "news_summary_agent"):
         super().__init__(agent_id)
         # Get the input stream
-        self.input_stream = get_stream(self, "first_person_perspective_data")
-        # Get the existing output stream
-        self.output_stream = get_stream(self, "analysis_actions")
-        # Get the LLM model for image processing
-        self.llm_model = get_model(["image"])
+        self.all_news_stream = get_stream(self, "all_news")
+        # Retrieve the existing output stream
+        self.summary_stream = get_stream(self, "summary_from_dialogue")
+        # Get the large language model for summarization
+        self.llm = get_model(["text"])
+
     def start(self) -> None:
-        def detect_action(frame_data):
-            print("Received frame data:", frame_data)  # Log input data
-            # Extract the image from the frame data
-            image = frame_data['frame']
-            # Prepare the prompt for the LLM
-            prompt = make_prompt({
-                "image": image,
-                "task": "Detect the current action from the first person perspective image. Respond with only the action tag in one or two words."
-            })
-            print("LLM prompt:", prompt)  # Log the prompt
-            # Query the LLM to get the action tag
-            action_tag = self.llm_model.query(prompt)
-            print("Detected action:", action_tag)  # Log the detected action
-            # Send the action tag to the output stream
-            return {"analysis_result": action_tag.strip()}  # Ensure the response is clean
-        # Register the listener function to the input stream
-        self.input_stream.for_each(detect_action, to_stream=self.output_stream)
+        # Define the listener function to process the news items
+        def filter_and_summarize_news(items: Dict) -> Union[Dict, None]:
+            print(f"Processing batch: {items}")  # Debug print
+            summaries = []
+            for item in items['item_list']:
+                if item['category'].lower() == 'politics':
+                    # Create a prompt for the LLM to summarize the dialogues
+                    prompt = make_prompt({
+                        "task": "Summarize the dialogues in the conference from the following news item:",
+                        "news_item": item['short_description']
+                    })
+                    print(f"Generated prompt: {prompt}")  # Debug print
+                    summary = self.llm.query(prompt)
+                    print(f"Generated summary: {summary}")  # Debug print
+                    summaries.append({
+                        'conference_date': item['date'],
+                        'summary': summary
+                    })
+            return summaries if summaries else None
+        
+        # Register the listener function with batch processing
+        self.all_news_stream.batch(by_count=2).for_each(filter_and_summarize_news, to_stream=self.summary_stream)
+
     def stop(self) -> None:
         # Unregister all listeners
-        self.input_stream.unregister_all(self)
+        self.all_news_stream.unregister_all(self)
         """
-    test_task("VideoTask1")
+    test_task("NewsTask1", agent=agent)
