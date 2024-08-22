@@ -89,7 +89,7 @@ class BatchInterfaceBase:
                         for log in self.test_log['task_reports'][task_name]:
                             if log['error_msg'] == "success":
                                 success_times += 1
-                        if success_times >= len(self.test_log['task_reports'][task_name]):
+                        if success_times > i:
                             continue
                     pbar.set_description(f"Task: {task_name}, Repeat: {i + 1}")
                     self._one_task_step(task)
