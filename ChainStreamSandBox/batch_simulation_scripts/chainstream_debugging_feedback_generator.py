@@ -1,6 +1,6 @@
 from sandbox_interface import SandboxBatchInterface
 from AgentGenerator import ChainstreamFeedbackGuidedAgentGeneratorForDebugging
-from ChainStreamSandBox.tasks import get_task_batch
+from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 class EvalReactPlusGenerator(SandboxBatchInterface):
     def __init__(self, task_list, repeat_time=5, result_path='./result', task_log_path=None):
@@ -14,6 +14,6 @@ class EvalReactPlusGenerator(SandboxBatchInterface):
 
 
 if __name__ == '__main__':
-    task_list = get_task_batch()
+    task_list = get_task_with_data_batch()
     evaluator = EvalReactPlusGenerator(task_list)
     evaluator.start()
