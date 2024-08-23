@@ -290,13 +290,13 @@ def _load_eval_result_for_success_rate(base_file_path):
 def _draw_avg_success_rate(generator_avg_success_rate):
     def _rename_generator(generator):
         if generator == "chainstream_with_real_task_stdout_err_msg":
-            return "CS-Feedback-ZeroShot"
+            return "CS-Feedback-0Shot"
         elif generator == "chainstream_human_written_code_task_with_data":
             return "Human"
         elif generator == 'chainstream_zero_shot':
-            return "CS-Zeroshot"
+            return "CS-0shot"
         elif generator == 'stream_python_zeroshot_task_with_data':
-            return "Py-Zeroshot"
+            return "Py-0shot"
         elif generator == 'chainstream_1shot':
             return "CS-1shot"
         else:
