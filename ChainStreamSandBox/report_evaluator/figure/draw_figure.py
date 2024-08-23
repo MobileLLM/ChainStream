@@ -7,6 +7,7 @@ import numpy as np
 from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 ALL_TASK_LIST = get_task_with_data_batch().keys()
+print("ALL_TASK_LIST:", len(ALL_TASK_LIST))
 
 
 def get_score(eval_result, N, Metric, metric, task=None):
@@ -70,37 +71,55 @@ def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
 
 def plot_different_task_histograms(all_figure_data: dict):
     num_figures = len(all_figure_data)
+    num_rows_per_figure = 4  # Number of rows per figure
+    num_subplots = (num_figures + num_rows_per_figure - 1) // num_rows_per_figure  # Total number of figures needed
 
-    for title, one_figure_data in all_figure_data.items():
-        tasks = list(one_figure_data.keys())
-        num_tasks = len(tasks)
-        generators = list(one_figure_data[tasks[0]].keys())
-        num_generators = len(generators)
+    figure_titles = list(all_figure_data.keys())
 
-        # Bar properties
-        width = 0.15  # Width of bars
-        offsets = np.arange(num_tasks)  # x locations for each task
+    for fig_index in range(num_subplots):
+        # Calculate which subplots belong to the current figure
+        start_index = fig_index * num_rows_per_figure
+        end_index = min(start_index + num_rows_per_figure, num_figures)
+        current_titles = figure_titles[start_index:end_index]
 
-        # Create a new figure for each subplot
-        fig, ax = plt.subplots(figsize=(0.3 * num_tasks, 6))  # Adjust width to accommodate tasks
+        num_tasks = len(ALL_TASK_LIST)
 
-        for i, generator in enumerate(generators):
-            scores = [one_figure_data[task][generator] for task in tasks]
+        # Create a figure with 4 rows and 1 column for the subplots
+        fig, axs = plt.subplots(num_rows_per_figure, 1, figsize=(0.3 * num_tasks, 6 * num_rows_per_figure))
+        axs = axs.flatten()
 
-            # Plot each generator's bars within each task
-            ax.bar(offsets + i * width, scores, width, label=f'{generator}')
+        for subplot_index, title in enumerate(current_titles):
+            ax = axs[subplot_index]
+            one_figure_data = all_figure_data[title]
+            tasks = list(one_figure_data.keys())
+            num_tasks = len(tasks)
+            generators = list(one_figure_data[tasks[0]].keys())
+            num_generators = len(generators)
 
-        # Add vertical lines between tasks to separate groups of bars
-        for x in np.arange(1, num_tasks):  # Start from 1 to avoid placing a line before the first task
-            ax.axvline(x=x - 0.5 * (1 - width), color='grey', linestyle='--', linewidth=0.5)
+            # Bar properties
+            width = 0.15  # Width of bars
+            offsets = np.arange(num_tasks)  # x locations for each task
 
-        # Set x-axis labels and title
-        ax.set_xticks(offsets + (num_generators - 1) * width / 2)
-        ax.set_xticklabels(tasks, rotation=45, ha='right')
-        ax.set_ylabel('Score')
-        ax.set_title(title)
-        ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
-        ax.legend(title='Generator')
+            for i, generator in enumerate(generators):
+                scores = [one_figure_data[task][generator] for task in tasks]
+                # Plot each generator's bars within each task
+                ax.bar(offsets + i * width, scores, width, label=f'{generator}')
+
+            # Add vertical lines between tasks to separate groups of bars
+            for x in np.arange(1, num_tasks):
+                ax.axvline(x=x - 0.5 * (1 - width), color='grey', linestyle='--', linewidth=0.5)
+
+            # Set x-axis labels and title
+            ax.set_xticks(offsets + (num_generators - 1) * width / 2)
+            ax.set_xticklabels(tasks, rotation=45, ha='right')
+            ax.set_ylabel('Score')
+            ax.set_title(title)
+            ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
+            ax.legend(title='Generator')
+
+        # Hide any unused subplots in the current figure
+        for subplot_index in range(len(current_titles), num_rows_per_figure):
+            fig.delaxes(axs[subplot_index])
 
         plt.tight_layout()
         plt.show()
