@@ -1,6 +1,9 @@
 from ChainStreamSandBox.report_evaluator.evaluator_base import EvaluatorBase
 from ChainStreamSandBox.report_evaluator.utils import *
+from ChainStreamSandBox.tasks import get_task_with_data_batch
 import os
+
+ALL_TASKS = get_task_with_data_batch().keys()
 
 
 class EvalCodeSimilarity(EvaluatorBase):
@@ -31,6 +34,8 @@ class EvalCodeSimilarity(EvaluatorBase):
                     "edit_distance": {"score": 0, "code": None, "report_init_time": None},
                     "codebleu": {"score": 0, "code": None, "report_init_time": None},
                 }
+                if task not in self.reference_report:
+                    continue
                 reference_code = self.reference_report[task][0]['sandbox_info']['agent_code']
 
                 for i, report in enumerate(reports[:N]):
@@ -57,10 +62,13 @@ class EvalCodeSimilarity(EvaluatorBase):
 
                 code_similarity[task] = task_code_similarity
             avg_code_similarity = {
-                "bleu": sum([code_similarity[task]['bleu']['score'] for task in code_similarity]) / len(code_similarity),
-                "edit_distance": sum([code_similarity[task]['edit_distance']['score'] for task in code_similarity]) / len(
+                "bleu": sum([code_similarity[task]['bleu']['score'] for task in code_similarity]) / len(
                     code_similarity),
-                "codebleu": sum([code_similarity[task]['codebleu']['score'] for task in code_similarity]) / len(code_similarity),
+                "edit_distance": sum(
+                    [code_similarity[task]['edit_distance']['score'] for task in code_similarity]) / len(
+                    code_similarity),
+                "codebleu": sum([code_similarity[task]['codebleu']['score'] for task in code_similarity]) / len(
+                    code_similarity),
             }
             self.eval_results['eval_result'][N] = {
                 "reference_log": self.reference_log,
@@ -74,7 +82,7 @@ class EvalCodeSimilarity(EvaluatorBase):
 
 
 if __name__ == "__main__":
-    path1 = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-43-43_human-written\test_log.json'
-    path2 = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-32-30_langchain-zero-shot\test_log.json'
-    evaluator_code = EvalCodeSimilarity(path1, path2)
+    reference_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json'
+    candidate_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-32-10_chainstream_zero_shot/test_log.json'
+    evaluator_code = EvalCodeSimilarity(reference_path, candidate_path)
     evaluator_code.calculate_code_similarity()
