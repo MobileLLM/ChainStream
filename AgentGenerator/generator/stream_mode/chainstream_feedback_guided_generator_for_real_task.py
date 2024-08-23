@@ -8,15 +8,17 @@ class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGenerator
         React with sandbox starting error ability
     """
 
-    def __init__(self, max_loop=20, sandbox_type='chainstream', only_print_last=False):
+    def __init__(self, max_loop=20, sandbox_type='chainstream', only_print_last=False, framework_example_number=0):
         super().__init__(max_loop=max_loop, sandbox_type=sandbox_type, only_print_last=only_print_last)
 
         self.feedback_processor = FilterErrorFeedbackProcessor()
 
+        self.framework_example_number = framework_example_number
+
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(output_stream, input_stream,
                                framework_name='chainstream',
-                               example_number=0,
+                               example_number=self.framework_example_number,
                                mission_name="stream",
                                command_name="feedback_guided_with_real_task",
                                need_feedback_example=True
