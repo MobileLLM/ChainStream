@@ -4,8 +4,14 @@ import json
 import os
 import numpy as np
 
+from ChainStreamSandBox.tasks import get_task_with_data_batch
+
+ALL_TASK_LIST = get_task_with_data_batch().keys()
+
 
 def get_score(eval_result, N, Metric, metric, task=None):
+    if N == -1:
+        N = str(max([int(k) for k in eval_result.keys()]))
     if task is None:
         if Metric == 'code_similarity':
             score = eval_result[str(N)]['avg_code_similarity'][metric]
@@ -24,6 +30,86 @@ def get_score(eval_result, N, Metric, metric, task=None):
             raise ValueError('Invalid Metric')
 
     return score
+
+
+def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
+    if Metric == 'code_similarity':
+        metric_list = ['bleu', 'edit_distance', 'codebleu']
+    elif Metric == 'output_similarity':
+        metric_list = [
+            ('str_metric', 'bleu'),
+            ('str_metric', 'ed'),
+            ('str_metric', 'len_weighted_bleu'),
+            ('str_metric', 'len_weighted_ed'),
+            ('hard_list_metric', 'bleu'),
+            ('hard_list_metric', 'ed'),
+            ('hard_list_metric', 'len_weighted_bleu'),
+            ('hard_list_metric', 'len_weighted_ed'),
+            ('soft_list_metric', 'bleu'),
+            ('soft_list_metric', 'ed'),
+            ('soft_list_metric', 'len_weighted_bleu'),
+            ('soft_list_metric', 'len_weighted_ed'),
+        ]
+    else:
+        raise ValueError('Invalid Metric')
+
+    all_eval_result = all_eval_result[Metric]
+
+    all_figure_data = {}
+    for metric in metric_list:
+        all_figure_data[metric] = {}
+        for task in ALL_TASK_LIST:
+            all_figure_data[metric][task] = {}
+            for generator_name, generator_result in all_eval_result.items():
+                if generator_result is not None:
+                    all_figure_data[metric][task][generator_name] = get_score(generator_result, -1, Metric, metric,
+                                                                              task=task)
+
+    plot_different_task_histograms(all_figure_data)
+
+
+def plot_different_task_histograms(all_figure_data: dict):
+    num_figures = len(all_figure_data)
+    cols = 1  # Number of columns in the subplot grid
+    rows = (num_figures + cols - 1) // cols  # Calculate the number of rows needed
+
+    fig, axes = plt.subplots(rows, cols, figsize=(15, 5 * rows))
+    axes = axes.flatten()  # Flatten axes array for easy iteration
+
+    for ax, (title, one_figure_data) in zip(axes, all_figure_data.items()):
+        tasks = list(one_figure_data.keys())
+        num_tasks = len(tasks)
+
+        # Bar properties
+        width = 0.1  # Width of bars
+        offsets = np.arange(num_tasks)  # x locations for each generator
+
+        for i, task in enumerate(tasks):
+            one_generator_data = one_figure_data[task]
+            Gs = list(one_generator_data.keys())
+            scores = list(one_generator_data.values())
+
+            # Plot each generator's bars
+            ax.bar(offsets[i] + np.arange(len(Gs)) * width, scores, width, label=f'{task}')
+
+            # Label each bar with the corresponding N
+            for j, (g, score) in enumerate(zip(Gs, scores)):
+                ax.text(offsets[i] + j * width, score + 0.02, f'G={g}', ha='center', va='bottom')
+
+        # Set x-axis labels and title
+        ax.set_xticks(offsets + (len(Gs) - 1) * width / 2)
+        ax.set_xticklabels(tasks)
+        ax.set_ylabel('Score')
+        ax.set_title(title)
+        ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
+        # ax.legend(title='Task')
+
+    # Hide any unused subplots
+    for ax in axes[num_figures:]:
+        ax.set_visible(False)
+
+    plt.tight_layout()
+    plt.show()
 
 
 def draw_different_generator_score_for_specific_Metric(all_eval_result, Metric):
@@ -65,14 +151,14 @@ def draw_different_generator_score_for_specific_Metric(all_eval_result, Metric):
                     all_figure_data[metric][generator_name][int(N)] = get_score(generator_result, int(N), Metric,
                                                                                 metric)
 
-    plot_histograms(all_figure_data)
+    plot_different_generator_histograms(all_figure_data)
 
 
 def load_all_results(base_file_path):
     # Metric_list = ['success_rate', 'code_similarity', 'output_similarity']
     # generator_list = ['result-chainstream-cot', 'result-python', 'result-chainstream-zero-shot',
     #                   'result-chainstream-one-shot', 'result-human-written', 'result-langchain-zero-shot']
-    Metric_list = ['output_similarity']
+    Metric_list = ['output_similarity', 'code_similarity']
     generator_list = ['result-native_python_zeroshot', 'result-chainstream_with_real_task', 'result-human_written']
 
     all_file_name = os.listdir(base_file_path)
@@ -103,7 +189,7 @@ def rename_generator(name):
         return "Human"
 
 
-def plot_histograms(all_figure_data: dict):
+def plot_different_generator_histograms(all_figure_data: dict):
     num_figures = len(all_figure_data)
     cols = 4  # Number of columns in the subplot grid
     rows = (num_figures + cols - 1) // cols  # Calculate the number of rows needed
@@ -160,7 +246,7 @@ def test_plot_histograms():
         }
     }
 
-    plot_histograms(all_figure_data)
+    plot_different_generator_histograms(all_figure_data)
 
 
 if __name__ == '__main__':
@@ -168,3 +254,5 @@ if __name__ == '__main__':
     eval_result = load_all_results(base_file_path)
     # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
     draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
+
+    draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
