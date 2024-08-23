@@ -172,7 +172,13 @@ def load_all_results(base_file_path):
     # generator_list = ['result-chainstream-cot', 'result-python', 'result-chainstream-zero-shot',
     #                   'result-chainstream-one-shot', 'result-human-written', 'result-langchain-zero-shot']
     Metric_list = ['output_similarity', 'code_similarity']
-    generator_list = ['result-native_python_zeroshot', 'result-chainstream_with_real_task', 'result-human_written']
+    generator_list = [
+        "result-chainstream_zeroshot",
+        "result-chainstream_1shot",
+        'result-chainstream_with_real_task',
+        'result-native_python_zeroshot',
+        'result-human_written',
+    ]
 
     all_file_name = os.listdir(base_file_path)
 
@@ -195,11 +201,16 @@ def load_all_results(base_file_path):
 
 def rename_generator(name):
     if name == "result-native_python_zeroshot":
-        return "Py-Zeroshot"
+        return "Py-0shot"
     elif name == "result-chainstream_with_real_task":
-        return "CS-Feedback"
+        return "CS-Feedback-0shot"
     elif name == "result-human_written":
         return "Human"
+    elif name == "result-chainstream_zeroshot":
+        return "CS-0shot"
+    elif name == "result-chainstream_1shot":
+        return "CS-1shot"
+
 
 
 def plot_different_generator_histograms(all_figure_data: dict):
@@ -232,7 +243,7 @@ def plot_different_generator_histograms(all_figure_data: dict):
 
         # Set x-axis labels and title
         ax.set_xticks(offsets + (len(Ns) - 1) * width / 2)
-        ax.set_xticklabels([rename_generator(generator) for generator in generators])
+        ax.set_xticklabels([rename_generator(generator) for generator in generators], rotation=45, ha='right')
         ax.set_ylabel('Score')
         ax.set_title(title)
         ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
@@ -262,10 +273,149 @@ def test_plot_histograms():
     plot_different_generator_histograms(all_figure_data)
 
 
+def _load_eval_result_for_success_rate(base_file_path):
+    all_file_name = os.listdir(base_file_path)
+
+    all_eval_results = []
+    for filename in all_file_name:
+        tmp_filename = '_'.join(filename.split('_')[2:5])
+        if tmp_filename.split('.')[0] == "success_rate_result":
+            with open(os.path.join(base_file_path, filename), 'r') as f:
+                eval_result = json.load(f)
+            all_eval_results.append(eval_result)
+
+    return all_eval_results
+
+
+def _draw_avg_success_rate(generator_avg_success_rate):
+    def _rename_generator(generator):
+        if generator == "chainstream_with_real_task_stdout_err_msg":
+            return "CS-Feedback-ZeroShot"
+        elif generator == "chainstream_human_written_code_task_with_data":
+            return "Human"
+        elif generator == 'chainstream_zero_shot':
+            return "CS-Zeroshot"
+        elif generator == 'stream_python_zeroshot_task_with_data':
+            return "Py-Zeroshot"
+        elif generator == 'chainstream_1shot':
+            return "CS-1shot"
+        else:
+            raise ValueError("Invalid generator name")
+
+    fig, ax = plt.subplots(1, 1)
+    # ax = axs.flatten()[0]
+
+    generators = list(generator_avg_success_rate.keys())
+    num_generators = len(generators)
+
+    # Bar properties
+    width = 0.2  # Width of bars
+    offsets = np.arange(num_generators)  # x locations for each generator
+
+    for i, generator in enumerate(generators):
+        one_generator_data = generator_avg_success_rate[generator]
+        Ns = list(one_generator_data.keys())
+        scores = list(one_generator_data.values())
+
+        # Plot each generator's bars
+        ax.bar(offsets[i] + np.arange(len(Ns)) * width, scores, width, label=f'{generator}')
+
+        # Label each bar with the corresponding N
+        for j, (n, score) in enumerate(zip(Ns, scores)):
+            ax.text(offsets[i] + j * width, score + 0.02, f'N={n}', ha='center', va='bottom')
+
+    # Set x-axis labels and title
+    ax.set_xticks(offsets + (len(Ns) - 1) * width / 2)
+    ax.set_xticklabels([_rename_generator(generator) for generator in generators])
+    ax.set_ylabel('Score')
+    ax.set_title("Success Rate for all generators")
+    ax.set_ylim(0, 100)  # Set y-axis range from 0 to 1
+    # ax.legend(title='Generator')
+
+    plt.tight_layout()
+    plt.show()
+
+
+def _draw_success_rate_for_tasks(generator_success_rate_for_tasks):
+    one_figure_data = generator_success_rate_for_tasks
+    generators = list(one_figure_data.keys())
+    num_generators = len(generators)
+    all_tasks = set()
+    for generator in generators:
+        all_tasks.update(one_figure_data[generator].keys())
+    num_tasks = len(all_tasks)
+    all_tasks = list(all_tasks)
+
+    fig, ax = plt.subplots(1, 1, figsize=(0.3 * num_tasks, 6))
+    # ax = axs.flatten()[0]
+
+    # Bar properties
+    width = 0.15  # Width of bars
+    offsets = np.arange(num_tasks)  # x locations for each task
+
+    for i, generator in enumerate(generators):
+        scores = [not one_figure_data[generator][task] if task in one_figure_data[generator] else 0 for task in all_tasks]
+        # Plot each generator's bars within each task
+        ax.bar(offsets + i * width, scores, width, label=f'{generator}')
+
+    # Add vertical lines between tasks to separate groups of bars
+    for x in np.arange(1, num_tasks):
+        ax.axvline(x=x - 0.5 * (1 - width), color='grey', linestyle='--', linewidth=0.5)
+
+    # Set x-axis labels and title
+    ax.set_xticks(offsets + (num_generators - 1) * width / 2)
+    ax.set_xticklabels(all_tasks, rotation=45, ha='right')
+    ax.set_ylabel('Score')
+    ax.set_title("Not success for each task")
+    ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
+    ax.legend(title='Generator')
+
+    plt.tight_layout()
+    plt.show()
+
+
+def draw_success_rate(base_file_path):
+    tmp_all_eval_results = _load_eval_result_for_success_rate(base_file_path)
+
+    all_generator_name = []
+    all_eval_results = {}
+    for tmp_eval_result in tmp_all_eval_results:
+        tmp_gen_list = tmp_eval_result['integrity_check_result']
+        for tmp_gen in tmp_gen_list.keys():
+            if tmp_gen not in all_generator_name:
+                all_generator_name.append(tmp_gen)
+                all_eval_results[tmp_gen.split(os.sep)[-2][20:]] = tmp_eval_result['eval_result'][tmp_gen]
+            else:
+                raise ValueError("Duplicate generator name")
+
+    generator_avg_success_rate = {}
+    generator_success_rate_for_tasks = {}
+
+    for gen_name, gen_results in all_eval_results.items():
+        generator_avg_success_rate[gen_name] = {}
+        generator_success_rate_for_tasks[gen_name] = {}
+        for N, gen_N_results in gen_results.items():
+            generator_avg_success_rate[gen_name][N] = gen_N_results['success_rate']
+            print(
+                f"Gen: {gen_name}, N: {N}, Success Rate: {gen_N_results['success_rate']} ({gen_N_results["success_count"]} / {gen_N_results['total_task_count']})")
+
+            for task, task_bool in gen_N_results['success_details'].items():
+                if task not in generator_success_rate_for_tasks[gen_name]:
+                    generator_success_rate_for_tasks[gen_name][task] = task_bool
+                else:
+                    generator_success_rate_for_tasks[gen_name][task] = generator_success_rate_for_tasks[gen_name][
+                                                                           task] or task_bool
+
+    _draw_avg_success_rate(generator_avg_success_rate)
+    _draw_success_rate_for_tasks(generator_success_rate_for_tasks)
+
+
 if __name__ == '__main__':
     base_file_path = '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/report_evaluator/result'
     eval_result = load_all_results(base_file_path)
     # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
-    draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
 
+    draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
     draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
+
+    draw_success_rate(base_file_path)

@@ -77,6 +77,11 @@ def cal_str_edit_distance_similarity(s1, s2):
 def cal_item_similarity(dict1, dict2, fields, similarity_func=None, hard_fields=False):
     final_score = 0.0
     for field in fields:
+        if isinstance(dict2, str):
+            if hard_fields:
+                return 0
+            else:
+                continue
         if field not in dict1:
             # raise ValueError(f"Field {field} not in dict")
             continue
