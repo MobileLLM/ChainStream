@@ -1,5 +1,5 @@
 from sandbox_interface import SandboxBatchInterface
-from ChainStreamSandBox.tasks import get_task_batch
+from ChainStreamSandBox.tasks import get_task_with_data_batch
 import os
 
 
@@ -12,6 +12,6 @@ class EvalExampleAgent(SandboxBatchInterface):
 
 
 if __name__ == '__main__':
-    task_list = get_task_batch()
+    task_list = get_task_with_data_batch()
     eval_agent = EvalExampleAgent(task_list, repeat_time=1)
     eval_agent.start()
