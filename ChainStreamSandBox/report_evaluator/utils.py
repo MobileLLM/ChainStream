@@ -30,7 +30,28 @@ from codebleu import calc_codebleu
 def cal_str_bleu_similarity(reference: str, candidate: str):
     reference = reference.split()
     candidate = candidate.split()
-    return sentence_bleu([reference], candidate)
+
+    # adjust the length of candidate to match the length of reference
+
+    candidate_length = len(candidate)
+    if candidate_length == 0:
+        if candidate == reference:
+            return 1.0
+        else:
+            return 0.0
+
+    if candidate_length == 1:
+        weights = (1, 0, 0, 0)
+    elif candidate_length == 2:
+        weights = (0.5, 0.5, 0, 0)
+    elif candidate_length == 3:
+        weights = (1 / 3, 1 / 3, 1 / 3, 0)
+    else:
+        weights = (0.25, 0.25, 0.25, 0.25)
+
+    bleu_score = sentence_bleu([reference], candidate, weights=weights)
+
+    return bleu_score
 
 
 def cal_code_bleu_similarity(reference: str, candidate: str):
@@ -90,7 +111,12 @@ def cal_list_similarity(list1, list2, fields, list_mode=None, similarity_func=No
                 ) if i > 0 and j > 0 else 0
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1], tmp_sum)
 
-        return dp[len1][len2] / len1
+        final_score = dp[len1][len2] / len1
+
+        if final_score != 1.0:
+            print(f"List score: {final_score}")
+
+        return final_score
     elif list_mode == "str":
         if similarity_func == "bleu":
             return cal_str_bleu_similarity(str(list1), str(list2))
