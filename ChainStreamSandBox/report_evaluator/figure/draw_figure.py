@@ -70,46 +70,40 @@ def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
 
 def plot_different_task_histograms(all_figure_data: dict):
     num_figures = len(all_figure_data)
-    cols = 1  # Number of columns in the subplot grid
-    rows = (num_figures + cols - 1) // cols  # Calculate the number of rows needed
 
-    fig, axes = plt.subplots(rows, cols, figsize=(15, 5 * rows))
-    axes = axes.flatten()  # Flatten axes array for easy iteration
-
-    for ax, (title, one_figure_data) in zip(axes, all_figure_data.items()):
+    for title, one_figure_data in all_figure_data.items():
         tasks = list(one_figure_data.keys())
         num_tasks = len(tasks)
+        generators = list(one_figure_data[tasks[0]].keys())
+        num_generators = len(generators)
 
         # Bar properties
-        width = 0.1  # Width of bars
-        offsets = np.arange(num_tasks)  # x locations for each generator
+        width = 0.15  # Width of bars
+        offsets = np.arange(num_tasks)  # x locations for each task
 
-        for i, task in enumerate(tasks):
-            one_generator_data = one_figure_data[task]
-            Gs = list(one_generator_data.keys())
-            scores = list(one_generator_data.values())
+        # Create a new figure for each subplot
+        fig, ax = plt.subplots(figsize=(0.3 * num_tasks, 6))  # Adjust width to accommodate tasks
 
-            # Plot each generator's bars
-            ax.bar(offsets[i] + np.arange(len(Gs)) * width, scores, width, label=f'{task}')
+        for i, generator in enumerate(generators):
+            scores = [one_figure_data[task][generator] for task in tasks]
 
-            # Label each bar with the corresponding N
-            for j, (g, score) in enumerate(zip(Gs, scores)):
-                ax.text(offsets[i] + j * width, score + 0.02, f'G={g}', ha='center', va='bottom')
+            # Plot each generator's bars within each task
+            ax.bar(offsets + i * width, scores, width, label=f'{generator}')
+
+        # Add vertical lines between tasks to separate groups of bars
+        for x in np.arange(1, num_tasks):  # Start from 1 to avoid placing a line before the first task
+            ax.axvline(x=x - 0.5 * (1 - width), color='grey', linestyle='--', linewidth=0.5)
 
         # Set x-axis labels and title
-        ax.set_xticks(offsets + (len(Gs) - 1) * width / 2)
-        ax.set_xticklabels(tasks)
+        ax.set_xticks(offsets + (num_generators - 1) * width / 2)
+        ax.set_xticklabels(tasks, rotation=45, ha='right')
         ax.set_ylabel('Score')
         ax.set_title(title)
         ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
-        # ax.legend(title='Task')
+        ax.legend(title='Generator')
 
-    # Hide any unused subplots
-    for ax in axes[num_figures:]:
-        ax.set_visible(False)
-
-    plt.tight_layout()
-    plt.show()
+        plt.tight_layout()
+        plt.show()
 
 
 def draw_different_generator_score_for_specific_Metric(all_eval_result, Metric):
