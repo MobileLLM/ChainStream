@@ -46,6 +46,6 @@ class EvaluatorSuccessRate(EvaluatorBase):
 
 
 if __name__ == "__main__":
-    base_folder_path = [r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-32-30_langchain-zero-shot\test_log.json']
+    base_folder_path = [r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_05-04-12_chainstream_with_real_task_stdout_err_msg/test_log.json']
     evaluator_success_rate = EvaluatorSuccessRate(base_folder_path)
     evaluator_success_rate.calculate_success_rate()

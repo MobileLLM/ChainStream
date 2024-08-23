@@ -62,18 +62,18 @@ def draw_different_generator_score_for_specific_Metric(all_eval_result, Metric):
             if generator_result is not None:
                 all_figure_data[metric][generator_name] = {}
                 for N, _ in generator_result.items():
-                    all_figure_data[metric][generator_name][int(N)] = get_score(generator_result, int(N), Metric, metric)
+                    all_figure_data[metric][generator_name][int(N)] = get_score(generator_result, int(N), Metric,
+                                                                                metric)
 
     plot_histograms(all_figure_data)
 
 
-
-
-
 def load_all_results(base_file_path):
-    Metric_list = ['success_rate', 'code_similarity', 'output_similarity']
-    generator_list = ['result-chainstream-cot', 'result-python', 'result-chainstream-zero-shot',
-                      'result-chainstream-one-shot', 'result-human-written', 'result-langchain-zero-shot']
+    # Metric_list = ['success_rate', 'code_similarity', 'output_similarity']
+    # generator_list = ['result-chainstream-cot', 'result-python', 'result-chainstream-zero-shot',
+    #                   'result-chainstream-one-shot', 'result-human-written', 'result-langchain-zero-shot']
+    Metric_list = ['output_similarity']
+    generator_list = ['result-native_python_zeroshot', 'result-chainstream_with_real_task', 'result-human_written']
 
     all_file_name = os.listdir(base_file_path)
 
@@ -94,13 +94,22 @@ def load_all_results(base_file_path):
     return all_eval_results
 
 
+def rename_generator(name):
+    if name == "result-native_python_zeroshot":
+        return "Py-Zeroshot"
+    elif name == "result-chainstream_with_real_task":
+        return "CS-Feedback"
+    elif name == "result-human_written":
+        return "Human"
+
+
 def plot_histograms(all_figure_data: dict):
     num_figures = len(all_figure_data)
-    fig, axes = plt.subplots(num_figures, 1, figsize=(10, 5 * num_figures))
+    cols = 4  # Number of columns in the subplot grid
+    rows = (num_figures + cols - 1) // cols  # Calculate the number of rows needed
 
-    # Ensure axes is iterable even if there's only one subplot
-    if num_figures == 1:
-        axes = [axes]
+    fig, axes = plt.subplots(rows, cols, figsize=(15, 5 * rows))
+    axes = axes.flatten()  # Flatten axes array for easy iteration
 
     for ax, (title, one_figure_data) in zip(axes, all_figure_data.items()):
         generators = list(one_figure_data.keys())
@@ -116,7 +125,7 @@ def plot_histograms(all_figure_data: dict):
             scores = list(one_generator_data.values())
 
             # Plot each generator's bars
-            ax.bar(offsets[i] + np.arange(len(Ns)) * width, scores, width, label=f'{generator}')
+            ax.bar(offsets[i] + np.arange(len(Ns)) * width, scores, width, label=f'{rename_generator(generator)}')
 
             # Label each bar with the corresponding N
             for j, (n, score) in enumerate(zip(Ns, scores)):
@@ -124,11 +133,14 @@ def plot_histograms(all_figure_data: dict):
 
         # Set x-axis labels and title
         ax.set_xticks(offsets + (len(Ns) - 1) * width / 2)
-        ax.set_xticklabels(generators)
-        # ax.set_xlabel('Generator')
+        ax.set_xticklabels([rename_generator(generator) for generator in generators])
         ax.set_ylabel('Score')
         ax.set_title(title)
-        # ax.legend(title='Generator')
+        ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
+
+    # Hide any unused subplots
+    for ax in axes[num_figures:]:
+        ax.set_visible(False)
 
     plt.tight_layout()
     plt.show()
@@ -154,6 +166,5 @@ def test_plot_histograms():
 if __name__ == '__main__':
     base_file_path = '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/report_evaluator/result'
     eval_result = load_all_results(base_file_path)
-    draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
+    # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
     draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
-

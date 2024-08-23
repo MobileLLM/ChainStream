@@ -111,7 +111,7 @@ def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, simi
         output2 = stream_list2.get(stream_name, None)
         if output2 is None:
             continue
-        print(output1)
+        # print(output1)
         if 'data' in output1 and len(output1['data']) > 0:
             fields = output1['data'][0].keys()
             tmp_score = cal_list_similarity(output1['data'], output2['data'], fields, list_mode=list_mode, similarity_func=similarity_func,
