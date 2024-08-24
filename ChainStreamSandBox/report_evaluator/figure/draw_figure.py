@@ -175,7 +175,8 @@ def load_all_results(base_file_path):
     generator_list = [
         "result-chainstream_zeroshot",
         "result-chainstream_1shot",
-        'result-chainstream_with_real_task',
+        'result-chainstream_feedback_0shot',
+        'result-chainstream_feedback_1shot',
         'result-native_python_zeroshot',
         'result-human_written',
     ]
@@ -202,8 +203,10 @@ def load_all_results(base_file_path):
 def rename_generator(name):
     if name == "result-native_python_zeroshot":
         return "Py-0shot"
-    elif name == "result-chainstream_with_real_task":
+    elif name == "result-chainstream_feedback_0shot":
         return "CS-Feedback-0shot"
+    elif name == "result-chainstream_feedback_1shot":
+        return "CS-Feedback-1shot"
     elif name == "result-human_written":
         return "Human"
     elif name == "result-chainstream_zeroshot":
@@ -291,6 +294,8 @@ def _draw_avg_success_rate(generator_avg_success_rate):
     def _rename_generator(generator):
         if generator == "chainstream_with_real_task_stdout_err_msg":
             return "CS-Feedback-0Shot"
+        elif generator == "chainstream_real_task_framework_1shot":
+            return "CS-Feedback-1shot"
         elif generator == "chainstream_human_written_code_task_with_data":
             return "Human"
         elif generator == 'chainstream_zero_shot':

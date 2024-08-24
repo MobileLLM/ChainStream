@@ -212,7 +212,8 @@ if __name__ == '__main__':
     tmp_list = {
         "result-chainstream_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-32-10_chainstream_zero_shot/test_log.json",
         "result-chainstream_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-27-20_chainstream_1shot/test_log.json" ,
-        "result-chainstream_with_real_task": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_05-04-12_chainstream_with_real_task_stdout_err_msg/test_log.json",
+        "result-chainstream_feedback_0shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_05-04-12_chainstream_with_real_task_stdout_err_msg/test_log.json",
+        "result-chainstream_feedback_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-30-23_chainstream_real_task_framework_1shot/test_log.json",
         "result-native_python_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-49-06_stream_python_zeroshot_task_with_data/test_log.json",
         "result-human_written": r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json',
     }
@@ -222,9 +223,10 @@ if __name__ == '__main__':
     first_n_list = {
         "result-human_written": [1],
         "result-native_python_zeroshot": [1, 3, 5],
-        "result-chainstream_with_real_task": [1, 2],
+        "result-chainstream_feedback_0shot": [1, 2],
         "result-chainstream_zeroshot": [1, 3, 5],
-        "result-chainstream_1shot": [1, 3, 5]
+        "result-chainstream_1shot": [1, 3, 5],
+        "result-chainstream_feedback_1shot": [1, 2]
     }
 
     for gen_name,tmp_path in tmp_list.items():
