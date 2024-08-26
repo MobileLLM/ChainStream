@@ -14,7 +14,7 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.output_ui_stream = None
         self.input_ui_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
-                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Video)
+                                modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
             "description": "All first person perspective images",

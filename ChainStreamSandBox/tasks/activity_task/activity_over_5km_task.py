@@ -15,7 +15,7 @@ class OldActivityTask1(SingleAgentTaskConfigBase):
         self.output_activity_stream = None
         self.input_activity_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
-                                scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
+                                modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
             "description": "A list of activities records",

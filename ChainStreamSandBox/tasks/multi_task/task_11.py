@@ -18,9 +18,8 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
         self.warning_board_stream = None
         self.input_three_person_stream = None
         self.input_screenshot_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Work,
-                                scene=Scene_Task_tag.School,
-                                modality=str([Modality_Task_tag.Video, Modality_Task_tag.Image]))
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.School,
+                                modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_screenshot",
             "description": "students screenshot data in the class",

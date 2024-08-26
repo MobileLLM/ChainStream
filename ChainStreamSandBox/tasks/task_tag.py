@@ -11,16 +11,11 @@ class Difficulty_Task_tag(Enum):
 
 class Domain_Task_tag(Enum):
     Health = "Health"
-    Work = "Work"
     Location = "Location"
     Weather = "Weather"
     Interpersonal_relationship = "Interpersonal_relationship"
-    Activity = "Activity"
     Daily_information = "Daily_information"
     Living = "Living"
-
-
-class Scene_Task_tag(Enum):
     Travel = "Travel"
     Office = "Office"
     Hospital = "Hospital"
@@ -28,7 +23,7 @@ class Scene_Task_tag(Enum):
     Home = "Home"
     Traffic = "Traffic"
     Shop = "Shop"
-    Exercise = "Exercise"
+    Activity = "Activity"
     Other = "Other"
 
 
@@ -37,6 +32,12 @@ class Modality_Task_tag(Enum):
     Video = "Video"
     Text = "Text"
     Image = "Image"
+    GPS_Sensor = "GPS_Sensor"
+    Gas_Sensor = "Gas_Sensor"
+    Health_Sensor = "Health_Sensor"
+    Wifi_Sensor = "Wifi_Sensor"
+    Weather_Sensor = "Weather_Sensor"
+    Activity_Sensor = "Activity_Sensor"
 
 
 class TaskTag(BaseModel):

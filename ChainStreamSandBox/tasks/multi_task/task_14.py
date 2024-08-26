@@ -16,7 +16,7 @@ class ShopStockTask(SingleAgentTaskConfigBase):
         self.output_message_stream = None
         self.work_trigger_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Daily_information,
-                                scene=Scene_Task_tag.Shop, modality=Modality_Task_tag.Video)
+                                modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "clock",
             "description": "the hours of the real-time clock data updated per three frames of the video",

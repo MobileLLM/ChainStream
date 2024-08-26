@@ -23,8 +23,7 @@ class TripMusicTask(SingleAgentTaskConfigBase):
         self.is_listening_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Activity, Domain_Task_tag.Location]),
-                                scene=Scene_Task_tag.Travel,
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video, Modality_Task_tag.Image]))
+                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my GPS data",

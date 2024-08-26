@@ -15,7 +15,7 @@ class HealthTask4(SingleAgentTaskConfigBase):
         self.output_sensor_stream = None
         self.input_sensor_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Health,
-                                scene=Scene_Task_tag.Hospital, modality=Modality_Task_tag.Text)
+                                modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
             "description": "All health information",

@@ -12,7 +12,7 @@ class OldGPSTask4(SingleAgentTaskConfigBase):
         self.output_gps_stream = None
         self.input_gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Location,
-                                scene=Scene_Task_tag.Travel, modality=Modality_Task_tag.Text)
+                                modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "A list of the gps data",

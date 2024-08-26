@@ -12,7 +12,7 @@ class OldNewsTask1(SingleAgentTaskConfigBase):
         self.output_news_stream = None
         self.input_news_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Daily_information,
-                                scene=Scene_Task_tag.Other, modality=Modality_Task_tag.Text)
+                                modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
             "description": "A list of news information",

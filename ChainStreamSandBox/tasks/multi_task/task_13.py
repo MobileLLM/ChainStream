@@ -18,7 +18,7 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
         self.patient_trigger = None
         self.output_message_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Health,
-                                scene=Scene_Task_tag.Hospital, modality=Modality_Task_tag.Video)
+                                modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_third_person_outdoor",
             "description": "third_person perspective data outside the clinic",

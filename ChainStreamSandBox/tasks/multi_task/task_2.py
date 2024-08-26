@@ -20,7 +20,7 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.stock_message_output = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Daily_information, Domain_Task_tag.Location]),
-                                scene=Scene_Task_tag.Other, modality=Modality_Task_tag.Text)
+                                modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_message",
             "description": "SMS contact information for all stock buyers",

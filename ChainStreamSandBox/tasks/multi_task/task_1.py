@@ -19,8 +19,8 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.input_gps_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Work, Domain_Task_tag.Location]),
-                                scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
+                                domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
+                                modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",

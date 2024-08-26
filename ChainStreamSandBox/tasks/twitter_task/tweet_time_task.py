@@ -12,7 +12,7 @@ class OldTweetTask8(SingleAgentTaskConfigBase):
         self.input_tweet_stream = None
         self.output_record = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Interpersonal_relationship,
-                                scene=Scene_Task_tag.Other, modality=Modality_Task_tag.Text)
+                                modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
             "description": "A list of twitter information",
