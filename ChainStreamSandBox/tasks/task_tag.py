@@ -16,15 +16,15 @@ class Domain_Task_tag(Enum):
     Interpersonal_relationship = "Interpersonal_relationship"
     Daily_information = "Daily_information"
     Living = "Living"
-    Travel = "Travel"
+    # Travel = "Travel"
     Office = "Office"
-    Hospital = "Hospital"
-    School = "School"
-    Home = "Home"
-    Traffic = "Traffic"
-    Shop = "Shop"
+    # Hospital = "Hospital"
+    # School = "School"
+    # Home = "Home"
+    # Traffic = "Traffic"
+    # Shop = "Shop"
     Activity = "Activity"
-    Other = "Other"
+    # Other = "Other"
 
 
 class Modality_Task_tag(Enum):
