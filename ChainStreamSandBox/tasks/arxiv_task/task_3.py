@@ -28,9 +28,9 @@ class ArxivTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "main_idea_by_Victor_Brunton",
-                "description": "A list of main ideas of the arxiv articles written by Victor Brunton,summarized by "
-                               "the abstracts (every two articles are packaged as a batch after filtering the author "
-                               "Victor Brunton)",
+                "description": "A series of main ideas from arxiv articles written by Victor Brunton, with articles "
+                               "filtered for the author Victor Brunton first, then packaged into batches of every two "
+                               "articles, and finally summarized by the abstracts.",
                 "fields": {
                     "article": "the title of each arxiv article, string",
                     "main_idea": "main ideas of the arxiv articles written by Victor Brunton and summarized by the "

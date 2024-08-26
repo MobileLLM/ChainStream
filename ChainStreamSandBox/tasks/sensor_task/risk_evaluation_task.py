@@ -15,7 +15,7 @@ class OldHealthTask10(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A list of health information",
+            "description": "A series of health information",
             "fields": {
                 'SystolicBP': "The systolic blood pressure detected, float",
                 'DiastolicBP': "The diastolic blood pressure detected, float",
@@ -27,7 +27,7 @@ class OldHealthTask10(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "risk_level",
-                "description": "A list of the analysis of the risk level of the person based on the health data",
+                "description": "A series of the analysis of the risk level of the person based on the health data",
                 "fields": {
                     "risk_level": "The evaluation of the risk level of the specific person, string"}
             }

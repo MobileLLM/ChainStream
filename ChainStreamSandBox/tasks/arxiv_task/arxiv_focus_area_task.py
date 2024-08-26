@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class OldArxivTask12(SingleAgentTaskConfigBase):
+class OldArxivTask9(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
@@ -18,22 +18,22 @@ class OldArxivTask12(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A list of arxiv articles",
+            "description": "A series of arxiv articles",
             "fields": {
-                "license": "The website information of the arxiv article, string",
-                "title": "The title of the arxiv article, string",
-                "comments": "The comments of the arxiv article, string",
-                "update_date": "The update date of the arxiv article, string",
-                "authors": "The authors of the arxiv article, string"
+                "abstract": "The abstract of the arxiv article, string",
+                "title": "The title of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "arxiv_website",
-                "description": "A list of arxiv articles with their website linked extracted from their license",
+                "stream_id": "arxiv_focus_area_tags",
+                "description": "A series of arxiv articles with their focus areas chosen from ['Optimization', "
+                               "'Classification', 'Regression', 'Clustering', 'Generation','Other'] based on their "
+                               "abstracts",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "website": "The website of the arxiv article, string"
+                    "focus_area": "The focus area of the arxiv article chosen from ['Optimization', "
+                               "'Classification', 'Regression', 'Clustering', 'Generation','Other'], string"
                 }
             }
         ])
@@ -42,32 +42,38 @@ class OldArxivTask12(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
-class testAgent(cs.agent.Agent):
+
+class TestAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "arxiv_website")
+        self.output_stream = cs.get_stream(self, "arxiv_focus_area_tags")
         self.llm = get_model("Text")
+
     def start(self):
         def process_paper(paper):
-            paper_title = paper["title"]
-            paper_website = paper["license"]      
-            if paper_website is not None: 
+            if "abstract" in paper:
+                paper_title = paper["title"]
+                paper_content = paper["abstract"]
+                focus_area_tags = ['Optimization', 'Classification', 'Regression', 'Clustering', 'Generation', 'Other']
+                prompt = "Give you an abstract of a paper: {}. What tag would you like to add to this paper? Choose from the following: {}".format(paper_content, ', '.join(focus_area_tags))
+                response = self.llm.query(cs.llm.make_prompt(prompt))
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "website": paper_website
+                    "focus_area": response
                 })
+
         self.input_stream.for_each(process_paper)
         '''
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_website')
+        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_focus_area_tags')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['arxiv_website'].append(data)
+            self.output_record['arxiv_focus_area_tags'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 

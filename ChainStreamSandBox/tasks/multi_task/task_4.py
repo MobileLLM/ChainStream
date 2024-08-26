@@ -21,13 +21,13 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
                                 modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_gps",
+            "stream_id": "all_location",
             "description": "all of my gps information",
             "fields": {
                 "Street Address": "the street address information from the gps sensor, string"
             }
         }, {
-            "stream_id": "all_ui",
+            "stream_id": "all_snapshot",
             "description": "all of my ui snapshots",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL, PIL.Image"
@@ -36,14 +36,14 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reminder",
-                "description": "A list of reminder messages when I slack off in the office (Office street address:3127 "
+                "description": "A series of reminder messages when I slack off in the office (Office street address:3127 "
                                "Edgemont Boulevard)",
                 "fields": {
                     "reminder": "A reminder message, string = Go back to work!"
                 }
             }, {
                 "stream_id": "is_office_event",
-                "description": "A check for whether the person is in the office",
+                "description": "A check for whether I am is in the office",
                 "fields": {
                     "Status": "True or False, bool"
                 }
@@ -57,8 +57,8 @@ from chainstream.context import Buffer
 class AgentExampleForMultiTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task_4"):
         super().__init__(agent_id)
-        self.ui_input = cs.get_stream(self, "all_ui")
-        self.gps_input = cs.get_stream(self, "all_gps")
+        self.ui_input = cs.get_stream(self, "all_snapshot")
+        self.gps_input = cs.get_stream(self, "all_location")
         self.message_output = cs.get_stream(self, "auto_reminder")
         self.ui_buffer = Buffer()
         self.is_office_event = cs.get_stream(self, "is_office_event")
@@ -92,8 +92,8 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'all_ui')
-        self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
+        self.input_ui_stream = cs.stream.create_stream(self, 'all_snapshot')
+        self.input_gps_stream = cs.stream.create_stream(self, 'all_location')
         self.output_message_stream = cs.stream.create_stream(self, 'auto_reminder')
         self.is_office_event = cs.stream.create_stream(self, 'is_office_event')
 
@@ -107,11 +107,11 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         self.is_office_event.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
-        sent_info = {'all_ui': [], 'all_gps': []}
+        sent_info = {'all_snapshot': [], 'all_location': []}
         for frame in self.ui_data:
-            sent_info['all_ui'].append(frame)
+            sent_info['all_snapshot'].append(frame)
             self.input_ui_stream.add_item(frame)
         for gps in self.gps_data:
-            sent_info['all_gps'].append(gps)
+            sent_info['all_location'].append(gps)
             self.input_gps_stream.add_item(gps)
         return sent_info

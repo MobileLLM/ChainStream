@@ -19,15 +19,17 @@ class VideoTask1(SingleAgentTaskConfigBase):
             "stream_id": "first_person_perspective_data",
             "description": "All first person perspective images",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL, string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_actions",
-                "description": "A list of the actions that are detected in real time",
+                "description": "A series of the scenes that are detected in real time chosen from ['driving', 'jumping "
+                               "roll', 'walking', 'swimming', 'climbing', 'skating']",
                 "fields": {
-                    "analysis_result": "the tag of the action from the image right now, string"}
+                    "analysis_result": "the scene detected from the video chosen from ['driving', 'jumping roll', "
+                                       "'walking', 'swimming', 'climbing', 'skating'], string"}
             }
         ])
         self.ego_4d_data = Ego4DData().load_for_action()
@@ -42,8 +44,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_screenshot(ego_data):
-            prompt = "Detect what am I doing now?Choose from several tags:['driving','jumping roll','walking',"
-            "'swimming','climbing','skating'],and just tell me what kind"
+            prompt = "Detect what I am doing now. Choose from the following scenes: ['driving', 'jumping roll', 'walking', 'swimming', 'climbing', 'skating'], and simply tell me which one."
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             
             self.analysis_output.add_item({

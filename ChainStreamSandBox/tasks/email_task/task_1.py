@@ -27,8 +27,9 @@ class EmailTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_by_sender",
-                "description": "A list of email summaries for each email sender, excluding advertisements (every two "
-                               "emails are packaged as a batch after filtering out the advertisements)",
+                "description": "A list of email summaries for each email sender, with advertisements filtered out "
+                               "first, followed by packaging every two emails into a batch, then grouping by sender, "
+                               "and finally summarizing",
                 "fields": {
                     "sender": "the name of the sender, string",
                     "summary": "the summary of the email for each email sender,excluding advertisements, string"

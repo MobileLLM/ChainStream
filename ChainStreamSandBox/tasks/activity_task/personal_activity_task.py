@@ -19,7 +19,7 @@ class OldActivityTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A list of activities records",
+            "description": "A series of activities records",
             "fields": {
                 "activity": "The specific activity, string",
                 "user": "The user id, string"
@@ -27,8 +27,8 @@ class OldActivityTask5(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "group_by_user",
-                "description": "A list of each user's activities packaged in batches of 2 seconds",
+                "stream_id": "activity_for_each_user",
+                "description": "A series of each user's activities packaged in batches of 10 seconds",
                 "fields": {
                     "users_activities": "A dict that records the activities of each user, dict"}
             }
@@ -42,7 +42,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_distance_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "group_by_user")
+        self.output_stream = cs.get_stream(self, "activity_for_each_user")
 
     def start(self):
         def group_by_user(activities_list):
@@ -58,17 +58,17 @@ class ActivityDistanceAgent(cs.agent.Agent):
             })
             return list(user_group.values())
             
-        self.input_stream.batch(by_time=2).for_each(group_by_user)
+        self.input_stream.batch(by_time=10).for_each(group_by_user)
 
         '''
 
     def init_environment(self, runtime):
         self.input_activity_stream = cs.stream.create_stream(self, 'all_activities')
-        self.output_activity_stream = cs.stream.create_stream(self, 'group_by_user')
+        self.output_activity_stream = cs.stream.create_stream(self, 'activity_for_each_user')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['group_by_user'].append(data)
+            self.output_record['activity_for_each_user'].append(data)
 
         self.output_activity_stream.for_each(record_output)
 

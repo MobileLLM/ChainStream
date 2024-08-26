@@ -5,11 +5,11 @@ from .arxiv_abstract_task import OldArxivTask1
 from .arxiv_algorithm_task import OldArxivTask2
 from .arxiv_approach_task import OldArxivTask3
 from .arxiv_authors_task import OldArxivTask4
-from .arxiv_comments_task import OldArxivTask5
+from .arxiv_pages_and_charts_task import OldArxivTask5
 from .arxiv_date_task import OldArxivTask6
 from .arxiv_implementation_task import OldArxivTask7
 from .arxiv_journal_reference_task import OldArxivTask8
-from .arxiv_problems_task import OldArxivTask9
-from .arxiv_stage_task import OldArxivTask10
+from .arxiv_focus_area_task import OldArxivTask9
+from .arxiv_version_task import OldArxivTask10
 from .arxiv_topic_task import OldArxivTask11
-from .arxiv_website_task import OldArxivTask12
+from .arxiv_url_task import OldArxivTask12

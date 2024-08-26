@@ -25,7 +25,7 @@ class VideoTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_violence",
-                "description": "A list of analysis of whether violence has occurred in the surveillance video",
+                "description": "A series of analysis of whether violence has occurred in the surveillance video",
                 "fields": {
                     "analysis_result": "the analysis of the violence incident happened, string"}
             }

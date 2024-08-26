@@ -36,9 +36,9 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_message",
-                "description": "An alarm message list when the gas stove is turned on but no one is there(home street "
-                               "address:123 Main St,every two copies of video data are packaged as "
-                               "a batch after judging not the home street address from gps data)",
+                "description": "An alarm message series when the gas stove is turned on but no one is there(home street "
+                               "address:123 Main St), with every two copies of video data are packaged as "
+                               "a batch after judging not the home street address from gps data",
                 "fields": {
                     "alarm": "You have not turned off the stove.Please notice!"
                 }

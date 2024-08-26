@@ -18,7 +18,7 @@ class OldArxivTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A list of arxiv articles",
+            "description": "A series of arxiv articles",
             "fields": {
                 "authors": "The authors of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -26,8 +26,8 @@ class OldArxivTask4(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "authors_number",
-                "description": "A list of arxiv articles with calculated numbers of the authors",
+                "stream_id": "arxiv_with_more_than_three_authors",
+                "description": "A series of arxiv articles with more than three authors",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "authors": "The authors of the arxiv article, string",
@@ -43,30 +43,37 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "authors_number")
+        self.output_stream = cs.get_stream(self, "arxiv_with_more_than_three_authors")
         self.llm = get_model("Text")
     def start(self):
+        # def process_paper(paper):
+        #     paper_title = paper["title"]
+        #     paper_authors = paper["authors"]      
+        #     prompt = "Now I give you the information on the authors of these papers.Are there more than three authors? Please simply answer y or n."
+        #     response = self.llm.query(cs.llm.make_prompt(prompt,paper_authors))
+        #     if response.lower()== "y":
+        #         return paper
         def process_paper(paper):
             paper_title = paper["title"]
-            paper_authors = paper["authors"]      
-            prompt = "Now I give you the information on the authors of these papers. How many authors does this paper have? Please just provide the number of authors."
-            response = self.llm.query(cs.llm.make_prompt(prompt,paper_authors))
-            self.output_stream.add_item({
-                    "title": paper_title,
-                    "authors": paper_authors,
-                    "number": response
-                })
+            paper_authors = paper["authors"]
+            response = len(paper_authors.split(","))
+            if response > 3:
+                self.output_stream.add_item({
+                        "title": paper_title,
+                        "authors": paper_authors
+                    })
+            return paper
         self.input_stream.for_each(process_paper)
         '''
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'authors_number')
+        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_with_more_than_three_authors')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['authors_number'].append(data)
+            self.output_record['arxiv_with_more_than_three_authors'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 

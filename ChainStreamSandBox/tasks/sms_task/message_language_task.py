@@ -17,7 +17,7 @@ class OldMessageTask3(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_sms",
-            "description": "A list of messages information",
+            "description": "A series of messages information",
             "fields": {
                 "text": "The content of the message, string",
                 "language": "The language of the message, string",
@@ -27,7 +27,7 @@ class OldMessageTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_language",
-                "description": "A list of the analysis of the language used in the message reports",
+                "description": "A series of the analysis of the language used in the message reports",
                 "fields": {
                     "content": "The content of the message, string",
                     "language": "The analysis of the language used in the message report, string"

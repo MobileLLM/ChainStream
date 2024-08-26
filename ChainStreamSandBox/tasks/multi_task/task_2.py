@@ -41,9 +41,9 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "stock_output",
-                "description": "A list of messages to remind all the buyers when the stock plummeted (write a function "
-                               "that use the buffer module to store stock items, every two for packaging as a batch "
-                               "after calculating the change_percentage for stocks)",
+                "description": "A series of messages to remind all buyers when the stock plummets (write a function "
+                               "that uses the buffer module to store stock items, with every two items packaged into "
+                               "a batch after calculating the change percentage for stocks)",
                 "fields": {
                     "stock": "the symbol of the stock, string",
                     "id": "the ids of all the stock buyers, int"

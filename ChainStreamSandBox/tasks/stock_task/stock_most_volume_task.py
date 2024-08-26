@@ -17,7 +17,7 @@ class OldStockTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stocks",
-            "description": "A list of stock information (every ten stock information are packaged as a batch)",
+            "description": "A series of stock information (every ten stock information are packaged as a batch)",
             "fields": {
                 "open": "The open price of the stock, float",
                 "close": "The close price of the price, float",
@@ -30,7 +30,7 @@ class OldStockTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "top_five_volume_stock",
-                "description": "A list of the filtered stocks with top five trading volume",
+                "description": "A series of the filtered stocks with top five trading volume",
                 "fields": {
                     "stock_symbol": "The symbol of the stock, string",
                     "volume": "The trading volume of the stock, float"

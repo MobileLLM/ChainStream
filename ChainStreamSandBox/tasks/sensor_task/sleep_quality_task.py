@@ -15,7 +15,7 @@ class OldHealthTask13(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A list of health information",
+            "description": "A series of health information",
             "fields": {
                 "Physical Activity Level": "The level of the physical activity, int",
                 "BS": "The blood sugar check,float",
@@ -34,7 +34,7 @@ class OldHealthTask13(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sleep_quality",
-                "description": "A list of the evaluation of the quality of sleep",
+                "description": "A series of the evaluation of the quality of sleep",
                 "fields": {
                     "quality_of_sleep": "The evaluation of the quality of sleep, int"}
             }

@@ -15,7 +15,7 @@ class OldNewsTask7(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "A list of news information",
+            "description": "A series of news information",
             "fields": {
                 "headline": "The headline of the news, string",
                 "short_description": "The short description of the news, string"
@@ -24,7 +24,7 @@ class OldNewsTask7(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "news_place",
-                "description": "A list of the location extracted from the news based on the news short description",
+                "description": "A series of the location extracted from the news based on the news short description",
                 "fields": {
                     "headline": "The headline of the news, string",
                     "news_place": "The location where the news took place, string"

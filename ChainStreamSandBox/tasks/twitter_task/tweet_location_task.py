@@ -15,7 +15,7 @@ class OldTweetTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A list of twitter information",
+            "description": "A series of twitter information",
             "fields": {
                 "airline_sentiment": "The sentiment of the twitter on airline, string",
                 "negative_reason": "The reason of negativeness, string",
@@ -31,7 +31,7 @@ class OldTweetTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tweets_location",
-                "description": "A list of the locations of the twitter users",
+                "description": "A series of tweet texts with the locations of the twitter users",
                 "fields": {
                     "text": "The text of the tweet, string",
                     "location": "The location where the tweet was sent by the user, string"

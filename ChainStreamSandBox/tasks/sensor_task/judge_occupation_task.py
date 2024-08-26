@@ -15,7 +15,7 @@ class OldHealthTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A list of health information",
+            "description": "A series of health information",
             "fields": {
                 'SystolicBP': "The systolic blood pressure detected, float",
                 'DiastolicBP': "The diastolic blood pressure detected, float",
@@ -27,9 +27,15 @@ class OldHealthTask9(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "occupation_estimation",
-                "description": "A list of the analysis of the occupation of the person based on the health data",
+                "description": "A series of the analysis of the occupation of the person chosen from ['Software "
+                               "Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', 'Chef', "
+                               "'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher'] "
+                               "based on the health data",
                 "fields": {
-                    "job_estimation": "The estimation of the occupation of the specific person, string"}
+                    "job_estimation": "The estimation of the occupation of the specific person chosen from ['Software "
+                                      "Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', "
+                                      "'Chef', 'Financial Analyst', 'Research Scientist', 'Sales Executive', "
+                                      "'Emergency Dispatcher'], string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -45,7 +51,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_health(health):
             health_text = f"SystolicBP: {health['SystolicBP']}, DiastolicBP: {health['DiastolicBP']}, BS: {health['BS']}, BodyTemp: {health['BodyTemp']}, HeartRate: {health['HeartRate']}"
-            prompt = f"Based on the following health indicators: {health_text}, estimate the person's current job position."
+            prompt = f"Based on the following health indicators: {health_text}, estimate the person's current job position chosen from  ['Software Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', 'Chef', 'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher']."
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
                 "job_estimation": response

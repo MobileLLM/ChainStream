@@ -27,9 +27,9 @@ class WeatherTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "clothing_recommendation",
-                "description": "A list of the recommendations of the suitable clothing according to the temperature "
-                               "in May,2024 (every two copies of weather data are packaged as a batch after filtering "
-                               "the weather in May,2024)",
+                "description": "A series of the recommendations of the suitable clothing according to the temperature "
+                               "in May each year,with every two copies of weather data packaged as a batch after "
+                               "filtering the weather in May each year",
                 "fields": {
                     "temperature": "temperature in degrees Celsius,string",
                     "clothing": "the clothing recommended,string"
@@ -52,7 +52,7 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
         def filter_date(weather):
             date_str = weather.get('Date_Time')
             date = datetime.strptime(date_str, '%Y/%m/%d %H:%M')
-            if date.year == 2024 and date.month == 5:
+            if date.month == 5:
                 return weather
             return None  
 

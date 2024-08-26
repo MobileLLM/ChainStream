@@ -48,9 +48,9 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "music_player",
-                "description": "A rock n roll music player when the driver is tired in the dangerous road section("
-                               "every two copies of music data are packaged as a batch after checking the status of "
-                               "the driver and the road condition",
+                "description": "A rock n roll music player when the driver is tired in the dangerous road section,"
+                               "with every two copies of music data packaged as a batch after checking the status "
+                               "of the driver and the road condition",
                 "fields": {
                     "song_name": "the name of the song,string",
                     "singer": "the singer of the song,string",

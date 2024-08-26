@@ -25,9 +25,9 @@ class ImageTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_software",
-                "description": "A series of software analysis for work right now",
+                "description": "Analysis of a series of software names for work",
                 "fields": {
-                    "analysis_result": "The software used for work right now, string"
+                    "analysis_result": "A string representing the software currently used for work."
                 }
             }
         ])

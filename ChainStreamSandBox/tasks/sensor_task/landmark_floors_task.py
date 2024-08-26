@@ -15,7 +15,7 @@ class OldGPSTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
-            "description": "A list of landmarks information",
+            "description": "A series of landmarks information",
             "fields": {
                 "NumberofFloors": "The number of the floors in the landmark, int",
                 "Street Address": "The street address of the landmark, string",
@@ -28,7 +28,7 @@ class OldGPSTask9(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "landmarks_floors",
-                "description": "A list of the numbers of the floors in the landmark",
+                "description": "A series of the numbers of the floors in the landmark",
                 "fields": {
                     "number_of_floors": "The number of the floors in the landmark, int"}
             }

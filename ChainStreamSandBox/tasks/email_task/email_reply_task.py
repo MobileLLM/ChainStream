@@ -17,7 +17,7 @@ class OldEmailTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_emails",
-            "description": "A list of emails",
+            "description": "A series of emails",
             "fields": {
                 "Content": "The content of the email, string",
                 "Subject": "The subject of the email, string"
@@ -26,7 +26,7 @@ class OldEmailTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_emails",
-                "description": "A list of auto-reply emails based on the contents",
+                "description": "A series of auto-reply emails based on the contents",
                 "fields": {
                     "subject": "The subject of the email, string",
                     "reply": "The auto-reply message of the email, string"}

@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class OldArxivTask5(SingleAgentTaskConfigBase):
+class OldArxivTask12(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
@@ -18,22 +18,23 @@ class OldArxivTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A list of arxiv articles",
+            "description": "A series of arxiv articles",
             "fields": {
-                "comments": "The comments of the arxiv article, string",
+                "license": "The website url information of the arxiv article, string",
                 "title": "The title of the arxiv article, string",
+                "comments": "The comments of the arxiv article, string",
                 "update_date": "The update date of the arxiv article, string",
                 "authors": "The authors of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "arxiv_comments",
-                "description": "A list of arxiv articles with their comments",
+                "stream_id": "arxiv_website_url",
+                "description": "A series of arxiv articles with their website url extracted from their license",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "comments": "The comments of the arxiv article, string"
-                    }
+                    "url": "The website url of the arxiv article, string"
+                }
             }
         ])
 
@@ -45,29 +46,28 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "arxiv_comments")
+        self.output_stream = cs.get_stream(self, "arxiv_website_url")
         self.llm = get_model("Text")
     def start(self):
         def process_paper(paper):
             paper_title = paper["title"]
-            paper_comments = paper["comments"]      
-            if paper_comments is not None: 
+            paper_url = paper["license"]      
+            if paper_website_url is not None: 
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "comments": paper_comments
+                    "url": paper_website_url
                 })
         self.input_stream.for_each(process_paper)
-        
         '''
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_comments')
+        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_website_url')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['arxiv_comments'].append(data)
+            self.output_record['arxiv_website_url'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
@@ -77,4 +77,3 @@ class testAgent(cs.agent.Agent):
             self.input_paper_stream.add_item(message)
             sent_paper['all_arxiv'].append(message)
         return sent_paper
-

@@ -27,11 +27,14 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_research_method",
-                "description": "A list of research methods for arxiv articles on math topic (every two articles are "
-                               "packaged as a batch after filtering the topic of math)",
+                "description": "A series of research methods for arxiv articles on the math topic, with articles "
+                               "filtered for the math topic first, then packaged into batches of every two articles, "
+                               "and finally summarized.",
                 "fields": {
                     "abstract": "the abstract of each arxiv article on math topic, string",
-                    "method": "the research method of each arxiv article on math topic, string"
+                    "method": "the research method of each arxiv article on math topic chosen from ['Experimental "
+                              "Evaluation', 'Theoretical Research', 'System Implementation', 'Data Analysis and "
+                              "Mining', 'Simulation and Modeling', 'User Study', 'Literature Review'], string "
                 }
             }
         ])
@@ -57,7 +60,7 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
 
         def sum_on_paper(paper):
             paper_list = paper['item_list']
-            prompt = "Summarize the research method of the papers here"
+            prompt = "Summarize the research method of the papers chosen from ["Experimental Evaluation", "Theoretical Research", "System Implementation", "Data Analysis and Mining", "Simulation and Modeling", "User Study", "Literature Review"].Only give me the choice."
             for paper_item in paper_list:
                 title = paper_item.get('title', 'No Title')  
                 abstract = paper_item.get('abstract', '')  

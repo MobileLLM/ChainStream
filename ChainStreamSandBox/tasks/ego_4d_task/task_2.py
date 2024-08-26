@@ -13,13 +13,13 @@ class VideoTask2(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_ui_stream = None
         self.input_ui_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
             "description": "All first person perspective images",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL, string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,7 +27,7 @@ class VideoTask2(SingleAgentTaskConfigBase):
                 "stream_id": "analysis_kitchen_risk",
                 "description": "A sequence that alerts the potential risk in the kitchen",
                 "fields": {
-                    "analysis_result": "the alert that detect the potential risk in the kitchen, string"}
+                    "risk": "An indication of whether there is potential risk, bool"}
             }
         ])
         self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
@@ -41,21 +41,20 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def detect_kitchen(ego_data):
+        def kitchen_risk(ego_data):
             print(ego_data)
             prompt = "Tell me whether I am cooking in the kitchen?Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             if res.lower()=="y":
-                return ego_data
+                self.analysis_output.add_item({
+                    "risk": True
+                })
             else:
-                return None
-        def analyse_risk(ego_data):
-            prompt = "Tell me the potential risk in the kitchen,just give me the name of the risk."
-            res = self.llm.query(cs.llm.make_prompt(prompt,ego_data["frame"]))
-            self.analysis_output.add_item({
-                "analysis_result": res
-            })
-        self.ego_input.for_each(detect_kitchen).for_each(analyse_risk)
+                self.analysis_output.add_item({
+                    "risk": False
+                })
+            
+        self.ego_input.for_each(kitchen_risk)
         '''
 
     def init_environment(self, runtime):

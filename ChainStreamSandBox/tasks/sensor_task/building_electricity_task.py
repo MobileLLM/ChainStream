@@ -15,7 +15,7 @@ class OldGPSTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Gas_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
-            "description": "A list of landmarks information",
+            "description": "A series of landmarks information",
             "fields": {
                 "Electricity(kWh)": "The electricity consumed by the landmark, float",
                 "GHGEmissions(MetricTonsCO2e)": "The green house gas emissions by the landmark, float",
@@ -26,7 +26,7 @@ class OldGPSTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "landmarks_electricity",
-                "description": "A list of the calculation of the electricity consumed by the landmark",
+                "description": "A series of the calculation of the electricity consumed by the landmark",
                 "fields": {
                     "electricity": "The electricity consumed by the landmark, float"}
             }

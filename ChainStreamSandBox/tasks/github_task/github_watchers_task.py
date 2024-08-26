@@ -18,7 +18,7 @@ class OldGithubTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information (every three github repositories are packaged as a batch)",
+            "description": "All github information",
             "fields": {
                 "stars_count": "the number of the stars received in the github repository, int",
                 "watchers": "the number of the watchers in the github repository, int",
@@ -29,7 +29,7 @@ class OldGithubTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "count_github_watchers",
-                "description": "A list of the current watchers of the github repositories",
+                "description": "A series of the current watchers of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "watchers_number": "the current number of watchers of the github repository, int"

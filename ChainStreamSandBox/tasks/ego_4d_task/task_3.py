@@ -13,21 +13,21 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_ui_stream = None
         self.input_ui_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
             "description": "All first person perspective images",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL, string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_topic",
-                "description": "A sequence that automatically records meeting topics",
+                "description": "A series of judgments on whether I am in the meeting room",
                 "fields": {
-                    "analysis_result": "the topic of the meeting, string"
+                    "meeting": "An indication of whether I am in a meeting, bool"
                 }
             }
         ])
@@ -46,14 +46,14 @@ class AgentExampleForImageTask(cs.agent.Agent):
             prompt = "Detect whether I am in a meeting,just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
-                return first_person_data
-        def analysis_topic(first_person_data):
-            prompt = "Tell me what topic we are talking about based on the image."
-            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
-            self.analysis_output.add_item({
-                "analysis_result": res
-            })
-        self.first_person_input.for_each(detect_scenario).for_each(analysis_topic)
+                self.analysis_output.add_item({
+                    "meeting": True
+                })
+            else:
+                self.analysis_output.add_item({
+                    "meeting": False
+                })
+        self.first_person_input.for_each(detect_scenario)
         '''
 
     def init_environment(self, runtime):

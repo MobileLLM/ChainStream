@@ -15,7 +15,7 @@ class OldTweetTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A list of twitter information",
+            "description": "A series of twitter information",
             "fields": {
                 "airline_sentiment": "The sentiment of the twitter on airline, string",
                 "negative_reason": "The reason of negativeness, string",
@@ -31,7 +31,7 @@ class OldTweetTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "retweet_count",
-                "description": "A list of the counting numbers of retweet",
+                "description": "A series of tweet texts with the counting numbers of retweet",
                 "fields": {
                     "text": "The text of the tweet, string",
                     "retweet_count": "The number of the retweet, int"

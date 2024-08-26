@@ -18,7 +18,7 @@ class OldArxivTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A list of arxiv articles",
+            "description": "A series of arxiv articles",
             "fields": {
                 "comments": "The comments of the arxiv article, string",
                 "title": "The title of the arxiv article, string",
@@ -29,7 +29,7 @@ class OldArxivTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_date",
-                "description": "A list of arxiv articles with their update date",
+                "description": "A series of arxiv articles with their update date",
                 "fields": {
                     "update_date": "The update date of the arxiv article, string",
                     "title": "The title of the arxiv article, string"

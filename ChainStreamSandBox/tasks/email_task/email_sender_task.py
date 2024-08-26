@@ -17,7 +17,7 @@ class OldEmailTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_emails",
-            "description": "A list of emails",
+            "description": "A series of emails",
             "fields": {
                 "From": "The sender of the email,string",
                 "Subject": "The subject of the email, string",
@@ -27,7 +27,7 @@ class OldEmailTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emails_sender",
-                "description": "A list of emails with the extraction of the sender",
+                "description": "A series of emails with the extraction of the sender",
                 "fields": {
                     "subject": "The subject of the email, string",
                     "sender": "The sender of the email, string"}

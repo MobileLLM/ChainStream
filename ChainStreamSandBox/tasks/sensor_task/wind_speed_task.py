@@ -15,7 +15,7 @@ class OldWeatherTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_wifi",
-            "description": "A list of the wifi information",
+            "description": "A series of the wifi information",
             "fields": {
                 "MAC.Address": "The mac address of the wifi signal, string",
                 "Vendor": "The vendor of the wifi signal, string",
@@ -27,7 +27,7 @@ class OldWeatherTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_wind_speed",
-                "description": "A list of the wind speed of the zones",
+                "description": "A series of the wind speed of the zones",
                 "fields": {
                     "location": "The location of the zone, string",
                     "time": "The time of the zone, string",

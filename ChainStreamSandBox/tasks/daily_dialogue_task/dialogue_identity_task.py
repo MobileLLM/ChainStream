@@ -15,7 +15,7 @@ class OldDialogueTask3(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Audio)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
-            "description": "A list of dialogues record",
+            "description": "A series of dialogues record",
             "fields": {
                 "id": "The id of the speaker, string",
                 "dialog": "The dialogues contents, string",
@@ -24,7 +24,7 @@ class OldDialogueTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "dialogues_identity",
-                "description": "A list of dialogues record with the analysis of the relationship among the speakers",
+                "description": "A series of dialogues record with the analysis of the relationship among the speakers",
                 "fields": {
                     "dialogues_id": "The id of the speaker, string",
                     "individuals_relationship": "The relationship analysed from the conversation, string"}

@@ -18,7 +18,7 @@ class GithubTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information (every three github repositories are packaged as a batch)",
+            "description": "All github information",
             "fields": {
                 "pull_requests": "the number of the pull-requests of the github repository, int",
                 "languages_used": "The code language used in github, string",
@@ -28,7 +28,8 @@ class GithubTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "language_from_most_pr",
-                "description": "A list of code language used in the github projects with most number of pull-requests",
+                "description": "A series of code language used in the github projects with most number of "
+                               "pull-requests, with every three github repositories packaged as a batch",
                 "fields": {
                     "pull_requests": "the name of the github repository",
                     "name": "the name of the github repository, string",

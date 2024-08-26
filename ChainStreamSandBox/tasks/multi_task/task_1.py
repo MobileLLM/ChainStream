@@ -16,7 +16,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_email_stream = None
         self.input_email_stream = None
-        self.input_gps_stream = None
+        self.input_location_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
@@ -29,18 +29,18 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
                 "Content": "the content of the email, string"
             }
         }, {
-            "stream_id": "all_gps",
-            "description": "all of my gps data",
+            "stream_id": "all_location",
+            "description": "all of my location data",
             "fields": {
-                "Street Address": "the street address information from the gps sensor, string"
+                "Street Address": "the street address information from the location sensor, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding advertisements in the office (office street "
-                               "address:3127 Edgemont Boulevard,and every two emails are packaged as a batch after "
-                               "filtering out the advertisements))",
+                "description": "A series of replied emails, excluding advertisements in the office (office street "
+                               "address: 3127 Edgemont Boulevard), with every two emails packaged into a batch after "
+                               "filtering out the advertisements.",
                 "fields": {
                     "content": "the content of the emails, string",
                     "tag": "An auto reply message, string = Received!"
@@ -53,7 +53,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.gps_data = LandmarkData().get_landmarks(number)
+        self.location_data = LandmarkData().get_landmarks(number)
         self.email_data = EmailData().get_emails(number)
         self.agent_example = '''
 import chainstream as cs
@@ -62,7 +62,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task_1"):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
-        self.gps_input = cs.get_stream(self, "all_gps")
+        self.location_input = cs.get_stream(self, "all_location")
         self.email_output = cs.get_stream(self, "auto_reply_in_office")
         self.email_buffer = Buffer()
         self.is_office_event = cs.get_stream(self, "is_office_event")
@@ -94,19 +94,19 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
                         "tag": "Received!"
                     })
                     
-        def analysis_gps(gps):
-            address = gps["Street Address"]
+        def analysis_location(location):
+            address = location["Street Address"]
             if address == "3127 Edgemont Boulevard":
                 self.is_office_event.add_item({"Status": "True"})
-                return gps
+                return location
             else:
                 return None
-        self.gps_input.for_each(analysis_gps).for_each(filter_advertisements).batch(by_count=2).for_each(auto_reply)     
+        self.location_input.for_each(analysis_location).for_each(filter_advertisements).batch(by_count=2).for_each(auto_reply)     
         '''
 
     def init_environment(self, runtime):
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
-        self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
+        self.input_location_stream = cs.stream.create_stream(self, 'all_location')
         self.output_email_stream = cs.stream.create_stream(self, 'auto_reply_in_office')
         self.is_office_event = cs.stream.create_stream(self, 'is_office_event')
 
@@ -120,11 +120,11 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.is_office_event.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
-        sent_info = {"all_email": [], "all_gps": []}
+        sent_info = {"all_email": [], "all_location": []}
         for email in self.email_data:
             sent_info["all_email"].append(email)
             self.input_email_stream.add_item(email)
-        for gps in self.gps_data:
-            sent_info["all_gps"].append(gps)
-            self.input_gps_stream.add_item(gps)
+        for location in self.location_data:
+            sent_info["all_location"].append(location)
+            self.input_location_stream.add_item(location)
         return sent_info

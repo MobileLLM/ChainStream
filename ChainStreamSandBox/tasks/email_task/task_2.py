@@ -29,11 +29,15 @@ class EmailTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "purpose_of_work_email",
-                "description": "A list of purposes for each work-related email during June to December (every two "
-                               "emails are packaged as a batch after filtering the work-related topic)",
+                "description": "A series of purposes for each work-related email from June to December, with emails "
+                               "filtered for work-related topics first, followed by packaging every two emails into a "
+                               "batch, then filtering by date, and finally summarizing the purposes",
                 "fields": {
                     "work_emails": "the content of the work-related email, string",
-                    "purpose": "the purpose of the work-related email sent by the sender, string"
+                    "purpose": "the purpose of the work-related email sent by the sender chosen from['Request for "
+                               "Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', "
+                               "'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', "
+                               "'Approval Request', 'Status Update', 'Other'], string "
                 }
             }
         ])
@@ -71,7 +75,7 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
             
         def sum_by_content(emails):
             content = [email['Content'] for email in emails['email_list']]
-            prompt = "Analyze the purposes of these emails"
+            prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']"
             res = self.llm.query(cs.llm.make_prompt(content, prompt))
             self.email_output.add_item({
                 "work_emails": content,

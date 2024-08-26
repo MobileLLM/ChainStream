@@ -38,8 +38,8 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "A list of commands of automatically closing the window(every two copies of weather "
-                               "data are packaged as a batch after judging the home street address from gps data)",
+                "description": "A series of commands of automatically closing the window, with every two copies of "
+                               "weather data packaged as a batch after judging the home street address from gps data",
                 "fields": {
                     "action": "Close all the windows!"
                 }

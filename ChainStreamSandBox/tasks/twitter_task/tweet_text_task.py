@@ -15,7 +15,7 @@ class OldTweetTask7(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A list of twitter information",
+            "description": "A series of twitter information",
             "fields": {
                 "airline_sentiment": "The sentiment of the twitter on airline, string",
                 "negative_reason": "The reason of negativeness, string",

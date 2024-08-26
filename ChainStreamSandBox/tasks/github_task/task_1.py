@@ -18,7 +18,7 @@ class GithubTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information (every three github repositories are packaged as a batch)",
+            "description": "All github information",
             "fields": {
                 "stars_count": "the number of the stars received in the github repository, int",
                 "watchers": "the number of the watchers in the github repository, int",
@@ -28,7 +28,9 @@ class GithubTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "top_ten_stars_github_repository",
-                "description": "Ten most-stars github repositories with the number of watchers",
+                "description": "Package every three GitHub repositories into a batch before processing. Then, "
+                               "select the ten repositories with the most stars and count the number of watchers for "
+                               "each repository.",
                 "fields": {
                     "stars": "the number of the stars received in the github repository, int",
                     "name": "the name of the github repository, string",

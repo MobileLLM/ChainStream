@@ -15,7 +15,7 @@ class OldGPSTask8(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "A list of the gps data",
+            "description": "A series of the gps data",
             "fields": {
                 "CapitalName": "The capital city to which the location belongs, string",
                 "ContinentName": "The continent to which the location belongs, string",
@@ -27,7 +27,7 @@ class OldGPSTask8(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "gps_longitude",
-                "description": "A list of the capital longitude extracted from the gps data",
+                "description": "A series of the capital longitude extracted from the gps data",
                 "fields": {
                     "gps_longitude": "The capital longitude of the location, float"}
             }

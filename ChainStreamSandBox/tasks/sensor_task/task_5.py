@@ -27,9 +27,9 @@ class WeatherTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_wet",
-                "description": "A list of reminders when the relative humidity exceeds 70% (every two copies of "
-                               "weather data are packaged as a batch after filtering the humidity percentage which is "
-                               "over 70%)",
+                "description": "A series of reminders when the relative humidity exceeds 70%,with every two copies of "
+                               "weather data packaged as a batch after filtering the humidity percentage which is "
+                               "over 70%",
                 "fields": {
                     "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
                     "humidity": "the percentage of the humidity, string",

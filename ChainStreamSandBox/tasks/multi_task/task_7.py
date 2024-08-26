@@ -37,9 +37,9 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "reminder",
-                "description": "A reminder list of watering the flowers after a period of time if I am not at home.("
-                               "home street address:123 Main St,every two copies of video data are packaged as "
-                               "a batch after judging not the home street address from gps data)",
+                "description": "A reminder series for watering the flowers after a period of time if I am not at home ("
+                               "home street address: 123 Main St), with every two copies of video data packaged into "
+                               "a batch after determining the home street address from GPS data",
                 "fields": {
                     "reminder": "You have not watered the flowers for a period of time. Please water the flowers."
                 }

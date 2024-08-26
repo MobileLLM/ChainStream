@@ -15,7 +15,7 @@ class OldHealthTask8(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A list of health information",
+            "description": "A series of health information",
             "fields": {
                 'SystolicBP': "The systolic blood pressure detected, float",
                 'DiastolicBP': "The diastolic blood pressure detected, float",
@@ -27,9 +27,11 @@ class OldHealthTask8(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emotion_estimation",
-                "description": "A list of the analysis of the mood based on the health data",
+                "description": "A series of the analysis of the mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', "
+                               "'Anxious', 'Relaxed'] based on the health data",
                 "fields": {
-                    "mood_estimation": "The estimation of the mood, string"}
+                    "mood_estimation": "The estimation of the mood chosen from['Happy', 'Sad', 'Angry', 'Excited', "
+                                       "'Anxious', 'Relaxed'], string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -45,7 +47,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_health(health):
             health_text = f"SystolicBP: {health['SystolicBP']}, DiastolicBP: {health['DiastolicBP']}, BS: {health['BS']}, BodyTemp: {health['BodyTemp']}, HeartRate: {health['HeartRate']}"
-            prompt = f"Based on the following health indicators: {health_text}, judge the person's current mood."
+            prompt = f"Based on the following health indicators: {health_text}, judge the person's current mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', 'Anxious', 'Relaxed']."
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
                 "mood_estimation": response
