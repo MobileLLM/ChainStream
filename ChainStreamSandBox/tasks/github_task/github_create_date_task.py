@@ -18,7 +18,7 @@ class OldGithubTask1(SingleAgentTaskConfigBase):
                                 scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information(every three github repositories are packaged as a batch)",
+            "description": "All github information (every three github repositories are packaged as a batch)",
             "fields": {
                 "stars_count": "the number of the stars received in the github repository, int",
                 "watchers": "the number of the watchers in the github repository, int",

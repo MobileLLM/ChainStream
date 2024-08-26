@@ -29,12 +29,12 @@ class HealthTask5(SingleAgentTaskConfigBase):
             {
                 "stream_id": "health_advice_for_engineers",
                 "description": "A list of the reasonable advice for the company's engineer according to their ages "
-                               "and sleeping time(every two copies of health sensor data are packaged as a batch "
+                               "and sleeping time (every two copies of health sensor data are packaged as a batch "
                                "after filtering the occupation which is 'Engineer')",
                 "fields": {
-                    "age": "the age of the engineer,int",
-                    "sleep_time": "the average sleep duration of the engineer,float",
-                    "advice": "the reasonable advice for every engineer,string"
+                    "age": "the age of the engineer, int",
+                    "sleep_time": "the average sleep duration of the engineer, float",
+                    "advice": "the reasonable advice for every engineer, string"
                 }
             }
         ])

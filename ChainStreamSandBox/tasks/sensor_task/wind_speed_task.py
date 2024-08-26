@@ -14,15 +14,14 @@ class OldWeatherTask6(SingleAgentTaskConfigBase):
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Work,
                                 scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_weather",
-            "description": "A list of the weather information",
+            "stream_id": "all_wifi",
+            "description": "A list of the wifi information",
             "fields": {
-                "Location": "The location of the zone,string",
-                "Date_Time": "The time of the zone,string",
-                "Temperature_C": "The temperature of the zone,float",
-                "Humidity_pct": "The humidity percentage of the zone,float",
-                "Precipitation_mm": "The precipitation of the zone,float",
-                "Wind_Speed_kmh": "The wind speed of the zone,float"
+                "MAC.Address": "The mac address of the wifi signal, string",
+                "Vendor": "The vendor of the wifi signal, string",
+                "SSID": "The SSID of the wifi signal, string",
+                "Signal": "The signal strength of the wifi signal, int",
+                "Channel": "The channel of the wifi signal, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,9 +29,9 @@ class OldWeatherTask6(SingleAgentTaskConfigBase):
                 "stream_id": "weather_wind_speed",
                 "description": "A list of the wind speed of the zones",
                 "fields": {
-                    "location": "The location of the zone,string",
-                    "time": "The time of the zone,string",
-                    "wind_speed": "The wind speed of the zone,float"
+                    "location": "The location of the zone, string",
+                    "time": "The time of the zone, string",
+                    "wind_speed": "The wind speed of the zone, float"
                 }
             }
         ])
@@ -50,9 +49,9 @@ class testAgent(cs.agent.Agent):
             location = weather["Location"]
             time = weather["Date_Time"]                
             self.output_stream.add_item({
-                "location":location,
-                "time":time,
-                "wind_speed":Wind_Speed_kmh
+                "location": location,
+                "time": time,
+                "wind_speed": Wind_Speed_kmh
             })
         self.input_stream.for_each(process_weather)
         '''

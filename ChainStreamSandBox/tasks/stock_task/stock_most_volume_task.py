@@ -17,14 +17,14 @@ class OldStockTask4(SingleAgentTaskConfigBase):
                                 scene=Scene_Task_tag.Other, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stocks",
-            "description": "A list of stock information(every ten stock information are packaged as a batch)",
+            "description": "A list of stock information (every ten stock information are packaged as a batch)",
             "fields": {
-                "open": "The open price of the stock,float",
-                "close": "The close price of the price,float",
-                "high": "The highest price of the stock,float",
-                "low": "The lowest price of the stock,float",
-                "symbol": "The symbol of the stock,string",
-                "volume": "The trading volume of the stock,float"
+                "open": "The open price of the stock, float",
+                "close": "The close price of the price, float",
+                "high": "The highest price of the stock, float",
+                "low": "The lowest price of the stock, float",
+                "symbol": "The symbol of the stock, string",
+                "volume": "The trading volume of the stock, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -32,8 +32,8 @@ class OldStockTask4(SingleAgentTaskConfigBase):
                 "stream_id": "top_five_volume_stock",
                 "description": "A list of the filtered stocks with top five trading volume",
                 "fields": {
-                    "stock_symbol": "The symbol of the stock,string",
-                    "volume": "The trading volume of the stock,float"
+                    "stock_symbol": "The symbol of the stock, string",
+                    "volume": "The trading volume of the stock, float"
                 }
             }
         ])
@@ -56,8 +56,8 @@ class testAgent(cs.agent.Agent):
                 volume = stock['volume']
                 stock_symbol = stock['symbol']
                 self.output_stream.add_item({
-                "stock_symbol":stock_symbol,
-                "volume":volume
+                "stock_symbol": stock_symbol,
+                "volume": volume
                 })
         self.input_stream.batch(by_count=10).for_each(process_stocks)
         '''

@@ -17,8 +17,8 @@ class OldNewsTask6(SingleAgentTaskConfigBase):
             "stream_id": "all_news",
             "description": "A list of news information",
             "fields": {
-                "headline": "The headline of the news,string",
-                "short_description": "The short description of the news,string"
+                "headline": "The headline of the news, string",
+                "short_description": "The short description of the news, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,8 +27,8 @@ class OldNewsTask6(SingleAgentTaskConfigBase):
                 "description": "A list of the analysis of the people involved in the news based on the news short "
                                "description",
                 "fields": {
-                    "headline": "The headline of the news,string",
-                    "people_involved": "The analysis of the people involved in the news,string"
+                    "headline": "The headline of the news, string",
+                    "people_involved": "The analysis of the people involved in the news, string"
                 }
             }
         ])
@@ -50,8 +50,8 @@ class testAgent(cs.agent.Agent):
             prompt = "Now you have received some news,please tell me the people who involved in the news"          
             response = self.llm.query(cs.llm.make_prompt(prompt,news_short_description))
             self.output_stream.add_item({
-            "headline":news_headline,
-            "people_involved":response})
+            "headline": news_headline,
+            "people_involved": response})
         self.input_stream.for_each(process_news)
         '''
 

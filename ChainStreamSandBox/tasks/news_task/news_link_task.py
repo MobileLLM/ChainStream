@@ -17,12 +17,12 @@ class OldNewsTask5(SingleAgentTaskConfigBase):
             "stream_id": "all_news",
             "description": "A list of news information",
             "fields": {
-                "headline": "The headline of the news,string",
-                "authors": "The authors of the news,string",
-                "category": "The category of the news,string",
-                "date": "The release date of the news,string",
-                "short_description": "The short description of the news,string",
-                "link": "The website link of the news,string",
+                "headline": "The headline of the news, string",
+                "authors": "The authors of the news, string",
+                "category": "The category of the news, string",
+                "date": "The release date of the news, string",
+                "short_description": "The short description of the news, string",
+                "link": "The website link of the news, string",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,8 +30,8 @@ class OldNewsTask5(SingleAgentTaskConfigBase):
                 "stream_id": "news_description",
                 "description": "A list of the website link of the released news",
                 "fields": {
-                    "headline": "The headline of the news,string",
-                    "link": "The website link of the news,string"
+                    "headline": "The headline of the news, string",
+                    "link": "The website link of the news, string"
                 }
             }
         ])
@@ -50,8 +50,8 @@ class testAgent(cs.agent.Agent):
             news_headline = news["headline"]
             news_link = news["link"]           
             self.output_stream.add_item({
-            "headline":news_headline,
-            "link":news_link})
+            "headline": news_headline,
+            "link": news_link})
         self.input_stream.for_each(process_news)
 
         '''

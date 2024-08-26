@@ -30,8 +30,8 @@ class HealthTask3(SingleAgentTaskConfigBase):
                                "every two copies of health sensor data are packaged as a batch after filtering the "
                                "BMI which is 'Overweight' or 'Obese')",
                 "fields": {
-                    "BMI": "the BMI category of the body check,string",
-                    "reminder": "Exercise yourself!"
+                    "BMI": "the BMI category of the body check, string",
+                    "reminder": "An auto reminder, string = Exercise yourself!"
                 }
             }
         ])

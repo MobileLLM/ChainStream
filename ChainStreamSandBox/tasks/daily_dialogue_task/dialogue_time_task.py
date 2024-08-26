@@ -17,8 +17,8 @@ class OldDialogueTask5(SingleAgentTaskConfigBase):
             "stream_id": "all_dialogues",
             "description": "A list of dialogues record",
             "fields": {
-                "id": "The id of the speaker,string",
-                "dialog": "The dialogues contents,string",
+                "id": "The id of the speaker, string",
+                "dialog": "The dialogues contents, string",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,8 +27,8 @@ class OldDialogueTask5(SingleAgentTaskConfigBase):
                 "description": "A list of dialogues record with the analysis of the time when the conversation "
                                "happened chosen from morning, afternoon,and evening",
                 "fields": {
-                    "dialogues_id": "The id of the speaker,string",
-                    "time": "The time when the conversation happened,string"}
+                    "dialogues_id": "The id of the speaker, string",
+                    "time": "The time when the conversation happened, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -49,8 +49,8 @@ class testAgent(cs.agent.Agent):
             prompt = "Examine the dialogue below and determine the time of day during which the conversation takes place: morning, afternoon, or evening.Only tell me the choice"
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-            "dialogues_id":dialogues_id,
-            "time":response
+            "dialogues_id": dialogues_id,
+            "time": response
             })
 
         self.input_stream.for_each(process_dialogues)

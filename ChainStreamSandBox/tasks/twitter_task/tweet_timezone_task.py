@@ -17,15 +17,15 @@ class OldTweetTask9(SingleAgentTaskConfigBase):
             "stream_id": "all_tweets",
             "description": "A list of twitter information",
             "fields": {
-                "airline_sentiment": "The sentiment of the twitter on airline,string",
-                "negative_reason": "The reason of negativeness,string",
-                "airline": "The name of the airline,string",
-                "name": "The name of the user,string",
-                "retweet_count": "The number of the retweet,int",
-                "text": "The text of the tweet,string",
-                "tweet_created": "The time of the tweet,string",
-                "tweet_location": "The location of the tweet,string",
-                "user_timezone": "The timezone of the twitter user,string"
+                "airline_sentiment": "The sentiment of the twitter on airline, string",
+                "negative_reason": "The reason of negativeness, string",
+                "airline": "The name of the airline, string",
+                "name": "The name of the user, string",
+                "retweet_count": "The number of the retweet, int",
+                "text": "The text of the tweet, string",
+                "tweet_created": "The time of the tweet, string",
+                "tweet_location": "The location of the tweet, string",
+                "user_timezone": "The timezone of the twitter user, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,8 +33,8 @@ class OldTweetTask9(SingleAgentTaskConfigBase):
                 "stream_id": "tweets_timezone",
                 "description": "A series of statistics on the timezone of the twitter user",
                 "fields": {
-                    "text": "The text of the tweet,string",
-                    "user_timezone": "The timezone of the twitter user,string"
+                    "text": "The text of the tweet, string",
+                    "user_timezone": "The timezone of the twitter user, string"
                 }
             }
         ])
@@ -53,8 +53,8 @@ class testAgent(cs.agent.Agent):
             user_timezone = tweets["user_timezone"]
             text = tweets["text"]        
             self.output_stream.add_item({
-                "text":text,
-                "user_timezone":user_timezone
+                "text": text,
+                "user_timezone": user_timezone
             })
         self.input_stream.for_each(process_tweet)
         '''

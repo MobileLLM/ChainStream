@@ -28,11 +28,11 @@ class GPSTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "nearest_hotel",
-                "description": "A list of the hotel around according to the street address(every two copies of "
+                "description": "A list of the hotel around according to the street address (every two copies of "
                                "location data are packaged as a batch after filtering hotel property type)",
                 "fields": {
                     "address": "the street address of my location",
-                    "hotel": "the names of the hotels around,string"
+                    "hotel": "the names of the hotels around, string"
                 }
             }
         ])

@@ -17,8 +17,8 @@ class OldDialogueTask3(SingleAgentTaskConfigBase):
             "stream_id": "all_dialogues",
             "description": "A list of dialogues record",
             "fields": {
-                "id": "The id of the speaker,string",
-                "dialog": "The dialogues contents,string",
+                "id": "The id of the speaker, string",
+                "dialog": "The dialogues contents, string",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -26,8 +26,8 @@ class OldDialogueTask3(SingleAgentTaskConfigBase):
                 "stream_id": "dialogues_identity",
                 "description": "A list of dialogues record with the analysis of the relationship among the speakers",
                 "fields": {
-                    "dialogues_id": "The id of the speaker,string",
-                    "individuals_relationship": "The relationship analysed from the conversation,string"}
+                    "dialogues_id": "The id of the speaker, string",
+                    "individuals_relationship": "The relationship analysed from the conversation, string"}
             }
         ])
 
@@ -49,8 +49,8 @@ class testAgent(cs.agent.Agent):
             prompt = "Analyze the roles of the characters in the following dialogues. Identify the individuals' respective roles or relationships."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-            "dialogues_id":dialogues_id,
-            "individuals_relationship":response
+            "dialogues_id": dialogues_id,
+            "individuals_relationship": response
             })
 
         self.input_stream.for_each(process_dialogues)

@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -19,7 +20,7 @@ class VideoTask6(SingleAgentTaskConfigBase):
             "stream_id": "third_person",
             "description": "All third person perspective images",
             "fields": {
-                "frame":"image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -69,5 +70,3 @@ class AgentExampleForImageTask(cs.agent.Agent):
             processed_results['third_person'].append(frame)
             self.input_ui_stream.add_item({"frame": frame})
         return processed_results
-
-

@@ -17,8 +17,8 @@ class OldNewsTask7(SingleAgentTaskConfigBase):
             "stream_id": "all_news",
             "description": "A list of news information",
             "fields": {
-                "headline": "The headline of the news,string",
-                "short_description": "The short description of the news,string"
+                "headline": "The headline of the news, string",
+                "short_description": "The short description of the news, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -26,8 +26,8 @@ class OldNewsTask7(SingleAgentTaskConfigBase):
                 "stream_id": "news_place",
                 "description": "A list of the location extracted from the news based on the news short description",
                 "fields": {
-                    "headline": "The headline of the news,string",
-                    "news_place": "The location where the news took place,string"
+                    "headline": "The headline of the news, string",
+                    "news_place": "The location where the news took place, string"
                 }
             }
         ])
@@ -49,8 +49,8 @@ class testAgent(cs.agent.Agent):
             prompt = "Now you have received some news,please tell me where the news happened"          
             response = self.llm.query(cs.llm.make_prompt(prompt,news_short_description))
             self.output_stream.add_item({
-            "headline":news_headline,
-            "news_place":response})
+            "headline": news_headline,
+            "news_place": response})
         self.input_stream.for_each(process_news)
         '''
 

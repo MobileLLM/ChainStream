@@ -18,9 +18,9 @@ class GithubTask4(SingleAgentTaskConfigBase):
                                 scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
-            "description": "All github information(every three github repositories are packaged as a batch)",
+            "description": "All github information (every three github repositories are packaged as a batch)",
             "fields": {
-                "pull_requests": "the number of the pull-requests of the github repository,int",
+                "pull_requests": "the number of the pull-requests of the github repository, int",
                 "languages_used": "The code language used in github, string",
                 "name": "the name of the github repository, string"
             }
@@ -59,7 +59,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
             languages_used = github_list.get('languages_used')
             name = github_list.get('name')
             self.github_output.add_item({
-                "pull_requests":pull_requests,
+                "pull_requests": pull_requests,
                 "name": name,
                 "languages_used": languages_used
             })

@@ -28,12 +28,12 @@ class WeatherTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "take_clothes_down",
                 "description": "A list of reminders to take down clothes in the balcony if the wind speed is over 20 "
-                               "kmh(every two copies of weather data are packaged as a batch after filtering the "
+                               "kmh (every two copies of weather data are packaged as a batch after filtering the "
                                "wind speed which is over 20 kmh)",
                 "fields": {
                     "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
                     "wind_speed_kmh": "the wind speed sensor in kmh, float",
-                    "reminder": "Collect the clothes in the balcony!"
+                    "reminder": "An auto reminder, string = Collect the clothes in the balcony!"
                 }
             }
         ])

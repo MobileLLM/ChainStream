@@ -24,20 +24,20 @@ class CatFoodTask(SingleAgentTaskConfigBase):
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {
-                "Street Address": "the street address information from the gps sensor,str"
+                "Street Address": "the street address information from the gps sensor, string"
             }
         }, {
             "stream_id": "all_video",
             "description": "all video data in the cat room",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "cat_food_reminder",
                 "description": "A reminder list of refilling the cat food if the bowl is empty when I am not at "
-                               "home.(home street address:123 Main St,every two copies of video data are packaged as "
+                               "home (home street address:123 Main St,every two copies of video data are packaged as "
                                "a batch after judging the home street address from gps data)",
                 "fields": {
                     "reminder": "There is no cat food already. Please refill it."

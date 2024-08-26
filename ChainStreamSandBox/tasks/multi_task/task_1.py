@@ -32,24 +32,24 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {
-                "Street Address": "the street address information from the gps sensor,str"
+                "Street Address": "the street address information from the gps sensor, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "Replied list of emails,excluding ads in the office.(office street address:3127 "
-                               "Edgemont Boulevard,and every two emails are packaged as a batch after filtering out "
-                               "the ads))",
+                "description": "Replied list of emails,excluding advertisements in the office (office street "
+                               "address:3127 Edgemont Boulevard,and every two emails are packaged as a batch after "
+                               "filtering out the advertisements))",
                 "fields": {
                     "content": "the content of the emails, string",
-                    "tag": "Received!"
+                    "tag": "An auto reply message, string = Received!"
                 }
             }, {
                 "stream_id": "is_office_event",
                 "description": "A bool to check whether the person is in the office",
                 "fields": {
-                    "Status": "True or False,bool"
+                    "Status": "True or False, bool"
                 }
             }
         ])
@@ -73,7 +73,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             self.email_buffer.append(email)
         self.email_input.for_each(save_email)
         
-        def filter_ads(is_office_event):
+        def filter_advertisements(is_office_event):
             if is_office_event:
                 emails = self.email_buffer.pop_all()
                 matching_emails = []
@@ -97,11 +97,11 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         def analysis_gps(gps):
             address = gps["Street Address"]
             if address == "3127 Edgemont Boulevard":
-                self.is_office_event.add_item({"Status":"True"})
+                self.is_office_event.add_item({"Status": "True"})
                 return gps
             else:
                 return None
-        self.gps_input.for_each(analysis_gps).for_each(filter_ads).batch(by_count=2).for_each(auto_reply)     
+        self.gps_input.for_each(analysis_gps).for_each(filter_advertisements).batch(by_count=2).for_each(auto_reply)     
         '''
 
     def init_environment(self, runtime):

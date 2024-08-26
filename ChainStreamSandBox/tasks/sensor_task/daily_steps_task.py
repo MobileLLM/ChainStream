@@ -17,18 +17,18 @@ class OldHealthTask5(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A list of health information",
             "fields": {
-                "Physical Activity Level": "The level of the physical activity,int",
-                "BS": "The blood sugar check,float",
-                "BMI Category": "The checked BMI category,string",
-                "BodyTemp": "The checked body temperature,float",
-                "Daily Steps": "The steps calculated daily,int",
-                "DiastolicBP": "The diastolic blood pressure detected,float",
-                "SystolicBP": "The systolic blood pressure detected,float",
-                "HeartRate": "The heart rate detected,int",
-                "Sleep Disorder": "The type of the sleep disorder,string",
-                "Sleep Duration": "The duration the sleeping time,float",
-                "Quality of Sleep": "The evaluation of the quality of sleep,int",
-                "Stress Level": "The level of stress detected,int"
+                "Physical Activity Level": "The level of the physical activity, int",
+                "BS": "The blood sugar check, float",
+                "BMI Category": "The checked BMI category, string",
+                "BodyTemp": "The checked body temperature, float",
+                "Daily Steps": "The steps calculated daily, int",
+                "DiastolicBP": "The diastolic blood pressure detected, float",
+                "SystolicBP": "The systolic blood pressure detected, float",
+                "HeartRate": "The heart rate detected, int",
+                "Sleep Disorder": "The type of the sleep disorder, string",
+                "Sleep Duration": "The duration the sleeping time, float",
+                "Quality of Sleep": "The evaluation of the quality of sleep, int",
+                "Stress Level": "The level of stress detected, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -36,7 +36,7 @@ class OldHealthTask5(SingleAgentTaskConfigBase):
                 "stream_id": "daily_steps",
                 "description": "A list of the steps daily",
                 "fields": {
-                    "daily_steps": "The steps calculated daily,int"}
+                    "daily_steps": "The steps calculated daily, int"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -53,7 +53,7 @@ class testAgent(cs.agent.Agent):
         def process_health(health):
             Daily_Steps = health["Daily Steps"]        
             self.output_stream.add_item({
-                "daily_steps":Daily_Steps
+                "daily_steps": Daily_Steps
                 })
         self.input_stream.for_each(process_health)
         '''

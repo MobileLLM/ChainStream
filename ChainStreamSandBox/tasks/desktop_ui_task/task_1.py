@@ -19,7 +19,7 @@ class ImageTask1(SingleAgentTaskConfigBase):
             "stream_id": "desktop_screenshot",
             "description": "All desktop ui images",
             "fields": {
-                "image_file": "image file in the Jpeg format processed using PIL,string"
+                "image_file": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

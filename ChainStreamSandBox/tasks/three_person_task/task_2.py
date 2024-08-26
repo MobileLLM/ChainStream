@@ -19,7 +19,7 @@ class VideoTask5(SingleAgentTaskConfigBase):
             "stream_id": "third_person",
             "description": "All third person perspective images",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

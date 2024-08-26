@@ -19,7 +19,7 @@ class OldActivityTask3(SingleAgentTaskConfigBase):
                                 scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A list of activities records(every five copies of activities data are packaged as a "
+            "description": "A list of activities records (every five copies of activities data are packaged as a "
                            "batch)",
             "fields": {
                 "Total_Distance": "The total distance statistic recorded, float",

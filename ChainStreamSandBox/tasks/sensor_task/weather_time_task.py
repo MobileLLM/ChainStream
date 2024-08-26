@@ -17,12 +17,12 @@ class OldWeatherTask5(SingleAgentTaskConfigBase):
             "stream_id": "all_weather",
             "description": "A list of the weather information",
             "fields": {
-                "Location": "The location of the zone,string",
-                "Date_Time": "The time of the zone,string",
-                "Temperature_C": "The temperature of the zone,float",
-                "Humidity_pct": "The humidity percentage of the zone,float",
-                "Precipitation_mm": "The precipitation of the zone,float",
-                "Wind_Speed_kmh": "The wind speed of the zone,float"
+                "Location": "The location of the zone, string",
+                "Date_Time": "The time of the zone, string",
+                "Temperature_C": "The temperature of the zone, float",
+                "Humidity_pct": "The humidity percentage of the zone, float",
+                "Precipitation_mm": "The precipitation of the zone, float",
+                "Wind_Speed_kmh": "The wind speed of the zone, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,8 +30,8 @@ class OldWeatherTask5(SingleAgentTaskConfigBase):
                 "stream_id": "weather_time",
                 "description": "A list of the time of the zones",
                 "fields": {
-                    "location": "The location of the zone,string",
-                    "time": "The time of the zone,string"
+                    "location": "The location of the zone, string",
+                    "time": "The time of the zone, string"
                 }
             }
         ])
@@ -48,8 +48,8 @@ class testAgent(cs.agent.Agent):
             Location = weather["Location"]
             Date_Time = weather["Date_Time"]        
             self.output_stream.add_item({
-                "location":Location,
-                "time":Date_Time
+                "location": Location,
+                "time": Date_Time
             })
         self.input_stream.for_each(process_weather)
         '''

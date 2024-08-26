@@ -17,11 +17,11 @@ class OldHealthTask10(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A list of health information",
             "fields": {
-                'SystolicBP': "The systolic blood pressure detected,float",
-                'DiastolicBP': "The diastolic blood pressure detected,float",
-                'BS': "The blood sugar level detected,float",
-                'BodyTemp': "The body temperature detected,float",
-                'HeartRate': "The heart rate detected,int"
+                'SystolicBP': "The systolic blood pressure detected, float",
+                'DiastolicBP': "The diastolic blood pressure detected, float",
+                'BS': "The blood sugar level detected, float",
+                'BodyTemp': "The body temperature detected, float",
+                'HeartRate': "The heart rate detected, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,7 +29,7 @@ class OldHealthTask10(SingleAgentTaskConfigBase):
                 "stream_id": "risk_level",
                 "description": "A list of the analysis of the risk level of the person based on the health data",
                 "fields": {
-                    "risk_level": "The evaluation of the risk level of the specific person,string"}
+                    "risk_level": "The evaluation of the risk level of the specific person, string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -48,7 +48,7 @@ class testAgent(cs.agent.Agent):
             prompt = "Based on the following health indicators, determine the person's health risk level. Categorize into 'high risk', 'low risk', or 'mid risk'."
             response = self.llm.query(cs.llm.make_prompt(prompt,health_text))
             self.output_stream.add_item({
-                "risk_level":response
+                "risk_level": response
                 })
         self.input_stream.for_each(process_health)
         '''

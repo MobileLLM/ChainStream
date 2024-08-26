@@ -17,11 +17,11 @@ class OldGPSTask7(SingleAgentTaskConfigBase):
             "stream_id": "all_gps",
             "description": "A list of the gps data",
             "fields": {
-                "CapitalName": "The capital city to which the location belongs,string",
-                "ContinentName": "The continent to which the location belongs,string",
-                "CountryName": "The country to which the location belongs,string",
-                "CapitalLatitude": "The capital latitude of the location,float",
-                "CapitalLongitude": "The capital longitude of the location,float",
+                "CapitalName": "The capital city to which the location belongs, string",
+                "ContinentName": "The continent to which the location belongs, string",
+                "CountryName": "The country to which the location belongs, string",
+                "CapitalLatitude": "The capital latitude of the location, float",
+                "CapitalLongitude": "The capital longitude of the location, float",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,7 +29,7 @@ class OldGPSTask7(SingleAgentTaskConfigBase):
                 "stream_id": "gps_latitude",
                 "description": "A list of the capital latitude extracted from the gps data",
                 "fields": {
-                    "gps_latitude": "The capital latitude of the location,float"}
+                    "gps_latitude": "The capital latitude of the location, float"}
             }
         ])
         self.gps_data = GPSData().get_gps(10)
@@ -48,7 +48,7 @@ class testAgent(cs.agent.Agent):
             gps_latitude = gps["CapitalLatitude"]
             print(gps_latitude)       
             self.output_stream.add_item({
-                "gps_latitude":gps_latitude
+                "gps_latitude": gps_latitude
             })
         self.input_stream.for_each(process_gps)
         '''

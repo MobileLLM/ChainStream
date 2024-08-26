@@ -28,13 +28,13 @@ class HealthTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "remind_medicine",
                 "description": "A list of reminders to take some medicine when the systolic blood pressure is over "
-                               "120 and the diastolic blood pressure is over 70(every two copies of health sensor "
+                               "120 and the diastolic blood pressure is over 70 (every two copies of health sensor "
                                "data are packaged as a batch after filtering the systolic blood pressure which is "
                                "over 120 and the diastolic blood pressure which is over 70)",
                 "fields": {
-                    "SystolicBP": "the systolic blood pressure data from the health sensor,float",
+                    "SystolicBP": "the systolic blood pressure data from the health sensor, float",
                     "DiastolicBP": "the diastolic blood pressure data from the health sensor, float",
-                    "reminder": "Remember to take your medicine!"
+                    "reminder": "An auto reminder, string = Remember to take your medicine!"
                 }
             }
         ])

@@ -27,11 +27,11 @@ class EmailTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_by_sender",
-                "description": "A list of email summaries for each email sender, excluding ads(every two emails are "
-                               "packaged as a batch after filtering out the ads)",
+                "description": "A list of email summaries for each email sender, excluding advertisements (every two "
+                               "emails are packaged as a batch after filtering out the advertisements)",
                 "fields": {
                     "sender": "the name of the sender, string",
-                    "summary": "the summary of the email for each email sender,excluding ads, string"
+                    "summary": "the summary of the email for each email sender,excluding advertisements, string"
                 }
             }
         ])
@@ -48,7 +48,7 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def filter_ads(email):
+        def filter_advertisements(email):
             prompt = "is this email an advertisement? answer y or n"
             res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
             if res.lower() == 'n':
@@ -73,7 +73,7 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
                 "summary": res
             })
 
-        self.email_input.for_each(filter_ads).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
+        self.email_input.for_each(filter_advertisements).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
         '''
 
     def init_environment(self, runtime):
@@ -92,7 +92,6 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         for email in self.email_data:
             email['sender'] = email['From']
             sent_emails['all_email'].append(email)
-            # print("[TASK] task sent email to agent:", email)
             self.input_email_stream.add_item(email)
         return sent_emails
 

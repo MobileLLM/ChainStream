@@ -27,11 +27,12 @@ class HealthTask2(SingleAgentTaskConfigBase):
             {
                 "stream_id": "remind_check",
                 "description": "A list of reminders to go to the hospital for a check when the blood sugar is over "
-                               "8.4(every two copies of health sensor data are packaged as a batch after filtering "
+                               "8.4 (every two copies of health sensor data are packaged as a batch after filtering "
                                "the blood sugar which is over 8.4)",
                 "fields": {
                     "Blood_sugar": "the blood sugar data from the health sensor, float",
-                    "reminder": "High blood sugar！You'd better go to the hospital to check your body!"
+                    "reminder": "An auto reminder, string = High blood sugar！You'd better go to the hospital to check "
+                                "your body! "
                 }
             }
         ])

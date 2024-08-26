@@ -17,8 +17,8 @@ class OldDialogueTask4(SingleAgentTaskConfigBase):
             "stream_id": "all_dialogues",
             "description": "A list of dialogues record",
             "fields": {
-                "id": "The id of the speaker,string",
-                "dialog": "The dialogues contents,string",
+                "id": "The id of the speaker, string",
+                "dialog": "The dialogues contents, string",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,8 +27,8 @@ class OldDialogueTask4(SingleAgentTaskConfigBase):
                 "description": "A list of dialogues record with the analysis of the place where the conversation "
                                "happened",
                 "fields": {
-                    "dialogues_id": "The id of the speaker,string",
-                    "place": "The place where the conversation happened,string"}
+                    "dialogues_id": "The id of the speaker, string",
+                    "place": "The place where the conversation happened, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -49,8 +49,8 @@ class testAgent(cs.agent.Agent):
             prompt = "Examine the conversation below and identify the location or setting where the dialogue takes place."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-                "dialogues_id":dialogues_id,
-                "place":response
+                "dialogues_id": dialogues_id,
+                "place": response
             })
             
         self.input_stream.for_each(process_dialogues)

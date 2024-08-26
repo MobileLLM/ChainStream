@@ -17,12 +17,12 @@ class OldNewsTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_news",
             "description": "A list of news information",
             "fields": {
-                "headline": "The headline of the news,string",
-                "authors": "The authors of the news,string",
-                "category": "The category of the news,string",
-                "date": "The release date of the news,string",
-                "short_description": "The short description of the news,string",
-                "link": "The website link of the news,string",
+                "headline": "The headline of the news, string",
+                "authors": "The authors of the news, string",
+                "category": "The category of the news, string",
+                "date": "The release date of the news, string",
+                "short_description": "The short description of the news, string",
+                "link": "The website link of the news, string",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,8 +30,8 @@ class OldNewsTask1(SingleAgentTaskConfigBase):
                 "stream_id": "news_authors",
                 "description": "A list of the authors of the news",
                 "fields": {
-                    "headline": "The headline of the news,string",
-                    "authors": "The authors of the news,string"
+                    "headline": "The headline of the news, string",
+                    "authors": "The authors of the news, string"
                 }
             }
         ])
@@ -50,8 +50,8 @@ class testAgent(cs.agent.Agent):
             news_headline = news["headline"]
             news_authors = news["authors"]           
             self.output_stream.add_item({
-            "headline":news_headline,
-            "authors":news_authors})
+            "headline": news_headline,
+            "authors": news_authors})
         self.input_stream.for_each(process_news)
         '''
 

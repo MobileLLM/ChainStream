@@ -17,11 +17,11 @@ class OldHealthTask9(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A list of health information",
             "fields": {
-                'SystolicBP': "The systolic blood pressure detected,float",
-                'DiastolicBP': "The diastolic blood pressure detected,float",
-                'BS': "The blood sugar level detected,float",
-                'BodyTemp': "The body temperature detected,float",
-                'HeartRate': "The heart rate detected,int"
+                'SystolicBP': "The systolic blood pressure detected, float",
+                'DiastolicBP': "The diastolic blood pressure detected, float",
+                'BS': "The blood sugar level detected, float",
+                'BodyTemp': "The body temperature detected, float",
+                'HeartRate': "The heart rate detected, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,7 +29,7 @@ class OldHealthTask9(SingleAgentTaskConfigBase):
                 "stream_id": "occupation_estimation",
                 "description": "A list of the analysis of the occupation of the person based on the health data",
                 "fields": {
-                    "job_estimation": "The estimation of the occupation of the specific person,string"}
+                    "job_estimation": "The estimation of the occupation of the specific person, string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -48,7 +48,7 @@ class testAgent(cs.agent.Agent):
             prompt = f"Based on the following health indicators: {health_text}, estimate the person's current job position."
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
-                "job_estimation":response
+                "job_estimation": response
                 })
         self.input_stream.for_each(process_health)
         '''

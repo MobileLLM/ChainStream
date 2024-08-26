@@ -20,7 +20,7 @@ class GithubTask3(SingleAgentTaskConfigBase):
             "stream_id": "all_github",
             "description": "All github information",
             "fields": {
-                "licence": "the licence of the github repository,string",
+                "licence": "the licence of the github repository, string",
                 "forks_count": "the number of forks from the github repository, int",
                 "name": "the name of the github repository, string"
             }
@@ -28,10 +28,10 @@ class GithubTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "most_forks_with_licence",
-                "description": "A list of fork number of github repositories with licence(every three github "
+                "description": "A list of fork number of github repositories with licence (every three github "
                                "repositories are packaged as a batch after filtering the github with licence)",
                 "fields": {
-                    "licence": "the licence of the github repository,string",
+                    "licence": "the licence of the github repository, string",
                     "name": "the name of the github repository, string",
                     "forks_count": "the number of forks from the github repository, int"
                 }
@@ -63,7 +63,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 name = github.get('name')
                 licence =  github.get('licence')
                 self.github_output.add_item({
-                    "licence":licence,
+                    "licence": licence,
                     "name": name,
                     "forks_count": forks_count
                 })

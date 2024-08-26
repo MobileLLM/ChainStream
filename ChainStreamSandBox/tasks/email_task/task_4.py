@@ -27,11 +27,11 @@ class EmailTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_email_reply",
-                "description": "Replied list of emails,excluding ads(every two emails are packaged as a batch after "
-                               "filtering out the ads)",
+                "description": "Replied list of emails,excluding advertisements (every two emails are packaged as a "
+                               "batch after filtering out the advertisements)",
                 "fields": {
                     "email": "the content of the email, string",
-                    "tag": "Received!, string"
+                    "Content": "Reply of the email, string = Received!"
                 }
             }
         ])
@@ -48,7 +48,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def filter_ads(email):
+        def filter_advertisements(email):
             prompt = "is this email an advertisement? answer y or n"
             res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
             if res.lower() == 'n':
@@ -61,10 +61,10 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
                 if content:
                     self.email_output.add_item({
                         "email": content,
-                        "tag": "Received!"
+                        "Content": "Received!"
                     })
 
-        self.email_input.for_each(filter_ads).batch(by_count=2).for_each(auto_reply)
+        self.email_input.for_each(filter_advertisements).batch(by_count=2).for_each(auto_reply)
         '''
 
     def init_environment(self, runtime):

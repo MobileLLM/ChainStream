@@ -17,7 +17,7 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Work,
                                 scene=Scene_Task_tag.Office, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_arxiv_with_EOS_tag",
+            "stream_id": "all_arxiv",
             "description": "All arxiv paper",
             "fields": {
                 "title": "the title of each arxiv article, string",
@@ -27,7 +27,7 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_research_method",
-                "description": "A list of research methods for arxiv articles on math topic(every two articles are "
+                "description": "A list of research methods for arxiv articles on math topic (every two articles are "
                                "packaged as a batch after filtering the topic of math)",
                 "fields": {
                     "abstract": "the abstract of each arxiv article on math topic, string",

@@ -17,8 +17,8 @@ class OldDialogueTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_dialogues",
             "description": "A list of dialogues record",
             "fields": {
-                "id": "The id of the speaker,string",
-                "dialog": "The dialogues contents,string",
+                "id": "The id of the speaker, string",
+                "dialog": "The dialogues contents, string",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,7 +27,7 @@ class OldDialogueTask2(SingleAgentTaskConfigBase):
                 "description": "A list of dialogues record with the analysis of the conversation atmosphere chosen "
                                "from positive, negative, neutral and other",
                 "fields": {
-                    "dialogues_id": "The id of the speaker,string",
+                    "dialogues_id": "The id of the speaker, string",
                     "emotion": "The emotion analysed from the conversation"}
             }
         ])
@@ -49,8 +49,8 @@ class testAgent(cs.agent.Agent):
             prompt = "Classify the following dialogues contents into one of the categories: positive, negative, neutral, other.Choose one and explain"
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-                "dialogues_id":dialogues_id,
-                "emotion":response
+                "dialogues_id": dialogues_id,
+                "emotion": response
                 })
 
         self.input_stream.for_each(process_dialogues)

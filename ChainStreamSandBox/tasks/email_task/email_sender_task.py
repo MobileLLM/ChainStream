@@ -20,8 +20,8 @@ class OldEmailTask5(SingleAgentTaskConfigBase):
             "description": "A list of emails",
             "fields": {
                 "From": "The sender of the email,string",
-                "Subject": "The subject of the email,string",
-                "Content": "The content of the email,string"
+                "Subject": "The subject of the email, string",
+                "Content": "The content of the email, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,8 +29,8 @@ class OldEmailTask5(SingleAgentTaskConfigBase):
                 "stream_id": "emails_sender",
                 "description": "A list of emails with the extraction of the sender",
                 "fields": {
-                    "subject": "The subject of the email,string",
-                    "sender": "The sender of the email,string"}
+                    "subject": "The subject of the email, string",
+                    "sender": "The sender of the email, string"}
             }
         ])
 
@@ -49,8 +49,8 @@ class testAgent(cs.agent.Agent):
             email_sender = email["From"]
             email_subject = email["Subject"]           
             self.output_stream.add_item({
-            "subject":email_subject,
-            "sender":email_sender
+            "subject": email_subject,
+            "sender": email_sender
             })
         self.input_stream.for_each(process_email)
         '''

@@ -29,7 +29,7 @@ class NewsTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "extract_entertainment_news_website",
                 "description": "A list of extraction of the entertainment news website links with their short "
-                               "descriptions(every two pieces of news are packaged as a batch after filtering the "
+                               "descriptions (every two pieces of news are packaged as a batch after filtering the "
                                "entertainment topic)",
                 "fields": {
                     "description": "the short description of the news, string",

@@ -28,7 +28,7 @@ class NewsTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_from_dialogue",
-                "description": "A summary of the dialogues in conference from the politics news with the date(every "
+                "description": "A summary of the dialogues in conference from the politics news with the date (every "
                                "two pieces of news are packaged as a batch after filtering the politics topic)",
                 "fields": {
                     "conference_date": "the date of the conference in the news, string",

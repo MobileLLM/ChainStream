@@ -28,7 +28,7 @@ class WeatherTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "clothing_recommendation",
                 "description": "A list of the recommendations of the suitable clothing according to the temperature "
-                               "in May,2024(every two copies of weather data are packaged as a batch after filtering "
+                               "in May,2024 (every two copies of weather data are packaged as a batch after filtering "
                                "the weather in May,2024)",
                 "fields": {
                     "temperature": "temperature in degrees Celsius,string",

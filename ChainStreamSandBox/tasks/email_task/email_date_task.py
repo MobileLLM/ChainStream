@@ -19,9 +19,9 @@ class OldEmailTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_emails",
             "description": "A list of emails",
             "fields": {
-                "Date": "The date of the email,string",
-                "Subject": "The subject of the email,string",
-                "Content": "The content of the email,string"
+                "Date": "The date of the email, string",
+                "Subject": "The subject of the email, string",
+                "Content": "The content of the email, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,8 +29,8 @@ class OldEmailTask1(SingleAgentTaskConfigBase):
                 "stream_id": "emails_date",
                 "description": "A list of emails with the extractions of their dates",
                 "fields": {
-                    "Subject": "The subject of the email,string",
-                    "Date": "The date of the email,string"}
+                    "Subject": "The subject of the email, string",
+                    "Date": "The date of the email, string"}
             }
         ])
         self.email_data = EmailData().get_emails(10)
@@ -48,8 +48,8 @@ class testAgent(cs.agent.Agent):
             email_date = email["Date"]
             email_subject = email["Subject"]           
             self.output_stream.add_item({
-            "Subject":email_subject,
-            "Date":email_date
+            "Subject": email_subject,
+            "Date": email_date
             })
         self.input_stream.for_each(process_email)
         '''

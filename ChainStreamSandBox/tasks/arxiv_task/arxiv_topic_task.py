@@ -34,7 +34,10 @@ class OldArxivTask11(SingleAgentTaskConfigBase):
                                "abstracts",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "topic": "The topic of the arxiv article, string"
+                    "topic": "The topic of the arxiv article, string in ['Artificial "
+                               "Intelligence', 'Computer Vision and Pattern Recognition', 'Machine Learning', "
+                               "'Neural and Evolutionary Computing', 'Robotics', 'Graphics', 'Human-Computer "
+                               "Interaction', 'Multiagent Systems', 'Software Engineering', 'Other']"
                 }
             }
         ])

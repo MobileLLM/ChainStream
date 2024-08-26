@@ -19,11 +19,11 @@ class OldStockTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_stocks",
             "description": "A list of stock information",
             "fields": {
-                "open": "The open price of the stock,float",
-                "close": "The close price of the price,float",
-                "high": "The highest price of the stock,float",
-                "low": "The lowest price of the stock,float",
-                "symbol": "The symbol of the stock,string"
+                "open": "The open price of the stock, float",
+                "close": "The close price of the price, float",
+                "high": "The highest price of the stock, float",
+                "low": "The lowest price of the stock, float",
+                "symbol": "The symbol of the stock, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -32,8 +32,8 @@ class OldStockTask2(SingleAgentTaskConfigBase):
                 "description": "A list of the recommendations for stock purchases based on the open,close,high and "
                                "low price",
                 "fields": {
-                    "recommendation": "yes or no,string",
-                    "stock_symbol": "The symbol of the stock,string"
+                    "buy": "yes or null, string",
+                    "stock_symbol": "The symbol of the stock, string"
                 }
             }
         ])
@@ -59,8 +59,8 @@ class testAgent(cs.agent.Agent):
             response = self.llm.query(cs.llm.make_prompt(prompt))
             if response.lower() == "y":
                 self.output_stream.add_item({
-                "recommendation":"yes",
-                "stock_symbol":stock_symbol
+                "buy": "yes",
+                "stock_symbol": stock_symbol
                 })
         self.input_stream.for_each(process_stocks)
         '''

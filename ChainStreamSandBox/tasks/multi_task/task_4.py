@@ -24,28 +24,28 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
             "stream_id": "all_gps",
             "description": "all of my gps information",
             "fields": {
-                "Street Address": "the street address information from the gps sensor,str"
+                "Street Address": "the street address information from the gps sensor, string"
             }
         }, {
             "stream_id": "all_ui",
             "description": "all of my ui snapshots",
             "fields": {
-                "image_file": "image file in the Jpeg format processed using PIL,string"
+                "image_file": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reminder",
-                "description": "A list of reminder messages when I slack off in the office.(Office street address:3127 "
+                "description": "A list of reminder messages when I slack off in the office (Office street address:3127 "
                                "Edgemont Boulevard)",
                 "fields": {
-                    "reminder": "Go back to work!"
+                    "reminder": "A reminder message, string = Go back to work!"
                 }
             }, {
                 "stream_id": "is_office_event",
                 "description": "A check for whether the person is in the office",
                 "fields": {
-                    "Status": "True or False,bool"
+                    "Status": "True or False, bool"
                 }
             }
         ])
@@ -77,14 +77,14 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
                     res = self.llm.query(cs.llm.make_prompt(ui['image_file'], prompt))
                     if res.lower() == 'y':
                         self.message_output.add_item({
-                            "reminder":"Go back to work!"
+                            "reminder": "Go back to work!"
                         })
                 return uis
 
         def analysis_gps(gps):
             address = gps["Street Address"]
             if address == "3127 Edgemont Boulevard":
-                self.is_office_event.add_item({"Status":"True"})
+                self.is_office_event.add_item({"Status": "True"})
                 return gps
             else:
                 return None

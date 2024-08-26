@@ -29,11 +29,11 @@ class ArxivTask3(SingleAgentTaskConfigBase):
             {
                 "stream_id": "main_idea_by_Victor_Brunton",
                 "description": "A list of main ideas of the arxiv articles written by Victor Brunton,summarized by "
-                               "the abstracts(every two articles are packaged as a batch after filtering the author "
+                               "the abstracts (every two articles are packaged as a batch after filtering the author "
                                "Victor Brunton)",
                 "fields": {
                     "article": "the title of each arxiv article, string",
-                    "main idea": "main ideas of the arxiv articles written by Victor Brunton and summarized by the "
+                    "main_idea": "main ideas of the arxiv articles written by Victor Brunton and summarized by the "
                                  "abstracts, string"
                 }
             }
@@ -64,7 +64,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
                 res = self.llm.query(cs.llm.make_prompt(abstract, prompt))
                 self.arxiv_output.add_item({
                     "article": title,
-                    "main idea": res
+                    "main_idea": res
                 })
         self.arxiv_input.for_each(filter_authors).batch(by_count=2).for_each(sum_on_paper)
         '''

@@ -29,7 +29,7 @@ class NewsTask3(SingleAgentTaskConfigBase):
             {
                 "stream_id": "USA_news_in_July",
                 "description": "A list of the extraction of the USA news in July with the headline and the category "
-                               "of them(every two pieces of news are packaged as a batch after filtering the USA news "
+                               "of them (every two pieces of news are packaged as a batch after filtering the USA news "
                                "happened in July)",
                 "fields": {
                     "headline": "the headline of the news event, string",

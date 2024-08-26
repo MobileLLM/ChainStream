@@ -19,7 +19,7 @@ class OldActivityTask5(SingleAgentTaskConfigBase):
                                 scene=Scene_Task_tag.Exercise, modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A list of activities records(",
+            "description": "A list of activities records",
             "fields": {
                 "activity": "The specific activity, string",
                 "user": "The user id, string"

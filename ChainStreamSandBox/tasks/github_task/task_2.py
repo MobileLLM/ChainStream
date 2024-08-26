@@ -20,7 +20,7 @@ class GithubTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_github",
             "description": "All github information",
             "fields": {
-                "commit_count": "the number of the commits in the github repository,int",
+                "commit_count": "the number of the commits in the github repository, int",
                 "created_at": "the time that the github repository was created at using ISO 8601 datetime format, "
                               "string",
                 "name": "the name of the github repository, string"
@@ -29,7 +29,7 @@ class GithubTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "commit_most_this_year",
-                "description": "Ten github repositories with the most number of commits in 2024(every seven github "
+                "description": "Ten github repositories with the most number of commits in 2024 (every seven github "
                                "repositories are packaged as a batch after filtering the github created in 2024)",
                 "fields": {
                     "date": "the time that the github repository was created at using ISO 8601 datetime format, string",

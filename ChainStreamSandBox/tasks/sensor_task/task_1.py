@@ -30,7 +30,7 @@ class GPSTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "city_identification",
                 "description": "A list of the city identifications according to the longitude and latitude sensor in "
-                               "North America(every two copies of location data are packaged as a batch after "
+                               "North America (every two copies of location data are packaged as a batch after "
                                "filtering the gps data in North America)",
                 "fields": {
                     "longitude": "the longitude of my location, string",
@@ -66,7 +66,7 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
                 self.sensor_output.add_item({
                     "latitude": latitude,
                     "longitude": longitude,
-                    "city":capital
+                    "city": capital
                 })
 
         self.sensor_input.for_each(filter_location).batch(by_count=2).for_each(analysis_location)

@@ -24,12 +24,12 @@ class TravelTask(SingleAgentTaskConfigBase):
             "stream_id": "all_weather",
             "description": "All weather information",
             "fields": {
-                "Location": "the weather location, string",
+                "Location": "the location, string",
                 "Temperature_C": "temperature in degrees Celsius, float"
             }
         }, {
             "stream_id": "all_dialogue",
-            "description": "All dialogues recorder(every two pieces of dialogues are packaged as a batch)",
+            "description": "All dialogues recorder (every two pieces of dialogues are packaged as a batch)",
             "fields": {
                 "dialog": "the dialogues information, string"
             }
@@ -37,7 +37,7 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_report",
-                "description": "A list of the places extracted from the dialogues with the temperature(every two "
+                "description": "A list of the places extracted from the dialogues with the temperature (every two "
                                "pieces of dialogues are packaged as a batch after filtering the topic of trip from "
                                "the dialogues)",
                 "fields": {
@@ -74,8 +74,8 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
                 for weather in weather_information:
                     if weather['Location'] == res:
                         self.message_output.add_item({
-                            "place":res,
-                            "temperature":weather['Temperature_C']
+                            "place": res,
+                            "temperature": weather['Temperature_C']
                             })
 
             return dialogs

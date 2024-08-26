@@ -17,11 +17,11 @@ class OldHealthTask8(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A list of health information",
             "fields": {
-                'SystolicBP': "The systolic blood pressure detected,float",
-                'DiastolicBP': "The diastolic blood pressure detected,float",
-                'BS': "The blood sugar level detected,float",
-                'BodyTemp': "The body temperature detected,float",
-                'HeartRate': "The heart rate detected,int"
+                'SystolicBP': "The systolic blood pressure detected, float",
+                'DiastolicBP': "The diastolic blood pressure detected, float",
+                'BS': "The blood sugar level detected, float",
+                'BodyTemp': "The body temperature detected, float",
+                'HeartRate': "The heart rate detected, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,7 +29,7 @@ class OldHealthTask8(SingleAgentTaskConfigBase):
                 "stream_id": "emotion_estimation",
                 "description": "A list of the analysis of the mood based on the health data",
                 "fields": {
-                    "mood_estimation": "The estimation of the mood,string"}
+                    "mood_estimation": "The estimation of the mood, string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -48,7 +48,7 @@ class testAgent(cs.agent.Agent):
             prompt = f"Based on the following health indicators: {health_text}, judge the person's current mood."
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
-                "mood_estimation":response
+                "mood_estimation": response
                 })
         self.input_stream.for_each(process_health)
         '''

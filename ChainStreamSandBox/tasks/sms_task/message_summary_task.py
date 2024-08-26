@@ -19,9 +19,9 @@ class OldMessageTask4(SingleAgentTaskConfigBase):
             "stream_id": "all_sms",
             "description": "A list of messages information",
             "fields": {
-                "text": "The content of the message,string",
-                "language": "The language of the message,string",
-                "time": "The time of the message,string"
+                "text": "The content of the message, string",
+                "language": "The language of the message, string",
+                "time": "The time of the message, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,8 +29,8 @@ class OldMessageTask4(SingleAgentTaskConfigBase):
                 "stream_id": "sms_summary",
                 "description": "A list of the summary of the message reports",
                 "fields": {
-                    "content": "The content of the message,string",
-                    "summary": "The summary of the message report,string"
+                    "content": "The content of the message, string",
+                    "summary": "The summary of the message report, string"
                 }
             }
         ])
@@ -52,7 +52,7 @@ class testAgent(cs.agent.Agent):
             response = self.llm.query(cs.llm.make_prompt(prompt,sms_text))
             self.output_stream.add_item({
                 "content": sms_text,
-                "summary":response
+                "summary": response
             })
         self.input_stream.for_each(process_sms)
         '''
