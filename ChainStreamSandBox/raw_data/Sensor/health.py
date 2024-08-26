@@ -40,7 +40,7 @@ class HealthData:
                     'DiastolicBP': float(row['DiastolicBP']),
                     'BS': float(row['BS']),
                     'BodyTemp': float(row['BodyTemp']),
-                    'HeartRate': row['HeartRate'],
+                    'HeartRate': float(row['HeartRate']),
                     'RiskLevel': row['RiskLevel']
                 }
                 self.health_data.append(health_entry)
