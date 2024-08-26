@@ -1,6 +1,5 @@
 import functools
 import uuid
-from chainstream.runtime import cs_server_core
 from chainstream.runtime import ErrorType
 import traceback
 from .batch_function import BatchFunction
@@ -28,6 +27,7 @@ class AgentFunction:
         setattr(self.func, "func_id", self.func_id)
 
     def __call__(self, *args, **kwargs):
+
         result = None
         try:
             if self.is_batch_func:
@@ -47,6 +47,7 @@ class AgentFunction:
                 "agent_id": self.agent.agent_id,
                 "output_stream_id": self.output_stream.stream_id if self.output_stream is not None else None,
             }
+            from chainstream.runtime import cs_server_core
             cs_server_core.record_error(ErrorType.FUNCTION_ERROR.value, error_message=error_msg,
                                         error_traceback=traceback.format_exc())
             # raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
