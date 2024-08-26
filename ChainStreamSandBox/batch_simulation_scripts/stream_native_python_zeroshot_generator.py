@@ -13,7 +13,8 @@ class StreamNativePythonZeroshotGeneratorBatch(SandboxBatchInterface):
         agent, latency, tokens = generator.generate_agent(task.output_stream_description, task.input_stream_description)
         return agent, latency, tokens
 
+
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = StreamNativePythonZeroshotGeneratorBatch(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-49-06_stream_python_zeroshot_task_with_data/test_log.json")
+    evaluator = StreamNativePythonZeroshotGeneratorBatch(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_09-31-41_stream_native_python_zeroshot/test_log.json")
     evaluator.start()
