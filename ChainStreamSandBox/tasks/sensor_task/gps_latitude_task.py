@@ -44,9 +44,7 @@ class testAgent(cs.agent.Agent):
         self.llm = get_model("Text")
     def start(self):
         def process_gps(gps):
-            # print(gps)
             gps_latitude = gps["CapitalLatitude"]
-            print(gps_latitude)       
             self.output_stream.add_item({
                 "gps_latitude": gps_latitude
             })

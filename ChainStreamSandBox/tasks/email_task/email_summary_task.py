@@ -49,7 +49,6 @@ class testAgent(cs.agent.Agent):
             email_subject = email["Subject"]    
             prompt = "Write a brief summary of the following email contents"
             response = self.llm.query(cs.llm.make_prompt(prompt,email_content))
-            print(email_subject+" : "+response)
             self.output_stream.add_item({
             "subject": email_subject,
             "summary": response

@@ -1,6 +1,9 @@
 import os
 from ChainStreamSandBox.report_evaluator.evaluator_base import EvaluatorBase
 from ChainStreamSandBox.report_evaluator.utils import *
+from ChainStreamSandBox.tasks import get_task_with_data_batch
+
+TASK_WITH_DATA_LIST = get_task_with_data_batch().keys()
 
 
 class EvalOutputSimilarity(EvaluatorBase):
@@ -26,6 +29,9 @@ class EvalOutputSimilarity(EvaluatorBase):
             self.eval_results['eval_result'][N] = {}
             output_similarity = {}
             for task, reports in self.candidate_reports.items():
+                if task not in TASK_WITH_DATA_LIST:
+
+                    continue
                 task_output_similarity = {
                     "str_metric": {
                         "len_weighted_bleu": {"score": 0, "output": None, "report_init_time": None},
@@ -55,7 +61,7 @@ class EvalOutputSimilarity(EvaluatorBase):
                     continue
 
                 for report in reports[:N]:
-                    candidate_outputs = report["output_stream_items"]
+                    candidate_outputs = report["output_stream_items"] if "output_stream_items" in report else {}
 
                     avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
                                                     similarity_func="bleu", len_weight=True)
@@ -202,7 +208,27 @@ class EvalOutputSimilarity(EvaluatorBase):
 
 
 if __name__ == '__main__':
-    result_folder_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-43-43_human-written\test_log.json'
-    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-21_19-43-43_human-written\test_log.json'
-    evaluator_output = EvalOutputSimilarity(agent_by_human_path, result_folder_path)
-    evaluator_output.calculate_output_similarity()
+    # ['result-native_python_zeroshot', 'result-chainstream_with_real_task', 'result-human_written', "result-chainstream_zeroshot", "result-chainstream_1shot"]
+    tmp_list = {
+        "result-chainstream_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-32-10_chainstream_zero_shot/test_log.json",
+        "result-chainstream_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-27-20_chainstream_1shot/test_log.json" ,
+        "result-chainstream_feedback_0shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_05-04-12_chainstream_with_real_task_stdout_err_msg/test_log.json",
+        "result-chainstream_feedback_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-30-23_chainstream_real_task_framework_1shot/test_log.json",
+        "result-native_python_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-49-06_stream_python_zeroshot_task_with_data/test_log.json",
+        "result-human_written": r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json',
+    }
+    # result_folder_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json'
+    agent_by_human_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json'
+
+    first_n_list = {
+        "result-human_written": [1],
+        "result-native_python_zeroshot": [1, 3, 5],
+        "result-chainstream_feedback_0shot": [1, 2],
+        "result-chainstream_zeroshot": [1, 3, 5],
+        "result-chainstream_1shot": [1, 3, 5],
+        "result-chainstream_feedback_1shot": [1, 2]
+    }
+
+    for gen_name,tmp_path in tmp_list.items():
+        evaluator_output = EvalOutputSimilarity(agent_by_human_path, tmp_path, save_name="output_similarity_" + gen_name)
+        evaluator_output.calculate_output_similarity(first_n=first_n_list[gen_name])

@@ -30,7 +30,28 @@ from codebleu import calc_codebleu
 def cal_str_bleu_similarity(reference: str, candidate: str):
     reference = reference.split()
     candidate = candidate.split()
-    return sentence_bleu([reference], candidate)
+
+    # adjust the length of candidate to match the length of reference
+
+    candidate_length = len(candidate)
+    if candidate_length == 0:
+        if candidate == reference:
+            return 1.0
+        else:
+            return 0.0
+
+    if candidate_length == 1:
+        weights = (1, 0, 0, 0)
+    elif candidate_length == 2:
+        weights = (0.5, 0.5, 0, 0)
+    elif candidate_length == 3:
+        weights = (1 / 3, 1 / 3, 1 / 3, 0)
+    else:
+        weights = (0.25, 0.25, 0.25, 0.25)
+
+    bleu_score = sentence_bleu([reference], candidate, weights=weights)
+
+    return bleu_score
 
 
 def cal_code_bleu_similarity(reference: str, candidate: str):
@@ -56,6 +77,11 @@ def cal_str_edit_distance_similarity(s1, s2):
 def cal_item_similarity(dict1, dict2, fields, similarity_func=None, hard_fields=False):
     final_score = 0.0
     for field in fields:
+        if isinstance(dict2, str):
+            if hard_fields:
+                return 0
+            else:
+                continue
         if field not in dict1:
             # raise ValueError(f"Field {field} not in dict")
             continue
@@ -90,7 +116,12 @@ def cal_list_similarity(list1, list2, fields, list_mode=None, similarity_func=No
                 ) if i > 0 and j > 0 else 0
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1], tmp_sum)
 
-        return dp[len1][len2] / len1
+        final_score = dp[len1][len2] / len1
+
+        if final_score != 1.0:
+            print(f"List score: {final_score}")
+
+        return final_score
     elif list_mode == "str":
         if similarity_func == "bleu":
             return cal_str_bleu_similarity(str(list1), str(list2))
@@ -111,7 +142,7 @@ def cal_multi_stream_similarity(stream_list1, stream_list2, list_mode=None, simi
         output2 = stream_list2.get(stream_name, None)
         if output2 is None:
             continue
-        print(output1)
+        # print(output1)
         if 'data' in output1 and len(output1['data']) > 0:
             fields = output1['data'][0].keys()
             tmp_score = cal_list_similarity(output1['data'], output2['data'], fields, list_mode=list_mode, similarity_func=similarity_func,
