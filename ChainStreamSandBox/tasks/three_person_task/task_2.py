@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class VideoTask5(SingleAgentTaskConfigBase):
+class VideoTask11(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None

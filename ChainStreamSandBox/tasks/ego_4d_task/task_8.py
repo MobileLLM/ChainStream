@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class VideoTask3(SingleAgentTaskConfigBase):
+class VideoTask8(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -25,13 +25,13 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "description": "A series of judgments on whether I am cooking in the kitchen",
                 "fields": {
-                    "meeting": "An indication of whether I am in a meeting, bool"
+                    "cooking": "An indication of whether I am cooking in the kitchen, bool"
                 }
             }
         ])
-        self.ego_4d_data = Ego4DData().load_for_person_detection()
+        self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
@@ -43,15 +43,15 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def detect_scenario(first_person_data):
-            prompt = "Detect whether I am in a meeting, just tell me y or n."
+            prompt = "Detect whether I am in the kitchen, just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
                 self.analysis_output.add_item({
-                    "meeting": True
+                    "cooking": True
                 })
             else:
                 self.analysis_output.add_item({
-                    "meeting": False
+                    "cooking": False
                 })
         self.first_person_input.for_each(detect_scenario)
         '''

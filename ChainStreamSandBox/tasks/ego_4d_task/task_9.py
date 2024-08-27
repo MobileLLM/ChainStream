@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class VideoTask3(SingleAgentTaskConfigBase):
+class VideoTask9(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -24,14 +24,14 @@ class VideoTask3(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "stream_id": "analysis_computer_status",
+                "description": "A series of judgments on whether my computer is turned on or not",
                 "fields": {
-                    "meeting": "An indication of whether I am in a meeting, bool"
+                    "computer_status": "An indication of whether my computer is turned on or not, bool"
                 }
             }
         ])
-        self.ego_4d_data = Ego4DData().load_for_person_detection()
+        self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
@@ -43,27 +43,27 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def detect_scenario(first_person_data):
-            prompt = "Detect whether I am in a meeting, just tell me y or n."
+            prompt = "Detect whether my computer is turned on or not, just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
                 self.analysis_output.add_item({
-                    "meeting": True
+                    "computer_status": True
                 })
             else:
                 self.analysis_output.add_item({
-                    "meeting": False
+                    "computer_status": False
                 })
         self.first_person_input.for_each(detect_scenario)
         '''
 
     def init_environment(self, runtime):
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
-        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_scenario')
+        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_computer_status')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['analysis_scenario'].append(data)
+            self.output_record['analysis_computer_status'].append(data)
 
         self.output_ui_stream.for_each(record_output)
 

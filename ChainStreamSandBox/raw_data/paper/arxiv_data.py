@@ -49,4 +49,4 @@ if __name__ == '__main__':
     arxiv_data = ArxivData()
     print(len(arxiv_data))
     print(arxiv_data.get_random_paper())
-    print(arxiv_data.get_random_papers(5))
+    print(arxiv_data.get_random_papers(10))

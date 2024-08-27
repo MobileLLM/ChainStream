@@ -14,7 +14,7 @@ class EmailTask4(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_email_stream = None
         self.input_email_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Interpersonal_relationship,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Interpersonal_relationship,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",

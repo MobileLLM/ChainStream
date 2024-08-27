@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class VideoTask3(SingleAgentTaskConfigBase):
+class VideoTask4(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -24,46 +24,43 @@ class VideoTask3(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "stream_id": "car_safety_reminder",
+                "description": "A stream of reminders to the driver when there is snow on the road",
                 "fields": {
-                    "meeting": "An indication of whether I am in a meeting, bool"
+                    "reminder": "A reminder for the driver to slow down, string = 'Please slow down, there is snow on "
+                                "the road.' "
                 }
             }
         ])
-        self.ego_4d_data = Ego4DData().load_for_person_detection()
+        self.ego_4d_data = Ego4DData().load_for_traffic()
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.first_person_input = cs.get_stream(self, "first_person_perspective_data")
-        self.analysis_output = cs.get_stream(self, "analysis_scenario")
+        self.analysis_output = cs.get_stream(self, "car_safety_reminder")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def detect_scenario(first_person_data):
-            prompt = "Detect whether I am in a meeting, just tell me y or n."
+        def detect_road(first_person_data):
+            prompt = "Detect whether there is snow on the road, just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
                 self.analysis_output.add_item({
-                    "meeting": True
+                    "reminder": "Please slow down, there is snow on the road."
                 })
-            else:
-                self.analysis_output.add_item({
-                    "meeting": False
-                })
-        self.first_person_input.for_each(detect_scenario)
+        self.first_person_input.for_each(detect_road)
         '''
 
     def init_environment(self, runtime):
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
-        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_scenario')
+        self.output_ui_stream = cs.stream.create_stream(self, 'car_safety_reminder')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['analysis_scenario'].append(data)
+            self.output_record['car_safety_reminder'].append(data)
 
         self.output_ui_stream.for_each(record_output)
 

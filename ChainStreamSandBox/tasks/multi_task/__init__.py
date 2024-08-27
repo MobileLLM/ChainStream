@@ -12,3 +12,4 @@ from .task_12 import ReadingLightTask
 from .task_13 import WaitingRoomTask
 from .task_14 import ShopStockTask
 from .task_15 import TripMusicTask
+from .task_16 import MultiTask1

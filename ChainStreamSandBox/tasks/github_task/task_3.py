@@ -14,7 +14,7 @@ class GithubTask3(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Office,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",

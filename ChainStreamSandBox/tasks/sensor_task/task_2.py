@@ -14,7 +14,7 @@ class GPSTask2(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Location,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Location,
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_locations",

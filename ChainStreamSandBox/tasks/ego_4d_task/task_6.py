@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class VideoTask3(SingleAgentTaskConfigBase):
+class VideoTask6(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
@@ -25,9 +25,9 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "description": "A series of judgments on whether I am in the playground",
                 "fields": {
-                    "meeting": "An indication of whether I am in a meeting, bool"
+                    "exercising": "An indication of whether I am in a playground, bool"
                 }
             }
         ])
@@ -43,15 +43,15 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def detect_scenario(first_person_data):
-            prompt = "Detect whether I am in a meeting, just tell me y or n."
+            prompt = "Detect whether I am exercising in the playground, just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
                 self.analysis_output.add_item({
-                    "meeting": True
+                    "exercising": True
                 })
             else:
                 self.analysis_output.add_item({
-                    "meeting": False
+                    "exercising": False
                 })
         self.first_person_input.for_each(detect_scenario)
         '''

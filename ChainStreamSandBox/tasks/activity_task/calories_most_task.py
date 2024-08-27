@@ -15,7 +15,7 @@ class ActivityTask3(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_activity_stream = None
         self.input_activity_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
