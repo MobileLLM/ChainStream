@@ -179,6 +179,9 @@ def load_all_results(base_file_path):
         'result-chainstream_feedback_1shot',
         'result-native_python_zeroshot',
         'result-human_written',
+        "result-langchain_zeroshot",
+        "result-chainstream_cot",
+        "result-chainstream_cot_1shot",
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -213,7 +216,12 @@ def rename_generator(name):
         return "CS-0shot"
     elif name == "result-chainstream_1shot":
         return "CS-1shot"
-
+    elif name == "result-chainstream_cot":
+        return "CS-Cot"
+    elif name == "result-chainstream_cot_1shot":
+        return "CS-Cot-1shot"
+    elif name == "result-langchain_zeroshot":
+        return "LC-0shot"
 
 
 def plot_different_generator_histograms(all_figure_data: dict):
@@ -304,6 +312,14 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "Py-0shot"
         elif generator == 'chainstream_1shot':
             return "CS-1shot"
+        elif generator == "chainstream_cot":
+            return "CS-Cot"
+        elif generator == "chainstream_cot_1shot":
+            return "CS-Cot-1shot"
+        elif generator == "stream_langchain_zeroshot":
+            return "LC-0shot"
+        elif generator == "stream_native_python_zeroshot":
+            return "Py-0shot"
         else:
             raise ValueError("Invalid generator name")
 
@@ -331,7 +347,7 @@ def _draw_avg_success_rate(generator_avg_success_rate):
 
     # Set x-axis labels and title
     ax.set_xticks(offsets + (len(Ns) - 1) * width / 2)
-    ax.set_xticklabels([_rename_generator(generator) for generator in generators])
+    ax.set_xticklabels([_rename_generator(generator) for generator in generators], rotation=45, ha='right')
     ax.set_ylabel('Score')
     ax.set_title("Success Rate for all generators")
     ax.set_ylim(0, 100)  # Set y-axis range from 0 to 1
@@ -359,7 +375,8 @@ def _draw_success_rate_for_tasks(generator_success_rate_for_tasks):
     offsets = np.arange(num_tasks)  # x locations for each task
 
     for i, generator in enumerate(generators):
-        scores = [not one_figure_data[generator][task] if task in one_figure_data[generator] else 0 for task in all_tasks]
+        scores = [not one_figure_data[generator][task] if task in one_figure_data[generator] else 0 for task in
+                  all_tasks]
         # Plot each generator's bars within each task
         ax.bar(offsets + i * width, scores, width, label=f'{generator}')
 

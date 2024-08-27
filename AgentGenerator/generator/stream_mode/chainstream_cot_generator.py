@@ -4,13 +4,15 @@ from AgentGenerator.io_model import StreamListDescription
 
 
 class ChainStreamCoTGenerator(DirectAgentGenerator):
-    def __init__(self):
+    def __init__(self, example_number=0):
         super().__init__()
+
+        self.example_number = example_number
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(output_stream, input_stream,
                                framework_name="chainstream",
-                               example_number=0,
+                               example_number=self.example_number,
                                mission_name="stream",
                                command_name="cot",
                                need_feedback_example=False)
