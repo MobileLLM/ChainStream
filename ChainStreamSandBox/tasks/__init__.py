@@ -80,45 +80,45 @@ from .email_task import EmailTask1
 from .email_task import EmailTask2
 from .email_task import EmailTask3
 from .email_task import EmailTask4
-from .email_task import OldEmailTask1
-from .email_task import OldEmailTask2
-from .email_task import OldEmailTask3
-from .email_task import OldEmailTask4
-from .email_task import OldEmailTask5
-from .email_task import OldEmailTask6
-from .email_task import OldEmailTask7
+from .email_task import EmailTask5
+from .email_task import EmailTask6
+from .email_task import EmailTask7
+from .email_task import EmailTask8
+from .email_task import EmailTask9
+from .email_task import EmailTask10
+from .email_task import EmailTask11
 from .news_task import NewsTask1
 from .news_task import NewsTask2
 from .news_task import NewsTask3
 from .news_task import NewsTask4
 from .news_task import NewsTask5
-from .news_task import OldNewsTask1
-from .news_task import OldNewsTask2
-from .news_task import OldNewsTask3
-from .news_task import OldNewsTask4
-from .news_task import OldNewsTask5
-from .news_task import OldNewsTask6
-from .news_task import OldNewsTask7
-from .news_task import OldNewsTask8
+from .news_task import NewsTask6
+from .news_task import NewsTask7
+from .news_task import NewsTask8
+from .news_task import NewsTask9
+from .news_task import NewsTask10
+from .news_task import NewsTask11
+from .news_task import NewsTask12
+from .news_task import NewsTask13
 from .stock_task import StockTask1
-from .stock_task import OldStockTask2
-from .stock_task import OldStockTask3
-from .stock_task import OldStockTask4
+from .stock_task import StockTask2
+from .stock_task import StockTask3
+from .stock_task import StockTask4
 from .arxiv_task import ArxivTask1
 from .arxiv_task import ArxivTask2
 from .arxiv_task import ArxivTask3
-from .arxiv_task import OldArxivTask1
-from .arxiv_task import OldArxivTask2
-from .arxiv_task import OldArxivTask3
-from .arxiv_task import OldArxivTask4
-from .arxiv_task import OldArxivTask5
-from .arxiv_task import OldArxivTask6
-from .arxiv_task import OldArxivTask7
-from .arxiv_task import OldArxivTask8
-from .arxiv_task import OldArxivTask9
-from .arxiv_task import OldArxivTask10
-from .arxiv_task import OldArxivTask11
-from .arxiv_task import OldArxivTask12
+from .arxiv_task import ArxivTask4
+from .arxiv_task import ArxivTask5
+from .arxiv_task import ArxivTask6
+from .arxiv_task import ArxivTask7
+from .arxiv_task import ArxivTask8
+from .arxiv_task import ArxivTask9
+from .arxiv_task import ArxivTask10
+from .arxiv_task import ArxivTask11
+from .arxiv_task import ArxivTask12
+from .arxiv_task import ArxivTask13
+from .arxiv_task import ArxivTask14
+from .arxiv_task import ArxivTask15
 from .sensor_task import GPSTask1
 from .sensor_task import GPSTask2
 from .sensor_task import GPSTask3
@@ -131,46 +131,46 @@ from .sensor_task import HealthTask2
 from .sensor_task import HealthTask3
 from .sensor_task import HealthTask4
 from .sensor_task import HealthTask5
-from .sensor_task import OldGPSTask1
-from .sensor_task import OldGPSTask2
-from .sensor_task import OldGPSTask3
-from .sensor_task import OldGPSTask4
-from .sensor_task import OldGPSTask5
-from .sensor_task import OldGPSTask6
-from .sensor_task import OldGPSTask7
-from .sensor_task import OldGPSTask8
-from .sensor_task import OldGPSTask9
-from .sensor_task import OldGPSTask10
-from .sensor_task import OldGPSTask11
-from .sensor_task import OldGPSTask12
-from .sensor_task import OldGPSTask13
-from .sensor_task import OldGPSTask14
-from .sensor_task import OldHealthTask1
-from .sensor_task import OldHealthTask2
-from .sensor_task import OldHealthTask3
-from .sensor_task import OldHealthTask4
-from .sensor_task import OldHealthTask5
-from .sensor_task import OldHealthTask6
-from .sensor_task import OldHealthTask7
-from .sensor_task import OldHealthTask8
-from .sensor_task import OldHealthTask9
-from .sensor_task import OldHealthTask10
-from .sensor_task import OldHealthTask11
-from .sensor_task import OldHealthTask12
-from .sensor_task import OldHealthTask13
-from .sensor_task import OldHealthTask14
-from .sensor_task import OldHealthTask15
-from .sensor_task import OldWeatherTask1
-from .sensor_task import OldWeatherTask2
-from .sensor_task import OldWeatherTask3
-from .sensor_task import OldWeatherTask4
-from .sensor_task import OldWeatherTask5
-from .sensor_task import OldWeatherTask6
-from .sensor_task import OldWifiTask1
-from .sensor_task import OldWifiTask2
-from .sensor_task import OldWifiTask3
-from .sensor_task import OldWifiTask4
-from .sensor_task import OldWifiTask5
+from .sensor_task import GPSTask4
+from .sensor_task import GPSTask5
+from .sensor_task import GPSTask6
+from .sensor_task import GPSTask7
+from .sensor_task import GPSTask8
+from .sensor_task import GPSTask9
+from .sensor_task import GPSTask10
+from .sensor_task import GPSTask11
+from .sensor_task import GPSTask12
+from .sensor_task import GPSTask13
+from .sensor_task import GPSTask14
+from .sensor_task import GPSTask15
+from .sensor_task import GPSTask16
+from .sensor_task import GPSTask17
+from .sensor_task import HealthTask6
+from .sensor_task import HealthTask7
+from .sensor_task import HealthTask8
+from .sensor_task import HealthTask9
+from .sensor_task import HealthTask10
+from .sensor_task import HealthTask11
+from .sensor_task import HealthTask12
+from .sensor_task import HealthTask13
+from .sensor_task import HealthTask14
+from .sensor_task import HealthTask15
+from .sensor_task import HealthTask16
+from .sensor_task import HealthTask17
+from .sensor_task import HealthTask18
+from .sensor_task import HealthTask19
+from .sensor_task import HealthTask20
+from .sensor_task import WeatherTask5
+from .sensor_task import WeatherTask6
+from .sensor_task import WeatherTask7
+from .sensor_task import WeatherTask8
+from .sensor_task import WeatherTask9
+from .sensor_task import WeatherTask10
+from .sensor_task import WifiTask1
+from .sensor_task import WifiTask2
+from .sensor_task import WifiTask3
+from .sensor_task import WifiTask4
+from .sensor_task import WifiTask5
 from .desktop_ui_task import ImageTask1
 from .ego_4d_task import VideoTask1
 from .ego_4d_task import VideoTask2
@@ -182,36 +182,36 @@ from .github_task import GithubTask1
 from .github_task import GithubTask2
 from .github_task import GithubTask3
 from .github_task import GithubTask4
-from .github_task import OldGithubTask1
-from .github_task import OldGithubTask2
-from .github_task import OldGithubTask3
-from .github_task import OldGithubTask4
-from .github_task import OldGithubTask5
-from .github_task import OldGithubTask6
-from .daily_dialogue_task import OldDialogueTask2
-from .daily_dialogue_task import OldDialogueTask3
-from .daily_dialogue_task import OldDialogueTask4
-from .daily_dialogue_task import OldDialogueTask5
-from .daily_dialogue_task import OldDialogueTask6
-from .sms_task import OldMessageTask1
-from .sms_task import OldMessageTask2
-from .sms_task import OldMessageTask3
-from .sms_task import OldMessageTask4
-from .sms_task import OldMessageTask5
-from .twitter_task import OldTweetTask1
-from .twitter_task import OldTweetTask2
-from .twitter_task import OldTweetTask3
-from .twitter_task import OldTweetTask4
-from .twitter_task import OldTweetTask5
-from .twitter_task import OldTweetTask6
-from .twitter_task import OldTweetTask7
-from .twitter_task import OldTweetTask8
-from .twitter_task import OldTweetTask9
-from .activity_task import OldActivityTask1
-from .activity_task import OldActivityTask2
-from .activity_task import OldActivityTask3
-from .activity_task import OldActivityTask4
-from .activity_task import OldActivityTask5
+from .github_task import GithubTask5
+from .github_task import GithubTask6
+from .github_task import GithubTask7
+from .github_task import GithubTask8
+from .github_task import GithubTask9
+from .github_task import GithubTask10
+from .daily_dialogue_task import DialogueTask1
+from .daily_dialogue_task import DialogueTask2
+from .daily_dialogue_task import DialogueTask3
+from .daily_dialogue_task import DialogueTask4
+from .daily_dialogue_task import DialogueTask5
+from .sms_task import MessageTask1
+from .sms_task import MessageTask2
+from .sms_task import MessageTask3
+from .sms_task import MessageTask4
+from .sms_task import MessageTask5
+from .twitter_task import TweetTask1
+from .twitter_task import TweetTask2
+from .twitter_task import TweetTask3
+from .twitter_task import TweetTask4
+from .twitter_task import TweetTask5
+from .twitter_task import TweetTask6
+from .twitter_task import TweetTask7
+from .twitter_task import TweetTask8
+from .twitter_task import TweetTask9
+from .activity_task import ActivityTask1
+from .activity_task import ActivityTask2
+from .activity_task import ActivityTask3
+from .activity_task import ActivityTask4
+from .activity_task import ActivityTask5
 from .multi_task import EmailTaskTest
 from .multi_task import MessageStockTask
 from .multi_task import WorkReminderTask
@@ -228,10 +228,17 @@ from .multi_task import ShopStockTask
 from .multi_task import TripMusicTask
 
 TASKS_WITH_DATA = {
-    # EmailTask1.__name__: EmailTask1,
+    EmailTask1.__name__: EmailTask1,
     EmailTask2.__name__: EmailTask2,
     EmailTask3.__name__: EmailTask3,
     EmailTask4.__name__: EmailTask4,
+    EmailTask5.__name__: EmailTask5,
+    EmailTask6.__name__: EmailTask6,
+    EmailTask7.__name__: EmailTask7,
+    EmailTask8.__name__: EmailTask8,
+    EmailTask9.__name__: EmailTask9,
+    EmailTask10.__name__: EmailTask10,
+    EmailTask11.__name__: EmailTask11,
     NewsTask1.__name__: NewsTask1,
     NewsTask2.__name__: NewsTask2,
     NewsTask3.__name__: NewsTask3,
@@ -244,6 +251,20 @@ TASKS_WITH_DATA = {
     GPSTask1.__name__: GPSTask1,
     GPSTask2.__name__: GPSTask2,
     GPSTask3.__name__: GPSTask3,
+    GPSTask4.__name__: GPSTask4,
+    GPSTask5.__name__: GPSTask5,
+    GPSTask6.__name__: GPSTask6,
+    GPSTask7.__name__: GPSTask7,
+    GPSTask8.__name__: GPSTask8,
+    GPSTask9.__name__: GPSTask9,
+    GPSTask10.__name__: GPSTask10,
+    GPSTask11.__name__: GPSTask11,
+    GPSTask12.__name__: GPSTask12,
+    GPSTask13.__name__: GPSTask13,
+    GPSTask14.__name__: GPSTask14,
+    GPSTask15.__name__: GPSTask15,
+    GPSTask16.__name__: GPSTask16,
+    GPSTask17.__name__: GPSTask17,
     WeatherTask1.__name__: WeatherTask1,
     WeatherTask2.__name__: WeatherTask2,
     WeatherTask3.__name__: WeatherTask3,
@@ -264,109 +285,88 @@ TASKS_WITH_DATA = {
     GithubTask2.__name__: GithubTask2,
     GithubTask3.__name__: GithubTask3,
     GithubTask4.__name__: GithubTask4,
-    OldGithubTask1.__name__: OldGithubTask1,
-    OldGithubTask2.__name__: OldGithubTask2,
-    OldGithubTask3.__name__: OldGithubTask3,
-    OldGithubTask4.__name__: OldGithubTask4,
-    OldGithubTask5.__name__: OldGithubTask5,
-    OldGithubTask6.__name__: OldGithubTask6,
+    GithubTask5.__name__: GithubTask5,
+    GithubTask6.__name__: GithubTask6,
+    GithubTask7.__name__: GithubTask7,
+    GithubTask8.__name__: GithubTask8,
+    GithubTask9.__name__: GithubTask9,
+    GithubTask10.__name__: GithubTask10,
     EmailTaskTest.__name__: EmailTaskTest,
     MessageStockTask.__name__: MessageStockTask,
     KitchenSafetyTask.__name__: KitchenSafetyTask,
-    OldArxivTask1.__name__: OldArxivTask1,
-    OldArxivTask2.__name__: OldArxivTask2,
-    OldArxivTask3.__name__: OldArxivTask3,
-    OldArxivTask4.__name__: OldArxivTask4,
-    OldArxivTask5.__name__: OldArxivTask5,
-    OldArxivTask6.__name__: OldArxivTask6,
-    OldArxivTask7.__name__: OldArxivTask7,
-    OldArxivTask8.__name__: OldArxivTask8,
-    OldArxivTask9.__name__: OldArxivTask9,
-    OldArxivTask10.__name__: OldArxivTask10,
-    OldArxivTask11.__name__: OldArxivTask11,
-    OldArxivTask12.__name__: OldArxivTask12,
-    OldDialogueTask2.__name__: OldDialogueTask2,
-    OldDialogueTask3.__name__: OldDialogueTask3,
-    OldDialogueTask4.__name__: OldDialogueTask4,
-    OldDialogueTask5.__name__: OldDialogueTask5,
-    OldDialogueTask6.__name__: OldDialogueTask6,
-    OldEmailTask1.__name__: OldEmailTask1,
-    OldEmailTask2.__name__: OldEmailTask2,
-    OldEmailTask3.__name__: OldEmailTask3,
-    OldEmailTask4.__name__: OldEmailTask4,
-    OldEmailTask5.__name__: OldEmailTask5,
-    OldEmailTask6.__name__: OldEmailTask6,
-    OldEmailTask7.__name__: OldEmailTask7,
-    OldGPSTask1.__name__: OldGPSTask1,
-    OldGPSTask2.__name__: OldGPSTask2,
-    OldGPSTask3.__name__: OldGPSTask3,
-    OldGPSTask4.__name__: OldGPSTask4,
-    OldGPSTask5.__name__: OldGPSTask5,
-    OldGPSTask6.__name__: OldGPSTask6,
-    OldGPSTask7.__name__: OldGPSTask7,
-    OldGPSTask8.__name__: OldGPSTask8,
-    OldGPSTask9.__name__: OldGPSTask9,
-    OldGPSTask10.__name__: OldGPSTask10,
-    OldGPSTask11.__name__: OldGPSTask11,
-    OldGPSTask12.__name__: OldGPSTask12,
-    OldGPSTask13.__name__: OldGPSTask13,
-    OldGPSTask14.__name__: OldGPSTask14,
-    OldNewsTask1.__name__: OldNewsTask1,
-    OldNewsTask2.__name__: OldNewsTask2,
-    OldNewsTask3.__name__: OldNewsTask3,
-    OldNewsTask4.__name__: OldNewsTask4,
-    OldNewsTask5.__name__: OldNewsTask5,
-    OldNewsTask6.__name__: OldNewsTask6,
-    OldNewsTask7.__name__: OldNewsTask7,
-    OldNewsTask8.__name__: OldNewsTask8,
-    OldMessageTask1.__name__: OldMessageTask1,
-    OldMessageTask2.__name__: OldMessageTask2,
-    OldMessageTask3.__name__: OldMessageTask3,
-    OldMessageTask4.__name__: OldMessageTask4,
-    OldMessageTask5.__name__: OldMessageTask5,
-    OldTweetTask1.__name__: OldTweetTask1,
-    OldTweetTask2.__name__: OldTweetTask2,
-    OldTweetTask3.__name__: OldTweetTask3,
-    OldTweetTask4.__name__: OldTweetTask4,
-    OldTweetTask5.__name__: OldTweetTask5,
-    OldTweetTask6.__name__: OldTweetTask6,
-    OldTweetTask7.__name__: OldTweetTask7,
-    OldTweetTask8.__name__: OldTweetTask8,
-    OldTweetTask9.__name__: OldTweetTask9,
-    OldActivityTask1.__name__: OldActivityTask1,
-    OldActivityTask2.__name__: OldActivityTask2,
-    OldActivityTask3.__name__: OldActivityTask3,
-    OldActivityTask4.__name__: OldActivityTask4,
-    OldActivityTask5.__name__: OldActivityTask5,
-    OldHealthTask1.__name__: OldHealthTask1,
-    OldHealthTask2.__name__: OldHealthTask2,
-    OldHealthTask3.__name__: OldHealthTask3,
-    OldHealthTask4.__name__: OldHealthTask4,
-    OldHealthTask5.__name__: OldHealthTask5,
-    OldHealthTask6.__name__: OldHealthTask6,
-    OldHealthTask7.__name__: OldHealthTask7,
-    OldHealthTask8.__name__: OldHealthTask8,
-    OldHealthTask9.__name__: OldHealthTask9,
-    OldHealthTask10.__name__: OldHealthTask10,
-    OldHealthTask11.__name__: OldHealthTask11,
-    OldHealthTask12.__name__: OldHealthTask12,
-    OldHealthTask13.__name__: OldHealthTask13,
-    OldHealthTask14.__name__: OldHealthTask14,
-    OldHealthTask15.__name__: OldHealthTask15,
-    OldWeatherTask1.__name__: OldWeatherTask1,
-    OldWeatherTask2.__name__: OldWeatherTask2,
-    OldWeatherTask3.__name__: OldWeatherTask3,
-    OldWeatherTask4.__name__: OldWeatherTask4,
-    OldWeatherTask5.__name__: OldWeatherTask5,
-    OldWeatherTask6.__name__: OldWeatherTask6,
-    OldWifiTask1.__name__: OldWifiTask1,
-    OldWifiTask2.__name__: OldWifiTask2,
-    OldWifiTask3.__name__: OldWifiTask3,
-    OldWifiTask4.__name__: OldWifiTask4,
-    OldWifiTask5.__name__: OldWifiTask5,
-    OldStockTask2.__name__: OldStockTask2,
-    OldStockTask3.__name__: OldStockTask3,
-    OldStockTask4.__name__: OldStockTask4
+    ArxivTask4.__name__: ArxivTask4,
+    ArxivTask5.__name__: ArxivTask5,
+    ArxivTask6.__name__: ArxivTask6,
+    ArxivTask7.__name__: ArxivTask7,
+    ArxivTask8.__name__: ArxivTask8,
+    ArxivTask9.__name__: ArxivTask9,
+    ArxivTask10.__name__: ArxivTask10,
+    ArxivTask11.__name__: ArxivTask11,
+    ArxivTask12.__name__: ArxivTask12,
+    ArxivTask13.__name__: ArxivTask13,
+    ArxivTask14.__name__: ArxivTask14,
+    ArxivTask15.__name__: ArxivTask15,
+    DialogueTask1.__name__: DialogueTask1,
+    DialogueTask2.__name__: DialogueTask2,
+    DialogueTask3.__name__: DialogueTask3,
+    DialogueTask4.__name__: DialogueTask4,
+    DialogueTask5.__name__: DialogueTask5,
+    NewsTask6.__name__: NewsTask6,
+    NewsTask7.__name__: NewsTask7,
+    NewsTask8.__name__: NewsTask8,
+    NewsTask9.__name__: NewsTask9,
+    NewsTask10.__name__: NewsTask10,
+    NewsTask11.__name__: NewsTask11,
+    NewsTask12.__name__: NewsTask12,
+    NewsTask13.__name__: NewsTask13,
+    MessageTask1.__name__: MessageTask1,
+    MessageTask2.__name__: MessageTask2,
+    MessageTask3.__name__: MessageTask3,
+    MessageTask4.__name__: MessageTask4,
+    MessageTask5.__name__: MessageTask5,
+    TweetTask1.__name__: TweetTask1,
+    TweetTask2.__name__: TweetTask2,
+    TweetTask3.__name__: TweetTask3,
+    TweetTask4.__name__: TweetTask4,
+    TweetTask5.__name__: TweetTask5,
+    TweetTask6.__name__: TweetTask6,
+    TweetTask7.__name__: TweetTask7,
+    TweetTask8.__name__: TweetTask8,
+    TweetTask9.__name__: TweetTask9,
+    ActivityTask1.__name__: ActivityTask1,
+    ActivityTask2.__name__: ActivityTask2,
+    ActivityTask3.__name__: ActivityTask3,
+    ActivityTask4.__name__: ActivityTask4,
+    ActivityTask5.__name__: ActivityTask5,
+    HealthTask6.__name__: HealthTask6,
+    HealthTask7.__name__: HealthTask7,
+    HealthTask8.__name__: HealthTask8,
+    HealthTask9.__name__: HealthTask9,
+    HealthTask10.__name__: HealthTask10,
+    HealthTask11.__name__: HealthTask11,
+    HealthTask12.__name__: HealthTask12,
+    HealthTask13.__name__: HealthTask13,
+    HealthTask14.__name__: HealthTask14,
+    HealthTask15.__name__: HealthTask15,
+    HealthTask16.__name__: HealthTask16,
+    HealthTask17.__name__: HealthTask17,
+    HealthTask18.__name__: HealthTask18,
+    HealthTask19.__name__: HealthTask19,
+    HealthTask20.__name__: HealthTask20,
+    WeatherTask5.__name__: WeatherTask5,
+    WeatherTask6.__name__: WeatherTask6,
+    WeatherTask7.__name__: WeatherTask7,
+    WeatherTask8.__name__: WeatherTask8,
+    WeatherTask9.__name__: WeatherTask9,
+    WeatherTask10.__name__: WeatherTask10,
+    WifiTask1.__name__: WifiTask1,
+    WifiTask2.__name__: WifiTask2,
+    WifiTask3.__name__: WifiTask3,
+    WifiTask4.__name__: WifiTask4,
+    WifiTask5.__name__: WifiTask5,
+    StockTask2.__name__: StockTask2,
+    StockTask3.__name__: StockTask3,
+    StockTask4.__name__: StockTask4
 }
 
 TASKS_WITHOUT_DATA = {
@@ -388,6 +388,13 @@ ALL_TASKS = {
     EmailTask2.__name__: EmailTask2,
     EmailTask3.__name__: EmailTask3,
     EmailTask4.__name__: EmailTask4,
+    EmailTask5.__name__: EmailTask5,
+    EmailTask6.__name__: EmailTask6,
+    EmailTask7.__name__: EmailTask7,
+    EmailTask8.__name__: EmailTask8,
+    EmailTask9.__name__: EmailTask9,
+    EmailTask10.__name__: EmailTask10,
+    EmailTask11.__name__: EmailTask11,
     NewsTask1.__name__: NewsTask1,
     NewsTask2.__name__: NewsTask2,
     NewsTask3.__name__: NewsTask3,
@@ -400,6 +407,20 @@ ALL_TASKS = {
     GPSTask1.__name__: GPSTask1,
     GPSTask2.__name__: GPSTask2,
     GPSTask3.__name__: GPSTask3,
+    GPSTask4.__name__: GPSTask4,
+    GPSTask5.__name__: GPSTask5,
+    GPSTask6.__name__: GPSTask6,
+    GPSTask7.__name__: GPSTask7,
+    GPSTask8.__name__: GPSTask8,
+    GPSTask9.__name__: GPSTask9,
+    GPSTask10.__name__: GPSTask10,
+    GPSTask11.__name__: GPSTask11,
+    GPSTask12.__name__: GPSTask12,
+    GPSTask13.__name__: GPSTask13,
+    GPSTask14.__name__: GPSTask14,
+    GPSTask15.__name__: GPSTask15,
+    GPSTask16.__name__: GPSTask16,
+    GPSTask17.__name__: GPSTask17,
     WeatherTask1.__name__: WeatherTask1,
     WeatherTask2.__name__: WeatherTask2,
     WeatherTask3.__name__: WeatherTask3,
@@ -420,120 +441,99 @@ ALL_TASKS = {
     GithubTask2.__name__: GithubTask2,
     GithubTask3.__name__: GithubTask3,
     GithubTask4.__name__: GithubTask4,
-    OldGithubTask1.__name__: OldGithubTask1,
-    OldGithubTask2.__name__: OldGithubTask2,
-    OldGithubTask3.__name__: OldGithubTask3,
-    OldGithubTask4.__name__: OldGithubTask4,
-    OldGithubTask5.__name__: OldGithubTask5,
-    OldGithubTask6.__name__: OldGithubTask6,
+    GithubTask5.__name__: GithubTask5,
+    GithubTask6.__name__: GithubTask6,
+    GithubTask7.__name__: GithubTask7,
+    GithubTask8.__name__: GithubTask8,
+    GithubTask9.__name__: GithubTask9,
+    GithubTask10.__name__: GithubTask10,
     EmailTaskTest.__name__: EmailTaskTest,
     MessageStockTask.__name__: MessageStockTask,
+    KitchenSafetyTask.__name__: KitchenSafetyTask,
+    ArxivTask4.__name__: ArxivTask4,
+    ArxivTask5.__name__: ArxivTask5,
+    ArxivTask6.__name__: ArxivTask6,
+    ArxivTask7.__name__: ArxivTask7,
+    ArxivTask8.__name__: ArxivTask8,
+    ArxivTask9.__name__: ArxivTask9,
+    ArxivTask10.__name__: ArxivTask10,
+    ArxivTask11.__name__: ArxivTask11,
+    ArxivTask12.__name__: ArxivTask12,
+    ArxivTask13.__name__: ArxivTask13,
+    ArxivTask14.__name__: ArxivTask14,
+    ArxivTask15.__name__: ArxivTask15,
+    DialogueTask1.__name__: DialogueTask1,
+    DialogueTask2.__name__: DialogueTask2,
+    DialogueTask3.__name__: DialogueTask3,
+    DialogueTask4.__name__: DialogueTask4,
+    DialogueTask5.__name__: DialogueTask5,
+    NewsTask6.__name__: NewsTask6,
+    NewsTask7.__name__: NewsTask7,
+    NewsTask8.__name__: NewsTask8,
+    NewsTask9.__name__: NewsTask9,
+    NewsTask10.__name__: NewsTask10,
+    NewsTask11.__name__: NewsTask11,
+    NewsTask12.__name__: NewsTask12,
+    NewsTask13.__name__: NewsTask13,
+    MessageTask1.__name__: MessageTask1,
+    MessageTask2.__name__: MessageTask2,
+    MessageTask3.__name__: MessageTask3,
+    MessageTask4.__name__: MessageTask4,
+    MessageTask5.__name__: MessageTask5,
+    TweetTask1.__name__: TweetTask1,
+    TweetTask2.__name__: TweetTask2,
+    TweetTask3.__name__: TweetTask3,
+    TweetTask4.__name__: TweetTask4,
+    TweetTask5.__name__: TweetTask5,
+    TweetTask6.__name__: TweetTask6,
+    TweetTask7.__name__: TweetTask7,
+    TweetTask8.__name__: TweetTask8,
+    TweetTask9.__name__: TweetTask9,
+    ActivityTask1.__name__: ActivityTask1,
+    ActivityTask2.__name__: ActivityTask2,
+    ActivityTask3.__name__: ActivityTask3,
+    ActivityTask4.__name__: ActivityTask4,
+    ActivityTask5.__name__: ActivityTask5,
+    HealthTask6.__name__: HealthTask6,
+    HealthTask7.__name__: HealthTask7,
+    HealthTask8.__name__: HealthTask8,
+    HealthTask9.__name__: HealthTask9,
+    HealthTask10.__name__: HealthTask10,
+    HealthTask11.__name__: HealthTask11,
+    HealthTask12.__name__: HealthTask12,
+    HealthTask13.__name__: HealthTask13,
+    HealthTask14.__name__: HealthTask14,
+    HealthTask15.__name__: HealthTask15,
+    HealthTask16.__name__: HealthTask16,
+    HealthTask17.__name__: HealthTask17,
+    HealthTask18.__name__: HealthTask18,
+    HealthTask19.__name__: HealthTask19,
+    HealthTask20.__name__: HealthTask20,
+    WeatherTask5.__name__: WeatherTask5,
+    WeatherTask6.__name__: WeatherTask6,
+    WeatherTask7.__name__: WeatherTask7,
+    WeatherTask8.__name__: WeatherTask8,
+    WeatherTask9.__name__: WeatherTask9,
+    WeatherTask10.__name__: WeatherTask10,
+    WifiTask1.__name__: WifiTask1,
+    WifiTask2.__name__: WifiTask2,
+    WifiTask3.__name__: WifiTask3,
+    WifiTask4.__name__: WifiTask4,
+    WifiTask5.__name__: WifiTask5,
+    StockTask2.__name__: StockTask2,
+    StockTask3.__name__: StockTask3,
+    StockTask4.__name__: StockTask4,
     WorkReminderTask.__name__: WorkReminderTask,
     TravelTask.__name__: TravelTask,
     CatFoodTask.__name__: CatFoodTask,
     WaterFlowerTask.__name__: WaterFlowerTask,
-    KitchenSafetyTask.__name__: KitchenSafetyTask,
     CloseWindowTask.__name__: CloseWindowTask,
     RemindDriverTask.__name__: RemindDriverTask,
     StudentInClassTask.__name__: StudentInClassTask,
     ReadingLightTask.__name__: ReadingLightTask,
     WaitingRoomTask.__name__: WaitingRoomTask,
     ShopStockTask.__name__: ShopStockTask,
-    TripMusicTask.__name__: TripMusicTask,
-    OldArxivTask1.__name__: OldArxivTask1,
-    OldArxivTask2.__name__: OldArxivTask2,
-    OldArxivTask3.__name__: OldArxivTask3,
-    OldArxivTask4.__name__: OldArxivTask4,
-    OldArxivTask5.__name__: OldArxivTask5,
-    OldArxivTask6.__name__: OldArxivTask6,
-    OldArxivTask7.__name__: OldArxivTask7,
-    OldArxivTask8.__name__: OldArxivTask8,
-    OldArxivTask9.__name__: OldArxivTask9,
-    OldArxivTask10.__name__: OldArxivTask10,
-    OldArxivTask11.__name__: OldArxivTask11,
-    OldArxivTask12.__name__: OldArxivTask12,
-    OldDialogueTask2.__name__: OldDialogueTask2,
-    OldDialogueTask3.__name__: OldDialogueTask3,
-    OldDialogueTask4.__name__: OldDialogueTask4,
-    OldDialogueTask5.__name__: OldDialogueTask5,
-    OldDialogueTask6.__name__: OldDialogueTask6,
-    OldEmailTask1.__name__: OldEmailTask1,
-    OldEmailTask2.__name__: OldEmailTask2,
-    OldEmailTask3.__name__: OldEmailTask3,
-    OldEmailTask4.__name__: OldEmailTask4,
-    OldEmailTask5.__name__: OldEmailTask5,
-    OldEmailTask6.__name__: OldEmailTask6,
-    OldEmailTask7.__name__: OldEmailTask7,
-    OldGPSTask1.__name__: OldGPSTask1,
-    OldGPSTask2.__name__: OldGPSTask2,
-    OldGPSTask3.__name__: OldGPSTask3,
-    OldGPSTask4.__name__: OldGPSTask4,
-    OldGPSTask5.__name__: OldGPSTask5,
-    OldGPSTask6.__name__: OldGPSTask6,
-    OldGPSTask7.__name__: OldGPSTask7,
-    OldGPSTask8.__name__: OldGPSTask8,
-    OldGPSTask9.__name__: OldGPSTask9,
-    OldGPSTask10.__name__: OldGPSTask10,
-    OldGPSTask11.__name__: OldGPSTask11,
-    OldGPSTask12.__name__: OldGPSTask12,
-    OldGPSTask13.__name__: OldGPSTask13,
-    OldGPSTask14.__name__: OldGPSTask14,
-    OldNewsTask1.__name__: OldNewsTask1,
-    OldNewsTask2.__name__: OldNewsTask2,
-    OldNewsTask3.__name__: OldNewsTask3,
-    OldNewsTask4.__name__: OldNewsTask4,
-    OldNewsTask5.__name__: OldNewsTask5,
-    OldNewsTask6.__name__: OldNewsTask6,
-    OldNewsTask7.__name__: OldNewsTask7,
-    OldNewsTask8.__name__: OldNewsTask8,
-    OldMessageTask1.__name__: OldMessageTask1,
-    OldMessageTask2.__name__: OldMessageTask2,
-    OldMessageTask3.__name__: OldMessageTask3,
-    OldMessageTask4.__name__: OldMessageTask4,
-    OldMessageTask5.__name__: OldMessageTask5,
-    OldTweetTask1.__name__: OldTweetTask1,
-    OldTweetTask2.__name__: OldTweetTask2,
-    OldTweetTask3.__name__: OldTweetTask3,
-    OldTweetTask4.__name__: OldTweetTask4,
-    OldTweetTask5.__name__: OldTweetTask5,
-    OldTweetTask6.__name__: OldTweetTask6,
-    OldTweetTask7.__name__: OldTweetTask7,
-    OldTweetTask8.__name__: OldTweetTask8,
-    OldTweetTask9.__name__: OldTweetTask9,
-    OldActivityTask1.__name__: OldActivityTask1,
-    OldActivityTask2.__name__: OldActivityTask2,
-    OldActivityTask3.__name__: OldActivityTask3,
-    OldActivityTask4.__name__: OldActivityTask4,
-    OldActivityTask5.__name__: OldActivityTask5,
-    OldHealthTask1.__name__: OldHealthTask1,
-    OldHealthTask2.__name__: OldHealthTask2,
-    OldHealthTask3.__name__: OldHealthTask3,
-    OldHealthTask4.__name__: OldHealthTask4,
-    OldHealthTask5.__name__: OldHealthTask5,
-    OldHealthTask6.__name__: OldHealthTask6,
-    OldHealthTask7.__name__: OldHealthTask7,
-    OldHealthTask8.__name__: OldHealthTask8,
-    OldHealthTask9.__name__: OldHealthTask9,
-    OldHealthTask10.__name__: OldHealthTask10,
-    OldHealthTask11.__name__: OldHealthTask11,
-    OldHealthTask12.__name__: OldHealthTask12,
-    OldHealthTask13.__name__: OldHealthTask13,
-    OldHealthTask14.__name__: OldHealthTask14,
-    OldHealthTask15.__name__: OldHealthTask15,
-    OldWeatherTask1.__name__: OldWeatherTask1,
-    OldWeatherTask2.__name__: OldWeatherTask2,
-    OldWeatherTask3.__name__: OldWeatherTask3,
-    OldWeatherTask4.__name__: OldWeatherTask4,
-    OldWeatherTask5.__name__: OldWeatherTask5,
-    OldWeatherTask6.__name__: OldWeatherTask6,
-    OldWifiTask1.__name__: OldWifiTask1,
-    OldWifiTask2.__name__: OldWifiTask2,
-    OldWifiTask3.__name__: OldWifiTask3,
-    OldWifiTask4.__name__: OldWifiTask4,
-    OldWifiTask5.__name__: OldWifiTask5,
-    OldStockTask2.__name__: OldStockTask2,
-    OldStockTask3.__name__: OldStockTask3,
-    OldStockTask4.__name__: OldStockTask4
+    TripMusicTask.__name__: TripMusicTask
 }
 
 

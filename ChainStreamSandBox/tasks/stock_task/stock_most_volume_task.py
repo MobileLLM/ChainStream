@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class OldStockTask4(SingleAgentTaskConfigBase):
+class StockTask2(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None

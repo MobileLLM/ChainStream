@@ -5,7 +5,7 @@ from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
 
-class OldTweetTask1(SingleAgentTaskConfigBase):
+class TweetTask1(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_tweet_stream = None

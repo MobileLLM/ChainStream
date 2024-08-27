@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class OldGithubTask4(SingleAgentTaskConfigBase):
+class GithubTask5(SingleAgentTaskConfigBase):
     def __init__(self, github_number=10):
         super().__init__()
         self.output_record = None

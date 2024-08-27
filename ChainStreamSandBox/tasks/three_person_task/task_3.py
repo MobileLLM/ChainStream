@@ -28,7 +28,7 @@ class VideoTask6(SingleAgentTaskConfigBase):
                 "stream_id": "detect_person",
                 "description": "A series of analysis of whether the secret base has been invaded by person",
                 "fields": {
-                    "analysis_result": "the detection of whether a person is in the secret base, string"}
+                    "analysis_result": "the detection of whether a person is in the secret base, string = y or n"}
             }
         ])
         self.Sphar_data = SpharData().load_for_person_detection()

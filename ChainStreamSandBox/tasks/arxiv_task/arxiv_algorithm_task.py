@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class OldArxivTask2(SingleAgentTaskConfigBase):
+class ArxivTask5(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None

@@ -2,10 +2,10 @@ from .task_1 import EmailTask1
 from .task_2 import EmailTask2
 from .task_3 import EmailTask3
 from .task_4 import EmailTask4
-from .email_date_task import OldEmailTask1
-from .email_emotion_task import OldEmailTask2
-from .email_receiver_task import OldEmailTask3
-from .email_reply_task import OldEmailTask4
-from .email_sender_task import OldEmailTask5
-from .email_subject_task import OldEmailTask6
-from .email_summary_task import OldEmailTask7
+from .email_date_task import EmailTask5
+from .email_emotion_task import EmailTask6
+from .email_receiver_task import EmailTask7
+from .email_reply_task import EmailTask8
+from .email_sender_task import EmailTask9
+from .email_subject_task import EmailTask10
+from .email_summary_task import EmailTask11

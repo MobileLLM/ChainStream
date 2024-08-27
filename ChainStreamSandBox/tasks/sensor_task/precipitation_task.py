@@ -5,7 +5,7 @@ from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
 
-class OldWeatherTask2(SingleAgentTaskConfigBase):
+class WeatherTask6(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None

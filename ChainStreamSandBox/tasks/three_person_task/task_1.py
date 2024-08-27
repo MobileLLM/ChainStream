@@ -25,9 +25,10 @@ class VideoTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_traffic",
-                "description": "A series of analysis of whether a building collapses or a car accident occurs",
+                "description": "A series of analysis of whether there are accidents happened on the road",
                 "fields": {
-                    "analysis_result": "the analysis of the traffic accident, string"}
+                    "analysis_result": "The analysis of whether an accident occurred in the surveillance video, "
+                                       "string = y or n"}
             }
         ])
         self.Sphar_data = SpharData().load_for_traffic()
@@ -42,8 +43,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_surveillance(third_person_data):
-            prompt = " Analyze if there is anything unusual on the road?simply answer y or n.If the answer is y,judge"
-            " the type of the accident from the tags:[car_accident,collapse,fire,others]."
+            prompt = " Analyze whether there are accidents on the road?simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res

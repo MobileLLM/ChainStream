@@ -5,7 +5,7 @@ from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
 
-class OldHealthTask14(SingleAgentTaskConfigBase):
+class HealthTask19(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None

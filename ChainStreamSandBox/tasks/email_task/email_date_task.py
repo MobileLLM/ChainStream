@@ -7,7 +7,7 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class OldEmailTask1(SingleAgentTaskConfigBase):
+class EmailTask5(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None

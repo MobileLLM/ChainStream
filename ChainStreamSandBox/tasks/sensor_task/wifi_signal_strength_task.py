@@ -5,7 +5,7 @@ from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
 
-class OldWifiTask3(SingleAgentTaskConfigBase):
+class WifiTask3(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
