@@ -17,12 +17,7 @@ class OldGPSTask14(SingleAgentTaskConfigBase):
             "stream_id": "all_landmarks",
             "description": "A series of landmarks information",
             "fields": {
-                "NumberofFloors": "The number of the floors in the landmark, int",
-                "Street Address": "The street address of the landmark, string",
-                "PropertyName": "The property name of the landmark, string",
-                "Neighborhood": "The neighborhood of the landmark, string",
-                "YearBuilt": "The construction time of the landmark, string",
-                "landmark_type": "The type of the landmark, string",
+                "landmark_type": "The type of the landmark, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

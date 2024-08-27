@@ -31,8 +31,8 @@ class GPSTask3(SingleAgentTaskConfigBase):
                 "description": "A series of the street addresses of all the 'K-12 School' around,with every two copies "
                                "of location data packaged as a batch after filtering K-12 School property type",
                 "fields": {
-                    "address": "the street address of my location, string",
-                    "school": "the names of the schools around, string"
+                    "Street Address": "the street address of my location, string",
+                    "PropertyName": "the names of the schools around, string"
                 }
             }
         ])
@@ -60,8 +60,8 @@ class AgentExampleForSensorTask3(cs.agent.Agent):
                 address = location.get('Street Address')
                 school = location.get('PropertyName')
                 self.sensor_output.add_item({
-                    "address": address,
-                    "school": school
+                    "Street Address": address,
+                    "PropertyName": school
                 })
 
         self.sensor_input.for_each(filter_school).batch(by_count=2).for_each(nearest_district)

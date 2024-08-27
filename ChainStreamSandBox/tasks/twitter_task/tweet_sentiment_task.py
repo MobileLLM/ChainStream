@@ -18,14 +18,7 @@ class OldTweetTask6(SingleAgentTaskConfigBase):
             "description": "A series of twitter information",
             "fields": {
                 "airline_sentiment": "The sentiment of the twitter on airline, string",
-                "negative_reason": "The reason of negativeness, string",
-                "airline": "The name of the airline, string",
-                "name": "The name of the user, string",
-                "retweet_count": "The number of the retweet, int",
-                "text": "The text of the tweet, string",
-                "tweet_created": "The time of the tweet, string",
-                "tweet_location": "The location of the tweet, string",
-                "user_timezone": "The timezone of the twitter user, string"
+                "text": "The text of the tweet, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -34,7 +27,7 @@ class OldTweetTask6(SingleAgentTaskConfigBase):
                 "description": "A series of tweet texts with the sentiment analysis of the tweets",
                 "fields": {
                     "text": "The text of the tweet, string",
-                    "sentiment": "The sentiment analysed from the tweet, string"
+                    "airline_sentiment": "The sentiment analysed from the tweet on the airline, string"
                 }
             }
         ])
@@ -54,7 +47,7 @@ class testAgent(cs.agent.Agent):
             text = tweets["text"]        
             self.output_stream.add_item({
                 "text": text,
-                "sentiment": airline_sentiment
+                "airline_sentiment": airline_sentiment
             })
         self.input_stream.for_each(process_tweet)
         '''

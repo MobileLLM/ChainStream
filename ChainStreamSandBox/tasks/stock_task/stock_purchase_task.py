@@ -32,8 +32,8 @@ class OldStockTask2(SingleAgentTaskConfigBase):
                 "description": "A series of the recommendations for stock purchases based on the open,close,high and "
                                "low price",
                 "fields": {
-                    "buy": "yes or null, string",
-                    "stock_symbol": "The symbol of the stock, string"
+                    "buy": "Decision on whether to buy the stock or not, string = yes or no",
+                    "symbol": "The symbol of the stock, string"
                 }
             }
         ])
@@ -60,8 +60,14 @@ class testAgent(cs.agent.Agent):
             if response.lower() == "y":
                 self.output_stream.add_item({
                 "buy": "yes",
-                "stock_symbol": stock_symbol
+                "symbol": stock_symbol
                 })
+            else:
+                self.output_stream.add_item({
+                "buy": "no", 
+                "symbol": stock_symbol
+                })
+            return stock
         self.input_stream.for_each(process_stocks)
         '''
 

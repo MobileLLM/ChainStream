@@ -17,15 +17,8 @@ class OldTweetTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_tweets",
             "description": "A series of twitter information",
             "fields": {
-                "airline_sentiment": "The sentiment of the twitter on airline, string",
-                "negative_reason": "The reason of negativeness, string",
-                "airline": "The name of the airline, string",
-                "name": "The name of the user, string",
                 "retweet_count": "The number of the retweet, int",
-                "text": "The text of the tweet, string",
-                "tweet_created": "The time of the tweet, string",
-                "tweet_location": "The location of the tweet, string",
-                "user_timezone": "The timezone of the twitter user, string"
+                "text": "The text of the tweet, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

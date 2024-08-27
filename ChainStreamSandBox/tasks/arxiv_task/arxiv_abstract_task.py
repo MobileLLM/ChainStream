@@ -23,7 +23,7 @@ class OldArxivTask1(SingleAgentTaskConfigBase):
                 "abstract": "The abstract of the arxiv article, string",
                 "title": "The title of the arxiv article, string",
                 "authors": "The authors of the arxiv article, string",
-                "update_date": "The date of the arxiv article, string",
+                "update_date": "The date of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,7 +33,7 @@ class OldArxivTask1(SingleAgentTaskConfigBase):
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "authors": "The authors of the arxiv article, string",
-                    "date": "The date of the arxiv article, string"}
+                    "update_date": "The date of the arxiv article, string"}
             }
         ])
 
@@ -59,7 +59,7 @@ class testAgent(cs.agent.Agent):
                 self.output_stream.add_item({
                     "title": title,
                     "authors": authors,
-                    "date": date
+                    "update_date": date
                 })
             return paper
         self.input_stream.for_each(process_paper)

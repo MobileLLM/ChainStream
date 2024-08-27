@@ -21,10 +21,7 @@ class OldArxivTask8(SingleAgentTaskConfigBase):
             "description": "A series of arxiv articles",
             "fields": {
                 "journal-ref": "The journal reference of the arxiv article, string",
-                "title": "The title of the arxiv article, string",
-                "comments": "The comments of the arxiv article, string",
-                "update_date": "The update date of the arxiv article, string",
-                "authors": "The authors of the arxiv article, string"
+                "title": "The title of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,7 +30,7 @@ class OldArxivTask8(SingleAgentTaskConfigBase):
                 "description": "A series of arxiv articles with their references provided",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "reference": "The journal reference of the arxiv article, string"
+                    "journal-ref": "The journal reference of the arxiv article, string"
                 }
             }
         ])
@@ -55,7 +52,7 @@ class testAgent(cs.agent.Agent):
             if paper_reference is not None: 
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "reference": paper_reference
+                    "journal-ref": paper_reference
                 })
         self.input_stream.for_each(process_paper)
 

@@ -20,7 +20,6 @@ class EmailTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_email",
             "description": "All email messages",
             "fields": {
-                "sender": "the name of the email sender, string",
                 "Content": "the content of the email, string",
                 "Date": "RFC 822 datetime format, string"
 
@@ -33,7 +32,7 @@ class EmailTask2(SingleAgentTaskConfigBase):
                                "filtered for work-related topics first, followed by packaging every two emails into a "
                                "batch, then filtering by date, and finally summarizing the purposes",
                 "fields": {
-                    "work_emails": "the content of the work-related email, string",
+                    "Content": "the content of the work-related email, string",
                     "purpose": "the purpose of the work-related email sent by the sender chosen from['Request for "
                                "Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', "
                                "'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', "
@@ -78,7 +77,7 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
             prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']"
             res = self.llm.query(cs.llm.make_prompt(content, prompt))
             self.email_output.add_item({
-                "work_emails": content,
+                "Content": content,
                 "purpose": res
             })
 

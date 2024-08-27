@@ -30,7 +30,7 @@ class HealthTask4(SingleAgentTaskConfigBase):
                                "copies of health sensor data are packaged as a batch after filtering the heart rate "
                                "which is over 85",
                 "fields": {
-                    "Heart Rate": "the heart rate data from the health sensor, float",
+                    "HeartRate": "the heart rate data from the health sensor, float",
                     "reminder": "An auto reminder, string = Heart rate is too high!Remember to rest yourself!"
                 }
             }

@@ -17,9 +17,7 @@ class OldGPSTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_landmarks",
             "description": "A series of landmarks information",
             "fields": {
-                "Electricity(kWh)": "The electricity consumed by the landmark, float",
-                "GHGEmissions(MetricTonsCO2e)": "The green house gas emissions by the landmark, float",
-                "NaturalGas(therms)": "The natural gas emissions by the landmark, float",
+                "Electricity(kWh)": "The electricity consumed by the landmark, float"
 
             }
         }])
@@ -28,7 +26,7 @@ class OldGPSTask1(SingleAgentTaskConfigBase):
                 "stream_id": "landmarks_electricity",
                 "description": "A series of the calculation of the electricity consumed by the landmark",
                 "fields": {
-                    "electricity": "The electricity consumed by the landmark, float"}
+                    "Electricity(kWh)": "The electricity consumed by the landmark, float"}
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -45,7 +43,7 @@ class testAgent(cs.agent.Agent):
         def process_landmark(landmark):
             Electricity = landmark["Electricity(kWh)"]        
             self.output_stream.add_item({
-                "electricity": Electricity
+                "Electricity(kWh)": Electricity
             })
         self.input_stream.for_each(process_landmark)
         '''

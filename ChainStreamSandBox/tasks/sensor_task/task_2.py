@@ -31,8 +31,8 @@ class GPSTask2(SingleAgentTaskConfigBase):
                 "description": "A series of the hotel around according to the street address,with every two copies of "
                                "location data packaged as a batch after filtering hotel property type",
                 "fields": {
-                    "address": "the street address of my location",
-                    "hotel": "the names of the hotels around, string"
+                    "Street Address": "the street address of my location",
+                    "PropertyName": "the names of the hotels around, string"
                 }
             }
         ])
@@ -60,8 +60,8 @@ class AgentExampleForSensorTask2(cs.agent.Agent):
                 address = location.get('Street Address')
                 hotel = location.get('PropertyName')
                 self.sensor_output.add_item({
-                    "address": address,
-                    "hotel": hotel
+                    "Street Address": address,
+                    "PropertyName": hotel
                 })
 
         self.sensor_input.for_each(filter_hotel).batch(by_count=2).for_each(nearest_hotel)

@@ -17,18 +17,7 @@ class OldHealthTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A series of health information",
             "fields": {
-                "Physical Activity Level": "The level of the physical activity, int",
-                "BS": "The blood sugar check, float",
-                "BMI Category": "The checked BMI category, string",
-                "BodyTemp": "The checked body temperature, float",
-                "Daily Steps": "The steps calculated daily, int",
-                "DiastolicBP": "The diastolic blood pressure detected, float",
-                "SystolicBP": "The systolic blood pressure detected, float",
-                "HeartRate": "The heart rate detected, int",
-                "Sleep Disorder": "The type of the sleep disorder, string",
-                "Sleep Duration": "The duration the sleeping time, float",
-                "Quality of Sleep": "The evaluation of the quality of sleep, int",
-                "Stress Level": "The level of stress detected, int"
+                "BS": "The blood sugar check, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -36,7 +25,7 @@ class OldHealthTask2(SingleAgentTaskConfigBase):
                 "stream_id": "blood_sugar",
                 "description": "A series of the blood sugar level",
                 "fields": {
-                    "blood_sugar": "The blood sugar check,float"}
+                    "blood_sugar": "The blood sugar check directly from the BS field, float"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)

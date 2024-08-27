@@ -22,9 +22,7 @@ class OldActivityTask4(SingleAgentTaskConfigBase):
             "fields": {
                 "Steps": "The steps calculated in the activity, int",
                 "Date": "The date of the activities recorded, string",
-                "activity": "The specific activity, string",
-                "Calories_Burned": "The calories burned in the activity, float",
-                "Fairly_Active_Minutes": "The minutes of the activities, float"
+                "activity": "The specific activity, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,7 +31,7 @@ class OldActivityTask4(SingleAgentTaskConfigBase):
                 "description": "A series of records of the activities which are over 5000 steps",
                 "fields": {
                     "Date": "The date of the activities recorded, string",
-                    "Activity": "The specific activity, string",
+                    "activity": "The specific activity, string",
                     "Steps": "The steps calculated in the activity, int"
                 }
             }
@@ -57,7 +55,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
                 motion = activity.get("activity", "Unknown Motion")
                 self.output_stream.add_item({
                     "Date": date,
-                    "Activity": motion,
+                    "activity": motion,
                     "Steps": Steps
                 })
 

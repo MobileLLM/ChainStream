@@ -45,7 +45,7 @@ class MessageStockTask(SingleAgentTaskConfigBase):
                                "that uses the buffer module to store stock items, with every two items packaged into "
                                "a batch after calculating the change percentage for stocks)",
                 "fields": {
-                    "stock": "the symbol of the stock, string",
+                    "symbol": "the symbol of the stock, string",
                     "id": "the ids of all the stock buyers, int"
                 }
             }
@@ -75,7 +75,7 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
             for message in messages:  
                 for stock in stock_list:  
                     self.stock_output.add_item({
-                        "stock": stock["symbol"], 
+                        "symbol": stock["symbol"], 
                         "id": message["id"]  
                     })
             return messages

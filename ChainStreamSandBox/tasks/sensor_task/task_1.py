@@ -20,7 +20,6 @@ class GPSTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_locations",
             "description": "All locations information",
             "fields": {
-                "ContinentName": "the name of the continent, string",
                 "CapitalLatitude": "the latitude of my location, string",
                 "CapitalLongitude": "the longitude of my location, string",
                 "CapitalName": "the name of the capital, string"
@@ -33,9 +32,9 @@ class GPSTask1(SingleAgentTaskConfigBase):
                                "North America,with every two copies of location data packaged as a batch after "
                                "filtering the gps data in North America",
                 "fields": {
-                    "longitude": "the longitude of my location, string",
-                    "latitude": "the latitude of my location, string",
-                    "city": "the name of my city, string"
+                    "CapitalLongitude": "the longitude of my location, string",
+                    "CapitalLatitude": "the latitude of my location, string",
+                    "CapitalName": "the name of my city, string"
                 }
             }
         ])
@@ -64,9 +63,9 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
                 longitude = location.get('CapitalLongitude')
                 capital = location.get('CapitalName')
                 self.sensor_output.add_item({
-                    "latitude": latitude,
-                    "longitude": longitude,
-                    "city": capital
+                    "CapitalLatitude": latitude,
+                    "CapitalLongitude": longitude,
+                    "CapitalName": capital
                 })
 
         self.sensor_input.for_each(filter_location).batch(by_count=2).for_each(analysis_location)

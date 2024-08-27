@@ -20,11 +20,8 @@ class OldGithubTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_github",
             "description": "All github information",
             "fields": {
-                "stars_count": "the number of the stars received in the github repository, int",
-                "watchers": "the number of the watchers in the github repository, int",
                 "name": "the name of the github repository, string",
-                "created_at": "the created-date of the github repository, string",
-                "primary_language": "the primary programming language of the github repository, string"
+                "created_at": "the created-date of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,7 +30,7 @@ class OldGithubTask1(SingleAgentTaskConfigBase):
                 "description": "A series of the created-dates of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
-                    "created_date": "the created-date the github repository, string"
+                    "created_at": "the created-date the github repository, string"
                 }
             }
         ])
@@ -55,7 +52,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
             name = github_dict['name']
             self.github_output.add_item({
                 "name": name,
-                "created_date": created_date
+                "created_at": created_date
             })
 
         self.github_input.for_each(github_date_extraction)

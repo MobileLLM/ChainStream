@@ -17,11 +17,7 @@ class OldWifiTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_wifi",
             "description": "A series of the wifi information",
             "fields": {
-                "MAC.Address": "The mac address of the wifi signal, string",
-                "Vendor": "The vendor of the wifi signal, string",
-                "SSID": "The SSID of the wifi signal, string",
-                "Signal": "The signal strength of the wifi signal, int",
-                "Channel": "The channel of the wifi signal, int"
+                "MAC.Address": "The mac address of the wifi signal, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,7 +25,7 @@ class OldWifiTask2(SingleAgentTaskConfigBase):
                 "stream_id": "wifi_address",
                 "description": "A series of the wifi mac address statistics",
                 "fields": {
-                    "MAC_Address": "The mac address of the wifi signal, string"
+                    "MAC.Address": "The mac address of the wifi signal, string"
                 }
             }
         ])
@@ -45,7 +41,7 @@ class testAgent(cs.agent.Agent):
         def process_wifi(wifi):
             MAC_Address = wifi["MAC.Address"]        
             self.output_stream.add_item({
-                "MAC_Address": MAC_Address
+                "MAC.Address": MAC_Address
             })
         self.input_stream.for_each(process_wifi)
         '''

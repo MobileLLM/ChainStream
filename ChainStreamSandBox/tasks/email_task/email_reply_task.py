@@ -28,7 +28,7 @@ class OldEmailTask4(SingleAgentTaskConfigBase):
                 "stream_id": "auto_reply_emails",
                 "description": "A series of auto-reply emails based on the contents",
                 "fields": {
-                    "subject": "The subject of the email, string",
+                    "Subject": "The subject of the email, string",
                     "reply": "The auto-reply message of the email, string"}
             }
         ])
@@ -50,7 +50,7 @@ class testAgent(cs.agent.Agent):
             prompt = "Now you have received some emails with the following subject: {},and the following content: {},please reply an email to the sender.".format(email_subject, email_content)          
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
-            "subject": email_subject,
+            "Subject": email_subject,
             "reply": response
             })
         self.input_stream.for_each(process_email)

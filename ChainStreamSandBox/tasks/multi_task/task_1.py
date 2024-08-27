@@ -42,8 +42,8 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
                                "address: 3127 Edgemont Boulevard), with every two emails packaged into a batch after "
                                "filtering out the advertisements.",
                 "fields": {
-                    "content": "the content of the emails, string",
-                    "tag": "An auto reply message, string = Received!"
+                    "Content": "the content of the emails, string",
+                    "Auto_reply": "An auto reply message, string = Received!"
                 }
             }, {
                 "stream_id": "is_office_event",
@@ -90,8 +90,8 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
                 content = email.get('Content')
                 if content:
                     self.email_output.add_item({
-                        "content": content,
-                        "tag": "Received!"
+                        "Content": content,
+                        "Auto_reply": "Received!"
                     })
                     
         def analysis_location(location):

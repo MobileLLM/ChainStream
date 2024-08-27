@@ -24,10 +24,14 @@ class OldDialogueTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "dialogues_identity",
-                "description": "A series of dialogues record with the analysis of the relationship among the speakers",
+                "description": "A series of dialogues record with the analysis of the relationship chosen from ["
+                               "'Family', 'Friends', 'Colleagues', 'Acquaintances', 'Partners','Other'] among the "
+                               "speakers",
                 "fields": {
-                    "dialogues_id": "The id of the speaker, string",
-                    "individuals_relationship": "The relationship analysed from the conversation, string"}
+                    "id": "The id of the speaker, string",
+                    "individuals_relationship": "The relationship analysed from the conversation chosen from ["
+                                                "'Family', 'Friends', 'Colleagues', 'Acquaintances', 'Partners',"
+                                                "'Other'] based on the dialog field, string"}
             }
         ])
 
@@ -46,10 +50,10 @@ class testAgent(cs.agent.Agent):
         def process_dialogues(dialogues):
             dialogues_id = dialogues["id"]
             dialogues_text = dialogues["dialog"]
-            prompt = "Analyze the roles of the characters in the following dialogues. Identify the individuals' respective roles or relationships."
+            prompt = "Analyze the roles of the characters in the following dialogues. Identify the individuals' respective roles or relationships chosen from ['Family', 'Friends', 'Colleagues', 'Acquaintances', 'Partners','Other'].Only give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-            "dialogues_id": dialogues_id,
+            "id": dialogues_id,
             "individuals_relationship": response
             })
 

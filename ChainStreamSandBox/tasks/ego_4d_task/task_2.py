@@ -25,7 +25,7 @@ class VideoTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_kitchen_risk",
-                "description": "A sequence that alerts the potential risk in the kitchen",
+                "description": "A sequence that alerts whether there is potential risk in the kitchen",
                 "fields": {
                     "risk": "An indication of whether there is potential risk, bool"}
             }

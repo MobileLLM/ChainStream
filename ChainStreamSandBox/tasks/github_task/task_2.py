@@ -32,7 +32,8 @@ class GithubTask2(SingleAgentTaskConfigBase):
                 "description": "Ten GitHub repositories with the most commits in 2024, with every seven GitHub "
                                "repositories packaged into a batch after filtering for repositories created in 2024.",
                 "fields": {
-                    "date": "the time that the github repository was created at using ISO 8601 datetime format, string",
+                    "created_at": "the time that the github repository was created at using ISO 8601 datetime format, "
+                                  "string",
                     "name": "the name of the github repository, string",
                     "commit_count": "the number of the commits in the github repository, int"
                 }
@@ -64,7 +65,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                 commit_count = github.get('commit_count')
                 name = github.get('name')
                 self.github_output.add_item({
-                    "date": created_at,
+                    "created_at": created_at,
                     "name": name,
                     "commit_count": commit_count
                 })

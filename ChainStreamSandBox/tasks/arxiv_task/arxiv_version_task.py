@@ -20,9 +20,8 @@ class OldArxivTask10(SingleAgentTaskConfigBase):
             "stream_id": "all_arxiv",
             "description": "A series of arxiv articles",
             "fields": {
-                "abstract": "The abstract of the arxiv article,string",
                 "title": "The title of the arxiv article,string",
-                "versions": "The published version and the time of the arxiv article,string",
+                "versions": "The published version and the time of the arxiv article,string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -32,8 +31,7 @@ class OldArxivTask10(SingleAgentTaskConfigBase):
                                "list of dictionaries, each containing the keys 'version' and 'created'. ",
                 "fields": {
                     "title": "The title of the arxiv article,string",
-                    "version": "The published version of the arxiv article,string",
-                    "stage": "The research stage of the arxiv article,string"
+                    "versions": "The published version of the arxiv article,string"
                 }
             }
         ])
@@ -59,7 +57,7 @@ class TestAgent(cs.agent.Agent):
                 version = paper_versions[0].get("version")
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "version": version,
+                    "versions": version,
                 })
 
         self.input_stream.for_each(process_paper)

@@ -31,7 +31,7 @@ class WeatherTask1(SingleAgentTaskConfigBase):
                                "in May each year,with every two copies of weather data packaged as a batch after "
                                "filtering the weather in May each year",
                 "fields": {
-                    "temperature": "temperature in degrees Celsius,string",
+                    "Temperature_C": "temperature in degrees Celsius,string",
                     "clothing": "the clothing recommended,string"
                 }
             }
@@ -63,7 +63,7 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
                     prompt = "Recommend the suitable clothing today according to the temperature."
                     res = self.llm.query(cs.llm.make_prompt(str(temperature), prompt))
                     self.sensor_output.add_item({
-                        "temperature": temperature,
+                        "Temperature_C": temperature,
                         "clothing": res
                     })
         self.sensor_input.for_each(filter_date).batch(by_count=2).for_each(recommend_clothing)

@@ -31,8 +31,8 @@ class WeatherTask2(SingleAgentTaskConfigBase):
                                "weather data packaged as a batch after filtering the humidity percentage which is "
                                "over 70%",
                 "fields": {
-                    "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
-                    "humidity": "the percentage of the humidity, string",
+                    "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "Humidity_pct": "the percentage of the humidity, string",
                     "reminder": "An auto reminder, string = When walking on the road, pay attention to wet and slippery!"
                 }
             }
@@ -61,8 +61,8 @@ class AgentExampleForSensorTask5(cs.agent.Agent):
                 humidity = weather.get('Humidity_pct')
                 date_time = weather.get('Date_Time')
                 self.sensor_output.add_item({
-                    "date_time": date_time,
-                    "humidity": str(humidity)+"%",
+                    "Date_Time": date_time,
+                    "Humidity_pct": str(humidity)+"%",
                     "reminder": "When walking on the road, pay attention to wet and slippery!"
                 })
         self.sensor_input.for_each(filter_humidity).batch(by_count=2).for_each(reminder)

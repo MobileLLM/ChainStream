@@ -20,7 +20,6 @@ class EmailTask4(SingleAgentTaskConfigBase):
             "stream_id": "all_email",
             "description": "All email messages",
             "fields": {
-                "sender": "the name of the sender, string",
                 "Content": "the content of the email, string"
             }
         }])
@@ -31,8 +30,8 @@ class EmailTask4(SingleAgentTaskConfigBase):
                                "advertisements first, followed by packaging every two emails into a batch, "
                                "and then listing the replies",
                 "fields": {
-                    "email": "the content of the email, string",
-                    "Content": "Reply of the email, string = Received!"
+                    "Content": "the content of the email, string",
+                    "Auto_reply": "Reply of the email, string = Received!"
                 }
             }
         ])
@@ -61,8 +60,8 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
                 content = email.get('Content')
                 if content:
                     self.email_output.add_item({
-                        "email": content,
-                        "Content": "Received!"
+                        "Content": content,
+                        "Auto_reply": "Received!"
                     })
 
         self.email_input.for_each(filter_advertisements).batch(by_count=2).for_each(auto_reply)

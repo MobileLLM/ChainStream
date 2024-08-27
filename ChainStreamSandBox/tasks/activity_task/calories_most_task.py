@@ -22,11 +22,9 @@ class OldActivityTask3(SingleAgentTaskConfigBase):
             "description": "A series of activities records (every five copies of activities data are packaged as a "
                            "batch)",
             "fields": {
-                "Total_Distance": "The total distance statistic recorded, float",
                 "Date": "The date of the activities recorded, string",
                 "activity": "The specific activity, string",
-                "Calories_Burned": "The calories burned in the activity, float",
-                "Fairly_Active_Minutes": "The minutes of the activities, float"
+                "Calories_Burned": "The calories burned in the activity, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -35,7 +33,7 @@ class OldActivityTask3(SingleAgentTaskConfigBase):
                 "description": "A series of records of the most calories-burned activities",
                 "fields": {
                     "Date": "The date of the activities recorded, string",
-                    "Activity": "The specific activity, string",
+                    "activity": "The specific activity, string",
                     "Calories_Burned": "The calories burned in the activity, float"
                 }
             }
@@ -60,7 +58,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
                 calories_burned = activity.get("Calories_Burned", 0)
                 self.output_stream.add_item({
                     "Date": date,
-                    "Activity": motion,
+                    "activity": motion,
                     "Calories_Burned": calories_burned
                 })
         

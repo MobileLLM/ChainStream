@@ -17,10 +17,7 @@ class OldGPSTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_landmarks",
             "description": "A series of landmarks information",
             "fields": {
-                "Electricity(kWh)": "The electricity consumed by the landmark, float",
-                "GHGEmissions(MetricTonsCO2e)": "The green house gas emissions by the landmark, float",
-                "NaturalGas(therms)": "The natural gas emissions by the landmark, float",
-
+                "GHGEmissions(MetricTonsCO2e)": "The green house gas emissions by the landmark, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -28,7 +25,7 @@ class OldGPSTask2(SingleAgentTaskConfigBase):
                 "stream_id": "landmarks_GHGEmissions",
                 "description": "A series of the calculation of the green house gas emissions by the landmark",
                 "fields": {
-                    "GHG_emissions": "The green house gas emissions by the landmark, float"}
+                    "GHGEmissions(MetricTonsCO2e)": "The green house gas emissions by the landmark, float"}
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -45,7 +42,7 @@ class testAgent(cs.agent.Agent):
         def process_landmark(landmark):
             GHGEmissions = landmark["GHGEmissions(MetricTonsCO2e)"]        
             self.output_stream.add_item({
-                "GHG_emissions": GHGEmissions
+                "GHGEmissions(MetricTonsCO2e)": GHGEmissions
             })
         self.input_stream.for_each(process_landmark)
 

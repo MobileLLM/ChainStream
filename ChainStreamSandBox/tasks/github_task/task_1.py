@@ -32,7 +32,7 @@ class GithubTask1(SingleAgentTaskConfigBase):
                                "select the ten repositories with the most stars and count the number of watchers for "
                                "each repository.",
                 "fields": {
-                    "stars": "the number of the stars received in the github repository, int",
+                    "stars_count": "the number of the stars received in the github repository, int",
                     "name": "the name of the github repository, string",
                     "watchers": "the number of the watchers in the github repository, int"
                 }
@@ -61,7 +61,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
             watchers = github_list.get('watchers')
             name = github_list.get('name')
             self.github_output.add_item({
-                "stars": stars,
+                "stars_count": stars,
                 "name": name,
                 "watchers": watchers
             })

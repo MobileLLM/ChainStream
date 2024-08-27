@@ -25,10 +25,11 @@ class OldDialogueTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "dialogues_place",
                 "description": "A series of dialogues record with the analysis of the place where the conversation "
-                               "happened",
+                               "happened chosen from ['Home', 'Office', 'Café', 'Park', 'Restaurant']",
                 "fields": {
-                    "dialogues_id": "The id of the speaker, string",
-                    "place": "The place where the conversation happened, string"}
+                    "id": "The id of the speaker, string",
+                    "place": "The place where the conversation happened chosen from ['Home', 'Office', 'Café', "
+                             "'Park', 'Restaurant'] based on the dialog field, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -46,10 +47,10 @@ class testAgent(cs.agent.Agent):
         def process_dialogues(dialogues):
             dialogues_id = dialogues["id"]
             dialogues_text = dialogues["dialog"]
-            prompt = "Examine the conversation below and identify the location or setting where the dialogue takes place."
+            prompt = "Examine the conversation below and identify the location or setting where the dialogue takes place chosen from ['Home', 'Office', 'Café', 'Park', 'Restaurant'].Only give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-                "dialogues_id": dialogues_id,
+                "id": dialogues_id,
                 "place": response
             })
             

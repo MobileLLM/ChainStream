@@ -31,10 +31,11 @@ class ArxivTask2(SingleAgentTaskConfigBase):
                                "filtered for the math topic first, then packaged into batches of every two articles, "
                                "and finally summarized.",
                 "fields": {
-                    "abstract": "the abstract of each arxiv article on math topic, string",
+                    "title": "the title of each arxiv article on math topic, string",
                     "method": "the research method of each arxiv article on math topic chosen from ['Experimental "
                               "Evaluation', 'Theoretical Research', 'System Implementation', 'Data Analysis and "
-                              "Mining', 'Simulation and Modeling', 'User Study', 'Literature Review'], string "
+                              "Mining', 'Simulation and Modeling', 'User Study', 'Literature Review'] based on "
+                              "the abstract, string "
                 }
             }
         ])

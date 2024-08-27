@@ -21,10 +21,8 @@ class OldActivityTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_activities",
             "description": "A series of activities records",
             "fields": {
-                "Total_Distance": "The total distance statistic recorded, float",
                 "Date": "The date of the activities recorded, string",
                 "activity": "The specific activity, string",
-                "Calories_Burned": "The calories burned in the activity, float",
                 "Fairly_Active_Minutes": "The minutes of the activities, float"
             }
         }])
@@ -34,8 +32,8 @@ class OldActivityTask2(SingleAgentTaskConfigBase):
                 "description": "A series of records when the activities are more than 30 minutes",
                 "fields": {
                     "Date": "the date when exercising more than 30 minutes, string",
-                    "Activity": "The specific activity, string",
-                    "Active_minutes": "The minutes of the exercise, float"}
+                    "activity": "The specific activity, string",
+                    "Fairly_Active_Minutes": "The minutes of the exercise, float"}
             }
         ])
 
@@ -57,8 +55,8 @@ class ActivityDistanceAgent(cs.agent.Agent):
                 motion = activity.get("activity", "Unknown Motion")
                 self.output_stream.add_item({
                     "Date": date,
-                    "Activity": motion,
-                    "Active_minutes": Fairly_Active_Minutes
+                    "activity": motion,
+                    "Fairly_Active_Minutes": Fairly_Active_Minutes
                 })
 
         self.input_stream.for_each(process_activity)

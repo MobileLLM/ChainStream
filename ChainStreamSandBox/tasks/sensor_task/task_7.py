@@ -31,8 +31,8 @@ class WeatherTask4(SingleAgentTaskConfigBase):
                                "kmh,with every two copies of weather data packaged as a batch after filtering the "
                                "wind speed which is over 20 kmh",
                 "fields": {
-                    "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
-                    "wind_speed_kmh": "the wind speed sensor in kmh, float",
+                    "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "Wind_Speed_kmh": "the wind speed sensor in kmh, float",
                     "reminder": "An auto reminder, string = Collect the clothes in the balcony!"
                 }
             }
@@ -60,8 +60,8 @@ class AgentExampleForSensorTask7(cs.agent.Agent):
                 wind_speed = weather.get('Wind_Speed_kmh')
                 date_time = weather.get('Date_Time')
                 self.sensor_output.add_item({
-                    "date_time": date_time,
-                    "wind_speed": str(wind_speed)+"km/h",
+                    "Date_Time": date_time,
+                    "Wind_Speed_kmh": str(wind_speed)+"km/h",
                     "reminder": "Collect the clothes in the balcony!"
                 })
         self.sensor_input.for_each(filter_precipitation).batch(by_count=2).for_each(reminder)

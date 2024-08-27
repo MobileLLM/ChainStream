@@ -18,11 +18,7 @@ class OldNewsTask1(SingleAgentTaskConfigBase):
             "description": "A series of news information",
             "fields": {
                 "headline": "The headline of the news, string",
-                "authors": "The authors of the news, string",
-                "category": "The category of the news, string",
-                "date": "The release date of the news, string",
-                "short_description": "The short description of the news, string",
-                "link": "The website link of the news, string",
+                "authors": "The authors of the news, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

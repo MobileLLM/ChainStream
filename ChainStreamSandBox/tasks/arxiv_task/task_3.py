@@ -32,7 +32,7 @@ class ArxivTask3(SingleAgentTaskConfigBase):
                                "filtered for the author Victor Brunton first, then packaged into batches of every two "
                                "articles, and finally summarized by the abstracts.",
                 "fields": {
-                    "article": "the title of each arxiv article, string",
+                    "title": "the title of each arxiv article, string",
                     "main_idea": "main ideas of the arxiv articles written by Victor Brunton and summarized by the "
                                  "abstracts, string"
                 }
@@ -63,7 +63,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
                 abstract = paper_item.get('abstract', '')  
                 res = self.llm.query(cs.llm.make_prompt(abstract, prompt))
                 self.arxiv_output.add_item({
-                    "article": title,
+                    "title": title,
                     "main_idea": res
                 })
         self.arxiv_input.for_each(filter_authors).batch(by_count=2).for_each(sum_on_paper)

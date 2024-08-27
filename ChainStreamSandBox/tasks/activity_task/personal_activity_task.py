@@ -28,9 +28,9 @@ class OldActivityTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "activity_for_each_user",
-                "description": "A series of each user's activities packaged in batches of 10 seconds",
+                "description": "A series of activities grouped by each user, with batches packaged every 10 seconds",
                 "fields": {
-                    "users_activities": "A dict that records the activities of each user, dict"}
+                    "users_activities": "A record of the activities grouped by each user, string"}
             }
         ])
 

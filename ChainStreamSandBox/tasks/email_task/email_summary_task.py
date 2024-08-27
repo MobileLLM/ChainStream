@@ -28,7 +28,7 @@ class OldEmailTask7(SingleAgentTaskConfigBase):
                 "stream_id": "emails_summary",
                 "description": "A series of emails with the summary based on the contents",
                 "fields": {
-                    "subject": "The subject of the email, string",
+                    "Subject": "The subject of the email, string",
                     "summary": "The summary of the email, string"}
             }
         ])
@@ -50,7 +50,7 @@ class testAgent(cs.agent.Agent):
             prompt = "Write a brief summary of the following email contents"
             response = self.llm.query(cs.llm.make_prompt(prompt,email_content))
             self.output_stream.add_item({
-            "subject": email_subject,
+            "Subject": email_subject,
             "summary": response
             })
         self.input_stream.for_each(process_email)

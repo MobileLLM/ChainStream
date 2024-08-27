@@ -21,10 +21,7 @@ class OldArxivTask12(SingleAgentTaskConfigBase):
             "description": "A series of arxiv articles",
             "fields": {
                 "license": "The website url information of the arxiv article, string",
-                "title": "The title of the arxiv article, string",
-                "comments": "The comments of the arxiv article, string",
-                "update_date": "The update date of the arxiv article, string",
-                "authors": "The authors of the arxiv article, string"
+                "title": "The title of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,7 +30,7 @@ class OldArxivTask12(SingleAgentTaskConfigBase):
                 "description": "A series of arxiv articles with their website url extracted from their license",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "url": "The website url of the arxiv article, string"
+                    "url": "The website url of the arxiv article directly from the field license, string"
                 }
             }
         ])

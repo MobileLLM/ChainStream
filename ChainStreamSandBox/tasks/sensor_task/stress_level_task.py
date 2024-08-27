@@ -17,17 +17,6 @@ class OldHealthTask14(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A series of health information",
             "fields": {
-                "Physical Activity Level": "The level of the physical activity, int",
-                "BS": "The blood sugar check, float",
-                "BMI Category": "The checked BMI category, string",
-                "BodyTemp": "The checked body temperature, float",
-                "Daily Steps": "The steps calculated daily, int",
-                "DiastolicBP": "The diastolic blood pressure detected, float",
-                "SystolicBP": "The systolic blood pressure detected, float",
-                "HeartRate": "The heart rate detected, int",
-                "Sleep Disorder": "The type of the sleep disorder, string",
-                "Sleep Duration": "The duration the sleeping time, float",
-                "Quality of Sleep": "The evaluation of the quality of sleep, int",
                 "Stress Level": "The level of stress detected, int"
             }
         }])
@@ -36,7 +25,7 @@ class OldHealthTask14(SingleAgentTaskConfigBase):
                 "stream_id": "stress_level",
                 "description": "A series of the detected stress level",
                 "fields": {
-                    "stress_level": "The level of stress detected, int"}
+                    "Stress Level": "The level of stress detected, int"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -53,7 +42,7 @@ class testAgent(cs.agent.Agent):
         def process_health(health):
             Stress_Level = health["Stress Level"]        
             self.output_stream.add_item({
-                "stress_level": Stress_Level
+                "Stress Level": Stress_Level
                 })
         self.input_stream.for_each(process_health)
         '''

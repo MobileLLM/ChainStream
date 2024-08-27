@@ -29,10 +29,10 @@ class NewsTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_output",
-                "description": "A series summarizing the CEOs' opinions on Techtronic, with filtered Techtronic news "
-                               "sent as a batch every second at regular intervals.",
+                "description": "A series of the summaries on the CEOs' opinions on Techtronic, with filtered "
+                               "Techtronic news sent in batches every second",
                 "fields": {
-                    "news": "the headline of the news event, string",
+                    "headline": "the headline of the news event, string",
                     "summary": "the summary of the CEOs' opinions on Techtronic, string"
                 }
             }
@@ -57,7 +57,7 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
                 prompt = "Summarize the opinions of the CEO in the news"
                 res = self.llm.query(cs.llm.make_prompt(news['short_description'], prompt))
                 self.output_local_stream.add_item({
-                    "news": title,
+                    "headline": title,
                     "summary": res
                 })
             return messages

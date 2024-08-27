@@ -32,8 +32,8 @@ class HealthTask5(SingleAgentTaskConfigBase):
                                "and sleeping time,with every two copies of health sensor data are packaged as a batch "
                                "after filtering the occupation which is 'Engineer'",
                 "fields": {
-                    "age": "the age of the engineer, int",
-                    "sleep_time": "the average sleep duration of the engineer, float",
+                    "Age": "the age of the engineer, int",
+                    "Sleep Duration": "the average sleep duration of the engineer, float",
                     "advice": "the reasonable advice for every engineer, string"
                 }
             }
@@ -64,8 +64,8 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
                           "Do you think the sleeping time is enough? Simply answer y or n.If the answer is n,give some suggestions.")
                 res = self.llm.query(cs.llm.make_prompt(f"Age: {age}, Sleep Duration: {sleep_time} hours", prompt))
                 self.sensor_output.add_item({
-                    "age": age,
-                    "sleeping time": str(sleep_time) + "h",
+                    "Age": age,
+                    "Sleep Duration": str(sleep_time) + "h",
                     "advice": res
                 })
 

@@ -24,10 +24,12 @@ class OldDialogueTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "dialogues_topic",
-                "description": "A series of dialogues record with the analysis of their topics",
+                "description": "A series of dialogues record with the analysis of their topics chosen from ["
+                               "'Technology', 'Health', 'Travel', 'Entertainment', 'Current Events','Other']",
                 "fields": {
-                    "dialogues_id": "The id of the speaker, string",
-                    "topic": "The topic of the conversation, string"}
+                    "id": "The id of the speaker, string",
+                    "topic": "The topic of the conversation chosen from ['Technology', 'Health', 'Travel', "
+                             "'Entertainment', 'Current Events','Other'] based on the dialog field, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -45,10 +47,10 @@ class testAgent(cs.agent.Agent):
         def process_dialogues(dialogues):
             dialogues_id = dialogues["id"]
             dialogues_text = dialogues["dialog"]
-            prompt = "Extract the main topics or themes from the following dialogues. Provide a brief summary of the primary subjects discussed."
+            prompt = "Extract the main topics or themes from the following dialogues chosen from ['Technology', 'Health', 'Travel', 'Entertainment', 'Current Events','Other'].Only give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-            "dialogues_id": dialogues_id,
+            "id": dialogues_id,
             "topic": response
             })
 

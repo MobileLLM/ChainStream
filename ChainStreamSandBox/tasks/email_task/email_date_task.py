@@ -20,8 +20,7 @@ class OldEmailTask1(SingleAgentTaskConfigBase):
             "description": "A series of emails",
             "fields": {
                 "Date": "The date of the email, string",
-                "Subject": "The subject of the email, string",
-                "Content": "The content of the email, string"
+                "Subject": "The subject of the email, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

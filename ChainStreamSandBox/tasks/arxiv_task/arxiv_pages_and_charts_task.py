@@ -21,9 +21,7 @@ class OldArxivTask5(SingleAgentTaskConfigBase):
             "description": "A series of arxiv articles",
             "fields": {
                 "comments": "The comments of the arxiv article, string",
-                "title": "The title of the arxiv article, string",
-                "update_date": "The update date of the arxiv article, string",
-                "authors": "The authors of the arxiv article, string"
+                "title": "The title of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -33,7 +31,7 @@ class OldArxivTask5(SingleAgentTaskConfigBase):
                                "pages and charts are included in the comments field)",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "numbers_of_pages_and_charts": "The comments of the arxiv article, string"
+                    "numbers_of_pages_and_charts": "Directly from the comments of the arxiv article, string"
                     }
             }
         ])

@@ -19,10 +19,6 @@ class OldStockTask4(SingleAgentTaskConfigBase):
             "stream_id": "all_stocks",
             "description": "A series of stock information (every ten stock information are packaged as a batch)",
             "fields": {
-                "open": "The open price of the stock, float",
-                "close": "The close price of the price, float",
-                "high": "The highest price of the stock, float",
-                "low": "The lowest price of the stock, float",
                 "symbol": "The symbol of the stock, string",
                 "volume": "The trading volume of the stock, float"
             }
@@ -32,7 +28,7 @@ class OldStockTask4(SingleAgentTaskConfigBase):
                 "stream_id": "top_five_volume_stock",
                 "description": "A series of the filtered stocks with top five trading volume",
                 "fields": {
-                    "stock_symbol": "The symbol of the stock, string",
+                    "symbol": "The symbol of the stock, string",
                     "volume": "The trading volume of the stock, float"
                 }
             }
@@ -56,7 +52,7 @@ class testAgent(cs.agent.Agent):
                 volume = stock['volume']
                 stock_symbol = stock['symbol']
                 self.output_stream.add_item({
-                "stock_symbol": stock_symbol,
+                "symbol": stock_symbol,
                 "volume": volume
                 })
         self.input_stream.batch(by_count=10).for_each(process_stocks)

@@ -19,7 +19,6 @@ class OldEmailTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_emails",
             "description": "A series of emails",
             "fields": {
-                "Date": "The date of the email, string",
                 "Subject": "The subject of the email, string",
                 "Content": "The content of the email, string"
             }
@@ -27,10 +26,12 @@ class OldEmailTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emails_emotion",
-                "description": "A series of emails with the analysis of the emotion based on the contents",
+                "description": "A series of emails with the analysis of the emotion chosen from ['positive', "
+                               "'negative', 'neutral', 'other'] based on the contents",
                 "fields": {
-                    "subject": "The subject of the email, string",
-                    "emotion": "The emotion analysed from the email, string"}
+                    "Subject": "The subject of the email, string",
+                    "emotion": "The emotion analysed from the email chosen from ['positive', 'negative', 'neutral', "
+                               "'other'], string"}
             }
         ])
         self.email_data = EmailData().get_emails(10)
@@ -50,7 +51,7 @@ class testAgent(cs.agent.Agent):
             prompt = "Classify the following email contents into one of the categories: positive, negative, neutral, other.Choose one and explain"
             response = self.llm.query(cs.llm.make_prompt(prompt,email_content))
             self.output_stream.add_item({
-            "subject": email_subject,
+            "Subject": email_subject,
             "emotion": response
             })
         self.input_stream.for_each(process_email)

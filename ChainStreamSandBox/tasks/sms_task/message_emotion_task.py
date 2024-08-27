@@ -19,18 +19,16 @@ class OldMessageTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_sms",
             "description": "A series of messages information",
             "fields": {
-                "text": "The content of the message, string",
-                "language": "The language of the message, string",
-                "time": "The time of the message, string"
+                "text": "The content of the message, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_emotion",
-                "description": "A series of the analysis of the emotion of the messages chosen from positive, negative, "
-                               "neutral and other based on the text",
+                "description": "A series of the analysis of the emotion of the messages chosen from positive, "
+                               "negative, neutral and other based on the text",
                 "fields": {
-                    "content": "The content of the message, string",
+                    "text": "The text content of the message, string",
                     "emotion": "The analysis of the emotion of the message, string"
                 }
             }
@@ -52,7 +50,7 @@ class testAgent(cs.agent.Agent):
             prompt = "Classify the following message contents into one of the categories: positive, negative, neutral, other.Choose one and explain"
             response = self.llm.query(cs.llm.make_prompt(prompt,sms_text))
             self.output_stream.add_item({
-                "content": sms_text,
+                "text": sms_text,
                 "emotion": response
             })
         self.input_stream.for_each(process_sms)

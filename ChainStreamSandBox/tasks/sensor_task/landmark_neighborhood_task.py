@@ -17,12 +17,7 @@ class OldGPSTask12(SingleAgentTaskConfigBase):
             "stream_id": "all_landmarks",
             "description": "A series of landmarks information",
             "fields": {
-                "NumberofFloors": "The number of the floors in the landmark, int",
-                "Street Address": "The street address of the landmark, string",
-                "PropertyName": "The property name of the landmark, string",
-                "Neighborhood": "The neighborhood of the landmark, string",
-                "YearBuilt": "The construction time of the landmark, string",
-                "landmark_type": "The type of the landmark, string",
+                "Neighborhood": "The neighborhood of the landmark, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -30,7 +25,7 @@ class OldGPSTask12(SingleAgentTaskConfigBase):
                 "stream_id": "landmarks_neighborhood",
                 "description": "A series of the neighborhoods of the landmarks",
                 "fields": {
-                    "neighborhood": "The neighborhood names of the landmark, string"}
+                    "Neighborhood": "The neighborhood names of the landmark, string"}
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -47,7 +42,7 @@ class testAgent(cs.agent.Agent):
         def process_landmark(landmark):
             Neighborhood = landmark["Neighborhood"]        
             self.output_stream.add_item({
-                "neighborhood": Neighborhood
+                "Neighborhood": Neighborhood
             })
         self.input_stream.for_each(process_landmark)
 

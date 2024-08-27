@@ -30,7 +30,7 @@ class HealthTask3(SingleAgentTaskConfigBase):
                                "every two copies of health sensor data packaged as a batch after filtering the "
                                "BMI which is 'Overweight' or 'Obese'",
                 "fields": {
-                    "BMI": "the BMI category of the body check, string",
+                    "BMI Category": "the BMI category of the body check, string",
                     "reminder": "An auto reminder, string = Exercise yourself!"
                 }
             }
@@ -56,7 +56,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
             for health in health_list['item_list']:
                 BMI = health['BMI Category']
                 self.sensor_output.add_item({
-                    "BMI": BMI,
+                    "BMI Category": BMI,
                     "reminder": "Exercise yourself!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)

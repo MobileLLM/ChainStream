@@ -17,10 +17,6 @@ class OldWifiTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_wifi",
             "description": "A series of the wifi information",
             "fields": {
-                "MAC.Address": "The mac address of the wifi signal, string",
-                "Vendor": "The vendor of the wifi signal, string",
-                "SSID": "The SSID of the wifi signal, string",
-                "Signal": "The signal strength of the wifi signal, int",
                 "Channel": "The channel of the wifi signal, int"
             }
         }])

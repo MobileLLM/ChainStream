@@ -21,10 +21,7 @@ class OldActivityTask1(SingleAgentTaskConfigBase):
             "description": "A series of activities records",
             "fields": {
                 "Total_Distance": "The total distance statistic recorded, float",
-                "Date": "The date of the activities recorded, string",
-                "activity": "The specific activity, string",
-                "Calories_Burned": "The calories burned in the activity, float",
-                "Fairly_Active_Minutes": "The minutes of the activities, float"
+                "Date": "The date of the activities recorded, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[

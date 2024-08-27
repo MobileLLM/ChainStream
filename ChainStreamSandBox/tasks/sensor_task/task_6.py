@@ -31,8 +31,8 @@ class WeatherTask3(SingleAgentTaskConfigBase):
                                "every two copies of weather data packaged as a batch after filtering the "
                                "precipitation which is over 5 mm",
                 "fields": {
-                    "date_time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
-                    "precipitation": "the precipitation of the city in mm, float",
+                    "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "Precipitation_mm": "the precipitation of the city in mm, float",
                     "reminder": "An auto reminder, string = Rain boots are recommended for walking outside!"
                 }
             }
@@ -60,8 +60,8 @@ class AgentExampleForSensorTask6(cs.agent.Agent):
                 precipitation = weather.get('Precipitation_mm')
                 date_time = weather.get('Date_Time')
                 self.sensor_output.add_item({
-                    "date_time": date_time,
-                    "precipitation": str(precipitation)+"mm",
+                    "Date_Time": date_time,
+                    "Precipitation_mm": str(precipitation)+"mm",
                     "reminder": "Rain boots are recommended for walking outside!"
                 })
         self.sensor_input.for_each(filter_precipitation).batch(by_count=2).for_each(reminder)

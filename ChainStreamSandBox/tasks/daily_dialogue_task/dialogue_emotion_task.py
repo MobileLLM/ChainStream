@@ -27,8 +27,8 @@ class OldDialogueTask2(SingleAgentTaskConfigBase):
                 "description": "A series of dialogues record with the analysis of the conversation atmosphere chosen "
                                "from positive, negative, neutral and other",
                 "fields": {
-                    "dialogues_id": "The id of the speaker, string",
-                    "emotion": "The emotion analysed from the conversation"}
+                    "id": "The id of the speaker, string",
+                    "emotion": "The emotion analysed from the conversation based on the dialog field, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -49,7 +49,7 @@ class testAgent(cs.agent.Agent):
             prompt = "Classify the following dialogues contents into one of the categories: positive, negative, neutral, other.Only give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
-                "dialogues_id": dialogues_id,
+                "id": dialogues_id,
                 "emotion": response
                 })
 

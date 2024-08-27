@@ -14,14 +14,12 @@ class OldWeatherTask6(SingleAgentTaskConfigBase):
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Living,
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_wifi",
+            "stream_id": "all_weather",
             "description": "A series of the wifi information",
             "fields": {
-                "MAC.Address": "The mac address of the wifi signal, string",
-                "Vendor": "The vendor of the wifi signal, string",
-                "SSID": "The SSID of the wifi signal, string",
-                "Signal": "The signal strength of the wifi signal, int",
-                "Channel": "The channel of the wifi signal, int"
+                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                "Location": "the location of the weather sensor, string",
+                "Wind_Speed_kmh": "the wind speed of the zones, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -29,9 +27,9 @@ class OldWeatherTask6(SingleAgentTaskConfigBase):
                 "stream_id": "weather_wind_speed",
                 "description": "A series of the wind speed of the zones",
                 "fields": {
-                    "location": "The location of the zone, string",
-                    "time": "The time of the zone, string",
-                    "wind_speed": "The wind speed of the zone, float"
+                    "Location": "The location of the zone, string",
+                    "Date_Time": "The time of the zone, string",
+                    "Wind_Speed_kmh": "The wind speed of the zone, float"
                 }
             }
         ])
@@ -49,9 +47,9 @@ class testAgent(cs.agent.Agent):
             location = weather["Location"]
             time = weather["Date_Time"]                
             self.output_stream.add_item({
-                "location": location,
-                "time": time,
-                "wind_speed": Wind_Speed_kmh
+                "Location": location,
+                "Date_Time": time,
+                "Wind_Speed_kmh": Wind_Speed_kmh
             })
         self.input_stream.for_each(process_weather)
         '''
