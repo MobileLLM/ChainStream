@@ -28,9 +28,16 @@ class StreamInterfaceSandBox(SandboxBase):
 
         self.stop_event = Event()
 
-    def prepare_environment(self):
+    # def prepare_environment(self):
+    #     self.task.init_environment(self.runtime)
+    #     self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
+
+    def prepare_input_environment(self):
         self.task.init_environment(self.runtime)
         self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
+
+    def prepare_output_environment(self):
+        pass
 
         # env_vars = {
         #     "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",

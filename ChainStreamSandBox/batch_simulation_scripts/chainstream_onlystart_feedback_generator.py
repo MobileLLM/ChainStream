@@ -1,6 +1,6 @@
 from sandbox_interface import SandboxBatchInterface
 from AgentGenerator import ChainstreamFeedbackGuidedGeneratorForStarting
-from ChainStreamSandBox.tasks import get_task_batch
+from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 
 class EvalReactGenerator(SandboxBatchInterface):
@@ -14,6 +14,6 @@ class EvalReactGenerator(SandboxBatchInterface):
         return agent, latency, tokens
 
 if __name__ == '__main__':
-    task_list = get_task_batch()
+    task_list = get_task_with_data_batch()
     evaluator = EvalReactGenerator(task_list)
     evaluator.start()

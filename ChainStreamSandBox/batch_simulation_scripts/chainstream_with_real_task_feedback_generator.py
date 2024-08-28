@@ -1,7 +1,7 @@
 from sandbox_interface import SandboxBatchInterface
 from AgentGenerator.generator.stream_mode.chainstream_feedback_guided_generator_for_real_task import \
     ChainstreamFeedbackGuidedGeneratorForRealTask
-from ChainStreamSandBox.tasks import get_task_batch
+from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 
 class EvalFeedbackGuidedGeneratorForRealTask(SandboxBatchInterface):
@@ -18,6 +18,6 @@ class EvalFeedbackGuidedGeneratorForRealTask(SandboxBatchInterface):
 
 
 if __name__ == '__main__':
-    task_list = get_task_batch()
-    evaluator = EvalFeedbackGuidedGeneratorForRealTask(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-30-23_chainstream_real_task_framework_1shot/test_log.json")
+    task_list = get_task_with_data_batch()
+    evaluator = EvalFeedbackGuidedGeneratorForRealTask(task_list)
     evaluator.start()
