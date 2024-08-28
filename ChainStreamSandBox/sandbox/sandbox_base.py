@@ -118,7 +118,7 @@ class SandboxBase:
     def _process_item_list_to_str(self, item_list):
         str_sent_item = []
         for item in item_list:
-            if isinstance(item, str):
+            if isinstance(item, str) or isinstance(item, float):
                 str_sent_item.append(item)
             elif isinstance(item, dict):
                 tmp_str_item = {}

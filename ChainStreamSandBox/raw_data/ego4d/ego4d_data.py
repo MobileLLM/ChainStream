@@ -67,12 +67,20 @@ class Ego4DData:
 
     def load_for_object_detection(self):
         video_ids = [
-            'aa590f8a-1e90-4bcd-b007-47baf9f8c389',
+            '03d4c383-b80e-4095-9328-c964f2803a26',
             '9ffdb530-718d-4898-aeba-1f7832a4c13b',
             '1efb20de-7aca-4798-a7c2-0e4dc34fb687'
         ]
         return self._load_frames(video_ids)
 
+    def load_for_traffic(self):
+        video_ids = [
+            '03d4c383-b80e-4095-9328-c964f2803a26'
+        ]
+        return self._load_frames(video_ids)
 
-
-
+    def load_for_meeting(self):
+        video_ids = [
+            'b513c72d-8b77-4bee-96b6-b5f57977a3eb'
+        ]
+        return self._load_frames(video_ids)

@@ -23,7 +23,7 @@ class HealthTask7(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "blood_sugar",
-                "description": "A series of the blood sugar level",
+                "description": "A series of the blood sugar level, with ",
                 "fields": {
                     "blood_sugar": "The blood sugar check directly from the BS field, float"}
             }
@@ -44,7 +44,7 @@ class testAgent(cs.agent.Agent):
             self.output_stream.add_item({
                 "blood_sugar": Blood_sugar
                 })
-        self.input_stream.for_each(process_health)
+        self.input_stream.batch(by_count=5).for_each(process_health)
         '''
 
     def init_environment(self, runtime):

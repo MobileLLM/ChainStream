@@ -114,7 +114,6 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
 
         def record_output(data):
             self.output_record['auto_reply_in_office'].append(data)
-            self.output_record['is_office_event'].append(data)
 
         self.output_email_stream.for_each(record_output)
         self.is_office_event.for_each(record_output)

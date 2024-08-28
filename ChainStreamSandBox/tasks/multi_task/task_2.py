@@ -116,9 +116,7 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         for message in self.message_data:
             sent_info['all_message'].append(message)
             self.input_message_stream.add_item(message)
-            time.sleep(1)
         for stock in self.stock_data:
             sent_info['all_stock'].append(stock)
             self.input_stock_stream.add_item(stock)
-            time.sleep(1)
         return sent_info

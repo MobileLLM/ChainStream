@@ -175,9 +175,22 @@ from .desktop_ui_task import ImageTask1
 from .ego_4d_task import VideoTask1
 from .ego_4d_task import VideoTask2
 from .ego_4d_task import VideoTask3
-from .three_person_task import VideoTask4
-from .three_person_task import VideoTask5
-from .three_person_task import VideoTask6
+from .ego_4d_task import VideoTask4
+from .ego_4d_task import VideoTask5
+from .ego_4d_task import VideoTask6
+from .ego_4d_task import VideoTask7
+from .ego_4d_task import VideoTask8
+from .ego_4d_task import VideoTask9
+from .three_person_task import VideoTask10
+from .three_person_task import VideoTask11
+from .three_person_task import VideoTask12
+from .three_person_task import VideoTask13
+from .three_person_task import VideoTask14
+from .screen_shot_task import ScreenshotTask1
+from .screen_shot_task import ScreenshotTask2
+from .screen_shot_task import ScreenshotTask3
+from .screen_shot_task import ScreenshotTask4
+from .screen_shot_task import ScreenshotTask5
 from .github_task import GithubTask1
 from .github_task import GithubTask2
 from .github_task import GithubTask3
@@ -193,6 +206,8 @@ from .daily_dialogue_task import DialogueTask2
 from .daily_dialogue_task import DialogueTask3
 from .daily_dialogue_task import DialogueTask4
 from .daily_dialogue_task import DialogueTask5
+from .daily_dialogue_task import DialogueTask6
+from .daily_dialogue_task import DialogueTask7
 from .sms_task import MessageTask1
 from .sms_task import MessageTask2
 from .sms_task import MessageTask3
@@ -223,9 +238,12 @@ from .multi_task import CloseWindowTask
 from .multi_task import RemindDriverTask
 from .multi_task import StudentInClassTask
 from .multi_task import ReadingLightTask
-from .multi_task import WaitingRoomTask
+from .multi_task import TrafficTask
 from .multi_task import ShopStockTask
 from .multi_task import TripMusicTask
+from .multi_task import MultiTask1
+from .multi_task import MultiTask2
+from .multi_task import MultiTask3
 
 TASKS_WITH_DATA = {
     # EmailTask1.__name__: EmailTask1,
@@ -281,6 +299,19 @@ TASKS_WITH_DATA = {
     VideoTask4.__name__: VideoTask4,
     VideoTask5.__name__: VideoTask5,
     VideoTask6.__name__: VideoTask6,
+    VideoTask7.__name__: VideoTask7,
+    VideoTask8.__name__: VideoTask8,
+    VideoTask9.__name__: VideoTask9,
+    VideoTask10.__name__: VideoTask10,
+    VideoTask11.__name__: VideoTask11,
+    VideoTask12.__name__: VideoTask12,
+    VideoTask13.__name__: VideoTask13,
+    VideoTask14.__name__: VideoTask14,
+    ScreenshotTask1.__name__: ScreenshotTask1,
+    ScreenshotTask2.__name__: ScreenshotTask2,
+    ScreenshotTask3.__name__: ScreenshotTask3,
+    ScreenshotTask4.__name__: ScreenshotTask4,
+    ScreenshotTask5.__name__: ScreenshotTask5,
     GithubTask1.__name__: GithubTask1,
     GithubTask2.__name__: GithubTask2,
     GithubTask3.__name__: GithubTask3,
@@ -311,6 +342,8 @@ TASKS_WITH_DATA = {
     DialogueTask3.__name__: DialogueTask3,
     DialogueTask4.__name__: DialogueTask4,
     DialogueTask5.__name__: DialogueTask5,
+    DialogueTask6.__name__: DialogueTask6,
+    DialogueTask7.__name__: DialogueTask7,
     NewsTask6.__name__: NewsTask6,
     NewsTask7.__name__: NewsTask7,
     NewsTask8.__name__: NewsTask8,
@@ -366,7 +399,14 @@ TASKS_WITH_DATA = {
     WifiTask5.__name__: WifiTask5,
     StockTask2.__name__: StockTask2,
     StockTask3.__name__: StockTask3,
-    StockTask4.__name__: StockTask4
+    StockTask4.__name__: StockTask4,
+    MultiTask1.__name__: MultiTask1,
+    MultiTask2.__name__: MultiTask2,
+    WorkReminderTask.__name__: WorkReminderTask,
+    MultiTask3.__name__: MultiTask3,
+    CloseWindowTask.__name__: CloseWindowTask,
+    ReadingLightTask.__name__: ReadingLightTask,
+    TrafficTask.__name__: TrafficTask
 }
 
 TASKS_WITHOUT_DATA = {
@@ -378,7 +418,7 @@ TASKS_WITHOUT_DATA = {
     RemindDriverTask.__name__: RemindDriverTask,
     StudentInClassTask.__name__: StudentInClassTask,
     ReadingLightTask.__name__: ReadingLightTask,
-    WaitingRoomTask.__name__: WaitingRoomTask,
+    TrafficTask.__name__: TrafficTask,
     ShopStockTask.__name__: ShopStockTask,
     TripMusicTask.__name__: TripMusicTask
 }
@@ -437,6 +477,19 @@ ALL_TASKS = {
     VideoTask4.__name__: VideoTask4,
     VideoTask5.__name__: VideoTask5,
     VideoTask6.__name__: VideoTask6,
+    VideoTask7.__name__: VideoTask7,
+    VideoTask8.__name__: VideoTask8,
+    VideoTask9.__name__: VideoTask9,
+    VideoTask10.__name__: VideoTask10,
+    VideoTask11.__name__: VideoTask11,
+    VideoTask12.__name__: VideoTask12,
+    VideoTask13.__name__: VideoTask13,
+    VideoTask14.__name__: VideoTask14,
+    ScreenshotTask1.__name__: ScreenshotTask1,
+    ScreenshotTask2.__name__: ScreenshotTask2,
+    ScreenshotTask3.__name__: ScreenshotTask3,
+    ScreenshotTask4.__name__: ScreenshotTask4,
+    ScreenshotTask5.__name__: ScreenshotTask5,
     GithubTask1.__name__: GithubTask1,
     GithubTask2.__name__: GithubTask2,
     GithubTask3.__name__: GithubTask3,
@@ -467,6 +520,8 @@ ALL_TASKS = {
     DialogueTask3.__name__: DialogueTask3,
     DialogueTask4.__name__: DialogueTask4,
     DialogueTask5.__name__: DialogueTask5,
+    DialogueTask6.__name__: DialogueTask6,
+    DialogueTask7.__name__: DialogueTask7,
     NewsTask6.__name__: NewsTask6,
     NewsTask7.__name__: NewsTask7,
     NewsTask8.__name__: NewsTask8,
@@ -531,7 +586,7 @@ ALL_TASKS = {
     RemindDriverTask.__name__: RemindDriverTask,
     StudentInClassTask.__name__: StudentInClassTask,
     ReadingLightTask.__name__: ReadingLightTask,
-    WaitingRoomTask.__name__: WaitingRoomTask,
+    TrafficTask.__name__: TrafficTask,
     ShopStockTask.__name__: ShopStockTask,
     TripMusicTask.__name__: TripMusicTask
 }

@@ -2,7 +2,7 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
-from ChainStreamSandBox.raw_data import GPSData
+from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
@@ -36,15 +36,15 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_message",
-                "description": "An alarm message series when the gas stove is turned on but no one is there(home street "
-                               "address:123 Main St), with every two copies of video data are packaged as "
-                               "a batch after judging not the home street address from gps data",
+                "description": "An alarm message series when the gas stove is turned on but no one is there(home "
+                               "street address:123 Main St), with every two copies of video data are packaged as a "
+                               "batch after judging not the home street address from gps data",
                 "fields": {
                     "alarm": "You have not turned off the stove.Please notice!"
                 }
             }
         ])
-        self.gps_data = GPSData().get_gps(number)
+        self.location_data = LandmarkData().get_landmarks(number)
         self.video_data = SpharData().load_for_traffic()
         self.agent_example = '''
 import chainstream as cs
@@ -66,19 +66,20 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         def check_place(gps_data):
             if gps_data["Street Address"] != "123 Main St":
                 three_person_data = self.video_buffer.pop_all()
-                return three_person_data
-
-        def check_stove(three_person_data):
-            data_list = three_person_data["item_list"]
-            prompt = "Please check whether the gas stove is turned on or not.Simply answer y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,three_person_data["frame"]))
-            if res.lower()== "y" :
-                self.message_output.add_item({
-                    "alarm":"You have not turned off the stove.Please notice!"
-                })
             return three_person_data
 
-        self.video_input.for_each(check_place).batch(by_count=2).for_each(check_stove)
+        def check_stove(three_person_data):
+            frames = three_person_data["frame"]
+            for frame in frames:
+                prompt = "Please assess if there is any risk with the gas stove.Simply answer y or n."
+                res = self.llm.query(cs.llm.make_prompt(prompt,frame))
+                if res.lower()== "n" :
+                    self.message_output.add_item({
+                        "alarm":"Your gas stove is safe right now."
+                    })
+            return three_person_data
+
+        self.gps_input.for_each(check_place).for_each(check_stove)
         '''
 
     def init_environment(self, runtime):
@@ -98,7 +99,7 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         for frame in self.video_data:
             sent_info['all_video'].append(frame)
             self.input_video_stream.add_item({"frame": frame})
-        for gps in self.gps_data:
+        for gps in self.location_data:
             sent_info['all_gps'].append(gps)
             self.gps_stream.add_item(gps)
         return sent_info

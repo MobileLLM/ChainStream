@@ -7,13 +7,13 @@ from ..task_tag import *
 random.seed(6666)
 
 
-class VideoTask3(SingleAgentTaskConfigBase):
+class VideoTask5(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
         self.output_ui_stream = None
         self.input_ui_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
@@ -24,10 +24,13 @@ class VideoTask3(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "stream_id": "analysis_topic",
+                "description": "A series of judgments on whether I am playing a musical instrument. If the answer is "
+                               "y, detect what kind of musical instrument I am playing chosen from ['Guitar', "
+                               "'Piano', 'Violin', 'Drum', 'Flute']",
                 "fields": {
-                    "meeting": "An indication of whether I am in a meeting, bool"
+                    "musical_instrument_type": "An indication of what kind of musical instrument I am playing chosen "
+                                               "from ['Guitar', 'Piano', 'Violin', 'Drum', 'Flute'], string "
                 }
             }
         ])
@@ -38,32 +41,32 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.first_person_input = cs.get_stream(self, "first_person_perspective_data")
-        self.analysis_output = cs.get_stream(self, "analysis_scenario")
+        self.analysis_output = cs.get_stream(self, "musical_instrument_type")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
         def detect_scenario(first_person_data):
-            prompt = "Detect whether I am in a meeting, just tell me y or n."
+            prompt = "Detect whether I'm playing a musical instrument, just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
-                self.analysis_output.add_item({
-                    "meeting": True
-                })
-            else:
-                self.analysis_output.add_item({
-                    "meeting": False
-                })
-        self.first_person_input.for_each(detect_scenario)
+                return first_person_data
+        def detect_instrument(first_person_data):
+            prompt = "Detect what kind of musical instrument I am playing chosen from ["Guitar", "Piano", "Violin", "Drum", "Flute"], just tell me the type."
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
+            self.analysis_output.add_item({
+            "musical_instrument_type":res
+            })
+        self.first_person_input.for_each(detect_scenario).for_each(detect_instrument)
         '''
 
     def init_environment(self, runtime):
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
-        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_scenario')
+        self.output_ui_stream = cs.stream.create_stream(self, 'musical_instrument_type')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['analysis_scenario'].append(data)
+            self.output_record['musical_instrument_type'].append(data)
 
         self.output_ui_stream.for_each(record_output)
 

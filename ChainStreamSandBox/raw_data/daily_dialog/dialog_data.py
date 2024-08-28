@@ -87,4 +87,4 @@ class DialogData:
 
 if __name__ == "__main__":
     dialog_data = DialogData()
-    print(dialog_data.get_dialog_batch(3))
+    print(dialog_data.get_dialog_batch(10))

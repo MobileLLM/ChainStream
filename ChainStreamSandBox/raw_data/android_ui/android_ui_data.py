@@ -56,5 +56,4 @@ class AndroidUIData:
 
 if __name__ == '__main__':
     data = AndroidUIData()
-    print(len(data))
     print(data.get_random_data())
