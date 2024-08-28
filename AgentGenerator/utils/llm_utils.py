@@ -97,10 +97,10 @@ class TextGPTModel(BaseOpenAI):
 
 
 if __name__ == '__main__':
-    prompt = {
-        "role": "system",
-        "content": "介绍一下你自己，你是具体什么型号的模型"
-    }
+    prompt = [{
+        "role": "user",
+        "content": "tell me a story"
+    }]
     model = TextGPTModel(model='gpt-4o')
 
     print(model.query(prompt))

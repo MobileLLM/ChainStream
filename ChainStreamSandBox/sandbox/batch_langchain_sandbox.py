@@ -106,7 +106,22 @@ if __name__ == "__main__":
     #     res = oj.start_test_agent(return_report_path=True)
     #     print(res)
 
-    tmp_func()
+    # tmp_func()
+
+    import os
+    from langchain.llms import OpenAI
+
+    env_vars = {
+        "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
+        "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
+    }
+
+    os.environ.update(env_vars)
+
+    llm = OpenAI(base_url=os.environ.get("OPENAI_BASE_URL"), api_key=os.environ.get("OPENAI_API_KEY"),
+                 model_name="gpt-4")
+    response = llm("tell me a joke")
+    print(response)
 
     # if res['start_agent'] != "[OK]":
     #     print("\n\nError while starting agent:", res['start_agent']['error_message'])

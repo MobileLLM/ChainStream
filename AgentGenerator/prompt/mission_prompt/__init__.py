@@ -10,8 +10,8 @@ else:
 
 def get_mission_prompt(output_stream, input_stream, mission_type, framework_type="None"):
 
-    if mission_type == "gpt":
-        return GPT_BASED_MISSION_PROMPT.format(output_stream=output_stream, input_stream=input_stream, input_data="{input_data}")
+    if mission_type == "native_gpt":
+        return GPT_BASED_MISSION_PROMPT.format(output_stream=output_stream, input_stream=input_stream, input_data="[input_data]")
     elif mission_type == "batch":
         return BATCH_BASED_PROMPT.format(output_stream=output_stream, input_stream=input_stream)
     elif mission_type == "stream":

@@ -32,6 +32,13 @@ class StreamInterfaceSandBox(SandboxBase):
         self.task.init_environment(self.runtime)
         self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
 
+        # env_vars = {
+        #     "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
+        #     "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
+        # }
+        #
+        # os.environ.update(env_vars)
+
     # def start_agent(self) -> object:
     #     raise NotImplementedError("Subclasses must implement start_agent")
 
@@ -85,10 +92,30 @@ if __name__ == "__main__":
     Config = ALL_TASKS['EmailTask1']
 
     agent_file = '''
+import os
+from openai import OpenAI
+
+openai_base_url = os.environ.get('OPENAI_BASE_URL')
+openai_api_key = os.environ.get("OPENAI_API_KEY")
+
 from chainstream.stream import get_stream_interface
 def process_data(stop_event):
     all_email_stream = get_stream_interface("all_email")
     summary_by_sender_stream = get_stream_interface("summary_by_sender")
+    
+    
+    print(openai_base_url)
+    print(openai_api_key)
+    client = OpenAI(base_url=openai_base_url, api_key=openai_api_key)
+
+    completion = client.chat.completions.create(
+      model="gpt-4o",
+      messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello!"}
+      ]
+    )
+    print(completion)
     
     while not stop_event.is_set():
         email_item = all_email_stream.get(timeout=1)

@@ -15,9 +15,9 @@ import io
 import sys
 
 if __name__ == '__main__':
-    from utils import extract_imports
+    from utils import extract_imports, escape_string_literals
 else:
-    from .utils import extract_imports
+    from .utils import extract_imports, escape_string_literals
 
 
 class SandboxError(Exception):
@@ -206,6 +206,13 @@ class SandboxBase:
             return None
 
     def start_test_agent(self, return_report_path=False):
+
+        env_vars = {
+            "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
+            "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
+        }
+
+        os.environ.update(env_vars)
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if self.task is not None:
@@ -377,6 +384,7 @@ class BatchSandbox(SandboxBase):
     def get_output_list(self) -> dict:
         try:
             output_list = self.run_func(self.all_input_data)
+
             for stream_id, record in output_list.items():
                 if len(record) == 0:
                     output_list[stream_id] = {
