@@ -13,6 +13,7 @@ base_prompt = {base_prompt}
 def process_data(input_streams: dict[str, list]):
     prompt = base_prompt.format(input_data=input_streams)
     client = openai.OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
+    print("Prompt: ", prompt)
     response = client.chat.completions.create(
         model={model_name},
         messages=[

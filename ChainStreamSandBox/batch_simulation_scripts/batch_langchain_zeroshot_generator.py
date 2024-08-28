@@ -1,6 +1,6 @@
 from sandbox_interface import SandboxBatchInterface
 from AgentGenerator import LangChainZeroshotGenerator
-from ChainStreamSandBox.tasks import get_task_batch
+from ChainStreamSandBox.tasks import get_task_with_data_batch
 import os
 
 
@@ -16,6 +16,6 @@ class LangChainBatchZeroshotEvaluator(SandboxBatchInterface):
 
 
 if __name__ == '__main__':
-    task_list = get_task_batch()
+    task_list = get_task_with_data_batch()
     evaluator = LangChainBatchZeroshotEvaluator(task_list)
     evaluator.start()

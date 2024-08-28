@@ -24,6 +24,8 @@ class NativePythonBatchSandbox(BatchSandbox):
             os.environ.update(env_vars)
 
             output_dict = self.code_instance(self.all_input_data)
+
+            print(f"output_dict: {output_dict}")
         except Exception as e:
             raise e
         finally:

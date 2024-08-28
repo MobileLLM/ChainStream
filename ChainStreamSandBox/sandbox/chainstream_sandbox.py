@@ -19,8 +19,15 @@ class ChainStreamSandBox(SandboxBase):
 
         self.agent_instance = Agent("sandbox_tmp_agent")
 
-    def prepare_environment(self):
+    # def prepare_environment(self):
+    #     self.task.init_environment(self.runtime)
+
+    def prepare_input_environment(self):
         self.task.init_environment(self.runtime)
+
+    def prepare_output_environment(self):
+        # self.task.init_output_stream(self.runtime)
+        pass
 
     def import_and_init(self, module):
         class_object = None

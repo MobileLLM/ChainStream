@@ -88,8 +88,14 @@ class SandboxBase:
         else:
             self.save_path = None
 
-    def prepare_environment(self):
-        raise NotImplementedError("Subclasses must implement prepare_environment")
+    # def prepare_environment(self):
+    #     raise NotImplementedError("Subclasses must implement prepare_environment")
+
+    def prepare_input_environment(self):
+        raise NotImplementedError("Subclasses must implement prepare_input_environment")
+
+    def prepare_output_environment(self):
+        raise NotImplementedError("Subclasses must implement prepare_output_environment")
 
     # def start_agent(self) -> object:
     #     raise NotImplementedError("Subclasses must implement start_agent")
@@ -216,9 +222,12 @@ class SandboxBase:
         try:
             self.result['sandbox_info']['sandbox_start_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if self.task is not None:
-                self.prepare_environment()
+                self.prepare_input_environment()
 
             res = self._start_agent()
+
+            if self.task is not None:
+                self.prepare_output_environment()
 
             if res is not None:
                 self.result['start_agent'] = res
@@ -347,9 +356,16 @@ class BatchSandbox(SandboxBase):
         self.output_list = []
         self.all_input_data = None
 
-    def prepare_environment(self):
+    # def prepare_environment(self):
+    #     self.task.init_environment(self.runtime)
+    #     self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
+
+    def prepare_input_environment(self):
         self.task.init_environment(self.runtime)
         self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
+
+    def prepare_output_environment(self):
+        pass
 
     # def start_agent(self) -> object:
     #     raise NotImplementedError("Subclasses must implement start_agent")

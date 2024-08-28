@@ -16,11 +16,6 @@ Each input stream and output stream has a unified format, as follows:
 
 The data includes the stream's ID (`stream_id`), the stream's description (`description`), and the stream's field descriptions (`fields`). You need to understand the task based on the output stream's description and ultimately return the output stream's content.
 
-Now, your task is to return the output stream:
-```json
-{output_stream}
-```
-
 You can choose from the following input streams:
 ```json
 {input_stream}
@@ -31,7 +26,19 @@ The input data is as follows:
 {input_data}
 ```
 
-Please process the input data and directly return the output stream data in JSON format.
+Now, your task is to return the output stream's data in JSON format. The output stream's format is as follows:
+```json
+{output_stream}
+```
+
+Please process the input data and directly return the output stream data, your answer should follow this JSON format:
+```json
+{{
+    "<stream_id1>": [{{item1}}, {{item2}}, {{item3}},...],
+    "<stream_id2>": [{{item1}}, {{item2}}, {{item3}},...],
+   ...
+}}
+```
 
 Output Data:
 """
