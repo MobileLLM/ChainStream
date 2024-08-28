@@ -419,22 +419,20 @@ def draw_success_rate(base_file_path):
         generator_success_rate_for_tasks[gen_name] = {}
         for N, gen_N_results in gen_results.items():
             generator_avg_success_rate[gen_name][N] = gen_N_results['success_rate']
-            print(
-                f"Gen: {gen_name}, N: {N}, Success Rate: {gen_N_results['success_rate']} ({gen_N_results["success_count"]} / {gen_N_results['total_task_count']})")
+            print(f"Gen: {gen_name}, N: {N}, Success Rate: {gen_N_results['success_rate']} ({gen_N_results['success_count']} / {gen_N_results['total_task_count']})")
 
             for task, task_bool in gen_N_results['success_details'].items():
                 if task not in generator_success_rate_for_tasks[gen_name]:
                     generator_success_rate_for_tasks[gen_name][task] = task_bool
                 else:
-                    generator_success_rate_for_tasks[gen_name][task] = generator_success_rate_for_tasks[gen_name][
-                                                                           task] or task_bool
+                    generator_success_rate_for_tasks[gen_name][task] = generator_success_rate_for_tasks[gen_name][task] or task_bool
 
     _draw_avg_success_rate(generator_avg_success_rate)
     _draw_success_rate_for_tasks(generator_success_rate_for_tasks)
 
 
 if __name__ == '__main__':
-    base_file_path = '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/report_evaluator/result'
+    base_file_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\report_evaluator\result'
     eval_result = load_all_results(base_file_path)
     # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
 
