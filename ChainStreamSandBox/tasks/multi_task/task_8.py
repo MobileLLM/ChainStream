@@ -24,23 +24,23 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
             "stream_id": "all_video",
             "description": "all video data in my kitchen",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }, {
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {
-                "Street Address": "the street address information from the gps sensor,str"
+                "Street Address": "the street address information from the gps sensor, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_message",
-                "description": "An alarm message series when the gas stove is turned on but no one is there(home "
-                               "street address:123 Main St), with every two copies of video data are packaged as a "
-                               "batch after judging not the home street address from gps data",
+                "description": "An alarm message series when the gas stove is safe when no one is home(home "
+                               "street address:'123 Main St')",
                 "fields": {
-                    "alarm": "You have not turned off the stove.Please notice!"
+                    "notice": "Information reflecting the safe status of the gas stove, string = 'Your gas stove is "
+                              "safe right now.' "
                 }
             }
         ])
@@ -75,7 +75,7 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
                 res = self.llm.query(cs.llm.make_prompt(prompt,frame))
                 if res.lower()== "n" :
                     self.message_output.add_item({
-                        "alarm":"Your gas stove is safe right now."
+                        "notice":"Your gas stove is safe right now."
                     })
             return three_person_data
 

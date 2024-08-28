@@ -37,8 +37,8 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_report",
-                "description": "A series of the places extracted from the dialogues with the temperature, with every two "
-                               "pieces of dialogues packaged as a batch after filtering the topic of trip from "
+                "description": "A series of the places extracted from the dialogues with the temperature, with every "
+                               "two pieces of dialogues packaged as a batch after filtering the topic of trip from "
                                "the dialogues",
                 "fields": {
                     "place": "the place extracted from the dialogue, string",

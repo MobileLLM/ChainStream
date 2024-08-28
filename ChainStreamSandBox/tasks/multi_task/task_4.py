@@ -36,8 +36,9 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_command",
-                "description": "A series of recordings when I am talking in the office conference room ("
-                               "PropertyName: Century Technology Light Building)",
+                "description": "A series of recordings when the GPS detects that I am in the office buliding and the "
+                               "surveillance video detects that I am talking in the office conference room.("
+                               "PropertyName: 'Century Technology Light Building')",
                 "fields": {
                     "command": "The automatic command to record the conversations in the conference, string = 'Start "
                                "recording the conversation!' "

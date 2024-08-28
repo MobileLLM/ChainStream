@@ -26,28 +26,28 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             "stream_id": "all_first_person",
             "description": "first_person perspective camera data in my study",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }, {
             "stream_id": "all_gps",
             "description": "all of my GPS information",
             "fields": {
-                "Street Address": "the street address information from the gps sensor,str",
-                "Navigation_endanger": "the detection of whether it is a dangerous road section,bool"
+                "PropertyName": "the property name from the gps sensor, string",
             }
         }, {
             "stream_id": "light_intensity",
-            "description": "A real-time light_intensity check information,every two copies of light intensity data "
-                           "are packaged as a batch",
+            "description": "A real-time light_intensity check information",
             "fields": {
-                "Light intensity outdoor": "the light intensity information outdoor right now,float"
+                "Light intensity outdoor": "the light intensity information outdoor right now, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "adjust_light",
-                "description": "A automatic command to adjust the light in the study.If the light exceeds 500, "
-                               "draw the curtains closed. If the light is less than 300, turn on the desk lamp.",
+                "description": "A automatic command to adjust the light in the study when the camera detects that I "
+                               "am reading a book at home(the property name is: 'Maple Ridge Apartments').If the "
+                               "light exceeds 500, draw the curtains closed. If the light is less than 300, "
+                               "turn on the desk lamp.",
                 "fields": {
                     "command": "the command to turn on the desk lamp or draw the curtains closed, string = 'Please "
                                "turn on the desk lamp.' if the light intensity is lower than 300, or 'Please draw the "
@@ -56,8 +56,7 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             },
             {
                 "stream_id": "is_reading",
-                "description": "Check whether the person is reading or not,every two copies of video data are "
-                               "packaged as a batch after judging the home street address gps data",
+                "description": "Check whether the person is reading or not",
                 "fields": {
                     "Status": "True or False, bool"
                 }
@@ -102,7 +101,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.light_input.for_each(check_light)
         
         def check_place(gps_data):
-            if gps_data["PropertyName"] != "123 Main St":
+            if gps_data["PropertyName"] == "Maple Ridge Apartments":
                 first_person_data = self.video_buffer.pop_all()
                 return first_person_data
 
@@ -151,6 +150,42 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.is_reading_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
+        properties = [
+            {
+                'PrimaryPropertyType': 'Mid-Rise Multifamily',
+                'PropertyName': 'Maple Ridge Apartments',
+                'Street Address': '123 Innovation Street',
+                'Neighborhood': 'Tech Park',
+                'YearBuilt': 2010,
+                'NumberofFloors': 15,
+                'Electricity(kWh)': 450000.0,
+                'NaturalGas(therms)': 9000.0,
+                'GHGEmissions(MetricTonsCO2e)': 72.30
+            },
+            {
+                'PrimaryPropertyType': 'Office Building',
+                'PropertyName': 'Maple Ridge Apartments',
+                'Street Address': '456 Development Avenue',
+                'Neighborhood': 'Business District',
+                'YearBuilt': 2015,
+                'NumberofFloors': 20,
+                'Electricity(kWh)': 600000.0,
+                'NaturalGas(therms)': 12000.0,
+                'GHGEmissions(MetricTonsCO2e)': 95.50
+            },
+            {
+                'PrimaryPropertyType': 'High-Rise Multifamily',
+                'PropertyName': 'Maple Ridge Apartments',
+                'Street Address': '789 Future Boulevard',
+                'Neighborhood': 'Innovation Hub',
+                'YearBuilt': 2018,
+                'NumberofFloors': 25,
+                'Electricity(kWh)': 750000.0,
+                'NaturalGas(therms)': 15000.0,
+                'GHGEmissions(MetricTonsCO2e)': 118.75
+            }
+        ]
+        self.gps_data.extend(properties)
         sent_info = {'all_first_person': [], 'all_gps': [], 'light_intensity': []}
         for frame in self.video_data:
             sent_info['all_first_person'].append(frame)

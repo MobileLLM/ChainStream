@@ -17,7 +17,7 @@ class ScreenshotTask4(SingleAgentTaskConfigBase):
             "stream_id": "all_screenshot",
             "description": "A stream of screenshot information",
             "fields": {
-                "info": "The details information on the screenshot data, string"
+                "info": "The details information on the screenshot data, dict with the key 'activity'"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -26,7 +26,8 @@ class ScreenshotTask4(SingleAgentTaskConfigBase):
                 "description": "The analysis of the ancestors of the ui property",
                 "fields": {
                     "ui_ancestors": "The analysis of the screenshot properties on the ancestors of the ui property, "
-                                    "located within the field 'info' -> 'activity' -> 'root' structure, list of strings"
+                                    "extracted within the field 'info' -> 'activity' -> 'root' -> 'ancestors' "
+                                    "structure, list of strings "
                 }
             }
         ])

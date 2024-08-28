@@ -31,14 +31,13 @@ class MultiTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_arxiv",
             "description": "all of the arxiv data",
             "fields": {
-                "title": "The title of the arxiv article, string",
-                "abstract": "The abstract of the arxiv article, string"
+                "title": "The title of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_recommendation",
-                "description": "A series of arxiv recommendation based on the subject of the emails",
+                "description": "A series of arxiv recommendation based on the subject keyword mentioned in the emails",
                 "fields": {
                     "title": "the title of the recommended arxiv paper, string"
                 }

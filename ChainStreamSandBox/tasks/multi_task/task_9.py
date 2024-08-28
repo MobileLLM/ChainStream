@@ -24,22 +24,22 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {
-                "PropertyName": "the property name in my gps data, str"
+                "PropertyName": "the property name in my gps data, string"
             }
         }, {
             "stream_id": "all_weather",
             "description": "All weather information",
             "fields": {
-                "Location": "the weather location, string",
-                "Temperature_C": "temperature in degrees Celsius, float",
-                "Weather": "the weather condition, string"
+                "Humidity_pct": "the humidity percentage right now, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "A series of commands of automatically closing the window, with every two copies of "
-                               "weather data packaged as a batch after judging the home street address from gps data",
+                "description": "A series of commands of automatically closing the window when the humidity percentage "
+                               "is over 60 but no one is home(home property name:'Maple Ridge Apartments'), with every "
+                               "two copies of weather data packaged as a batch after judging the home street address "
+                               "from gps data",
                 "fields": {
                     "humidity": "humidity percentage, float",
                     "action": "An auto command, string = 'Close all the windows!'"

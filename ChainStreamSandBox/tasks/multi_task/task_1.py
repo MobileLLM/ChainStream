@@ -25,7 +25,6 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
             "stream_id": "all_email",
             "description": "All email messages",
             "fields": {
-                "sender": "the name of the sender, string",
                 "Content": "the content of the email, string"
             }
         }, {
@@ -39,11 +38,11 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
             {
                 "stream_id": "auto_reply_in_office",
                 "description": "A series of replied emails, excluding advertisements in the office (office street "
-                               "address: 3127 Edgemont Boulevard), with every two emails packaged into a batch after "
+                               "address: '3127 Edgemont Boulevard'), with every two emails packaged into a batch after "
                                "filtering out the advertisements.",
                 "fields": {
                     "Content": "the content of the emails, string",
-                    "Auto_reply": "An auto reply message, string = Received!"
+                    "Auto_reply": "An auto reply message, string = 'Received!'"
                 }
             }, {
                 "stream_id": "is_office_event",

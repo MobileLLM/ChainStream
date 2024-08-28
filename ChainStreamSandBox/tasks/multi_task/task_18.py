@@ -32,7 +32,8 @@ class MultiTask3(SingleAgentTaskConfigBase):
             "description": "all of the weather data",
             "fields": {
                 "Temperature_C": "the temperature of the location, float",
-                "Wind_Speed_kmh": "the wind speed of the location, float"
+                "Wind_Speed_kmh": "the wind speed of the location, float",
+                "Location": "the location, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -40,7 +41,7 @@ class MultiTask3(SingleAgentTaskConfigBase):
                 "stream_id": "weather_search",
                 "description": "A series of weather information search based on the name mentioned in dialogues",
                 "fields": {
-                    "Location": "the location mentioned in the travel dialogs, string",
+                    "Location": "the location mentioned in the travel dialogues, string",
                     "Temperature_C": "the temperature of the location, float",
                     "Wind_Speed_kmh": "the wind speed of the location, float"
                 }

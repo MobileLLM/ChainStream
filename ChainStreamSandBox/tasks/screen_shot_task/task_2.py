@@ -17,7 +17,7 @@ class ScreenshotTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_screenshot",
             "description": "A stream of screenshot information",
             "fields": {
-                "info": "The details information on the screenshot data, string"
+                "info": "The details information on the screenshot data, dict with the key 'activity'"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,8 +27,8 @@ class ScreenshotTask2(SingleAgentTaskConfigBase):
                                "horizontally",
                 "fields": {
                     "scrollable_horizontal": "The analysis of the screenshot properties on whether the root view is "
-                                             "scrollable horizontally, located within the field 'info' -> 'activity' "
-                                             "-> 'root' structure, bool "
+                                             "scrollable horizontally, extracted within the field 'info' -> 'activity' "
+                                             "-> 'root' -> 'scrollable-horizontal' structure, bool"
                 }
             }
         ])

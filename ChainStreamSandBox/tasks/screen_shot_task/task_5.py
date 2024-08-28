@@ -17,7 +17,7 @@ class ScreenshotTask5(SingleAgentTaskConfigBase):
             "stream_id": "all_screenshot",
             "description": "A stream of screenshot information",
             "fields": {
-                "info": "The details information on the screenshot data, string"
+                "info": "The details information on the screenshot data, dict with the key 'activity'"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -25,8 +25,8 @@ class ScreenshotTask5(SingleAgentTaskConfigBase):
                 "stream_id": "screenshot_details",
                 "description": "The analysis of the bound of the ui",
                 "fields": {
-                    "bounds": "The analysis of the bound coordination of the ui, located within the field 'info' -> "
-                              "'activity' -> 'root' structure, list of integers",
+                    "bounds": "The analysis of the bound coordination of the ui, extracted within the field 'info' -> "
+                              "'activity' -> 'root' -> 'bounds' structure, list of integers",
                 }
             }
         ])

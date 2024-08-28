@@ -19,14 +19,15 @@ class DialogueTask7(SingleAgentTaskConfigBase):
             "description": "A series of dialogues record",
             "fields": {
                 "topic": "The id of the speaker, string",
-                "dialog": "The dialogues dict with the keys: 'text', 'act', 'emotion', dict",
+                "dialog": "The dialogues dict with the keys: 'text', 'act', 'emotion', dict"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "ordinary_life_dialog_intention",
-                "description": "A stream of the intention of the ordinary-life dialogues extracted from the field "
-                               "'act', with each batch containing two items",
+                "description": "A stream of dialogue texts, grouped by the 'Ordinary Life' ones within the 'topic' "
+                               "field and extracted from the 'act' key within the 'dialog' field, with each batch "
+                               "containing two items.",
                 "fields": {
                     "dialog_intention": "The intention of the dialogues with the topic of ordinary life, string"}
             }

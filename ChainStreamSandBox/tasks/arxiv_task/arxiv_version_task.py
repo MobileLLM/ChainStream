@@ -21,18 +21,19 @@ class ArxivTask15(SingleAgentTaskConfigBase):
             "stream_id": "all_arxiv",
             "description": "A series of arxiv articles",
             "fields": {
-                "title": "The title of the arxiv article,string",
-                "versions": "The published version and the time of the arxiv article,string"
+                "title": "The title of the arxiv article, string",
+                "versions": "The published version and the time of the arxiv article, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_stage_tags",
-                "description": "The arxiv versions extracted from the 'versions' field, the field is formatted as a "
-                               "list of dictionaries, each containing the keys 'version' and 'created'. ",
+                "description": "The arxiv versions extracted from the 'version' field. (the 'versions' field is "
+                               "formatted as a list of dictionaries, each containing the keys 'version' and "
+                               "'created'.)",
                 "fields": {
-                    "title": "The title of the arxiv article,string",
-                    "versions": "The published version of the arxiv article,string"
+                    "title": "The title of the arxiv article, string",
+                    "version": "The published version of the arxiv article, string"
                 }
             }
         ])
@@ -58,7 +59,7 @@ class TestAgent(cs.agent.Agent):
                 version = paper_versions[0].get("version")
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "versions": version,
+                    "version": version,
                 })
 
         self.input_stream.for_each(process_paper)

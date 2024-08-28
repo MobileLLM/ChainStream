@@ -25,30 +25,30 @@ class TrafficTask(SingleAgentTaskConfigBase):
             "stream_id": "all_third_person",
             "description": "all third person perspective traffic data",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }, {
             "stream_id": "all_first_person",
-            "description": "all first person perspective data in the car (the data is sent at regular intervals as a "
-                           "batch every five seconds)",
+            "description": "all first person perspective data in the car",
             "fields": {
-                "frame": "image file in the Jpeg format processed using PIL,string"
+                "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "output_messages",
-                "description": "A message reminding the driver to pay attention to the road ahead",
+                "description": "A prompt message when a traffic accident is detected ahead from the all_third_person "
+                               "data and I am driving detected from the all_first_person data",
                 "fields": {
-                    "Reminder": "A notification reminding the driver to pay attention to the road conditions ahead. "
-                                "string = 'Pay attention to the road ahead'",
+                    "Reminder": "A notification reminding the driver to pay attention to the road conditions ahead if "
+                                "there is an accident ahead.string = 'Accident ahead! Pay attention to the road'",
                 }
             },
             {
                 "stream_id": "driving_state",
                 "description": "Trigger to determine if I am driving",
                 "fields": {
-                    "Status": "True or False. bool"
+                    "Status": "True or False, bool"
                 }
             }
         ])
@@ -76,7 +76,7 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
                     print(res)
                     if res.lower()=="y":
                         self.message_output.add_item({
-                        "Reminder": "Pay attention to the road ahead."
+                        "Reminder": "Accident ahead! Pay attention to the road"
                     })
         self.third_person_input.for_each(check_accident)
 
@@ -85,7 +85,7 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_input['frame']))
             if res.lower() == 'y' :
                 self.driving_state.add_item({
-                "state":True
+                "Status":True
                 })
                 return first_person_input
             else:

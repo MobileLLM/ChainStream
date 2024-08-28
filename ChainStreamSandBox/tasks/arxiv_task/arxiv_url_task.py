@@ -28,7 +28,7 @@ class ArxivTask14(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_website_url",
-                "description": "A series of arxiv articles with their website url extracted from their license",
+                "description": "A series of arxiv articles with their website url extracted from their 'license' field",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "url": "The website url of the arxiv article directly from the field license, string"

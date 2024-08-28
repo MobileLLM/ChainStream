@@ -17,7 +17,7 @@ class ScreenshotTask3(SingleAgentTaskConfigBase):
             "stream_id": "all_screenshot",
             "description": "A stream of screenshot information",
             "fields": {
-                "info": "The details information on the screenshot data, string"
+                "info": "The details information on the screenshot data, dict with the key 'activity'"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -26,7 +26,8 @@ class ScreenshotTask3(SingleAgentTaskConfigBase):
                 "description": "The analysis of the screenshot properties on whether the root view is clickable",
                 "fields": {
                     "clickable": "The analysis of the screenshot properties on whether the root view is clickable, "
-                                 "located within the field 'info' -> 'activity' -> 'root' structure, bool "
+                                 "extracted within the field 'info' -> 'activity' -> 'root' -> 'clickable' structure,"
+                                 " bool "
                 }
             }
         ])
