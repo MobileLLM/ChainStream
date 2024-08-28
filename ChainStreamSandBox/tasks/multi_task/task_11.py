@@ -98,6 +98,22 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         self.output_number_stream.for_each(record_output)
         self.warning_board_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_three_person_stream = cs.stream.create_stream(self, 'all_classroom')
+        self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
+
+    def init_output_stream(self, runtime):
+        self.output_number_stream = cs.stream.get_stream(self, 'students_number')
+        self.warning_board_stream = cs.stream.get_stream(self, 'warning_board')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['students_number'].append(data)
+            self.output_record['warning_board'].append(data)
+
+        self.output_number_stream.for_each(record_output)
+        self.warning_board_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         sent_info = {'all_classroom': [], 'all_screenshot': []}
         for frame in self.video_data:

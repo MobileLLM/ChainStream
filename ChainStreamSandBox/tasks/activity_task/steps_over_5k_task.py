@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -72,10 +73,21 @@ class ActivityDistanceAgent(cs.agent.Agent):
 
         self.output_activity_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_activity_stream = cs.stream.create_stream(self, 'all_activities')
+
+    def init_output_stream(self, runtime):
+        self.output_activity_stream = cs.stream.get_stream(self, 'steps_over_5k')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['steps_over_5k'].append(data)
+
+        self.output_activity_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         activity_dict = {'all_activities': []}
         for activity in self.activity_data:
             self.input_activity_stream.add_item(activity)
             activity_dict['all_activities'].append(activity)
         return activity_dict
-

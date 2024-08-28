@@ -62,6 +62,18 @@ class testAgent(cs.agent.Agent):
 
         self.output_screenshot_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
+
+    def init_output_stream(self, runtime):
+        self.output_screenshot_stream = cs.stream.get_stream(self, 'screenshot_usage')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['screenshot_type'].append(data)
+
+        self.output_screenshot_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         screenshot_dict = {'all_screenshot': []}
         for image in self.screenshot_data:

@@ -11,7 +11,8 @@ class DialogueTask7(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_dialogue_stream = None
         self.input_dialogue_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Interpersonal_relationship,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium,
+                                domain=Domain_Task_tag.Interpersonal_relationship,
                                 modality=Modality_Task_tag.Audio)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
@@ -60,6 +61,19 @@ class testAgent(cs.agent.Agent):
     def init_environment(self, runtime):
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
         self.output_dialogue_stream = cs.stream.create_stream(self, 'ordinary_life_dialog_intention')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['ordinary_life_dialog_intention'].append(data)
+
+        self.output_dialogue_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
+
+    def init_output_stream(self, runtime):
+        self.output_dialogue_stream = cs.stream.get_stream(self, 'ordinary_life_dialog_intention')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 

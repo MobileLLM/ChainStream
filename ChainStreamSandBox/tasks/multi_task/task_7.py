@@ -95,6 +95,20 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
 
         self.output_message_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.gps_stream = cs.stream.create_stream(self, 'all_gps')
+        self.input_video_stream = cs.stream.create_stream(self, 'all_video')
+
+    def init_output_stream(self, runtime):
+        self.output_message_stream = cs.stream.get_stream(self, 'reminder')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['reminder'].append(data)
+
+        self.output_message_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         sent_info = {'all_gps': [], 'all_video': []}
         for frame in self.video_data:

@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import StockData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -84,10 +85,22 @@ class testAgent(cs.agent.Agent):
 
         self.output_stock_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_stock_stream = cs.stream.create_stream(self, 'all_stocks')
+
+    def init_output_stream(self, runtime):
+        self.output_stock_stream = cs.stream.get_stream(self, 'recommendation_sell_stock')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['recommendation_sell_stock'].append(data)
+
+        self.output_stock_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         stock_dict = {'all_stocks': []}
         for stock in self.stock_data:
             self.input_stock_stream.add_item(stock)
             stock_dict['all_stocks'].append(stock)
         return stock_dict
-

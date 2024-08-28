@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -35,9 +36,9 @@ class ArxivTask13(SingleAgentTaskConfigBase):
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "topic": "The topic of the arxiv article, string in ['Artificial "
-                               "Intelligence', 'Computer Vision and Pattern Recognition', 'Machine Learning', "
-                               "'Neural and Evolutionary Computing', 'Robotics', 'Graphics', 'Human-Computer "
-                               "Interaction', 'Multiagent Systems', 'Software Engineering', 'Other']"
+                             "Intelligence', 'Computer Vision and Pattern Recognition', 'Machine Learning', "
+                             "'Neural and Evolutionary Computing', 'Robotics', 'Graphics', 'Human-Computer "
+                             "Interaction', 'Multiagent Systems', 'Software Engineering', 'Other']"
                 }
             }
         ])
@@ -80,10 +81,22 @@ class TestAgent(cs.agent.Agent):
 
         self.output_paper_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
+
+    def init_output_stream(self, runtime):
+        self.output_paper_stream = cs.stream.get_stream(self, 'arxiv_topic')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['arxiv_topic'].append(data)
+
+        self.output_paper_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         sent_paper = {'all_arxiv': []}
         for message in self.paper_data:
             self.input_paper_stream.add_item(message)
             sent_paper['all_arxiv'].append(message)
         return sent_paper
-

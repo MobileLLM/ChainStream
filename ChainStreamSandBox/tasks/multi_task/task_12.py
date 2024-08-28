@@ -133,6 +133,23 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.adjust_light_stream.for_each(record_output)
         self.is_reading_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_first_person_stream = cs.stream.create_stream(self, 'all_first_person')
+        self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
+        self.input_light_stream = cs.stream.create_stream(self, 'light_intensity')
+
+    def init_output_stream(self, runtime):
+        self.adjust_light_stream = cs.stream.get_stream(self, 'adjust_light')
+        self.is_reading_stream = cs.stream.get_stream(self, 'is_reading')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['adjust_light'].append(data)
+            self.output_record['is_reading'].append(data)
+
+        self.adjust_light_stream.for_each(record_output)
+        self.is_reading_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         sent_info = {'all_first_person': [], 'all_gps': [], 'light_intensity': []}
         for frame in self.video_data:

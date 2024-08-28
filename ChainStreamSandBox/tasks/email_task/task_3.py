@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -88,6 +89,19 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
 
         self.output_email_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_email_stream = cs.stream.create_stream(self, 'all_email')
+
+    def init_output_stream(self, runtime):
+        self.output_email_stream = cs.stream.get_stream(self, 'summary_by_receiver')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['summary_by_receiver'].append(data)
+
+        self.output_email_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         received_emails = {"all_email": []}
         for email in self.email_data:
@@ -95,8 +109,3 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
             received_emails['all_email'].append(email)
             self.input_email_stream.add_item(email)
         return received_emails
-
-
-
-
-

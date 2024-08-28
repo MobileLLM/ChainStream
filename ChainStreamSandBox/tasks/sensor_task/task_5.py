@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -33,7 +34,8 @@ class WeatherTask2(SingleAgentTaskConfigBase):
                 "fields": {
                     "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
                     "Humidity_pct": "the percentage of the humidity, string",
-                    "reminder": "An auto reminder, string = When walking on the road, pay attention to wet and slippery!"
+                    "reminder": "An auto reminder, string = When walking on the road, pay attention to wet and "
+                                "slippery! "
                 }
             }
         ])
@@ -71,6 +73,19 @@ class AgentExampleForSensorTask5(cs.agent.Agent):
     def init_environment(self, runtime):
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_sensor_stream = cs.stream.create_stream(self, 'alarm_wet')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['alarm_wet'].append(data)
+
+        self.output_sensor_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.input_sensor_stream = cs.stream.create_stream(self, 'all_weather')
+
+    def init_output_stream(self, runtime):
+        self.output_sensor_stream = cs.stream.get_stream(self, 'alarm_wet')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 

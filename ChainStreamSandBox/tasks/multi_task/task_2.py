@@ -111,6 +111,20 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
 
         self.stock_message_output.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
+        self.input_message_stream = cs.stream.create_stream(self, 'all_message')
+
+    def init_output_stream(self, runtime):
+        self.stock_message_output = cs.stream.get_stream(self, 'stock_output')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['stock_output'].append(data)
+
+        self.stock_message_output.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         sent_info = {'all_stock': [], 'all_message': []}
         for message in self.message_data:

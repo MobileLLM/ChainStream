@@ -40,7 +40,7 @@ class MultiTask3(SingleAgentTaskConfigBase):
                 "stream_id": "weather_search",
                 "description": "A series of weather information search based on the name mentioned in dialogues",
                 "fields": {
-                    "Location":"the location mentioned in the travel dialogs, string",
+                    "Location": "the location mentioned in the travel dialogs, string",
                     "Temperature_C": "the temperature of the location, float",
                     "Wind_Speed_kmh": "the wind speed of the location, float"
                 }
@@ -86,6 +86,20 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.input_dialogues_stream = cs.stream.create_stream(self, 'all_dialogues')
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_weather_stream = cs.stream.create_stream(self, 'weather_search')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['weather_search'].append(data)
+
+        self.output_weather_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.input_dialogues_stream = cs.stream.create_stream(self, 'all_dialogues')
+        self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
+
+    def init_output_stream(self, runtime):
+        self.output_weather_stream = cs.stream.get_stream(self, 'weather_search')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 

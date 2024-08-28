@@ -118,6 +118,22 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
         self.is_office_event.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_email_stream = cs.stream.create_stream(self, 'all_email')
+        self.input_location_stream = cs.stream.create_stream(self, 'all_location')
+
+    def init_output_stream(self, runtime):
+        self.output_email_stream = cs.stream.get_stream(self, 'auto_reply_in_office')
+        self.is_office_event = cs.stream.get_stream(self, 'is_office_event')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['auto_reply_in_office'].append(data)
+
+        self.output_email_stream.for_each(record_output)
+        self.is_office_event.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         sent_info = {"all_email": [], "all_location": []}
         for email in self.email_data:

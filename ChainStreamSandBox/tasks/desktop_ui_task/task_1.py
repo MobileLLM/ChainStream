@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import DesktopData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -55,6 +56,19 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def init_environment(self, runtime):
         self.input_ui_stream = cs.stream.create_stream(self, 'desktop_screenshot')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_software')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['analysis_software'].append(data)
+
+        self.output_ui_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.input_ui_stream = cs.stream.create_stream(self, 'desktop_screenshot')
+
+    def init_output_stream(self, runtime):
+        self.output_ui_stream = cs.stream.get_stream(self, 'analysis_software')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 

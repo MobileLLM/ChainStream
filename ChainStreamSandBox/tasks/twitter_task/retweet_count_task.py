@@ -63,6 +63,18 @@ class testAgent(cs.agent.Agent):
 
         self.output_tweet_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_tweet_stream = cs.stream.create_stream(self, 'all_tweets')
+
+    def init_output_stream(self, runtime):
+        self.output_tweet_stream = cs.stream.get_stream(self, 'retweet_count')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['retweet_count'].append(data)
+
+        self.output_tweet_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         twitter_dict = {'all_tweets': []}
         for info in self.tweet_data:

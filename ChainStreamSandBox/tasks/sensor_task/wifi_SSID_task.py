@@ -56,6 +56,18 @@ class testAgent(cs.agent.Agent):
 
         self.output_wifi_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_wifi_stream = cs.stream.create_stream(self, 'all_wifi')
+
+    def init_output_stream(self, runtime):
+        self.output_wifi_stream = cs.stream.get_stream(self, 'wifi_ssid')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['wifi_ssid'].append(data)
+
+        self.output_wifi_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         wifi_dict = {'all_wifi': []}
         for info in self.wifi_data:

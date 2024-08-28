@@ -64,6 +64,18 @@ class testAgent(cs.agent.Agent):
 
         self.output_weather_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
+
+    def init_output_stream(self, runtime):
+        self.output_weather_stream = cs.stream.get_stream(self, 'weather_temperature')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['weather_temperature'].append(data)
+
+        self.output_weather_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         weather_dict = {'all_weather': []}
         for info in self.weather_data:

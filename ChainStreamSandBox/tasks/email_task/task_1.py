@@ -77,11 +77,22 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
         self.email_input.for_each(filter_advertisements).batch(by_count=2).for_each(group_by_sender).for_each(sum_by_sender)
         '''
 
+    def init_environment(self, runtime):
+        self.input_email_stream = cs.stream.create_stream(self, 'all_email')
+        self.output_email_stream = cs.stream.create_stream(self, 'summary_by_sender')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record["summary_by_sender"].append(data)
+
+        self.output_email_stream.for_each(record_output)
+
     def init_input_stream(self, runtime):
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
 
     def init_output_stream(self, runtime):
-        self.output_email_stream = cs.stream.create_stream(self, 'summary_by_sender')
+        self.output_email_stream = cs.stream.get_stream(self, 'summary_by_sender')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 

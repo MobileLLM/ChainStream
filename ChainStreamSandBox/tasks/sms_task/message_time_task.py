@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SMSData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -66,11 +67,22 @@ class testAgent(cs.agent.Agent):
 
         self.output_sms_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
+
+    def init_output_stream(self, runtime):
+        self.output_sms_stream = cs.stream.get_stream(self, 'sms_time')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['sms_time'].append(data)
+
+        self.output_sms_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         message_dict = {'all_sms': []}
         for message in self.sms_data:
             self.input_sms_stream.add_item(message)
             message_dict['all_sms'].append(message)
         return message_dict
-
-

@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -99,6 +100,22 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         self.clock_stream = cs.stream.create_stream(self, 'clock')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.work_trigger_stream = cs.stream.create_stream(self, 'work_trigger')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['output_messages'].append(data)
+            self.output_record['work_trigger'].append(data)
+
+        self.output_message_stream.for_each(record_output)
+        self.work_trigger_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.input_shop_stream = cs.stream.create_stream(self, 'all_first_person_shop')
+        self.clock_stream = cs.stream.create_stream(self, 'clock')
+
+    def init_output_stream(self, runtime):
+        self.output_message_stream = cs.stream.get_stream(self, 'output_messages')
+        self.work_trigger_stream = cs.stream.get_stream(self, 'work_trigger')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):

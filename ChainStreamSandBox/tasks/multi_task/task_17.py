@@ -92,6 +92,20 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
 
         self.output_github_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_dialogues_stream = cs.stream.create_stream(self, 'all_dialogues')
+        self.input_github_stream = cs.stream.create_stream(self, 'all_github')
+
+    def init_output_stream(self, runtime):
+        self.output_github_stream = cs.stream.get_stream(self, 'github_search')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['github_search'].append(data)
+
+        self.output_github_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         dialogues = [
             {

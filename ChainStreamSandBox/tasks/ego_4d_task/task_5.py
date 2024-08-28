@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -70,10 +71,22 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
         self.output_ui_stream.for_each(record_output)
 
+    def init_input_stream(self, runtime):
+        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
+
+    def init_output_stream(self, runtime):
+        self.output_ui_stream = cs.stream.get_stream(self, 'musical_instrument_type')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['musical_instrument_type'].append(data)
+
+        self.output_ui_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         processed_results = {'first_person_perspective_data': []}
         for frame in self.ego_4d_data:
             processed_results['first_person_perspective_data'].append(frame)
             self.input_ui_stream.add_item({"frame": frame})
         return processed_results
-

@@ -118,10 +118,30 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
     def init_environment(self, runtime):
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
+        self.scene_stream = cs.stream.create_stream(self, 'all_scene')
         self.output_music_stream = cs.stream.create_stream(self, 'auto_play_music')
         self.is_travel_stream = cs.stream.create_stream(self, 'is_travel')
-        self.scene_stream = cs.stream.create_stream(self, 'all_scene')
         self.is_listening_stream = cs.stream.create_stream(self, 'is_listening')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['auto_play_music'].append(data)
+            self.output_record['is_travel'].append(data)
+            self.output_record['is_listening'].append(data)
+
+        self.output_music_stream.for_each(record_output)
+        self.is_travel_stream.for_each(record_output)
+        self.is_listening_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.gps_stream = cs.stream.create_stream(self, 'all_gps')
+        self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
+        self.scene_stream = cs.stream.create_stream(self, 'all_scene')
+
+    def init_output_stream(self, runtime):
+        self.output_music_stream = cs.stream.get_stream(self, 'auto_play_music')
+        self.is_travel_stream = cs.stream.get_stream(self, 'is_travel')
+        self.is_listening_stream = cs.stream.get_stream(self, 'is_listening')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):

@@ -4,6 +4,7 @@ import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -11,8 +12,8 @@ class VideoTask10(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
-        self.output_ui_stream = None
-        self.input_ui_stream = None
+        self.output_three_person_stream = None
+        self.input_three_person_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
@@ -53,19 +54,32 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'third_person')
-        self.output_ui_stream = cs.stream.create_stream(self, 'analysis_traffic')
+        self.input_three_person_stream = cs.stream.create_stream(self, 'third_person')
+        self.output_three_person_stream = cs.stream.create_stream(self, 'analysis_traffic')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
             self.output_record['analysis_traffic'].append(data)
 
-        self.output_ui_stream.for_each(record_output)
+        self.output_three_person_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.input_three_person_stream = cs.stream.create_stream(self, 'third_person')
+
+    def init_output_stream(self, runtime):
+        self.output_three_person_stream = cs.stream.get_stream(self, 'analysis_traffic')
+
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['analysis_traffic'].append(data)
+
+        self.output_three_person_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
         processed_results = {'third_person': []}
         for frame in self.Sphar_data:
             processed_results['third_person'].append(frame)
-            self.input_ui_stream.add_item({"frame": frame})
+            self.input_three_person_stream.add_item({"frame": frame})
         return processed_results

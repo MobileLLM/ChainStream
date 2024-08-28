@@ -6,6 +6,7 @@ from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
 import time
 from ..task_tag import *
+
 random.seed(6666)
 
 
@@ -98,6 +99,20 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.first_person_stream = cs.stream.create_stream(self, 'all_first_person')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
         self.driving_state = cs.stream.create_stream(self, 'driving_state')
+        self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
+
+        def record_output(data):
+            self.output_record['output_messages'].append(data)
+
+        self.output_message_stream.for_each(record_output)
+
+    def init_input_stream(self, runtime):
+        self.third_person_stream = cs.stream.create_stream(self, 'all_third_person')
+        self.first_person_stream = cs.stream.create_stream(self, 'all_first_person')
+
+    def init_output_stream(self, runtime):
+        self.output_message_stream = cs.stream.get_stream(self, 'output_messages')
+        self.driving_state = cs.stream.get_stream(self, 'driving_state')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
