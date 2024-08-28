@@ -362,7 +362,7 @@ class BatchSandbox(SandboxBase):
 
     def prepare_input_environment(self):
         self.task.init_environment(self.runtime)
-        #     self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
+        self.input_recorder = TmpInputRecordAgent(self.all_input_stream_ids)
 
     def prepare_output_environment(self):
         pass
