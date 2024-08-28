@@ -2,32 +2,33 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
+from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
 import time
 from ..task_tag import *
 random.seed(6666)
 
 
-class WaitingRoomTask(SingleAgentTaskConfigBase):
+class TrafficTask(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
         self.output_record = None
         self.clock_stream = None
-        self.input_outdoor_stream = None
-        self.input_indoor_stream = None
-        self.patient_trigger = None
+        self.third_person_stream = None
+        self.first_person_stream = None
+        self.driving_state = None
         self.output_message_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Health,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "all_third_person_outdoor",
-            "description": "third_person perspective data outside the clinic",
+            "stream_id": "all_third_person",
+            "description": "all third person perspective traffic data",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
             }
         }, {
-            "stream_id": "all_third_person_indoor",
-            "description": "third_person perspective data in the clinic(the data is sent at regular intervals as a "
+            "stream_id": "all_first_person",
+            "description": "all first person perspective data in the car (the data is sent at regular intervals as a "
                            "batch every five seconds)",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL,string"
@@ -36,79 +37,80 @@ class WaitingRoomTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "output_messages",
-                "description": "A message that reminds the doctor to come back",
+                "description": "A message reminding the driver to pay attention to the road ahead",
                 "fields": {
-                    "Notion": "There are patients who are waiting for a period of time",
+                    "Reminder": "A notification reminding the driver to pay attention to the road conditions ahead. "
+                                "string = 'Pay attention to the road ahead'",
                 }
             },
             {
-                "stream_id": "patient_trigger",
-                "description": "A trigger when the patients exceed 5 in the waiting room",
+                "stream_id": "driving_state",
+                "description": "Trigger to determine if I am driving",
                 "fields": {
-                    "Status": "True or False"
+                    "Status": "True or False. bool"
                 }
             }
         ])
-        self.video_data1 = SpharData().load_for_traffic()
-        self.video_data2 = SpharData().load_for_traffic()
+        self.third_person_data = SpharData().load_for_traffic()
+        self.first_person_data = Ego4DData().load_for_traffic()
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
 class AgentExampleForMultiTask13(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_multi_task13"):
         super().__init__(agent_id)
-        self.outdoor_input = cs.get_stream(self, "all_third_person_outdoor")
-        self.indoor_input = cs.get_stream(self, "all_third_person_indoor")
+        self.third_person_input = cs.get_stream(self, "all_third_person")
+        self.first_person_input = cs.get_stream(self, "all_first_person")
         self.message_output = cs.get_stream(self, "output_messages")
-        self.patient_trigger = cs.get_stream(self, "patient_trigger")
+        self.driving_state = cs.get_stream(self, "driving_state")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
+        def check_accident(third_person_inputs):
+            print(third_person_inputs)
+            if self.driving_state is not None:
+                for frame in third_person_inputs["frame"]:
+                    prompt = "Is there a traffic accident ahead?Simply tell me y or n"
+                    res = self.llm.query(cs.llm.make_prompt(prompt,frame))
+                    print(res)
+                    if res.lower()=="y":
+                        self.message_output.add_item({
+                        "Reminder": "Pay attention to the road ahead."
+                    })
+        self.third_person_input.for_each(check_accident)
 
-        def check_doctor(indoor_inputs):
-            indoor_input = indoor_inputs["item_list"]
-            if self.patient_trigger == "True":
-                prompt = "Have the doctor come back?Simply answer y or n."
-                res = self.llm.query(cs.llm.make_prompt(prompt,indoor_input["frame"]))
-                if res.lower()=="n":
-                    self.message_output.add_item({
-                    "Notion": "There are patients who are waiting for a period of time."
+        def check_behaviour(first_person_input):
+            prompt = "Please check if I am driving a car.Simply tell me y or n."
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_input['frame']))
+            if res.lower() == 'y' :
+                self.driving_state.add_item({
+                "state":True
                 })
-        self.indoor_input.batch(by_time=5).for_each(check_doctor)
-
-        def check_number(outdoor_input):
-            prompt = "Please check how many patients are in the waiting room.Please only tell me the number."
-            res = self.llm.query(cs.llm.make_prompt(prompt,outdoor_input["frame"]))
-            if res >= "5" :
-                self.patient_trigger.add_item({"Status":"True"})
-                return indoor_input
+                return first_person_input
             else:
                 return None
 
-        self.outdoor_input.for_each(check_number)
+        self.first_person_input.for_each(check_behaviour)
         '''
 
     def init_environment(self, runtime):
-        self.input_indoor_stream = cs.stream.create_stream(self, 'all_third_person_indoor')
-        self.input_outdoor_stream = cs.stream.create_stream(self, 'all_third_person_outdoor')
+        self.third_person_stream = cs.stream.create_stream(self, 'all_third_person')
+        self.first_person_stream = cs.stream.create_stream(self, 'all_first_person')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
-        self.patient_trigger = cs.stream.create_stream(self, 'patient_trigger')
+        self.driving_state = cs.stream.create_stream(self, 'driving_state')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
             self.output_record['output_messages'].append(data)
-            self.output_record['patient_trigger'].append(data)
 
         self.output_message_stream.for_each(record_output)
-        self.patient_trigger.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
-        sent_info = {'all_third_person_indoor': [], 'all_third_person_outdoor': []}
-        for frame in self.video_data1:
-            sent_info['all_third_person_indoor'].append(frame)
-            self.input_indoor_stream.add_item({"frame": frame})
-            time.sleep(1)
-        for frame in self.video_data2:
-            sent_info['all_third_person_outdoor'].append(frame)
-            self.input_outdoor_stream.add_item({"frame": frame})
+        sent_info = {'all_third_person': [], 'all_first_person': []}
+        for frame in self.first_person_data:
+            sent_info['all_first_person'].append(frame)
+            self.first_person_stream.add_item({"frame": frame})
+        for frame in self.third_person_data:
+            sent_info['all_third_person'].append(frame)
+            self.third_person_stream.add_item({"frame": frame})
         return sent_info

@@ -78,3 +78,9 @@ class Ego4DData:
             '03d4c383-b80e-4095-9328-c964f2803a26'
         ]
         return self._load_frames(video_ids)
+
+    def load_for_meeting(self):
+        video_ids = [
+            'b513c72d-8b77-4bee-96b6-b5f57977a3eb'
+        ]
+        return self._load_frames(video_ids)

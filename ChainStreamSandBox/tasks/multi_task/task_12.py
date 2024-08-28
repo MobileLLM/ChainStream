@@ -1,7 +1,7 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
-from ChainStreamSandBox.raw_data import GPSData
+from ChainStreamSandBox.raw_data import LandmarkData
 from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
@@ -46,9 +46,12 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "adjust_light",
-                "description": "A automatic command to adjust the light in the study",
+                "description": "A automatic command to adjust the light in the study.If the light exceeds 500, "
+                               "draw the curtains closed. If the light is less than 300, turn on the desk lamp.",
                 "fields": {
-                    "Light intensity indoor": "the light intensity information indoor right now,float"
+                    "command": "the command to turn on the desk lamp or draw the curtains closed, string = 'Please "
+                               "turn on the desk lamp.' if the light intensity is lower than 300, or 'Please draw the "
+                               "curtains closed.'if the light intensity is over 500 "
                 }
             },
             {
@@ -56,11 +59,11 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
                 "description": "Check whether the person is reading or not,every two copies of video data are "
                                "packaged as a batch after judging the home street address gps data",
                 "fields": {
-                    "Status": "True or False"
+                    "Status": "True or False, bool"
                 }
             }
         ])
-        self.gps_data = GPSData().get_gps(number)
+        self.gps_data = LandmarkData().get_landmarks(number)
         self.video_data = Ego4DData().load_for_action()
         self.agent_example = '''
 import chainstream as cs
@@ -82,32 +85,37 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.video_input.for_each(save_video)
 
         def check_light(light_inputs):
-            light_input = light_inputs["item_list"]
-            if self.is_reading == "True":
-                for light in light_input:
-                    prompt = "Do you think the light_intensity is enough for reading books?If not,tell me the best light intensity."
-                    res = self.llm.query(cs.llm.make_prompt(prompt,light_input["Light intensity outdoor"]))
+            if self.is_reading is not None:
+                intensity = light_inputs["Light intensity outdoor"]
+                print(type(intensity))
+                if intensity<300 :
                     self.command_output.add_item({
-                        "Light intensity indoor": res
+                        "light_intensity": intensity,
+                        "command": 'Please turn on the desk lamp.'
                     })
-        self.light_input.batch(by_count=2).for_each(check_light)
+                elif intensity>500:
+                    self.command_output.add_item({
+                        "light_intensity": intensity,
+                        "command": 'Please draw the curtains closed.'
+                    })
+            return light_inputs
+        self.light_input.for_each(check_light)
         
         def check_place(gps_data):
-            if gps_data["Street Address"] == "123 Main St":
+            if gps_data["PropertyName"] != "123 Main St":
                 first_person_data = self.video_buffer.pop_all()
                 return first_person_data
 
         def check_reading(first_person_data):
-            data_list = first_person_data["item_list"]
             prompt = "Please check whether I am reading books.Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()== "y" :
-                self.is_reading.add_item({"Status":"True"})
+                self.is_reading.add_item({"Status":True})
                 return first_person_data
             else:
                 return None
 
-        self.video_input.for_each(check_place).batch(by_count=2).for_each(check_reading)
+        self.gps_input.for_each(check_place).for_each(check_reading)
         '''
 
     def init_environment(self, runtime):

@@ -38,12 +38,9 @@ class MultiTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_recommendation",
-                "description": "A series of replied emails, excluding advertisements in the office (office street "
-                               "address: 3127 Edgemont Boulevard), with every two emails packaged into a batch after "
-                               "filtering out the advertisements.",
+                "description": "A series of arxiv recommendation based on the subject of the emails",
                 "fields": {
-                    "Content": "the content of the emails, string",
-                    "Auto_reply": "An auto reply message, string = Received!"
+                    "title": "the title of the recommended arxiv paper, string"
                 }
             }
         ])
@@ -69,7 +66,6 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         def recommend_arxiv(subject_list):
             subjects = subject_list['item_list']
             arxiv_list = self.arxiv_buffer.pop_all()
-            print(arxiv_list)
             for subject in subjects:
                 for arxiv in arxiv_list:
                     if subject in arxiv['title']:
@@ -77,7 +73,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
                             'title':arxiv['title']
                             })
             return subject_list
-        
+
         def extract_subject(email):
             Subject = email["Subject"]
             return Subject
@@ -122,10 +118,10 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         ]
         self.email_data.extend(emails)
         sent_info = {"all_email": [], "all_arxiv": []}
-        for email in self.email_data:
-            sent_info["all_email"].append(email)
-            self.input_email_stream.add_item(email)
         for arxiv in self.arxiv_data:
             sent_info["all_arxiv"].append(arxiv)
             self.input_arxiv_stream.add_item(arxiv)
+        for email in self.email_data:
+            sent_info["all_email"].append(email)
+            self.input_email_stream.add_item(email)
         return sent_info

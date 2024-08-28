@@ -32,7 +32,6 @@ class AgentFunction:
         try:
             if self.is_batch_func:
                 result, self.kwargs = self.func(args[0], self.kwargs)
-                result = result[0]
             else:
                 result = self.func(*args, **kwargs)
 

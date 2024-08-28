@@ -1,7 +1,7 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import random
 import chainstream as cs
-from ChainStreamSandBox.raw_data import GPSData
+from ChainStreamSandBox.raw_data import LandmarkData
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
@@ -24,7 +24,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
             "stream_id": "all_gps",
             "description": "all of my gps data",
             "fields": {
-                "Street Address": "the street address information from the gps sensor,str"
+                "PropertyName": "the property name in my gps data, str"
             }
         }, {
             "stream_id": "all_weather",
@@ -32,7 +32,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
             "fields": {
                 "Location": "the weather location, string",
                 "Temperature_C": "temperature in degrees Celsius, float",
-                "Weather": "the weather condition,string"
+                "Weather": "the weather condition, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -41,11 +41,12 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
                 "description": "A series of commands of automatically closing the window, with every two copies of "
                                "weather data packaged as a batch after judging the home street address from gps data",
                 "fields": {
-                    "action": "Close all the windows!"
+                    "humidity": "humidity percentage, float",
+                    "action": "An auto command, string = 'Close all the windows!'"
                 }
             }
         ])
-        self.gps_data = GPSData().get_gps(number)
+        self.landmark_data = LandmarkData().get_landmarks(number)
         self.weather_data = WeatherData().get_weather(number)
         self.agent_example = '''
 import chainstream as cs
@@ -65,20 +66,21 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         self.weather_input.for_each(save_weather)
 
         def check_place(gps_data):
-            if gps_data["Street Address"] == "123 Main St":
+            if gps_data['PropertyName'] != "Maple Ridge Apartments":
                 weather_data = self.weather_buffer.pop_all()
                 return weather_data
 
         def close_window(weather_data):
             data_list = weather_data["item_list"]
             for data in data_list:
-                if data['Location'] == "123 Main St" and data['Weather']=="Rainy":
+                if data['Humidity_pct'] >= 60:
                     self.action_output.add_item({
+                        'humidity': data['Humidity_pct'],
                         "action":"Close all the windows!"
                     })
-            return reminder
+            return weather_data
 
-        self.weather_input.for_each(check_place).batch(by_count=2).for_each(close_window)
+        self.gps_input.for_each(check_place).batch(by_count=2).for_each(close_window)
         '''
 
     def init_environment(self, runtime):
@@ -98,7 +100,7 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         for weather in self.weather_data:
             sent_info['all_weather'].append(weather)
             self.input_weather_stream.add_item(weather)
-        for gps in self.gps_data:
-            sent_info['all_gps'].append(gps)
-            self.gps_stream.add_item(gps)
+        for landmark in self.landmark_data:
+            sent_info['all_gps'].append(landmark)
+            self.gps_stream.add_item(landmark)
         return sent_info

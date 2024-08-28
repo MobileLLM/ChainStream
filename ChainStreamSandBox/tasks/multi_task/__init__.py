@@ -9,7 +9,9 @@ from .task_9 import CloseWindowTask
 from .task_10 import RemindDriverTask
 from .task_11 import StudentInClassTask
 from .task_12 import ReadingLightTask
-from .task_13 import WaitingRoomTask
+from .task_13 import TrafficTask
 from .task_14 import ShopStockTask
 from .task_15 import TripMusicTask
 from .task_16 import MultiTask1
+from .task_17 import MultiTask2
+from .task_18 import MultiTask3
