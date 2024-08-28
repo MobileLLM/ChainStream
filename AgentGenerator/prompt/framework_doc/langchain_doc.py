@@ -65,13 +65,9 @@ If your code requires a large language model (LLM), you can directly use the `op
 
 ```python
 import os
-from langchain.llms import OpenAI
 
-openai.base_url = os.environ.get("OPENAI_BASE_URL")
-openai.api_key = os.environ.get("OPENAI_API_KEY")
-
-llm = OpenAI(base_url=openai_base_url, api_key=openai_api_key, model_name="gpt-4")
-response = llm("your prompt")
+openai_api_key = os.environ['OPENAI_API_KEY']
+openai_base_url = os.environ.get("OPENAI_BASE_URL")
 ```
 
 Please write fully functional code directly. We will not review the code details but will test the correctness of the code. All code should adhere to PEP8 standards.

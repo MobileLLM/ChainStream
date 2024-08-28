@@ -23,6 +23,8 @@ class BatchInterfaceBase:
             self.run_times = 1
 
             tmp_name = input("给这次的log路径取名，尽量是英文:")
+            if hasattr(self, "model_name"):
+                tmp_name = self.model_name + "_" + tmp_name
             self.report_path_base = os.path.join(result_path, self.start_time + "_" + tmp_name)
             if not os.path.exists(self.report_path_base):
                 os.makedirs(self.report_path_base)

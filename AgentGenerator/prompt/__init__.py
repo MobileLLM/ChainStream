@@ -2,17 +2,18 @@ if __name__ == '__main__':
     from mission_prompt import get_mission_prompt
     from command_prompt import get_command_prompt
     from framework_doc import get_framework_doc
+    from .feedback_processor import FilterErrorFeedbackProcessor, FilterErrorWithExampleFeedbackProcessor
 else:
     from .mission_prompt import get_mission_prompt
     from .command_prompt import get_command_prompt
     from .framework_doc import get_framework_doc
-    from .feedback_processor import FilterErrorFeedbackProcessor
+    from .feedback_processor import FilterErrorFeedbackProcessor, FilterErrorWithExampleFeedbackProcessor
 
 from typing import Literal
 
 framework_type = Literal['chainstream', 'batch_langchain', "batch_native_python", "stream_langchain", "stream_native_python", "native_gpt"]
-mission_type = Literal['batch', 'gpt', 'stream']
-command_type = Literal['cot', 'few_shot', 'feedback_guided_only_start', 'feedback_guided_with_running', 'feedback_guided_with_real_task']
+mission_type = Literal['batch', 'native_gpt', 'stream']
+command_type = Literal['native_gpt', 'cot', 'few_shot', 'feedback_guided_only_start', 'feedback_guided_with_running', 'feedback_guided_with_real_task']
 
 
 def get_base_prompt(output_stream,

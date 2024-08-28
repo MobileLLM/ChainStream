@@ -80,46 +80,30 @@ class ChainStreamSandBox(SandboxBase):
 if __name__ == "__main__":
     from ChainStreamSandBox.tasks import ALL_TASKS
 
-    Config = ALL_TASKS['EmailTask1']
+    Config = ALL_TASKS['HealthTask4']
 
     agent_file = '''
-import chainstream
+import chainstream as cs
 from chainstream.agent import Agent
-from chainstream.stream import get_stream, create_stream
-from chainstream.context import Buffer
-from chainstream.llm import get_model, make_prompt
 
-class EmailSummaryAgent(Agent):
-    def __init__(self, agent_id: str="email_summary_agent"):
+class HealthMonitorAgent(Agent):
+    def __init__(self, agent_id: str = "health_monitor_agent"):
         super().__init__(agent_id)
-        self.email_stream = get_stream(self, "all_email")
-        self.summary_stream = get_stream(self, "summary_by_sender")
-        self.llm = get_model(["text"])
+        self.all_health_stream = cs.get_stream(self, "all_health")
+        self.remind_rest_stream = cs.get_stream(self, "remind_rest")
 
     def start(self) -> None:
-        def filter_advertisements(email):
-            print("filter_advertisements", email)
-            if "advertisement" not in email['Content'].lower():
-                print("not an advertisement", email)
-                return email
+        def process_heart_rate_batch(items):
+            print(f"Received {items}")
+            for item in items:
+                heart_rate = item.get("HeartRate")
+                if heart_rate and heart_rate > 75:
+                    reminder = {"reminder": "Heart rate is {heart_rate}! Remember to rest yourself!"}
+                    self.remind_rest_stream.add_item(reminder)
+                    break  
     
-        def summarize_emails(email_batch):
-            print("summarize_emails", email_batch)
-            buffer = Buffer()
-            for email in email_batch['item_list']:
-                buffer.append({'sender': email['sender'], 'content': email['Content']})
-            
-            prompt = make_prompt(buffer, "Provide a summary for each sender's emails.")
-            summary = self.llm.query(prompt)
-            
-            self.summary_stream.add_item({'sender': email['sender'], 'summary': summary})
-        
-        self.email_stream.for_each(filter_advertisements)\
-                          .batch(by_count=5)\
-                          .for_each(summarize_emails)
-        
-    def stop(self) -> None:
-        self.email_stream.unregister_all(self)
+        self.all_health_stream.batch(by_count=1).for_each(process_heart_rate_batch)
+
     '''
     config = Config()
     oj = ChainStreamSandBox(config, agent_file, save_result=True, only_init_agent=False)

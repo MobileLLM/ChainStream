@@ -3,6 +3,7 @@ if __name__ == '__main__':
 else:
     from .sandbox_base import BatchSandbox
 import os
+import ast
 
 
 class NativePythonBatchSandbox(BatchSandbox):
@@ -23,11 +24,17 @@ class NativePythonBatchSandbox(BatchSandbox):
             os.environ.update(env_vars)
 
             output_dict = self.code_instance(self.all_input_data)
+        except Exception as e:
+            raise e
         finally:
             os.environ.clear()
             os.environ.update(original_env)
+        tmp_output_dict = output_dict
+        if tmp_output_dict.startswith("```json") and tmp_output_dict.endswith("```"):
+            tmp_output_dict = tmp_output_dict[7:-3]
+            tmp_output_dict = ast.literal_eval(tmp_output_dict)
 
-        return output_dict
+        return tmp_output_dict
 
 
 if __name__ == "__main__":
@@ -36,10 +43,24 @@ if __name__ == "__main__":
     Config = ALL_TASKS['EmailTask1']
 
     agent_file = '''
+from openai import OpenAI
+import os
+
 def process_data(input_dict):
     print(input_dict)
+    # print(os.environ['OPENAI_API_KEY'])
+    # print(os.environ['OPENAI_BASE_URL'])
+    llm = OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
+    response = llm.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Hello!"}
+        ]
+    )
+    print(response)
     output_dict = {
-        "summary_by_sender" : input_dict["all_email"]
+        "summary_by_sender" : response.choices[0].message.content,
     }
     return output_dict
     '''

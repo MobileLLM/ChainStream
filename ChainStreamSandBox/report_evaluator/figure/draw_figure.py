@@ -222,6 +222,7 @@ def rename_generator(name):
         return "CS-Cot-1shot"
     elif name == "result-langchain_zeroshot":
         return "LC-0shot"
+    raise ValueError("Invalid generator name")
 
 
 def plot_different_generator_histograms(all_figure_data: dict):

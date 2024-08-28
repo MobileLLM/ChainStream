@@ -71,16 +71,15 @@ def process_data(is_stop: threading.Event) -> None:
 import os
 import openai
 
-openai.base_url = os.environ.get("OPENAI_BASE_URL")
-openai.api_key = os.environ.get("OPENAI_API_KEY")
-
-response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "Your System Prompt"},
-            {"role": "user", "content": "Your User Prompt"},
-        ]
-    )
+llm_client = OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
+response = llm_client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello!"}
+    ]
+)
+response_text = response.choices[0].message.content,
 ```
 
 """
@@ -105,18 +104,9 @@ If you need to use an LLM, you can use the `openai` library. The necessary envir
 
 ```python
 import os
-import openai
 
-openai.base_url = os.environ.get("OPENAI_BASE_URL")
-openai.api_key = os.environ.get("OPENAI_API_KEY")
-
-response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "Your system prompt here"},
-            {"role": "user", "content": "Your user prompt here"},
-        ]
-    )
+openai_api_key = os.environ['OPENAI_API_KEY']
+openai_base_url = os.environ.get("OPENAI_BASE_URL")
 ```
 
 """

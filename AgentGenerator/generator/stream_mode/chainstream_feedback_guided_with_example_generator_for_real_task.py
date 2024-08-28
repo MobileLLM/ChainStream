@@ -1,10 +1,10 @@
 from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGeneratorWithTask
-from AgentGenerator.prompt import FilterErrorFeedbackProcessor
+from AgentGenerator.prompt import FilterErrorWithExampleFeedbackProcessor
 from AgentGenerator.prompt import get_base_prompt
 from AgentGenerator.io_model import StreamListDescription
 
 
-class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGeneratorWithTask):
+class ChainStreamFeedbackGuidedWithExampleAgentGeneratorWithRealTask(FeedbackGuidedAgentGeneratorWithTask):
     """
         React with sandbox starting error ability
     """
@@ -12,7 +12,7 @@ class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGenerator
     def __init__(self, max_loop=20, sandbox_type='chainstream', only_print_last=False, framework_example_number=0):
         super().__init__(max_loop=max_loop, sandbox_type=sandbox_type, only_print_last=only_print_last)
 
-        self.feedback_processor = FilterErrorFeedbackProcessor()
+        self.feedback_processor = FilterErrorWithExampleFeedbackProcessor()
 
         self.framework_example_number = framework_example_number
 
@@ -45,7 +45,7 @@ class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGenerator
 
 if __name__ == '__main__':
     from ChainStreamSandBox.tasks import ALL_TASKS
-    generator = ChainstreamFeedbackGuidedGeneratorForRealTask(framework_example_number=0)
+    generator = ChainStreamFeedbackGuidedWithExampleAgentGeneratorWithRealTask(framework_example_number=0)
     task = ALL_TASKS["HealthTask4"]()
     haha = generator.generate_agent(
         StreamListDescription(streams=[
