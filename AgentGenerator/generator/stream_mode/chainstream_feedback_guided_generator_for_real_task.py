@@ -1,6 +1,7 @@
 from AgentGenerator.generator.generator_base import FeedbackGuidedAgentGeneratorWithTask
 from AgentGenerator.prompt import FilterErrorFeedbackProcessor
 from AgentGenerator.prompt import get_base_prompt
+from AgentGenerator.io_model import StreamListDescription
 
 
 class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGeneratorWithTask):
@@ -44,10 +45,20 @@ class ChainstreamFeedbackGuidedGeneratorForRealTask(FeedbackGuidedAgentGenerator
 
 if __name__ == '__main__':
     from ChainStreamSandBox.tasks import ALL_TASKS
-    generator = ChainstreamFeedbackGuidedGeneratorForRealTask()
-    task = ALL_TASKS["EmailTask2"]()
+    generator = ChainstreamFeedbackGuidedGeneratorForRealTask(framework_example_number=0)
+    task = ALL_TASKS["HealthTask4"]()
     haha = generator.generate_agent(
-        task.output_stream_description,
+        StreamListDescription(streams=[
+            {
+                "stream_id": "remind_rest",
+                "description": "A stream of reminders to take a rest when the heart rate is over 75 in every 2 seconds.",
+                "fields": {
+                    "Heart Rate": "the heart rate data from the health sensor, float",
+                    "reminder": "Heart rate is too high!Remember to rest yourself!"
+                }
+            }
+        ])
+        ,
         input_description=task.input_stream_description,
         task=task,
     )
