@@ -55,7 +55,7 @@ class ActivityData:
 
     def get_random_activity_data(self):
         activity_sequence = self.get_activity_sequence()
-        print(activity_sequence)
+        # print(activity_sequence)
         result = []
         for activity in activity_sequence:
             num_entries = random.randint(0, 20)
