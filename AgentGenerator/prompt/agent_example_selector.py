@@ -1,6 +1,7 @@
 import random
 import os
 import ast
+import time
 
 from ChainStreamSandBox.tasks import get_task_with_data_batch
 from AgentGenerator.utils.llm_utils import TextGPTModel
@@ -83,7 +84,10 @@ class AgentExampleSelector:
             raise ValueError("Max example count reached")
 
         agent_example_list = list(self.agent_example_list.keys())
-        selected_agent_example = random.choice(agent_example_list)
+
+        milliseconds = int(round(time.time() * 1000))
+        random_generator = random.SystemRandom(milliseconds)
+        selected_agent_example = random_generator.choice(agent_example_list)
         self.selected_example_count += 1
         example = self.agent_example_list[selected_agent_example]
         self.agent_example_list.pop(selected_agent_example)

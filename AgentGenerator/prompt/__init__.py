@@ -22,8 +22,8 @@ def get_base_prompt(output_stream,
                     example_number=None,
                     mission_name: mission_type = None,
                     command_name: command_type = None,
-                    need_feedback_example=None):
-    tmp_framework_prompt = get_framework_doc(framework_name, example_number)
+                    need_feedback_example=None, task_now=None):
+    tmp_framework_prompt = get_framework_doc(framework_name, example_number, task_now=task_now)
     tmp_mission_prompt = get_mission_prompt(output_stream, input_stream, mission_name, framework_name)
     tmp_command_prompt = get_command_prompt(command_name, need_feedback_example)
 

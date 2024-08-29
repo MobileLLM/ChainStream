@@ -423,6 +423,8 @@ TASKS_WITHOUT_DATA = {
     TripMusicTask.__name__: TripMusicTask
 }
 
+TASK_WITH_DATA_INTANCES = {k: v() for k, v in TASKS_WITH_DATA.items()}
+
 ALL_TASKS = {
     EmailTask1.__name__: EmailTask1,
     EmailTask2.__name__: EmailTask2,
@@ -594,6 +596,10 @@ ALL_TASKS = {
 
 def get_task_batch():
     return ALL_TASKS
+
+
+def get_task_with_data_instances_batch():
+    return TASK_WITH_DATA_INTANCES
 
 
 def get_task_with_data_batch():
