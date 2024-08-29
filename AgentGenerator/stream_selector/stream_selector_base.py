@@ -1,5 +1,10 @@
-from ..io_model import StreamListDescription
-from ..utils import TextGPTModel
+from AgentGenerator.io_model import StreamListDescription
+from AgentGenerator.utils import TextGPTModel
+
+
+STREAM_SELECT_PROMPT = """
+请扮演一个程序员来执行一个编程任务的早期
+"""
 
 
 def _process_stream(stream_list: StreamListDescription):
@@ -43,3 +48,39 @@ class StreamSelectorBase:
 
     def _select_stream_by_llm(self, output_stream) -> StreamListDescription:
         pass
+
+
+if __name__ == '__main__':
+    from ChainStreamSandBox.tasks import get_task_with_data_batch
+    task_list = get_task_with_data_batch()
+    input_stream_set = set()
+    all_stream_list_repeated = []
+    for task_name, task_class in task_list.items():
+        tmp_input_streams = task_class().input_stream_description
+        for input_stream in tmp_input_streams.streams:
+            input_stream_set.add(str(input_stream))
+            all_stream_list_repeated.append(str(input_stream))
+
+    all_stream_list = list(input_stream_set)
+    print(all_stream_list)
+
+    stream_name_set = set()
+    input_stream_dict = {}
+    for s in all_stream_list:
+        tmp_name = s.split()[0].split("=")[-1]
+
+        print(tmp_name)
+        stream_name_set.add(tmp_name)
+    for s in all_stream_list_repeated:
+        tmp_name = s.split()[0].split("=")[-1]
+        if tmp_name not in input_stream_dict:
+            input_stream_dict[tmp_name] = []
+        input_stream_dict[tmp_name].append(s)
+
+    print(stream_name_set)
+    print(f"total stream names: {len(stream_name_set)}")
+    print(f"total streams: {len(input_stream_set)}")
+    for s, v in input_stream_dict.items():
+        print(f"stream name: {s} : {v}")
+    print(f"tot task streams: {len(all_stream_list_repeated)}")
+    a = 1
