@@ -10,9 +10,7 @@ from AgentGenerator.utils.llm_utils import TextGPTModel
 CURRENT_CODE_PROMPT = """
 The current code provided by the user is: 
 
-```python
 {current_code}
-```
 """
 
 EXAMPLE_SELECTOR_WITH_FEEDBACK_BASE_PROMPT = """
@@ -53,8 +51,8 @@ Output:
 
 
 class AgentExampleSelector:
-    def __init__(self, task_instance_dict, task_now, max_example_num=3):
-        self.task_instance_dict = task_instance_dict
+    def __init__(self, task_now, max_example_num=3):
+        self.task_instance_dict = get_all_task_instances()
         # all_tasks = get_task_with_data_batch()
         # all_tasks = {k: v() for k, v in all_tasks.items()}
         self.agent_example_list = {k: v.agent_example for k, v in self.task_instance_dict.items()}
@@ -95,6 +93,9 @@ class AgentExampleSelector:
         return example
 
     def get_llm_agent_example(self, feedback: tuple = None, current_code: str = None):
+        if self.selected_example_count >= self.max_example_count:
+            raise ValueError("Max example count reached")
+
         if feedback is None:
             prompt = EXAMPLE_SELECTOR_ONLY_TASK_BASE_PROMPT.format(
                 example_list=self._get_agent_example_list_prompt(),
@@ -130,17 +131,22 @@ class AgentExampleSelector:
 
         try:
             example_name = ast.literal_eval(response)
+            if isinstance(example_name, str):
+                example_name = example_name.strip().strip(',')[0]
             if isinstance(example_name, list):
                 example_name = example_name[0]
+                if isinstance(example_name, list):
+                    example_name = example_name[0]
             if example_name not in self.agent_example_list:
                 raise ValueError("Invalid example name")
             example = self.agent_example_list[example_name]
             self.agent_example_list.pop(example_name)
             self.selected_example_count += 1
-            return example
+            return example, example_name
 
-        except Exception:
-            raise ValueError("Invalid response format")
+        except Exception as e:
+            print(f"[AgentExampleSelectorError]: {e}, response: {response}")
+            return None, "[AgentExampleSelectorError]: {e}, response: {response}"
 
 
 if __name__ == "__main__":

@@ -23,11 +23,12 @@ class ChainStreamSandBox(SandboxBase):
     #     self.task.init_environment(self.runtime)
 
     def prepare_input_environment(self):
-        self.task.init_environment(self.runtime)
+        # self.task.init_environment(self.runtime)
+        self.task.init_input_stream(self.runtime)
 
     def prepare_output_environment(self):
         # self.task.init_output_stream(self.runtime)
-        pass
+        self.task.init_output_stream(self.runtime)
 
     def import_and_init(self, module):
         class_object = None

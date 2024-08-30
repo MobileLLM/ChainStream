@@ -126,12 +126,14 @@ class BatchInterfaceBase:
             "end_time": None,
             "error_msg": None,
         }
-        loop_count, history = None, None
+        loop_count, history, selected_example_name = None, None, None
         tmp_return = self.get_agent_for_specific_task(task)
         if len(tmp_return) == 3:
             agent_code, latency, tokens = tmp_return
         elif len(tmp_return) == 5:
             agent_code, latency, tokens, loop_count, history = tmp_return
+        elif len(tmp_return) == 6:
+            agent_code, latency, tokens, loop_count, history, selected_example_name = tmp_return
         else:
             raise ValueError(f"The return of get_agent_for_specific_task() should be a tuple of (agent_code, latency, tokens) or (agent_code, latency, tokens, _), but got {tmp_return}")
 
@@ -153,6 +155,7 @@ class BatchInterfaceBase:
             tmp_task_log['latency'] = latency
             tmp_task_log['loop_count'] = loop_count
             tmp_task_log['history'] = history
+            tmp_task_log['selected_example_name'] = selected_example_name
             tmp_task_log['tokens'] = {
                 "prompt_tokens": tokens[0],
                 "completion_tokens": tokens[1],

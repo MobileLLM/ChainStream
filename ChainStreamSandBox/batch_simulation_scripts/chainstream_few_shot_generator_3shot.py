@@ -8,14 +8,14 @@ class FewShotEvaluator(SandboxBatchInterface):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task):
-        generator = ChainStreamFewShotGenerator(example_number=0)
+        generator = ChainStreamFewShotGenerator(example_number=3)
         generator.set_verbose(True)
         # TODO: fix this para with a new output description
-        agent, latency, tokens = generator.generate_agent(task.output_stream_description, task.input_stream_description)
+        agent, latency, tokens = generator.generate_agent(task.output_stream_description, task.input_stream_description, task=task)
         return agent, latency, tokens
 
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = FewShotEvaluator(task_list)
+    evaluator = FewShotEvaluator(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_04-25-40_chainstream_fewshot_3shot/test_log.json")
     evaluator.start()

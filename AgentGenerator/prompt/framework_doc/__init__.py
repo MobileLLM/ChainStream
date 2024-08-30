@@ -16,7 +16,8 @@ def get_framework_doc(framework, example_num=None, task_now=None):
         if example_num is not None and example_num != 0:
             if task_now is None:
                 raise ValueError("Task name must be provided for example generation")
-            selector = AgentExampleSelector(get_all_task_instances(), task_now)
+            # selector = AgentExampleSelector(get_all_task_instances(), task_now)
+            selector = AgentExampleSelector(task_now)
             prompt += f"\nHere's {example_num} example of how to use chainstream to solve the problem:\n"
             for i in range(example_num):
                 prompt += f"Example {i}:\n```python\n{selector.get_random_agent_example()}\n```\n"

@@ -61,7 +61,12 @@ class AgentGeneratorBase:
         end_time = datetime.datetime.now()
 
         if hasattr(self, "loop_count") and hasattr(self, "history"):
-            return code, (end_time - start_time).total_seconds(), self.get_llm_token_count(), self.loop_count, self.history
+
+            if hasattr(self, "selected_example_name"):
+                return code, (end_time - start_time).total_seconds(), self.get_llm_token_count(), self.loop_count, self.history, self.selected_example_name
+            else:
+                return code, (
+                            end_time - start_time).total_seconds(), self.get_llm_token_count(), self.loop_count, self.history
         return code, (end_time - start_time).total_seconds(), self.get_llm_token_count()
 
     # def generate_agent_impl(self, input_description: [StreamListDescription, None], output_description:
