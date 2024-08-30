@@ -3,7 +3,8 @@ import os
 import ast
 import time
 
-from ChainStreamSandBox.tasks import get_task_with_data_batch
+# FIXME: this is a temporary solution to import the task instances
+from ChainStreamSandBox.tasks.tmp_task_instances import get_all_task_instances
 from AgentGenerator.utils.llm_utils import TextGPTModel
 
 CURRENT_CODE_PROMPT = """
@@ -144,7 +145,7 @@ class AgentExampleSelector:
 
 if __name__ == "__main__":
     task_now = "EmailTask2"
-    task_instance_dict = get_task_with_data_batch()
+    task_instance_dict = get_all_task_instances()
     task_instance_dict = {k: v() for k, v in task_instance_dict.items()}
     agent_example_selector = AgentExampleSelector(task_instance_dict, task_now)
     example = agent_example_selector.get_llm_agent_example(("Error message", "Current output", "Current stdout"))
