@@ -161,3 +161,16 @@ def create_stream(agent, stream_id, type=None):
 def register_stream_manager(manager):
     global stream_manager
     stream_manager = manager
+
+
+class Stream:
+    """must create or get a stream by using get_stream or create_stream functions, not directly"""
+    def __init__(self):
+        raise RuntimeError("must create or get a stream by using get_stream or create_stream functions, not directly")
+
+    def for_each(self, func):
+        raise RuntimeError("must create or get a stream by using get_stream or create_stream functions, not directly")
+
+    def batch(self, *args, **kwargs):
+        raise RuntimeError("must create or get a stream by using get_stream or create_stream functions, not directly")
+

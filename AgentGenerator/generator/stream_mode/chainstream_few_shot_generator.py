@@ -15,7 +15,8 @@ class ChainStreamFewShotGenerator(DirectAgentGenerator):
                                example_number=self.example_number,
                                mission_name="stream",
                                command_name="few_shot",
-                               need_feedback_example=False
+                               need_feedback_example=False,
+                               task_now=self.task.__class__.__name__
                                )
 
     def process_response(self, response) -> str:
@@ -23,7 +24,7 @@ class ChainStreamFewShotGenerator(DirectAgentGenerator):
 
 
 if __name__ == "__main__":
-    agent_generator = ChainStreamFewShotGenerator()
+    agent_generator = ChainStreamFewShotGenerator(example_number=1)
     agent_code, latency, tokens = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",
