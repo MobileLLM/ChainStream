@@ -30,7 +30,7 @@ class EmailTask8(SingleAgentTaskConfigBase):
                 "description": "A series of auto-reply emails based on the contents",
                 "fields": {
                     "Subject": "The subject of the email, string",
-                    "reply": "The auto-reply message of the email, string"}
+                    "reply": "The auto-reply message of the email, string = 'Received!'"}
             }
         ])
 
@@ -48,11 +48,9 @@ class testAgent(cs.agent.Agent):
         def process_email(email):
             email_content = email["Content"]
             email_subject = email["Subject"]    
-            prompt = "Now you have received some emails with the following subject: {},and the following content: {},please reply an email to the sender.".format(email_subject, email_content)          
-            response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
             "Subject": email_subject,
-            "reply": response
+            "reply": 'Received!'
             })
         self.input_stream.for_each(process_email)
         '''

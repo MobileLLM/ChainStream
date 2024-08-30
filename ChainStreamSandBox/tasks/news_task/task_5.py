@@ -61,7 +61,7 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
                     "headline": title,
                     "summary": res
                 })
-            return messages
+            return news
 
         def extract_type(news):
             news_type = news['category']

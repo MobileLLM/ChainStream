@@ -6,7 +6,7 @@ from AgentGenerator.prompt.feedback_processor import FilterErrorFeedbackProcesso
 
 def test_task(task_id, agent=None):
     task = ALL_TASKS[task_id]()
-    sandbox = StreamInterfaceSandBox(task, task.agent_example if agent is None else agent, save_path=None)
+    sandbox = ChainStreamSandBox(task, task.agent_example if agent is None else agent, save_path=None)
 
     report = sandbox.start_test_agent(return_report_path=False)
 
@@ -21,4 +21,4 @@ if __name__ == '__main__':
     for i, line in enumerate(agent.split('\n')):
         print(f"{i+1}. {line}")
 
-    test_task("EmailTask2", agent=agent)
+    test_task("NewsTask3")

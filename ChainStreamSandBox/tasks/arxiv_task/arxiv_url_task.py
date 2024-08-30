@@ -50,10 +50,10 @@ class testAgent(cs.agent.Agent):
         def process_paper(paper):
             paper_title = paper["title"]
             paper_url = paper["license"]      
-            if paper_website_url is not None: 
+            if paper_url is not None: 
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "url": paper_website_url
+                    "url": paper_url
                 })
         self.input_stream.for_each(process_paper)
         '''

@@ -18,7 +18,7 @@ class VideoTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
-            "description": "All first person perspective images",
+            "description": "All first person perspective images from the portable camera presenting what I see",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -26,8 +26,8 @@ class VideoTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_actions",
-                "description": "A series of the scenes that are detected in real time chosen from ['driving', 'jumping "
-                               "roll', 'walking', 'swimming', 'climbing', 'skating']",
+                "description": "A series of the scenes that are detected in real time from the camera chosen from ["
+                               "'driving', 'jumping', 'roll', 'walking', 'swimming', 'climbing', 'skating']",
                 "fields": {
                     "analysis_result": "the scene detected from the video chosen from ['driving', 'jumping roll', "
                                        "'walking', 'swimming', 'climbing', 'skating'], string"}

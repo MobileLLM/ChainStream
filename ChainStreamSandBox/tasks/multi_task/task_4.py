@@ -86,7 +86,7 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         def analysis_gps(gps):
             address = gps["PropertyName"]
             if address == "Century Technology Light Building":
-                self.is_office_event.add_item({"Status": "True"})
+                self.is_office_event.add_item({"Status": True})
                 return gps
             else:
                 return None
@@ -101,10 +101,14 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output1(data):
             self.output_record['auto_command'].append(data)
 
-        self.output_message_stream.for_each(record_output)
+        def record_output2(data):
+            self.output_record['is_office_event'].append(data)
+
+        self.output_message_stream.for_each(record_output1)
+        self.is_office_event.for_each(record_output2)
 
     def init_input_stream(self, runtime):
         self.input_video_stream = cs.stream.create_stream(self, 'all_first_person')
@@ -116,10 +120,14 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output1(data):
             self.output_record['auto_command'].append(data)
 
-        self.output_message_stream.for_each(record_output)
+        def record_output2(data):
+            self.output_record['is_office_event'].append(data)
+
+        self.output_message_stream.for_each(record_output1)
+        self.is_office_event.for_each(record_output2)
 
     def start_task(self, runtime) -> dict:
         properties = [

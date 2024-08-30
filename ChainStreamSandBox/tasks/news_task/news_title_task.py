@@ -22,7 +22,7 @@ class NewsTask13(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "news_date",
+                "stream_id": "news_title",
                 "description": "A series of the headline of the news",
                 "fields": {
                     "headline": "The headline of the news, string"

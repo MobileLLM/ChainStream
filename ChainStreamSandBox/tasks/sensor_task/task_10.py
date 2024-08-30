@@ -51,8 +51,11 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
     def start(self):
         def filter_abnormal(health):
             BMI = health['BMI Category']
-            if BMI == "Overweight" or "Obese":
+            if BMI == "Overweight" or BMI == "Obese":
+                print(BMI)
                 return health
+            else:
+                return None
         def reminder(health_list):
             for health in health_list['item_list']:
                 BMI = health['BMI Category']

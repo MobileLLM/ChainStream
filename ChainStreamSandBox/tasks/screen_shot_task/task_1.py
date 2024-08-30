@@ -40,12 +40,12 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_screenshot")
-        self.output_stream = cs.get_stream(self,"screenshot_type")
+        self.output_stream = cs.get_stream(self,"screenshot_usage")
         self.llm = get_model("image")
     def start(self):
         def process_screenshot(screenshot):
             image = screenshot["img"]
-            prompt = "Please analyze the android screenshot and tell me the reason why I used the phone chosen from ['Work', 'Social', 'Entertainment', 'Other'].Only give me the choice."'
+            prompt = "Please analyze the android screenshot and tell me the reason why I used the phone chosen from ['Work', 'Social', 'Entertainment', 'Other'].Only give me the choice."            
             res = self.llm.query(cs.llm.make_prompt(image, prompt))
             self.output_stream.add_item({
             "usage": res})
@@ -58,7 +58,7 @@ class testAgent(cs.agent.Agent):
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['screenshot_type'].append(data)
+            self.output_record['screenshot_usage'].append(data)
 
         self.output_screenshot_stream.for_each(record_output)
 
@@ -70,7 +70,7 @@ class testAgent(cs.agent.Agent):
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['screenshot_type'].append(data)
+            self.output_record['screenshot_usage'].append(data)
 
         self.output_screenshot_stream.for_each(record_output)
 

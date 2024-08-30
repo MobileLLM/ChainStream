@@ -27,9 +27,11 @@ class HealthTask15(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "risk_level",
-                "description": "A series of the analysis of the risk level of the person based on the health data",
+                "description": "A series of the analysis of the risk level of the person based on the health data "
+                               "chosen from 'high risk', 'low risk', or 'mid risk'",
                 "fields": {
-                    "risk_level": "The evaluation of the risk level of the specific person, string"}
+                    "risk_level": "The evaluation of the risk level of the specific person chosen from 'high risk', "
+                                  "'low risk', or 'mid risk', string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -45,7 +47,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_health(health):
             health_text = f"SystolicBP: {health['SystolicBP']}, DiastolicBP: {health['DiastolicBP']}, BS: {health['BS']}, BodyTemp: {health['BodyTemp']}, HeartRate: {health['HeartRate']}"
-            prompt = "Based on the following health indicators, determine the person's health risk level. Categorize into 'high risk', 'low risk', or 'mid risk'."
+            prompt = "Based on the following health indicators, determine the person's health risk level. Categorize into 'high risk', 'low risk', or 'mid risk'. Just give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,health_text))
             self.output_stream.add_item({
                 "risk_level": response

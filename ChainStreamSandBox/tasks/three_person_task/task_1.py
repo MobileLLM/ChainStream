@@ -18,7 +18,7 @@ class VideoTask10(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "third_person",
-            "description": "All third person perspective images",
+            "description": "All third person perspective images from the surveillance camera on the street",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -26,7 +26,7 @@ class VideoTask10(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_traffic",
-                "description": "A series of analysis of whether there are accidents happened on the road",
+                "description": "A series of analysis on whether there are accidents happened on the road",
                 "fields": {
                     "analysis_result": "The analysis of whether there is an accident occurred in the surveillance "
                                        "video, string = y or n"}

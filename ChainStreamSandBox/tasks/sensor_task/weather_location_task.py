@@ -18,7 +18,7 @@ class WeatherTask8(SingleAgentTaskConfigBase):
             "description": "A series of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
-                "Date_Time": "The time of the zone, string"
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -27,7 +27,7 @@ class WeatherTask8(SingleAgentTaskConfigBase):
                 "description": "A series of the location of the zones",
                 "fields": {
                     "Location": "The location of the zone, string",
-                    "Date_Time": "The time of the zone, string"
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
                 }
             }
         ])

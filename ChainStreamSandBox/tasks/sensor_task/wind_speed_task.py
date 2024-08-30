@@ -17,7 +17,7 @@ class WeatherTask10(SingleAgentTaskConfigBase):
             "stream_id": "all_weather",
             "description": "A series of the wifi information",
             "fields": {
-                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                 "Location": "the location of the weather sensor, string",
                 "Wind_Speed_kmh": "the wind speed of the zones, float"
             }
@@ -28,7 +28,7 @@ class WeatherTask10(SingleAgentTaskConfigBase):
                 "description": "A series of the wind speed of the zones",
                 "fields": {
                     "Location": "The location of the zone, string",
-                    "Date_Time": "The time of the zone, string",
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                     "Wind_Speed_kmh": "The wind speed of the zone, float"
                 }
             }

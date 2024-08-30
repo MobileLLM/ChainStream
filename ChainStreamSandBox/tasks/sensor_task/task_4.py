@@ -21,7 +21,7 @@ class WeatherTask1(SingleAgentTaskConfigBase):
             "stream_id": "all_weather",
             "description": "All weather information",
             "fields": {
-                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                 "Temperature_C": "temperature in degrees Celsius, float"
             }
         }])
@@ -30,10 +30,12 @@ class WeatherTask1(SingleAgentTaskConfigBase):
                 "stream_id": "clothing_recommendation",
                 "description": "A series of the recommendations of the suitable clothing according to the temperature "
                                "in May each year,with every two copies of weather data packaged as a batch after "
-                               "filtering the weather in May each year",
+                               "filtering the weather in May each year chosen from ['T-shirt', 'Tank top', 'Sweater', "
+                               "'Hoodie', 'Jacket']",
                 "fields": {
-                    "Temperature_C": "temperature in degrees Celsius,string",
-                    "clothing": "the clothing recommended,string"
+                    "Temperature_C": "temperature in degrees Celsius, string",
+                    "clothing": "the clothing recommended chosen from ['T-shirt', 'Tank top', 'Sweater', 'Hoodie', "
+                                "'Jacket'], string "
                 }
             }
         ])
@@ -61,7 +63,7 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
             for weather in weather_list['item_list']:
                 temperature = weather.get('Temperature_C')
                 if temperature is not None:
-                    prompt = "Recommend the suitable clothing today according to the temperature."
+                    prompt = "Recommend the suitable clothing today according to the temperature chosen from ['T-shirt', 'Tank top', 'Sweater', 'Hoodie', 'Jacket']."
                     res = self.llm.query(cs.llm.make_prompt(str(temperature), prompt))
                     self.sensor_output.add_item({
                         "Temperature_C": temperature,

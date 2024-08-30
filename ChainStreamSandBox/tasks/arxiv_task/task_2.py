@@ -62,7 +62,7 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
 
         def sum_on_paper(paper):
             paper_list = paper['item_list']
-            prompt = "Summarize the research method of the papers chosen from ["Experimental Evaluation", "Theoretical Research", "System Implementation", "Data Analysis and Mining", "Simulation and Modeling", "User Study", "Literature Review"].Only give me the choice."
+            prompt = "Summarize the research method of the papers chosen from ['Experimental Evaluation', 'Theoretical Research', 'System Implementation', 'Data Analysis and Mining', 'Simulation and Modeling', 'User Study', 'Literature Review'].Only give me the choice."
             for paper_item in paper_list:
                 title = paper_item.get('title', 'No Title')  
                 abstract = paper_item.get('abstract', '')  

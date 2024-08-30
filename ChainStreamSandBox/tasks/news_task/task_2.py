@@ -60,8 +60,8 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
             for news in news_list:
                 date = news.get('date')
                 prompt = "Extract the main characters of the news"
-                descriptions = [x.get('short_description', '') for x in news_list]
-                res = self.llm.query(cs.llm.make_prompt(descriptions, prompt))
+                description = news['short_description']
+                res = self.llm.query(cs.llm.make_prompt(description, prompt))
                 self.news_output.add_item({
                     "characters": res,
                     "date": date

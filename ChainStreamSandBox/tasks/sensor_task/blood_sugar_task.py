@@ -40,10 +40,12 @@ class testAgent(cs.agent.Agent):
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
-            Blood_sugar = health["BS"]        
-            self.output_stream.add_item({
-                "blood_sugar": Blood_sugar
-                })
+            health_list = health['item_list']
+            for health_message in health_list:
+                Blood_sugar = health_message["BS"]        
+                self.output_stream.add_item({
+                    "blood_sugar": Blood_sugar
+                    })
         self.input_stream.batch(by_count=5).for_each(process_health)
         '''
 

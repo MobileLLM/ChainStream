@@ -30,7 +30,8 @@ class MessageTask2(SingleAgentTaskConfigBase):
                                "negative, neutral and other based on the text",
                 "fields": {
                     "text": "The text content of the message, string",
-                    "emotion": "The analysis of the emotion of the message, string"
+                    "emotion": "The analysis of the emotion of the message chosen from positive, negative, neutral "
+                               "and other, string "
                 }
             }
         ])
@@ -48,7 +49,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_sms(sms):
             sms_text = sms["text"]
-            prompt = "Classify the following message contents into one of the categories: positive, negative, neutral, other.Choose one and explain"
+            prompt = "Classify the following message contents into one of the categories: positive, negative, neutral, other. Simply choose one."
             response = self.llm.query(cs.llm.make_prompt(prompt,sms_text))
             self.output_stream.add_item({
                 "text": sms_text,

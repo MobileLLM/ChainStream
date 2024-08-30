@@ -27,7 +27,7 @@ class ArxivTask12(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "arxiv_comments",
+                "stream_id": "numbers_of_pages_and_charts",
                 "description": "Arxiv articles with their pages and charts extracted from the comments (The number of "
                                "pages and charts are included in the comments field)",
                 "fields": {

@@ -23,7 +23,7 @@ class TweetTask3(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "tweets_account",
+                "stream_id": "tweets_airline",
                 "description": "A series of tweet texts with with the name of the airlines",
                 "fields": {
                     "text": "The text of the tweet, string",

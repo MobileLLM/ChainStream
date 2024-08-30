@@ -22,7 +22,7 @@ class WeatherTask3(SingleAgentTaskConfigBase):
             "description": "All weather information",
             "fields": {
                 "Precipitation_mm": "the precipitation of the city in mm, float",
-                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string"
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -32,7 +32,7 @@ class WeatherTask3(SingleAgentTaskConfigBase):
                                "with every two copies of weather data packaged as a batch after filtering the "
                                "precipitation which is over 5 mm",
                 "fields": {
-                    "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                     "Precipitation_mm": "the precipitation of the city in mm, float",
                     "reminder": "An auto reminder, string = Rain boots are recommended for walking outside!"
                 }

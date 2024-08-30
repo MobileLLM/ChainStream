@@ -18,7 +18,7 @@ class VideoTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
-            "description": "All first person perspective images",
+            "description": "All first person perspective images from the portable camera presenting what I see",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -39,7 +39,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.first_person_input = cs.get_stream(self, "first_person_perspective_data")
-        self.analysis_output = cs.get_stream(self, "analysis_scenario")
+        self.analysis_output = cs.get_stream(self, "analysis_computer_status")
         self.llm = cs.llm.get_model("image")
 
     def start(self):

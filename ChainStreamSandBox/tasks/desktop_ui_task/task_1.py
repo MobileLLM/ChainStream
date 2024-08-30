@@ -28,7 +28,7 @@ class ImageTask1(SingleAgentTaskConfigBase):
                 "stream_id": "analysis_software",
                 "description": "Analysis of a series of software names for work",
                 "fields": {
-                    "analysis_result": "A string representing the software currently used for work."
+                    "analysis_result": "A stream of the software name currently used for work."
                 }
             }
         ])
@@ -44,7 +44,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_screenshot(screenshot):
-            prompt = "Analyze the software I am using for work right now,just tell me the name of the software"
+            prompt = "Analyze the software I am using for work right now, just tell me the name of the software."
             res = self.llm.query(cs.llm.make_prompt(prompt,screenshot['image_file']))
             self.analysis_output.add_item({
                 "analysis_result": res

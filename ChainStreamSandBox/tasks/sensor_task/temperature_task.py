@@ -18,7 +18,7 @@ class WeatherTask7(SingleAgentTaskConfigBase):
             "description": "A series of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
-                "Date_Time": "The time of the zone, string",
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                 "Temperature_C": "The temperature of the zone, float"
             }
         }])
@@ -29,7 +29,7 @@ class WeatherTask7(SingleAgentTaskConfigBase):
                 "fields": {
                     "Temperature_C": "The temperature of the zone, float",
                     "Location": "The location of the zone, string",
-                    "Date_Time": "The time of the zone, string"
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
                 }
             }
         ])

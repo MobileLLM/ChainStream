@@ -22,7 +22,7 @@ class WeatherTask4(SingleAgentTaskConfigBase):
             "description": "All weather information",
             "fields": {
                 "Wind_Speed_kmh": "the wind speed sensor in kmh, float",
-                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string"
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -32,7 +32,7 @@ class WeatherTask4(SingleAgentTaskConfigBase):
                                "kmh,with every two copies of weather data packaged as a batch after filtering the "
                                "wind speed which is over 20 kmh",
                 "fields": {
-                    "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                     "Wind_Speed_kmh": "the wind speed sensor in kmh, float",
                     "reminder": "An auto reminder, string = Collect the clothes in the balcony!"
                 }

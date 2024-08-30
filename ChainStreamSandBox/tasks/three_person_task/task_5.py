@@ -18,7 +18,7 @@ class VideoTask14(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "third_person",
-            "description": "All third person perspective images",
+            "description": "All third person perspective images from the surveillance camera in the parking lot",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -43,7 +43,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_surveillance(third_person_data):
-            prompt = "The following images were captured by a surveillance camera in the parking lot.Just tell me the number of cars in the image."
+            prompt = "The following images were captured by a surveillance camera in the parking lot. Just tell me the number of cars in the image."
             res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res

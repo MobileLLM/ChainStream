@@ -18,7 +18,8 @@ class VideoTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
-            "description": "All first person perspective images",
+            "description": "All first person perspective images from the portable camera presenting what I see when I "
+                           "am driving",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -26,7 +27,7 @@ class VideoTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "car_safety_reminder",
-                "description": "A stream of reminders to the driver when there is snow on the road",
+                "description": "A stream of reminders to the driver when there is snow on both sides of the road",
                 "fields": {
                     "reminder": "A reminder for the driver to slow down, string = 'Please slow down, there is snow on "
                                 "the road.' "
@@ -45,12 +46,13 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def detect_road(first_person_data):
-            prompt = "Detect whether there is snow on the road, just tell me y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
-            if res.lower()=="y":
-                self.analysis_output.add_item({
-                    "reminder": "Please slow down, there is snow on the road."
-                })
+            for frame in first_person_data["frame"]:
+                prompt = "Detect whether there is snow on both sides of the road, just tell me y or n."
+                res = self.llm.query(cs.llm.make_prompt(prompt,frame))
+                if res.lower()=="y":
+                    self.analysis_output.add_item({
+                        "reminder": "Please slow down, there is snow on the road."
+                    })
         self.first_person_input.for_each(detect_road)
         '''
 

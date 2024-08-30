@@ -25,11 +25,12 @@ class DialogueTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "work_dialogues",
-                "description": "A stream of dialogue texts, grouped by the 'Work' ones within the 'topic' "
+                "description": "A stream of dialogue texts, grouped by the same topic ones within the 'topic' "
                                "field and extracted from the 'text' key within the 'dialog' field, with each batch "
                                "containing two items.",
                 "fields": {
-                    "dialog": "The work-related dialogues, string"}
+                    "topic": "the topic of the grouped dialogues, string",
+                    "dialog": "The dialogues of the same topic, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -44,19 +45,22 @@ class testAgent(cs.agent.Agent):
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def process_dialogues(dialogues):
+        def grouped_dialogues(dialogues):
+            dialogue_list = dialogues['item_list']
             topic_group = {}
-            for dialog in dialogues:
-                if dialog['topic'] == "Work":
-                    if dialog['topic'] not in topic_group:
-                        topic_group[dialog['topic']] = [dialog['dialog']['text']]
-                    else:
-                        sender_group[dialog['topic']].append([dialog['dialog']['text']])
-            self.output_stream.add_item({
-            'dialog':sender_group.values()
-            })
+            for dialog in dialogue_list:
+                if dialog['topic'] not in topic_group:
+                    topic_group[dialog['topic']] = [dialog['dialog'][0]['text']]
+                else:
+                    topic_group[dialog['topic']].append(dialog['dialog'][0]['text'])
+            
+                self.output_stream.add_item({
+                    'topic': dialog['topic'],
+                    'dialog': list(topic_group.values())
+                })
+            
             return list(topic_group.values())
-        self.input_stream.batch(by_count=2).for_each(process_dialogues)
+        self.input_stream.batch(by_count=2).for_each(grouped_dialogues)
         '''
 
     def init_environment(self, runtime):

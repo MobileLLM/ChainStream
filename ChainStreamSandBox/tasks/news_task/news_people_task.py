@@ -23,7 +23,7 @@ class NewsTask11(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "news_description",
+                "stream_id": "news_people_involved",
                 "description": "A series of the analysis of the people involved in the news based on the news short "
                                "description",
                 "fields": {

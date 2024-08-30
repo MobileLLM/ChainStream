@@ -69,11 +69,12 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
         def sum_by_receiver(receiver_email):
             receiver = receiver_email[0]['receiver']
             prompt = "Summarize all these emails here"
-            res = self.llm.query(cs.llm.make_prompt([x['Content'] for x in receiver_email], prompt))
-            self.email_output.add_item({
-                "receiver": receiver,
-                "summary": res
-            })
+            for x in receiver_email:
+                res = self.llm.query(cs.llm.make_prompt(x['Content'], prompt))
+                self.email_output.add_item({
+                    "receiver": receiver,
+                    "summary": res
+                })
 
         self.email_input.for_each(filter_work).batch(by_count=2).for_each(group_by_receiver).for_each(sum_by_receiver)
         '''

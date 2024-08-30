@@ -18,17 +18,15 @@ class VideoTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
-            "description": "All first person perspective images",
+            "description": "All first person perspective images from the portable camera presenting what I see",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "analysis_topic",
-                "description": "A series of judgments on whether I am playing a musical instrument. If the answer is "
-                               "y, detect what kind of musical instrument I am playing chosen from ['Guitar', "
-                               "'Piano', 'Violin', 'Drum', 'Flute']",
+                "stream_id": "musical_instrument_type",
+                "description": "An detection of what kind of musical instrument I am playing",
                 "fields": {
                     "musical_instrument_type": "An indication of what kind of musical instrument I am playing chosen "
                                                "from ['Guitar', 'Piano', 'Violin', 'Drum', 'Flute'], string "
@@ -52,7 +50,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
             if res.lower()=="y":
                 return first_person_data
         def detect_instrument(first_person_data):
-            prompt = "Detect what kind of musical instrument I am playing chosen from ["Guitar", "Piano", "Violin", "Drum", "Flute"], just tell me the type."
+            prompt = "Detect what kind of musical instrument I am playing chosen from ['Guitar', 'Piano', 'Violin', 'Drum', 'Flute'], just tell me the type."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             self.analysis_output.add_item({
             "musical_instrument_type":res

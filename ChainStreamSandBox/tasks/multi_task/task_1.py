@@ -96,7 +96,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         def analysis_location(location):
             address = location["Street Address"]
             if address == "3127 Edgemont Boulevard":
-                self.is_office_event.add_item({"Status": "True"})
+                self.is_office_event.add_item({"Status": True})
                 return location
             else:
                 return None
@@ -111,11 +111,15 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output_1(data):
             self.output_record['auto_reply_in_office'].append(data)
 
-        self.output_email_stream.for_each(record_output)
-        self.is_office_event.for_each(record_output)
+        self.output_email_stream.for_each(record_output_1)
+
+        def record_output_2(data):
+            self.output_record['is_office_event'].append(data)
+
+        self.is_office_event.for_each(record_output_2)
 
     def init_input_stream(self, runtime):
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
@@ -127,11 +131,15 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output_1(data):
             self.output_record['auto_reply_in_office'].append(data)
 
-        self.output_email_stream.for_each(record_output)
-        self.is_office_event.for_each(record_output)
+        self.output_email_stream.for_each(record_output_1)
+
+        def record_output_2(data):
+            self.output_record['is_office_event'].append(data)
+
+        self.is_office_event.for_each(record_output_2)
 
     def start_task(self, runtime) -> dict:
         sent_info = {"all_email": [], "all_location": []}

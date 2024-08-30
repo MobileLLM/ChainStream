@@ -29,13 +29,13 @@ class HealthTask14(SingleAgentTaskConfigBase):
                 "stream_id": "occupation_estimation",
                 "description": "A series of the analysis of the occupation of the person chosen from ['Software "
                                "Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', 'Chef', "
-                               "'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher'] "
-                               "based on the health data",
+                               "'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher', "
+                               "'Not Sure'] based on the health data",
                 "fields": {
                     "job_estimation": "The estimation of the occupation of the specific person chosen from ['Software "
                                       "Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', "
                                       "'Chef', 'Financial Analyst', 'Research Scientist', 'Sales Executive', "
-                                      "'Emergency Dispatcher'], string"}
+                                      "'Emergency Dispatcher', 'Not Sure'], string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -51,7 +51,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_health(health):
             health_text = f"SystolicBP: {health['SystolicBP']}, DiastolicBP: {health['DiastolicBP']}, BS: {health['BS']}, BodyTemp: {health['BodyTemp']}, HeartRate: {health['HeartRate']}"
-            prompt = f"Based on the following health indicators: {health_text}, estimate the person's current job position chosen from  ['Software Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', 'Chef', 'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher']."
+            prompt = f"Based on the following health indicators: {health_text}, estimate the person's current job position chosen from  ['Software Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', 'Chef', 'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher', 'Not sure']. Simply give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
                 "job_estimation": response

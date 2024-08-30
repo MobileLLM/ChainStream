@@ -73,7 +73,6 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
                 for frame in third_person_inputs["frame"]:
                     prompt = "Is there a traffic accident ahead?Simply tell me y or n"
                     res = self.llm.query(cs.llm.make_prompt(prompt,frame))
-                    print(res)
                     if res.lower()=="y":
                         self.message_output.add_item({
                         "Reminder": "Accident ahead! Pay attention to the road"
@@ -101,10 +100,14 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.driving_state = cs.stream.create_stream(self, 'driving_state')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output1(data):
             self.output_record['output_messages'].append(data)
 
-        self.output_message_stream.for_each(record_output)
+        def record_output2(data):
+            self.output_record['driving_state'].append(data)
+
+        self.output_message_stream.for_each(record_output1)
+        self.driving_state.for_each(record_output2)
 
     def init_input_stream(self, runtime):
         self.third_person_stream = cs.stream.create_stream(self, 'all_third_person')
@@ -115,10 +118,14 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.driving_state = cs.stream.get_stream(self, 'driving_state')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output1(data):
             self.output_record['output_messages'].append(data)
 
-        self.output_message_stream.for_each(record_output)
+        def record_output2(data):
+            self.output_record['driving_state'].append(data)
+
+        self.output_message_stream.for_each(record_output1)
+        self.driving_state.for_each(record_output2)
 
     def start_task(self, runtime) -> dict:
         sent_info = {'all_third_person': [], 'all_first_person': []}

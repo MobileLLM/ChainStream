@@ -28,10 +28,10 @@ class HealthTask13(SingleAgentTaskConfigBase):
             {
                 "stream_id": "emotion_estimation",
                 "description": "A series of the analysis of the mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', "
-                               "'Anxious', 'Relaxed'] based on the health data",
+                               "'Anxious', 'Relaxed', 'Not sure'] based on the health data",
                 "fields": {
                     "mood_estimation": "The estimation of the mood chosen from['Happy', 'Sad', 'Angry', 'Excited', "
-                                       "'Anxious', 'Relaxed'], string"}
+                                       "'Anxious', 'Relaxed', 'Not sure'], string"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -47,7 +47,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_health(health):
             health_text = f"SystolicBP: {health['SystolicBP']}, DiastolicBP: {health['DiastolicBP']}, BS: {health['BS']}, BodyTemp: {health['BodyTemp']}, HeartRate: {health['HeartRate']}"
-            prompt = f"Based on the following health indicators: {health_text}, judge the person's current mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', 'Anxious', 'Relaxed']."
+            prompt = f"Based on the following health indicators: {health_text}, judge the person's current mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', 'Anxious', 'Relaxed', 'Not sure']. Please only give me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt))
             self.output_stream.add_item({
                 "mood_estimation": response

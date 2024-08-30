@@ -18,7 +18,7 @@ class WeatherTask5(SingleAgentTaskConfigBase):
             "description": "A series of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
-                "Date_Time": "The time of the zone, string",
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                 "Humidity_pct": "The humidity percentage of the zone, float"
             }
         }])
@@ -29,7 +29,7 @@ class WeatherTask5(SingleAgentTaskConfigBase):
                 "fields": {
                     "Humidity_pct": "The humidity percentage of the zone, float",
                     "Location": "The location of the zone, string",
-                    "Date_Time": "The time of the zone, string"
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
                 }
             }
         ])

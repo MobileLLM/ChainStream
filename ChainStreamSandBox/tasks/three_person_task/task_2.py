@@ -18,7 +18,7 @@ class VideoTask11(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "third_person",
-            "description": "All third person perspective images",
+            "description": "All third person perspective images from the surveillance camera in the school",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }

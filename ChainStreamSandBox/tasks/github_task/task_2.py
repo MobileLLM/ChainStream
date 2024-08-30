@@ -61,6 +61,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
             github_list2 = github_list['item_list']
             sorted_dicts = sorted(github_list2, key=lambda x: int(x['commit_count']), reverse=True)
             top_10_dicts = sorted_dicts[:10]
+            print(top_10_dicts)
             for github in top_10_dicts:
                 created_at = github.get('created_at')
                 commit_count = github.get('commit_count')

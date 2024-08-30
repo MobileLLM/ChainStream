@@ -18,7 +18,7 @@ class VideoTask12(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "third_person",
-            "description": "All third person perspective images",
+            "description": "All third person perspective images from the surveillance camera in the secret base",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -26,7 +26,7 @@ class VideoTask12(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "detect_person",
-                "description": "A series of analysis of whether the secret base has been invaded by person",
+                "description": "A series of analysis on whether the secret base has been invaded by person",
                 "fields": {
                     "analysis_result": "the detection of whether a person is in the secret base, string = y or n"}
             }

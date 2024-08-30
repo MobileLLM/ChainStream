@@ -49,7 +49,7 @@ class testAgent(cs.agent.Agent):
         def process_email(email):
             email_content = email["Content"]
             email_subject = email["Subject"]           
-            prompt = "Classify the following email contents into one of the categories: positive, negative, neutral, other.Choose one and explain"
+            prompt = "Classify the following email contents into one of the categories: positive, negative, neutral, other. Please simply choose one."
             response = self.llm.query(cs.llm.make_prompt(prompt,email_content))
             self.output_stream.add_item({
             "Subject": email_subject,

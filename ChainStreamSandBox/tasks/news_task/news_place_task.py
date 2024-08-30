@@ -24,10 +24,12 @@ class NewsTask12(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "news_place",
-                "description": "A series of the location extracted from the news based on the news short description",
+                "description": "A series of the location extracted from the news based on the news short description "
+                               "chosen from ['Local', 'National', 'International', 'Urban', 'Rural']",
                 "fields": {
                     "headline": "The headline of the news, string",
-                    "news_place": "The location where the news took place, string"
+                    "news_place": "The location where the news took place chosen from ['Local', 'National', "
+                                  "'International', 'Urban', 'Rural'], string "
                 }
             }
         ])
@@ -46,7 +48,7 @@ class testAgent(cs.agent.Agent):
         def process_news(news):
             news_headline = news["headline"]
             news_short_description = news["short_description"]       
-            prompt = "Now you have received some news,please tell me where the news happened"          
+            prompt = "Now you have received some news,please tell me where the news happened chosen from ['Local', 'National', 'International', 'Urban', 'Rural']. Please simply give me the choice."          
             response = self.llm.query(cs.llm.make_prompt(prompt,news_short_description))
             self.output_stream.add_item({
             "headline": news_headline,

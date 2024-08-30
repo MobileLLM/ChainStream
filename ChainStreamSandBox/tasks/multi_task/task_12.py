@@ -86,7 +86,6 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         def check_light(light_inputs):
             if self.is_reading is not None:
                 intensity = light_inputs["Light intensity outdoor"]
-                print(type(intensity))
                 if intensity<300 :
                     self.command_output.add_item({
                         "light_intensity": intensity,
@@ -125,12 +124,14 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.is_reading_stream = cs.stream.create_stream(self, 'is_reading')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output1(data):
             self.output_record['adjust_light'].append(data)
+
+        def record_output2(data):
             self.output_record['is_reading'].append(data)
 
-        self.adjust_light_stream.for_each(record_output)
-        self.is_reading_stream.for_each(record_output)
+        self.adjust_light_stream.for_each(record_output1)
+        self.is_reading_stream.for_each(record_output2)
 
     def init_input_stream(self, runtime):
         self.input_first_person_stream = cs.stream.create_stream(self, 'all_first_person')
@@ -142,12 +143,14 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.is_reading_stream = cs.stream.get_stream(self, 'is_reading')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
-        def record_output(data):
+        def record_output1(data):
             self.output_record['adjust_light'].append(data)
+
+        def record_output2(data):
             self.output_record['is_reading'].append(data)
 
-        self.adjust_light_stream.for_each(record_output)
-        self.is_reading_stream.for_each(record_output)
+        self.adjust_light_stream.for_each(record_output1)
+        self.is_reading_stream.for_each(record_output2)
 
     def start_task(self, runtime) -> dict:
         properties = [

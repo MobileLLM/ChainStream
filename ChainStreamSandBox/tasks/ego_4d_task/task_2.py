@@ -18,7 +18,7 @@ class VideoTask2(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "first_person_perspective_data",
-            "description": "All first person perspective images",
+            "description": "All first person perspective images from the portable camera presenting what I see",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -26,9 +26,9 @@ class VideoTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_kitchen_risk",
-                "description": "A sequence that alerts whether there is potential risk in the kitchen",
+                "description": "A stream of judging whether I am in the kitchen",
                 "fields": {
-                    "risk": "An indication of whether there is potential risk, bool"}
+                    "cooking": "An indication of whether I am cooking in the kitchen, bool"}
             }
         ])
         self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
@@ -48,11 +48,11 @@ class AgentExampleForImageTask(cs.agent.Agent):
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             if res.lower()=="y":
                 self.analysis_output.add_item({
-                    "risk": True
+                    "cooking": True
                 })
             else:
                 self.analysis_output.add_item({
-                    "risk": False
+                    "cooking": False
                 })
             
         self.ego_input.for_each(kitchen_risk)

@@ -22,7 +22,7 @@ class WeatherTask2(SingleAgentTaskConfigBase):
             "description": "All weather information",
             "fields": {
                 "Humidity_pct": "the percentage of the humidity, float",
-                "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string"
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
@@ -32,10 +32,10 @@ class WeatherTask2(SingleAgentTaskConfigBase):
                                "weather data packaged as a batch after filtering the humidity percentage which is "
                                "over 70%",
                 "fields": {
-                    "Date_Time": "the '%Y/%m/%d %H:%M:%S' datetime format, string",
+                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                     "Humidity_pct": "the percentage of the humidity, string",
-                    "reminder": "An auto reminder, string = When walking on the road, pay attention to wet and "
-                                "slippery! "
+                    "reminder": "An auto reminder, string = 'When walking on the road, pay attention to wet and "
+                                "slippery!' "
                 }
             }
         ])
