@@ -4,7 +4,7 @@ from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 
 class NativeGPTBatchInterface(SandboxBatchInterface):
-    def __init__(self, task_list, model_name, repeat_time=1, result_path='./result', task_log_path=None):
+    def __init__(self, task_list, model_name, repeat_time=5, result_path='./result', task_log_path=None):
         self.model_name = model_name
 
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="native_python_batch")

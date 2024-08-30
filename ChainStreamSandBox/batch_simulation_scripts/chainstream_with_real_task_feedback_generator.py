@@ -5,11 +5,11 @@ from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 
 class EvalFeedbackGuidedGeneratorForRealTask(SandboxBatchInterface):
-    def __init__(self, task_list, repeat_time=2, result_path='./result', task_log_path=None):
+    def __init__(self, task_list, repeat_time=3, result_path='./result', task_log_path=None):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task, verbose=True, only_print_last=False):
-        generator = ChainstreamFeedbackGuidedGeneratorForRealTask(max_loop=10, only_print_last=only_print_last, framework_example_number=1)
+        generator = ChainstreamFeedbackGuidedGeneratorForRealTask(max_loop=10, only_print_last=only_print_last, framework_example_number=0)
         generator.set_verbose(verbose)
         # TODO: fix this para with a new output description
         agent, latency, tokens, loop_count, history = generator.generate_agent(task.output_stream_description, task.input_stream_description,
@@ -19,5 +19,5 @@ class EvalFeedbackGuidedGeneratorForRealTask(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = EvalFeedbackGuidedGeneratorForRealTask(task_list)
+    evaluator = EvalFeedbackGuidedGeneratorForRealTask(task_list, task_log_path=r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_02-51-10_chainstream_with_real_task_0_shot\test_log.json')
     evaluator.start()

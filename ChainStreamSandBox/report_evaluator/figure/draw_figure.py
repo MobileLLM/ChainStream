@@ -85,7 +85,7 @@ def plot_different_task_histograms(all_figure_data: dict):
         num_tasks = len(ALL_TASK_LIST)
 
         # Create a figure with 4 rows and 1 column for the subplots
-        fig, axs = plt.subplots(num_rows_per_figure, 1, figsize=(0.3 * num_tasks, 6 * num_rows_per_figure))
+        fig, axs = plt.subplots(num_rows_per_figure, 1, figsize=(0.4 * num_tasks, 6 * num_rows_per_figure))
         axs = axs.flatten()
 
         for subplot_index, title in enumerate(current_titles):
@@ -111,7 +111,7 @@ def plot_different_task_histograms(all_figure_data: dict):
 
             # Set x-axis labels and title
             ax.set_xticks(offsets + (num_generators - 1) * width / 2)
-            ax.set_xticklabels(tasks, rotation=45, ha='right')
+            ax.set_xticklabels(tasks, rotation=45, ha='right', fontsize=4)
             ax.set_ylabel('Score')
             ax.set_title(title)
             ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
@@ -182,6 +182,7 @@ def load_all_results(base_file_path):
         "result-langchain_zeroshot",
         "result-chainstream_cot",
         "result-chainstream_cot_1shot",
+        "result-gpt-4o"
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -222,6 +223,8 @@ def rename_generator(name):
         return "CS-Cot-1shot"
     elif name == "result-langchain_zeroshot":
         return "LC-0shot"
+    elif name == "result-gpt-4o":
+        return "GPT-4o-0shot"
     raise ValueError("Invalid generator name")
 
 
@@ -301,26 +304,28 @@ def _load_eval_result_for_success_rate(base_file_path):
 
 def _draw_avg_success_rate(generator_avg_success_rate):
     def _rename_generator(generator):
-        if generator == "chainstream_with_real_task_stdout_err_msg":
+        if generator == "chainstream_with_real_task_0_shot":
             return "CS-Feedback-0Shot"
         elif generator == "chainstream_real_task_framework_1shot":
             return "CS-Feedback-1shot"
-        elif generator == "chainstream_human_written_code_task_with_data":
+        elif generator == "human_written_test_after_fixing":
             return "Human"
         elif generator == 'chainstream_zero_shot':
             return "CS-0shot"
-        elif generator == 'stream_python_zeroshot_task_with_data':
+        elif generator == 'native_python_zero_shot':
             return "Py-0shot"
         elif generator == 'chainstream_1shot':
             return "CS-1shot"
-        elif generator == "chainstream_cot":
+        elif generator == "chainstream_cot_zero_shot":
             return "CS-Cot"
         elif generator == "chainstream_cot_1shot":
             return "CS-Cot-1shot"
-        elif generator == "stream_langchain_zeroshot":
+        elif generator == "langchain_zero_shot":
             return "LC-0shot"
         elif generator == "stream_native_python_zeroshot":
             return "Py-0shot"
+        elif generator == "gpt-4o_native_gpt_4o":
+            return "GPT-4o-0shot"
         else:
             raise ValueError("Invalid generator name")
 
@@ -419,13 +424,15 @@ def draw_success_rate(base_file_path):
         generator_success_rate_for_tasks[gen_name] = {}
         for N, gen_N_results in gen_results.items():
             generator_avg_success_rate[gen_name][N] = gen_N_results['success_rate']
-            print(f"Gen: {gen_name}, N: {N}, Success Rate: {gen_N_results['success_rate']} ({gen_N_results['success_count']} / {gen_N_results['total_task_count']})")
+            print(
+                f"Gen: {gen_name}, N: {N}, Success Rate: {gen_N_results['success_rate']} ({gen_N_results['success_count']} / {gen_N_results['total_task_count']})")
 
             for task, task_bool in gen_N_results['success_details'].items():
                 if task not in generator_success_rate_for_tasks[gen_name]:
                     generator_success_rate_for_tasks[gen_name][task] = task_bool
                 else:
-                    generator_success_rate_for_tasks[gen_name][task] = generator_success_rate_for_tasks[gen_name][task] or task_bool
+                    generator_success_rate_for_tasks[gen_name][task] = generator_success_rate_for_tasks[gen_name][
+                                                                           task] or task_bool
 
     _draw_avg_success_rate(generator_avg_success_rate)
     _draw_success_rate_for_tasks(generator_success_rate_for_tasks)
@@ -437,6 +444,6 @@ if __name__ == '__main__':
     # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
 
     draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
-    draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
+    # draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
 
-    draw_success_rate(base_file_path)
+    # draw_success_rate(base_file_path)
