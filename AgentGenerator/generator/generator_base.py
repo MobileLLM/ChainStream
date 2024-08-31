@@ -342,7 +342,7 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
                 print(f"Loop: {self.loop_count}")
             else:
                 print(
-                    f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n##############\n")
+                    f"####################################\nQuerying LLM at {datetime.datetime.now()} with prompt: {prompt[0]['content']}\nResponse: {response}\n#######Testing Code: {self.loop_count-1}#######\n")
         return response
 
     def step(self, action) -> (str, bool):

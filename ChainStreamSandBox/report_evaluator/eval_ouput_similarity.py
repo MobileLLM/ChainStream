@@ -30,6 +30,7 @@ class EvalOutputSimilarity(EvaluatorBase):
             output_similarity = {}
             for task, reports in self.candidate_reports.items():
                 if task not in TASK_WITH_DATA_LIST:
+
                     continue
                 task_output_similarity = {
                     "str_metric": {
@@ -62,144 +63,94 @@ class EvalOutputSimilarity(EvaluatorBase):
                 for report in reports[:N]:
                     candidate_outputs = report["output_stream_items"] if "output_stream_items" in report else {}
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="str",
-                                                                                      similarity_func="bleu",
-                                                                                      len_weight=True)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
+                                                    similarity_func="bleu", len_weight=True)
                     if avg_stream_score > task_output_similarity["str_metric"]["len_weighted_bleu"]["score"]:
                         task_output_similarity["str_metric"]["len_weighted_bleu"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["len_weighted_bleu"]["output"] = candidate_outputs
-                        task_output_similarity["str_metric"]["len_weighted_bleu"]["report_init_time"] = \
-                        report['sandbox_info'][
+                        task_output_similarity["str_metric"]["len_weighted_bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="str",
-                                                                                      similarity_func="ed",
-                                                                                      len_weight=True)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str",
+                                                    similarity_func="ed", len_weight=True)
                     if avg_stream_score > task_output_similarity["str_metric"]["len_weighted_ed"]["score"]:
                         task_output_similarity["str_metric"]["len_weighted_ed"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["len_weighted_ed"]["output"] = candidate_outputs
-                        task_output_similarity["str_metric"]["len_weighted_ed"]["report_init_time"] = \
-                        report['sandbox_info'][
+                        task_output_similarity["str_metric"]["len_weighted_ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="str",
-                                                                                      similarity_func="bleu",
-                                                                                      len_weight=False)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str", similarity_func="bleu", len_weight=False)
                     if avg_stream_score > task_output_similarity["str_metric"]["bleu"]["score"]:
                         task_output_similarity["str_metric"]["bleu"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["bleu"]["output"] = candidate_outputs
                         task_output_similarity["str_metric"]["bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="str",
-                                                                                      similarity_func="ed",
-                                                                                      len_weight=False)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="str", similarity_func="ed", len_weight=False)
                     if avg_stream_score > task_output_similarity["str_metric"]["ed"]["score"]:
                         task_output_similarity["str_metric"]["ed"]["score"] = avg_stream_score
                         task_output_similarity["str_metric"]["ed"]["output"] = candidate_outputs
                         task_output_similarity["str_metric"]["ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="bleu",
-                                                                                      hard_fields=True, len_weight=True)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="bleu", hard_fields=True, len_weight=True)
                     if avg_stream_score > task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["score"]:
                         task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["output"] = candidate_outputs
-                        task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["report_init_time"] = \
-                        report['sandbox_info'][
+                        task_output_similarity["hard_list_metric"]["len_weighted_bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="ed",
-                                                                                      hard_fields=True, len_weight=True)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="ed", hard_fields=True, len_weight=True)
                     if avg_stream_score > task_output_similarity["hard_list_metric"]["len_weighted_ed"]["score"]:
                         task_output_similarity["hard_list_metric"]["len_weighted_ed"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["len_weighted_ed"]["output"] = candidate_outputs
-                        task_output_similarity["hard_list_metric"]["len_weighted_ed"]["report_init_time"] = \
-                        report['sandbox_info'][
+                        task_output_similarity["hard_list_metric"]["len_weighted_ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="bleu",
-                                                                                      hard_fields=True,
-                                                                                      len_weight=False)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="bleu", hard_fields=True, len_weight=False)
                     if avg_stream_score > task_output_similarity["hard_list_metric"]["bleu"]["score"]:
                         task_output_similarity["hard_list_metric"]["bleu"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["bleu"]["output"] = candidate_outputs
                         task_output_similarity["hard_list_metric"]["bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="ed",
-                                                                                      hard_fields=True,
-                                                                                      len_weight=False)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="ed", hard_fields=True, len_weight=False)
                     if avg_stream_score > task_output_similarity["hard_list_metric"]["ed"]["score"]:
                         task_output_similarity["hard_list_metric"]["ed"]["score"] = avg_stream_score
                         task_output_similarity["hard_list_metric"]["ed"]["output"] = candidate_outputs
                         task_output_similarity["hard_list_metric"]["ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="bleu",
-                                                                                      hard_fields=False,
-                                                                                      len_weight=True)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="bleu", hard_fields=False, len_weight=True)
                     if avg_stream_score > task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["score"]:
                         task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["output"] = candidate_outputs
-                        task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["report_init_time"] = \
-                        report['sandbox_info'][
+                        task_output_similarity["soft_list_metric"]["len_weighted_bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="ed",
-                                                                                      hard_fields=False,
-                                                                                      len_weight=True)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="ed", hard_fields=False, len_weight=True)
                     if avg_stream_score > task_output_similarity["soft_list_metric"]["len_weighted_ed"]["score"]:
                         task_output_similarity["soft_list_metric"]["len_weighted_ed"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["len_weighted_ed"]["output"] = candidate_outputs
-                        task_output_similarity["soft_list_metric"]["len_weighted_ed"]["report_init_time"] = \
-                        report['sandbox_info'][
+                        task_output_similarity["soft_list_metric"]["len_weighted_ed"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="bleu",
-                                                                                      hard_fields=False,
-                                                                                      len_weight=False)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="bleu", hard_fields=False, len_weight=False)
                     if avg_stream_score > task_output_similarity["soft_list_metric"]["bleu"]["score"]:
                         task_output_similarity["soft_list_metric"]["bleu"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["bleu"]["output"] = candidate_outputs
                         task_output_similarity["soft_list_metric"]["bleu"]["report_init_time"] = report['sandbox_info'][
                             'sandbox_init_time']
 
-                    avg_stream_score, stream_similarity = cal_multi_stream_similarity(reference_outputs,
-                                                                                      candidate_outputs,
-                                                                                      list_mode="list",
-                                                                                      similarity_func="ed",
-                                                                                      hard_fields=False,
-                                                                                      len_weight=False)
+                    avg_stream_score,stream_similarity = cal_multi_stream_similarity(reference_outputs, candidate_outputs, list_mode="list",
+                                                    similarity_func="ed", hard_fields=False, len_weight=False)
                     if avg_stream_score > task_output_similarity["soft_list_metric"]["ed"]["score"]:
                         task_output_similarity["soft_list_metric"]["ed"]["score"] = avg_stream_score
                         task_output_similarity["soft_list_metric"]["ed"]["output"] = candidate_outputs
@@ -211,49 +162,37 @@ class EvalOutputSimilarity(EvaluatorBase):
             avg_output_similarity = {
                 "str_metric": {
                     "len_weighted_bleu":
-                        sum(output_similarity[task]["str_metric"]["len_weighted_bleu"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["str_metric"]["len_weighted_bleu"]['score'] for task in output_similarity) / len(output_similarity),
                     "len_weighted_ed":
-                        sum(output_similarity[task]["str_metric"]["len_weighted_ed"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["str_metric"]["len_weighted_ed"]['score'] for task in output_similarity) / len(output_similarity),
                     "bleu":
-                        sum(output_similarity[task]["str_metric"]["bleu"]['score'] for task in output_similarity) / len(
-                            output_similarity),
+                        sum(output_similarity[task]["str_metric"]["bleu"]['score'] for task in output_similarity) / len(output_similarity),
                     "ed":
-                        sum(output_similarity[task]["str_metric"]["ed"]['score'] for task in output_similarity) / len(
-                            output_similarity),
+                        sum(output_similarity[task]["str_metric"]["ed"]['score'] for task in output_similarity) / len(output_similarity),
                     # "llm":
                     #     sum(output_similarity[task]["str_metric"]["llm"] for task in output_similarity) / len(output_similarity),
                 },
                 "hard_list_metric": {
                     "len_weighted_bleu":
-                        sum(output_similarity[task]["hard_list_metric"]["len_weighted_bleu"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["hard_list_metric"]["len_weighted_bleu"]['score'] for task in output_similarity) / len(output_similarity),
                     "len_weighted_ed":
-                        sum(output_similarity[task]["hard_list_metric"]["len_weighted_ed"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["hard_list_metric"]["len_weighted_ed"]['score'] for task in output_similarity) / len(output_similarity),
                     "bleu":
-                        sum(output_similarity[task]["hard_list_metric"]["bleu"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["hard_list_metric"]["bleu"]['score'] for task in output_similarity) / len(output_similarity),
                     "ed":
-                        sum(output_similarity[task]["hard_list_metric"]["ed"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["hard_list_metric"]["ed"]['score'] for task in output_similarity) / len(output_similarity),
                     # "llm":
                     #     sum(output_similarity[task]["hard_list_metric"]["llm"] for task in output_similarity) / len(output_similarity),
                 },
                 "soft_list_metric": {
                     "len_weighted_bleu":
-                        sum(output_similarity[task]["soft_list_metric"]["len_weighted_bleu"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["soft_list_metric"]["len_weighted_bleu"]['score'] for task in output_similarity) / len(output_similarity),
                     "len_weighted_ed":
-                        sum(output_similarity[task]["soft_list_metric"]["len_weighted_ed"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["soft_list_metric"]["len_weighted_ed"]['score'] for task in output_similarity) / len(output_similarity),
                     "bleu":
-                        sum(output_similarity[task]["soft_list_metric"]["bleu"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["soft_list_metric"]["bleu"]['score'] for task in output_similarity) / len(output_similarity),
                     "ed":
-                        sum(output_similarity[task]["soft_list_metric"]["ed"]['score'] for task in
-                            output_similarity) / len(output_similarity),
+                        sum(output_similarity[task]["soft_list_metric"]["ed"]['score'] for task in output_similarity) / len(output_similarity),
                     # "llm":
                     #     sum(output_similarity[task]["soft_list_metric"]["llm"] for task in output_similarity) / len(output_similarity),
                 }
@@ -278,20 +217,23 @@ if __name__ == '__main__':
         # "result-chainstream_feedback_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-30-23_chainstream_real_task_framework_1shot/test_log.json",
         # "result-native_python_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_09-31-41_stream_native_python_zeroshot/test_log.json",
         # "result-langchain_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_10-38-14_stream_langchain_zeroshot/test_log.json",
-        "result-native_python_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_18-59-07_native_python_zero_shot\test_log.json',
-        "result-langchain_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-02-44_langchain_zero_shot\test_log.json',
-        "result-gpt-4o": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-04-07_gpt-4o_native_gpt_4o\test_log.json',
-        "result-chainstream_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-05-29_chainstream_zero_shot\test_log.json',
-        "result-chainstream_cot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-09-40_chainstream_cot_zero_shot\test_log.json',
-        "result-chainstream_feedback_0shot": r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_02-51-10_chainstream_with_real_task_0_shot\test_log.json",
-        "result-chainstream_feedback_with_example": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-31_09-27-48_chainstream feedback with example\test_log.json',
-        "result-human_written": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-30_20-38-19_human_written_test_after_fixing\test_log.json'
+        # "result-native_python_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_18-59-07_native_python_zero_shot\test_log.json',
+        # "result-langchain_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-02-44_langchain_zero_shot\test_log.json',
+        # "result-gpt-4o": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-04-07_gpt-4o_native_gpt_4o\test_log.json',
+        # "result-chainstream_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-05-29_chainstream_zero_shot\test_log.json',
+        # "result-chainstream_cot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-09-40_chainstream_cot_zero_shot\test_log.json',
+        # "result-chainstream_feedback_0shot": r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_02-51-10_chainstream_with_real_task_0_shot\test_log.json"
+        "result-chainstream_fewshot_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-53-25_chainstream_fewshot_1shot/test_log.json",
+        "result-chainstream_fewshot_3shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_04-25-40_chainstream_fewshot_3shot/test_log.json",
+        "result-human_written": r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-28-16_human_written/test_log.json'
     }
     # result_folder_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json'
-    agent_by_human_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-30_20-38-19_human_written_test_after_fixing\test_log.json'
+    agent_by_human_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-28-16_human_written/test_log.json'
 
     first_n_list = {
         "result-human_written": [1],
+        "result-chainstream_fewshot_1shot": [1, 3, 5],
+        "result-chainstream_fewshot_3shot": [1, 3, 5],
 
         # "result-chainstream_1shot": [1, 3, 5],
         # "result-chainstream_feedback_1shot": [1, 2],
@@ -301,11 +243,9 @@ if __name__ == '__main__':
         "result-gpt-4o": [1, 3, 5],
         "result-chainstream_zeroshot": [1, 3, 5],
         "result-langchain_zeroshot": [1, 3, 5],
-        "result-chainstream_cot": [1, 3, 5],
-        "result-chainstream_feedback_with_example": [1]
+        "result-chainstream_cot": [1, 3, 5]
     }
 
-    for gen_name, tmp_path in tmp_list.items():
-        evaluator_output = EvalOutputSimilarity(agent_by_human_path, tmp_path,
-                                                save_name="output_similarity_" + gen_name)
+    for gen_name,tmp_path in tmp_list.items():
+        evaluator_output = EvalOutputSimilarity(agent_by_human_path, tmp_path, save_name="output_similarity_" + gen_name)
         evaluator_output.calculate_output_similarity(first_n=first_n_list[gen_name])

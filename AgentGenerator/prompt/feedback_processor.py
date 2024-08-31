@@ -116,9 +116,10 @@ class FilterErrorWithExampleFeedbackProcessor(FeedbackProcessorBase):
             try:
                 example_code, example_name = self.agent_example_selector.get_llm_agent_example((str_err, str_stdout, str_output), current_code=last_code)
                 if example_code is not None:
-                    example_prompt = f"Here is an example code may help you solve the problem:\n```python Exampele: {example_name}\n{example_code}```\n"
+                    example_prompt = f"\nHere is an example code may help you solve the problem, example name: {example_name}, target_stream: {self.agent_example_selector.get_target_stream_by_name(example_name)}.\n```python\n{example_code}```\n"
                     feedback = f"{feedback}\n{example_prompt}"
             except Exception as e:
                 print(f"[FeedbackProcessorExampleSelector] Error in getting example code: {str(e)}")
 
+            feedback += "You can debug your code by using print statements and checking the stdout message. Do not use loggers in your code because log messages will not be visible in the sandbox output.\n"
             return feedback, example_name

@@ -78,6 +78,11 @@ class AgentExampleSelector:
         example_list = example_list.strip()
         return example_list
 
+    def get_target_stream_by_name(self, example_name: str) -> str:
+        if example_name not in self.agent_name_2_target_stream:
+            raise ValueError("Invalid example name")
+        return self.agent_name_2_target_stream[example_name]
+
     def get_random_agent_example(self):
         if self.selected_example_count >= self.max_example_count:
             raise ValueError("Max example count reached")
@@ -146,7 +151,7 @@ class AgentExampleSelector:
 
         except Exception as e:
             print(f"[AgentExampleSelectorError]: {e}, response: {response}")
-            return None, "[AgentExampleSelectorError]: {e}, response: {response}"
+            return None, f"[AgentExampleSelectorError]: {e}, response: {response}"
 
 
 if __name__ == "__main__":
