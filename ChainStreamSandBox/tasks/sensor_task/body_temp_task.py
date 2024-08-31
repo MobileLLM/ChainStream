@@ -26,7 +26,7 @@ class HealthTask9(SingleAgentTaskConfigBase):
                 "description": "A prompt if the temperature is within the range of 97 to 99.",
                 "fields": {
                     "temperature_value": "The checked body temperature value filtered in the range of 97 to 99, float",
-                    "Notice": "A prompt indicating a normal temperature, string = Normal body temperature range"
+                    "Notice": "A prompt indicating a normal temperature, string = 'Normal body temperature range'"
                 }
             }
         ])
@@ -45,7 +45,7 @@ class testAgent(cs.agent.Agent):
             BodyTemp = health["BodyTemp"]
             if BodyTemp > 97 and  BodyTemp < 99:
                 self.output_stream.add_item({
-                    "temperature_value": BodyTemp
+                    "temperature_value": BodyTemp,
                     "Notice":"Normal body temperature range"
                     })
         self.input_stream.for_each(process_health)

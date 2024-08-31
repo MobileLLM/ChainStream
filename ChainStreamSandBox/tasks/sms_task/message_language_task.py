@@ -42,7 +42,7 @@ class testAgent(cs.agent.Agent):
         super().__init__("test_message_agent")
         self.input_stream = cs.get_stream(self,"all_sms")
         self.output_stream = cs.create_stream(self,"sms_language")
-
+        self.llm = cs.llm.get_model("Text")
     def start(self):
         def process_sms(sms):
             sms_text = sms["text"]

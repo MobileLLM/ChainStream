@@ -24,7 +24,7 @@ class WeatherTask7(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_temperature",
+                "stream_id": "temperature_over_30",
                 "description": "A stream of the temperature of the zones which is over 30 degree",
                 "fields": {
                     "temperature_over_30": "The temperature of the zone which is over 30, float",
@@ -40,7 +40,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.create_stream(self,"weather_temperature")
+        self.output_stream = cs.create_stream(self,"temperature_over_30")
     def start(self):
         def process_weather(weather):
             Temperature_C = weather["Temperature_C"]

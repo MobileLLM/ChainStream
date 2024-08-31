@@ -24,7 +24,7 @@ class HealthTask8(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "Overweight_BMI_category",
-                "description": "A stream of the risk level of the 'Overweight' BMI category data in every two seconds",
+                "description": "A stream of the risk level of the 'Overweight' BMI category data in every three seconds",
                 "fields": {
                     "risk_level": "The risk level of the checked 'Overweight' BMI category data, string"}
             }
@@ -41,12 +41,14 @@ class testAgent(cs.agent.Agent):
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
-            BMI_Category = health["BMI Category"]
-            if BMI_Category == "Overweight":  
-                self.output_stream.add_item({
-                    "risk_level": health["RiskLevel"]
-                    })
-        self.input_stream.batch(by_time=2).for_each(process_health)
+            health_list = health['item_list']
+            for health in health_list:
+                BMI_Category = health["BMI Category"]
+                if BMI_Category == "Overweight":  
+                    self.output_stream.add_item({
+                        "risk_level": health["RiskLevel"]
+                        })
+        self.input_stream.batch(by_time=3).for_each(process_health)
         '''
 
     def init_environment(self, runtime):

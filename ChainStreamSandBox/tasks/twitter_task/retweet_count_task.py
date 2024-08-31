@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_twitter_agent")
         self.input_stream = cs.get_stream(self,"all_tweets")
-        self.output_stream = cs.create_stream(self,"retweet_count")
+        self.output_stream = cs.create_stream(self,"retweet_count_more_than_0")
         self.llm = get_model("Text")
     def start(self):
         def process_tweet(tweets):

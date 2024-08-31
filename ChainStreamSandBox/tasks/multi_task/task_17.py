@@ -112,7 +112,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'Can you help me export the Export-Photoshop-Layer-For-Android project?',
+                        'text': 'Can you help me export the AnkiconnectAndroid project?',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
@@ -123,7 +123,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'We need to configure the ktor-api for the project.',
+                        'text': 'We need to configure the STM32F4 for the project.',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
@@ -134,13 +134,24 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'Please apply the hyper-named-css-colors to the design.',
+                        'text': 'Please apply the QQrobotFramework to the design.',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
                 ],
                 'topic': 'Work',
                 'id': 20003
+            },
+            {
+                'dialog': [
+                    {
+                        'text': 'The docker-nginx-angular project is really wonderful!',
+                        'act': 'directive',
+                        'emotion': 'excited'
+                    }
+                ],
+                'topic': 'Work',
+                'id': 20004
             }
         ]
 

@@ -27,15 +27,15 @@ class ArxivTask12(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "numbers_of_pages",
-                "description": "Arxiv articles titles with their number of pages extracted from the comments field, "
-                               "but only if the 'comments' field contains the keyword 'pages' (The format: ××× pages "
-                               "is included in the 'comments' field.).",
+                "stream_id": "comments_info_with_pages",
+                "description": "Arxiv articles titles with their comments field, but only if the 'comments' field "
+                               "contains the keyword 'pages' (The format: ××× pages is included in the 'comments' "
+                               "field.).",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "number_of_pages": "their number of pages extracted from the comments field, but only if the "
-                                       "'comments' field contains the keyword 'pages' (The format: ××× pages is "
-                                       "included in the 'comments' field.), string "
+                    "number_of_pages": "The information extracted from the comments field, but only if the 'comments' "
+                                       "field contains the keyword 'pages' (The format: '××× pages' is included in "
+                                       "the 'comments' field.), string "
                 }
             }
         ])
@@ -49,18 +49,17 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.create_stream(self, "numbers_of_pages")
+        self.output_stream = cs.create_stream(self, "comments_info_with_pages")
         self.llm = get_model("Text")
     def start(self):
         def process_paper(paper):
             paper_title = paper["title"]
             paper_comments = paper["comments"]      
             if paper_comments is not None: 
-                if "pages" in text:
-                    match = re.search(r'(\d+)\s*pages', text)
+                if "pages" in paper_comments:
                     self.output_stream.add_item({
                         "title": paper_title,
-                        "comments": match
+                        "comments": paper_comments
                     })
         self.input_stream.for_each(process_paper)
         
@@ -68,12 +67,12 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'numbers_of_pages')
+        self.output_paper_stream = cs.stream.create_stream(self, 'comments_info_with_pages')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['numbers_of_pages'].append(data)
+            self.output_record['comments_info_with_pages'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
@@ -81,12 +80,12 @@ class testAgent(cs.agent.Agent):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
 
     def init_output_stream(self, runtime):
-        self.output_paper_stream = cs.stream.get_stream(self, 'numbers_of_pages')
+        self.output_paper_stream = cs.stream.get_stream(self, 'comments_info_with_pages')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['numbers_of_pages'].append(data)
+            self.output_record['comments_info_with_pages'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 

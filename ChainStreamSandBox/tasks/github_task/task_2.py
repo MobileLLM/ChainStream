@@ -5,7 +5,7 @@ from ChainStreamSandBox.raw_data import GitHubData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
-random.seed(6666)
+random.seed(24)
 
 
 class GithubTask2(SingleAgentTaskConfigBase):
@@ -23,18 +23,18 @@ class GithubTask2(SingleAgentTaskConfigBase):
             "fields": {
                 "commit_count": "the number of the commits in the github repository, int",
                 "created_at": "the time that the github repository was created at using ISO 8601 datetime format, "
-                              "string",
+                              "datetime",
                 "name": "the name of the github repository, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "commit_most_this_year",
-                "description": "Ten GitHub repositories with the most commits in 2024, with every seven GitHub "
+                "description": "Ten GitHub repositories with the most commits in 2024, with every ten GitHub "
                                "repositories packaged into a batch after filtering for repositories created in 2024.",
                 "fields": {
                     "created_at": "the time that the github repository was created at using ISO 8601 datetime format, "
-                                  "string",
+                                  "datetime",
                     "name": "the name of the github repository, string",
                     "commit_count": "the number of the commits in the github repository, int"
                 }
@@ -55,13 +55,11 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def start(self):
         def count_stars(github_dicts):
             date = github_dicts['created_at']
-            if date.startswith("2024"):
-                return github_dicts
+            return github_dicts
         def count_commit(github_list):
             github_list2 = github_list['item_list']
             sorted_dicts = sorted(github_list2, key=lambda x: int(x['commit_count']), reverse=True)
             top_10_dicts = sorted_dicts[:10]
-            print(top_10_dicts)
             for github in top_10_dicts:
                 created_at = github.get('created_at')
                 commit_count = github.get('commit_count')
@@ -71,7 +69,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                     "name": name,
                     "commit_count": commit_count
                 })
-        self.github_input.for_each(count_stars).batch(by_count=7).for_each(count_commit)
+        self.github_input.for_each(count_stars).batch(by_count=10).for_each(count_commit)
         '''
 
     def init_environment(self, runtime):

@@ -40,7 +40,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.create_stream(self,"Humidity_pct_over_70")
+        self.output_stream = cs.create_stream(self,"Precipitation_over_5_mm")
     def start(self):
         def process_weather(weather):
             Precipitation_mm = weather["Precipitation_mm"]

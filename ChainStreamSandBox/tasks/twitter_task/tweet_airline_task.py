@@ -45,8 +45,8 @@ class testAgent(cs.agent.Agent):
         def process_tweet(tweets):
             airline = tweets["airline"]
             text = tweets["text"]
-            prompt = "Is the airline mentioned in the tweet American?Only answer y or n"
-            res = cs.llm.query(cs.make_prompt(prompt,airline))
+            prompt = "Is the airline mentioned in the tweet American?Only answer y or n."
+            res = self.llm.query(cs.llm.make_prompt(prompt,airline))
             if res.lower() == "y":          
                 self.output_stream.add_item({
                     "text": text,

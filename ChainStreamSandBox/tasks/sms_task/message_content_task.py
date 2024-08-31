@@ -25,10 +25,10 @@ class MessageTask1(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "Chinese_text",
-                "description": "A stream of the text of the messages translated into Chinese.",
+                "stream_id": "German_text",
+                "description": "A stream of the text of the messages translated into German.",
                 "fields": {
-                    "Chinese_text": "The Chinese text of the message, string"
+                    "German_text": "The German text of the message, string"
                 }
             }
         ])
@@ -40,15 +40,16 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_message_agent")
         self.input_stream = cs.get_stream(self,"all_sms")
-        self.output_stream = cs.create_stream(self,"Chinese_text")
+        self.output_stream = cs.create_stream(self,"German_text")
+        self.llm = cs.llm.get_model("Text")
 
     def start(self):
         def process_sms(sms):
             sms_text = sms["text"]
-            prompt = 'Please translate the following text into Chinese.Only give me the translated text.' 
+            prompt = 'Please translate the following text into German.Only give me the translated text.' 
             res = self.llm.query(cs.llm.make_prompt(prompt, sms_text))
             self.output_stream.add_item({
-                "Chinese_text": res
+                "German_text": res
             })
         self.input_stream.for_each(process_sms)
 
@@ -56,12 +57,12 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
-        self.output_sms_stream = cs.stream.create_stream(self, 'Chinese_text')
+        self.output_sms_stream = cs.stream.create_stream(self, 'German_text')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['Chinese_text'].append(data)
+            self.output_record['German_text'].append(data)
 
         self.output_sms_stream.for_each(record_output)
 
@@ -69,12 +70,12 @@ class testAgent(cs.agent.Agent):
         self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
 
     def init_output_stream(self, runtime):
-        self.output_sms_stream = cs.stream.get_stream(self, 'Chinese_text')
+        self.output_sms_stream = cs.stream.get_stream(self, 'German_text')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['Chinese_text'].append(data)
+            self.output_record['German_text'].append(data)
 
         self.output_sms_stream.for_each(record_output)
 

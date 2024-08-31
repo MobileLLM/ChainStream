@@ -46,7 +46,7 @@ class testAgent(cs.agent.Agent):
         def process_tweet(tweets):
             text = tweets["text"]
             prompt = 'Please classify the sentiment of the following as positive, negative, or neutral. Only give me the choice.'
-            res = cs.llm.query(cs.make_prompt(prompt, tweets_text))        
+            res = self.llm.query(cs.llm.make_prompt(prompt, text))        
             self.output_stream.add_item({
                 "text": text,
                 "airline_sentiment": res

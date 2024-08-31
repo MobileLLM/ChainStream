@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import Ego4DData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class WorkReminderTask(SingleAgentTaskConfigBase):
@@ -75,7 +72,7 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
             if is_office_event is not None:
                 videos = self.video_buffer.get_all()
                 for video in videos:
-                    prompt = "Am I talking in the office?Simply answer y or n"
+                    prompt = "Am I talking in the office? Simply answer y or n"
                     res = self.llm.query(cs.llm.make_prompt(video['frame'], prompt))
                     if res.lower() == 'y':
                         self.command_output.add_item({

@@ -85,6 +85,8 @@ class ActivityDistanceAgent(cs.agent.Agent):
         def record_output(data):
             self.output_record['calories_burned_most'].append(data)
 
+        self.output_activity_stream.for_each(record_output)
+
     def start_task(self, runtime) -> dict:
         activity_dict = {'all_activities': []}
         for activity in self.activity_data:

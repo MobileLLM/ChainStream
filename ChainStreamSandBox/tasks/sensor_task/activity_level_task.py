@@ -45,7 +45,7 @@ class testAgent(cs.agent.Agent):
             sorted_list = sorted(health_list, key=lambda x: x['Physical Activity Level'], reverse=True)
             for health in sorted_list: 
                 self.output_stream.add_item({
-                    "activity_level": health['Physical_Activity_Level']
+                    "activity_level": health['Physical Activity Level']
                     })
         self.input_stream.batch(by_count=6).for_each(process_health)
         '''
