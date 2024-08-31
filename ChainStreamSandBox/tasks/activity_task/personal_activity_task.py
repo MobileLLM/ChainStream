@@ -43,7 +43,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_distance_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "activity_for_each_user")
+        self.output_stream = cs.create_stream(self, "activity_for_each_user")
 
     def start(self):
         def group_by_user(activities_list):

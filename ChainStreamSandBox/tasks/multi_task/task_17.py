@@ -19,8 +19,8 @@ class MultiTask2(SingleAgentTaskConfigBase):
         self.input_github_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
-                                modality=Modality_Task_tag.Text)
+                                domain=str([Domain_Task_tag.Daily_information, Domain_Task_tag.Office]),
+                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Audio]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
             "description": "All dialogues record",
@@ -56,7 +56,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.dialogues_input = cs.get_stream(self, "all_dialogues")
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "github_search")
+        self.github_output = cs.create_stream(self, "github_search")
         self.github_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
 

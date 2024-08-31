@@ -46,7 +46,7 @@ class AgentExampleForSensorTask3(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_gps_task_2"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_locations")
-        self.sensor_output = cs.get_stream(self, "street_of_school")
+        self.sensor_output = cs.create_stream(self, "street_of_school")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

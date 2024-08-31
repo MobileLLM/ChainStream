@@ -16,7 +16,7 @@ class ArxivTask1(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Office,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
@@ -47,7 +47,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_arxiv_task_1"):
         super().__init__(agent_id)
         self.arxiv_input = cs.get_stream(self, "all_arxiv")
-        self.arxiv_output = cs.get_stream(self, "summary_of_arxiv")
+        self.arxiv_output = cs.create_stream(self, "summary_of_arxiv")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

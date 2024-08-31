@@ -15,7 +15,7 @@ class NewsTask1(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
@@ -47,7 +47,7 @@ class AgentExampleForNewsTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_news_task_1"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
-        self.news_output = cs.get_stream(self, "summary_from_dialogue")
+        self.news_output = cs.create_stream(self, "summary_from_dialogue")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

@@ -16,7 +16,7 @@ class NewsTask5(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.input_news_stream = None
         self.output_local_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
@@ -30,11 +30,11 @@ class NewsTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_output",
-                "description": "A stream of the summaries on the CEOs' opinions on Techtronic, with filtered "
-                               "Techtronic news sent in batches every second",
+                "description": "A stream of the summaries on the CEOs' opinions on 'POLITICS', with filtered "
+                               "'POLITICS' news sent in batches every second",
                 "fields": {
                     "headline": "the headline of the news event, string",
-                    "summary": "the summary of the CEOs' opinions on Techtronic, string"
+                    "summary": "the summary of the CEOs' opinions on 'POLITICS', string"
                 }
             }
         ])
@@ -47,7 +47,7 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
         self.message_buffer = Buffer()
-        self.output_local_stream = cs.get_stream(self, "summary_output")
+        self.output_local_stream = cs.create_stream(self, "summary_output")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -65,7 +65,8 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
 
         def extract_type(news):
             news_type = news['category']
-            if news_type == "Techtronic":
+            print(news_type)
+            if news_type == "POLITICS":
                 return news
 
         self.news_input.for_each(extract_type).batch(by_time=1).for_each(summary_description)

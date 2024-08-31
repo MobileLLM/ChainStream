@@ -46,7 +46,7 @@ class AgentExampleForStockTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_stock_task_1"):
         super().__init__(agent_id)
         self.stock_input = cs.get_stream(self, "all_stock")
-        self.stock_output = cs.get_stream(self, "up_or_down")
+        self.stock_output = cs.create_stream(self, "up_or_down")
         self.llm = cs.llm.get_model("Text")
 
         def filter_mlm_stocks(stock_dict):

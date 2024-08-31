@@ -19,7 +19,7 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Living, Domain_Task_tag.Location]),
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_video",
             "description": "all video data in my kitchen",
@@ -54,7 +54,7 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.message_output = cs.get_stream(self, "alarm_message")
+        self.message_output = cs.create_stream(self, "alarm_message")
         self.video_buffer = Buffer()
         self.llm = cs.llm.get_model("image")
 

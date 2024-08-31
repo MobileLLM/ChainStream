@@ -46,7 +46,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("calories_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "calories_burned_most")
+        self.output_stream = cs.create_stream(self, "calories_burned_most")
 
     def start(self):
         def process_activity(activity_dict):

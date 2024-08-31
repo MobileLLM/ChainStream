@@ -36,7 +36,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_wifi_agent")
         self.input_stream = cs.get_stream(self,"all_wifi")
-        self.output_stream = cs.get_stream(self,"wifi_channel")
+        self.output_stream = cs.create_stream(self,"wifi_channel")
     def start(self):
         def process_wifi(wifi):
             Channel = wifi["Channel"]        

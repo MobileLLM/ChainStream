@@ -18,14 +18,14 @@ class ArxivData:
                 item = json.loads(line)
                 if 'categories' in item and 'cs' in item['categories']:
                     paper = {
-                        'authors': item['authors'],
-                        'title': item['title'],
-                        'abstract': item['abstract'],
-                        'comments': item['comments'],
-                        'journal-ref': item['journal-ref'],
-                        'license': item['license'],
-                        'versions': item['versions'],
-                        'update_date': item['update_date']
+                        'authors': str(item['authors']),
+                        'title': str(item['title']),
+                        'abstract': str(item['abstract']),
+                        'comments': str(item['comments']),
+                        'journal-ref': str(item['journal-ref']),
+                        'license': str(item['license']),
+                        'versions': str(item['versions']),
+                        'update_date': str(item['update_date'])
                     }
                     cs_papers.append(paper)
 

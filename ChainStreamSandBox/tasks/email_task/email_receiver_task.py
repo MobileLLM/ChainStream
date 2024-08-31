@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_email_agent")
         self.input_stream = cs.get_stream(self,"all_emails")
-        self.output_stream = cs.get_stream(self,"emails_receiver")
+        self.output_stream = cs.create_stream(self,"emails_receiver")
         self.llm = get_model("Text")
     def start(self):
         def process_email(email):

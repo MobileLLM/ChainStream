@@ -19,7 +19,7 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.input_gps_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_location",
             "description": "all of my gps information",
@@ -61,9 +61,9 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_first_person")
         self.gps_input = cs.get_stream(self, "all_location")
-        self.command_output = cs.get_stream(self, "auto_command")
+        self.command_output = cs.create_stream(self, "auto_command")
         self.video_buffer = Buffer()
-        self.is_office_event = cs.get_stream(self, "is_office_event")
+        self.is_office_event = cs.create_stream(self, "is_office_event")
         self.llm = cs.llm.get_model("image")
 
     def start(self):

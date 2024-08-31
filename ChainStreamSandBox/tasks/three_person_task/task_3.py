@@ -38,13 +38,13 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.surveillance_input = cs.get_stream(self, "third_person")
-        self.analysis_output = cs.get_stream(self, "detect_person")
+        self.analysis_output = cs.create_stream(self, "detect_person")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
         def analyze_surveillance(third_person_data):
-            prompt = "The following images were captured by a surveillance camera at a secret base.Judge if there is "
-            "personnel in the secret base?simply answer y or n"
+            prompt = "The following images were captured by a surveillance camera at a secret base. Judge if there is "
+            "personnel in the secret base? Simply answer y or n"
             res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res

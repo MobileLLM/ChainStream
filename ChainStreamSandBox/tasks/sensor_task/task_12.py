@@ -48,7 +48,7 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_health_task_5"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_health")
-        self.sensor_output = cs.get_stream(self, "health_advice_for_engineers")
+        self.sensor_output = cs.create_stream(self, "health_advice_for_engineers")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

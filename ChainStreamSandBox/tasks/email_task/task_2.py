@@ -49,7 +49,7 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_email_task_2"):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
-        self.email_output = cs.get_stream(self, "purpose_of_work_email")
+        self.email_output = cs.create_stream(self, "purpose_of_work_email")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -74,13 +74,15 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
 
             
         def sum_by_content(emails):
-            content = [email['Content'] for email in emails['email_list']]
-            prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']. Please only give me the choice."
-            res = self.llm.query(cs.llm.make_prompt(content, prompt))
-            self.email_output.add_item({
-                "Content": content,
-                "purpose": res
-            })
+            print(emails)
+            for email in emails['email_list']:
+                content = email['Content']
+                prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']. Please only give me the choice."
+                res = self.llm.query(cs.llm.make_prompt(content, prompt))
+                self.email_output.add_item({
+                    "Content": content,
+                    "purpose": res
+                })
 
         self.email_input.for_each(filter_work).batch(by_count=2).for_each(filter_date).for_each(sum_by_content)
 '''

@@ -39,7 +39,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.screenshot_input = cs.get_stream(self, "desktop_screenshot")
-        self.analysis_output = cs.get_stream(self, "analysis_software")
+        self.analysis_output = cs.create_stream(self, "analysis_software")
         self.llm = cs.llm.get_model("image")
 
     def start(self):

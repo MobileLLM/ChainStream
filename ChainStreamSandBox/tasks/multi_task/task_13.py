@@ -19,7 +19,7 @@ class TrafficTask(SingleAgentTaskConfigBase):
         self.first_person_stream = None
         self.driving_state = None
         self.output_message_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Health,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_third_person",
@@ -62,13 +62,12 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         super().__init__(agent_id)
         self.third_person_input = cs.get_stream(self, "all_third_person")
         self.first_person_input = cs.get_stream(self, "all_first_person")
-        self.message_output = cs.get_stream(self, "output_messages")
-        self.driving_state = cs.get_stream(self, "driving_state")
+        self.message_output = cs.create_stream(self, "output_messages")
+        self.driving_state = cs.create_stream(self, "driving_state")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
         def check_accident(third_person_inputs):
-            print(third_person_inputs)
             if self.driving_state is not None:
                 for frame in third_person_inputs["frame"]:
                     prompt = "Is there a traffic accident ahead?Simply tell me y or n"

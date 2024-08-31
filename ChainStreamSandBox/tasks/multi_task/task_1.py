@@ -20,7 +20,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
-                                modality=Modality_Task_tag.Text)
+                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.GPS_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",
@@ -62,9 +62,9 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
         self.location_input = cs.get_stream(self, "all_location")
-        self.email_output = cs.get_stream(self, "auto_reply_in_office")
+        self.email_output = cs.create_stream(self, "auto_reply_in_office")
         self.email_buffer = Buffer()
-        self.is_office_event = cs.get_stream(self, "is_office_event")
+        self.is_office_event = cs.create_stream(self, "is_office_event")
         self.llm = cs.llm.get_model("Text")
         
     def start(self):

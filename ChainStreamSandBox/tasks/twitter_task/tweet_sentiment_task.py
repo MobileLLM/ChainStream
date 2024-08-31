@@ -17,17 +17,18 @@ class TweetTask6(SingleAgentTaskConfigBase):
             "stream_id": "all_tweets",
             "description": "A stream of twitter information",
             "fields": {
-                "airline_sentiment": "The sentiment of the twitter on airline, string",
                 "text": "The text of the tweet, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tweets_sentiment",
-                "description": "A stream of tweet texts with the sentiment analysis of the tweets",
+                "description": "A stream of tweet texts with the sentiment analysis chosen from positive, negative or "
+                               "neutral",
                 "fields": {
                     "text": "The text of the tweet, string",
-                    "airline_sentiment": "The sentiment analysed from the tweet on the airline, string"
+                    "airline_sentiment": "The sentiment analysed from the tweet on the airline chosen from positive, "
+                                         "negative or neutral, string "
                 }
             }
         ])
@@ -39,15 +40,16 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_twitter_agent")
         self.input_stream = cs.get_stream(self,"all_tweets")
-        self.output_stream = cs.get_stream(self,"tweets_sentiment")
+        self.output_stream = cs.create_stream(self,"tweets_sentiment")
         self.llm = get_model("Text")
     def start(self):
         def process_tweet(tweets):
-            airline_sentiment = tweets["airline_sentiment"]
-            text = tweets["text"]        
+            text = tweets["text"]
+            prompt = 'Please classify the sentiment of the following as positive, negative, or neutral. Only give me the choice.'
+            res = cs.llm.query(cs.make_prompt(prompt, tweets_text))        
             self.output_stream.add_item({
                 "text": text,
-                "airline_sentiment": airline_sentiment
+                "airline_sentiment": res
             })
         self.input_stream.for_each(process_tweet)
         '''

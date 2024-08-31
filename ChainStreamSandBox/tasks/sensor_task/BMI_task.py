@@ -11,7 +11,7 @@ class HealthTask8(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_health_stream = None
         self.input_health_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Health,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Health,
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
@@ -37,7 +37,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"Overweight_BMI_category")
+        self.output_stream = cs.create_stream(self,"Overweight_BMI_category")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):

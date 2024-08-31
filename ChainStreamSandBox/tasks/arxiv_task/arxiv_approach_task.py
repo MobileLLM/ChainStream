@@ -45,7 +45,7 @@ class TestAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "tag_approach")
+        self.output_stream = cs.create_stream(self, "tag_approach")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

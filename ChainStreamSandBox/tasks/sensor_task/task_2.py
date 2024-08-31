@@ -30,10 +30,10 @@ class GPSTask2(SingleAgentTaskConfigBase):
             {
                 "stream_id": "nearest_hotel",
                 "description": "A stream of the hotel around according to the street address,with every two copies of "
-                               "location data packaged as a batch after filtering hotel property type",
+                               "location data packaged as a batch after filtering 'Low-Rise Multifamily' property type",
                 "fields": {
                     "Street Address": "the street address of my location",
-                    "PropertyName": "the names of the hotels around, string"
+                    "PropertyName": "the names of the 'Low-Rise Multifamily' around, string"
                 }
             }
         ])
@@ -46,13 +46,13 @@ class AgentExampleForSensorTask2(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_gps_task_2"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_locations")
-        self.sensor_output = cs.get_stream(self, "nearest_hotel")
+        self.sensor_output = cs.create_stream(self, "nearest_hotel")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
         def filter_hotel(location):
             type = location['PrimaryPropertyType']
-            if type == "Hotel":
+            if type == "Low-Rise Multifamily":
                 return location
 
         def nearest_hotel(location_list):

@@ -60,7 +60,7 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         super().__init__(agent_id)
         self.message_input = cs.get_stream(self, "all_message")
         self.stock_input = cs.get_stream(self, "all_stock")
-        self.stock_output = cs.get_stream(self, "stock_output")
+        self.stock_output = cs.create_stream(self, "stock_output")
         self.message_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
 

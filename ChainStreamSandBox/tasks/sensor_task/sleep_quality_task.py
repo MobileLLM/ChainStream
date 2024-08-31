@@ -17,15 +17,16 @@ class HealthTask18(SingleAgentTaskConfigBase):
             "stream_id": "all_health",
             "description": "A stream of health information",
             "fields": {
-                "Quality of Sleep": "The evaluation of the quality of sleep, int"
+                "Quality of Sleep": "The evaluation of the quality of sleep ranking from 0 to 10, int"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "sleep_quality",
-                "description": "A stream of the evaluation of the quality of sleep",
+                "stream_id": "quality_of_sleep_lower_than_6",
+                "description": "A stream of the evaluation of the quality of sleep if the level is lower than 6",
                 "fields": {
-                    "Quality of Sleep": "The evaluation of the quality of sleep, int"}
+                    "quality_of_sleep_lower_than_6": "The evaluation of the quality of sleep if the level is lower "
+                                                     "than 6, int"}
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -36,24 +37,25 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"sleep_quality")
+        self.output_stream = cs.create_stream(self,"quality_of_sleep_lower_than_6")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
-            Quality_of_Sleep = health["Quality of Sleep"]        
-            self.output_stream.add_item({
-                "Quality of Sleep": Quality_of_Sleep
-                })
+            Quality_of_Sleep = health["Quality of Sleep"]
+            if Quality_of_Sleep < 6: 
+                self.output_stream.add_item({
+                    "quality_of_sleep_lower_than_6": Quality_of_Sleep
+                    })
         self.input_stream.for_each(process_health)
         '''
 
     def init_environment(self, runtime):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_health_stream = cs.stream.create_stream(self, 'sleep_quality')
+        self.output_health_stream = cs.stream.create_stream(self, 'quality_of_sleep_lower_than_6')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['sleep_quality'].append(data)
+            self.output_record['quality_of_sleep_lower_than_6'].append(data)
 
         self.output_health_stream.for_each(record_output)
 
@@ -61,11 +63,11 @@ class testAgent(cs.agent.Agent):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
 
     def init_output_stream(self, runtime):
-        self.output_health_stream = cs.stream.get_stream(self, 'sleep_quality')
+        self.output_health_stream = cs.stream.get_stream(self, 'quality_of_sleep_lower_than_6')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['sleep_quality'].append(data)
+            self.output_record['quality_of_sleep_lower_than_6'].append(data)
 
         self.output_health_stream.for_each(record_output)
 

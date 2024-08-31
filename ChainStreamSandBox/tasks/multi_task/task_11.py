@@ -60,8 +60,8 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         super().__init__(agent_id)
         self.classroom_input = cs.get_stream(self, "all_classroom")
         self.screenshot_input = cs.get_stream(self, "all_screenshot")
-        self.numbers_output = cs.get_stream(self, "students_number")
-        self.warning_board_output = cs.get_stream(self, "warning_board")
+        self.numbers_output = cs.create_stream(self, "students_number")
+        self.warning_board_output = cs.create_stream(self, "warning_board")
         self.llm = cs.llm.get_model("image")
         self.output_buffer = Buffer()
     def start(self):

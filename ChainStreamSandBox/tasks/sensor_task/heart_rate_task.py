@@ -36,7 +36,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"HeartRate_over_75")
+        self.output_stream = cs.create_stream(self,"HeartRate_over_75")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):

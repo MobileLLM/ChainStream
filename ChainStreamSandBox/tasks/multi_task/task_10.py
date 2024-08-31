@@ -21,7 +21,7 @@ class RemindDriverTask(SingleAgentTaskConfigBase):
         self.is_tired_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Activity, Domain_Task_tag.Location]),
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "GPS data for navigation of the driver",
@@ -76,9 +76,9 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         self.gps_input = cs.get_stream(self, "all_gps")
         self.monitor_input = cs.get_stream(self, "all_monitor")
         self.music_input = cs.get_stream(self, "music_data")
-        self.music_output = cs.get_stream(self, "auto_play_music")
+        self.music_output = cs.create_stream(self, "auto_play_music")
         self.music_buffer = Buffer()
-        self.is_tired = cs.get_stream(self, "is_tired")
+        self.is_tired = cs.create_stream(self, "is_tired")
         self.llm = cs.llm.get_model("image")
 
     def start(self):

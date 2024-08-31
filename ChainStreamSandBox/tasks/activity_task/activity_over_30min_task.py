@@ -45,7 +45,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_time_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "activity_over_30min")
+        self.output_stream = cs.create_stream(self, "activity_over_30min")
 
     def start(self):
         def process_activity(activity):

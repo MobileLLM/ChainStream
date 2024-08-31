@@ -20,17 +20,16 @@ class MessageTask3(SingleAgentTaskConfigBase):
             "stream_id": "all_sms",
             "description": "A stream of messages information",
             "fields": {
-                "text": "The content of the message, string",
-                "language": "The language of the message, string"
+                "text": "The content of the message, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_language",
-                "description": "A stream of the analysis of the language used in the message reports",
+                "description": "A stream of the analysis of the language used in the message",
                 "fields": {
                     "text": "The content of the message, string",
-                    "language": "The analysis of the language used in the message report, string"
+                    "language": "The analysis of the language used in the message, string"
                 }
             }
         ])
@@ -42,15 +41,16 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_message_agent")
         self.input_stream = cs.get_stream(self,"all_sms")
-        self.output_stream = cs.get_stream(self,"sms_language")
+        self.output_stream = cs.create_stream(self,"sms_language")
 
     def start(self):
         def process_sms(sms):
-            sms_language = sms["language"]
             sms_text = sms["text"]
+            prompt = 'Please tell me the language of the following text.Only tell me the language.' 
+            res = self.llm.query(cs.llm.make_prompt(prompt, sms_text))
             self.output_stream.add_item({
                 "text": sms_text,
-                "language": sms_language
+                "language": res
             })
         self.input_stream.for_each(process_sms)
 

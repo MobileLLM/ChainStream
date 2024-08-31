@@ -44,16 +44,9 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "arxiv_with_more_than_three_authors")
+        self.output_stream = cs.create_stream(self, "arxiv_with_more_than_three_authors")
         self.llm = get_model("Text")
     def start(self):
-        # def process_paper(paper):
-        #     paper_title = paper["title"]
-        #     paper_authors = paper["authors"]      
-        #     prompt = "Now I give you the information on the authors of these papers.Are there more than three authors? Please simply answer y or n."
-        #     response = self.llm.query(cs.llm.make_prompt(prompt,paper_authors))
-        #     if response.lower()== "y":
-        #         return paper
         def process_paper(paper):
             paper_title = paper["title"]
             paper_authors = paper["authors"]

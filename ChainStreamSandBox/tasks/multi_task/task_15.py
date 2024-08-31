@@ -80,12 +80,12 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         super().__init__(agent_id)
         self.gps_input = cs.get_stream(self, "all_gps")
         self.screenshot_input = cs.get_stream(self, "all_screenshot")
-        self.music_output = cs.get_stream(self, "auto_play_music")
+        self.music_output = cs.create_stream(self, "auto_play_music")
         self.scene_input = cs.get_stream(self, "all_scene")
         self.music_buffer = Buffer()
         self.llm = cs.llm.get_model("image")
-        self.is_travel = cs.get_stream(self, "is_travel")
-        self.is_listening = cs.get_stream(self, "is_listening")
+        self.is_travel = cs.create_stream(self, "is_travel")
+        self.is_listening = cs.create_stream(self, "is_listening")
 
     def start(self):
         def check_listening(ui_data):

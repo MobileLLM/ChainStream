@@ -36,7 +36,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_gps_agent")
         self.input_stream = cs.get_stream(self,"all_gps")
-        self.output_stream = cs.get_stream(self,"gps_longitude")
+        self.output_stream = cs.create_stream(self,"gps_longitude")
         self.llm = get_model("Text")
     def start(self):
         def process_gps(gps):

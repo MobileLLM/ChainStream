@@ -48,7 +48,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "top_ten_stars_github_repository")
+        self.github_output = cs.create_stream(self, "top_ten_stars_github_repository")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

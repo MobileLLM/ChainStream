@@ -48,7 +48,7 @@ class AgentExampleForSensorTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_weather_task_1"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_weather")
-        self.sensor_output = cs.get_stream(self, "clothing_recommendation")
+        self.sensor_output = cs.create_stream(self, "clothing_recommendation")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

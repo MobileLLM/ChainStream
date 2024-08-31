@@ -44,7 +44,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "arxiv_website_url")
+        self.output_stream = cs.create_stream(self, "arxiv_website_url")
         self.llm = get_model("Text")
     def start(self):
         def process_paper(paper):

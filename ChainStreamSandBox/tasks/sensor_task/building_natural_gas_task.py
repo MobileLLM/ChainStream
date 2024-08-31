@@ -38,15 +38,15 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_landmark_agent")
         self.input_stream = cs.get_stream(self,"all_landmarks")
-        self.output_stream = cs.get_stream(self,"natural_gas_over_5k")
+        self.output_stream = cs.create_stream(self,"natural_gas_over_5k")
         self.llm = get_model("Text")
     def start(self):
         def process_landmark(landmark):
             NaturalGas = landmark["NaturalGas(therms)"]
-            if NaturalGas > 5000:  
-            self.output_stream.add_item({
-                "natural_gas_over_5k": NaturalGas
-            })
+            if NaturalGas > 5000: 
+                self.output_stream.add_item({
+                    "natural_gas_over_5k": NaturalGas
+                })
         self.input_stream.for_each(process_landmark)
 
         '''

@@ -39,7 +39,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_landmark_agent")
         self.input_stream = cs.get_stream(self,"all_landmarks")
-        self.output_stream = cs.get_stream(self,"floors_over_10")
+        self.output_stream = cs.create_stream(self,"floors_over_10")
         self.llm = get_model("Text")
     def start(self):
         def process_landmark(landmark):

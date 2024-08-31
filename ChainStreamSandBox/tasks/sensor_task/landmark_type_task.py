@@ -11,7 +11,7 @@ class GPSTask17(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_landmark_stream = None
         self.input_landmark_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Location,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Location,
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
@@ -38,7 +38,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_landmark_agent")
         self.input_stream = cs.get_stream(self,"all_landmarks")
-        self.output_stream = cs.get_stream(self,"same_type_landmarks")
+        self.output_stream = cs.create_stream(self,"same_type_landmarks")
         self.llm = get_model("Text")
     def start(self):
         def grouped_landmark_type(landmark):

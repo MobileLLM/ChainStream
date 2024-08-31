@@ -46,7 +46,7 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_email_task_3"):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
-        self.email_output = cs.get_stream(self, "summary_by_receiver")
+        self.email_output = cs.create_stream(self, "summary_by_receiver")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

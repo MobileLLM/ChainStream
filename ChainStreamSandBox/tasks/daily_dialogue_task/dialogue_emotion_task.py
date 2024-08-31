@@ -39,7 +39,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_dialogues")
-        self.output_stream = cs.get_stream(self,"dialogues_emotion")
+        self.output_stream = cs.create_stream(self,"dialogues_emotion")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

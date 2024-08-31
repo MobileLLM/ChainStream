@@ -182,7 +182,8 @@ def load_all_results(base_file_path):
         "result-langchain_zeroshot",
         "result-chainstream_cot",
         "result-chainstream_cot_1shot",
-        "result-gpt-4o"
+        "result-gpt-4o",
+        "result-chainstream_feedback_with_example"
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -225,6 +226,8 @@ def rename_generator(name):
         return "LC-0shot"
     elif name == "result-gpt-4o":
         return "GPT-4o-0shot"
+    elif name == "result-chainstream_feedback_with_example":
+        return "CS-Feedback-Example"
     raise ValueError("Invalid generator name")
 
 
@@ -326,6 +329,8 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "Py-0shot"
         elif generator == "gpt-4o_native_gpt_4o":
             return "GPT-4o-0shot"
+        elif generator == "chainstream feedback with example":
+            return "CS-Feedback-Example"
         else:
             raise ValueError("Invalid generator name")
 
@@ -444,6 +449,6 @@ if __name__ == '__main__':
     # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
 
     draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
-    # draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
+    draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
 
-    # draw_success_rate(base_file_path)
+    draw_success_rate(base_file_path)

@@ -55,7 +55,7 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.message_output = cs.get_stream(self, "reminder")
+        self.message_output = cs.create_stream(self, "reminder")
         self.video_buffer = Buffer()
         self.llm = cs.llm.get_model("image")
 

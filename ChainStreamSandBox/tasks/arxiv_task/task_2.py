@@ -15,7 +15,7 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Office,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
@@ -28,15 +28,15 @@ class ArxivTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_research_method",
-                "description": "A stream of research methods for arxiv articles on the math topic, with articles "
-                               "filtered for the math topic first, then packaged into batches of every two articles, "
-                               "and finally summarized.",
+                "description": "A stream of research methods for arxiv articles on the computer science topic, "
+                               "with articles filtered for the computer science topic first, then packaged into "
+                               "batches of every two articles, and finally summarized.",
                 "fields": {
-                    "title": "the title of each arxiv article on math topic, string",
-                    "method": "the research method of each arxiv article on math topic chosen from ['Experimental "
-                              "Evaluation', 'Theoretical Research', 'System Implementation', 'Data Analysis and "
-                              "Mining', 'Simulation and Modeling', 'User Study', 'Literature Review'] based on "
-                              "the abstract, string "
+                    "title": "the title of each arxiv article on computer science topic, string",
+                    "method": "the research method of each arxiv article on computer science topic chosen from ["
+                              "'Experimental Evaluation', 'Theoretical Research', 'System Implementation', "
+                              "'Data Analysis and Mining', 'Simulation and Modeling', 'User Study', 'Literature "
+                              "Review'] based on the abstract, string "
                 }
             }
         ])
@@ -49,13 +49,13 @@ class AgentExampleForArxivTask2(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_arxiv_task_2"):
         super().__init__(agent_id)
         self.arxiv_input = cs.get_stream(self, "all_arxiv")
-        self.arxiv_output = cs.get_stream(self, "arxiv_research_method")
+        self.arxiv_output = cs.create_stream(self, "arxiv_research_method")
 
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
         def filter_topic(paper):
-            prompt = "Is this paper on math? answer y or n"
+            prompt = "Is this paper on computer science? answer y or n"
             res = self.llm.query(cs.llm.make_prompt(paper['title'], prompt))
             if res.lower() == 'y':
                 return paper

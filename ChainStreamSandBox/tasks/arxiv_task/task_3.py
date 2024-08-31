@@ -15,7 +15,7 @@ class ArxivTask3(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Office,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
@@ -30,8 +30,8 @@ class ArxivTask3(SingleAgentTaskConfigBase):
             {
                 "stream_id": "main_idea_by_Victor_Brunton",
                 "description": "A stream of main ideas from arxiv articles written by Victor Brunton, with articles "
-                               "filtered for the author Victor Brunton first, then packaged into batches of every two "
-                               "articles, and finally summarized by the abstracts.",
+                               "filtered for the author Victor Brunton first, then packaged into batches of every "
+                               "three articles, and finally summarized by the abstracts.",
                 "fields": {
                     "title": "the title of each arxiv article, string",
                     "main_idea": "main ideas of the arxiv articles written by Victor Brunton and summarized by the "
@@ -48,7 +48,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_arxiv_task_3"):
         super().__init__(agent_id)
         self.arxiv_input = cs.get_stream(self, "all_arxiv")
-        self.arxiv_output = cs.get_stream(self, "main_idea_by_Victor_Brunton")
+        self.arxiv_output = cs.create_stream(self, "main_idea_by_Victor_Brunton")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -67,7 +67,7 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
                     "title": title,
                     "main_idea": res
                 })
-        self.arxiv_input.for_each(filter_authors).batch(by_count=2).for_each(sum_on_paper)
+        self.arxiv_input.for_each(filter_authors).batch(by_count=3).for_each(sum_on_paper)
         '''
 
     def init_environment(self, runtime):
@@ -95,6 +95,39 @@ class AgentExampleForArxivTask1(cs.agent.Agent):
         self.output_paper_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
+        data = [
+            {
+                "authors": "Victor Brunton",
+                "title": "Advanced Data Analysis Techniques",
+                "abstract": "This article explores advanced techniques in data analysis, including machine learning algorithms and statistical methods. We provide case studies to illustrate practical applications in various fields.",
+                "comments": "Preliminary findings; further research needed.",
+                "journal-ref": "Journal of Data Science, Vol. 12, pp. 45-60, 2023",
+                "license": "http://example.org/licenses/creative-commons/1.0/",
+                "versions": "[{'version': 'v1', 'created': 'Mon, 01 Feb 2023 09:00:00 GMT'}]",
+                "update_date": "2023-02-01"
+            },
+            {
+                "authors": "Victor Brunton, Alice Smith",
+                "title": "Data Visualization Techniques",
+                "abstract": "This paper discusses various techniques for effective data visualization, focusing on interactive and dynamic visualizations. Examples from recent projects are included to demonstrate the impact of visualization on data interpretation.",
+                "comments": "Draft version; to be updated with new examples.",
+                "journal-ref": "Data Science and Analytics, Vol. 8, pp. 101-115, 2022",
+                "license": "http://example.org/licenses/nonexclusive-distrib/1.0/",
+                "versions": "[{'version': 'v1', 'created': 'Tue, 15 Nov 2022 10:30:00 GMT'}]",
+                "update_date": "2022-11-15"
+            },
+            {
+                "authors": "Victor Brunton, John Doe",
+                "title": "Machine Learning in Healthcare",
+                "abstract": "The article reviews the application of machine learning techniques in the healthcare industry, covering both current trends and future potential. Case studies from various healthcare settings are analyzed.",
+                "comments": "For review; suggestions welcomed.",
+                "journal-ref": "Healthcare Technology Review, Vol. 6, pp. 78-89, 2024",
+                "license": "http://example.org/licenses/public-domain/1.0/",
+                "versions": "[{'version': 'v1', 'created': 'Wed, 05 Jun 2024 14:45:00 GMT'}]",
+                "update_date": "2024-06-05"
+            }
+        ]
+        self.paper_data.extend(data)
         sent_papers = {'all_arxiv': []}
         for paper in self.paper_data:
             sent_papers['all_arxiv'].append(paper)

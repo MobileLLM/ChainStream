@@ -19,7 +19,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Living, Domain_Task_tag.Weather]),
-                                modality=Modality_Task_tag.Text)
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Weather_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps data",
@@ -56,7 +56,7 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         super().__init__(agent_id)
         self.weather_input = cs.get_stream(self, "all_weather")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.action_output = cs.get_stream(self, "auto_close_window")
+        self.action_output = cs.create_stream(self, "auto_close_window")
         self.weather_buffer = Buffer()
         self.llm = cs.llm.get_model("text")
 

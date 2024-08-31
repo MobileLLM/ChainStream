@@ -46,7 +46,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_steps_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "steps_over_5k")
+        self.output_stream = cs.create_stream(self, "steps_over_5k")
 
     def start(self):
         def process_activity(activity):

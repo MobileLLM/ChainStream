@@ -23,11 +23,12 @@ class TweetTask1(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "retweet_count",
-                "description": "A stream of tweet texts with the counting numbers of retweet",
+                "stream_id": "retweet_count_more_than_0",
+                "description": "Filter the stream of tweet texts to include only those tweets that have more than 0 "
+                               "retweets.",
                 "fields": {
                     "text": "The text of the tweet, string",
-                    "retweet_count": "The number of the retweet, int"
+                    "retweet_count": "The number of the retweet which is more than 0, int"
                 }
             }
         ])
@@ -40,26 +41,27 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_twitter_agent")
         self.input_stream = cs.get_stream(self,"all_tweets")
-        self.output_stream = cs.get_stream(self,"retweet_count")
+        self.output_stream = cs.create_stream(self,"retweet_count")
         self.llm = get_model("Text")
     def start(self):
         def process_tweet(tweets):
             retweet_count = tweets["retweet_count"]
-            text = tweets["text"]  
-            self.output_stream.add_item({
-                "text": text,
-                "retweet_count": retweet_count
-            })
+            text = tweets["text"]
+            if retweet_count > 0:
+                self.output_stream.add_item({
+                    "text": text,
+                    "retweet_count": retweet_count
+                })
         self.input_stream.for_each(process_tweet)
         '''
 
     def init_environment(self, runtime):
         self.input_tweet_stream = cs.stream.create_stream(self, 'all_tweets')
-        self.output_tweet_stream = cs.stream.create_stream(self, 'retweet_count')
+        self.output_tweet_stream = cs.stream.create_stream(self, 'retweet_count_more_than_0')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['retweet_count'].append(data)
+            self.output_record['retweet_count_more_than_0'].append(data)
 
         self.output_tweet_stream.for_each(record_output)
 
@@ -67,11 +69,11 @@ class testAgent(cs.agent.Agent):
         self.input_tweet_stream = cs.stream.create_stream(self, 'all_tweets')
 
     def init_output_stream(self, runtime):
-        self.output_tweet_stream = cs.stream.get_stream(self, 'retweet_count')
+        self.output_tweet_stream = cs.stream.get_stream(self, 'retweet_count_more_than_0')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['retweet_count'].append(data)
+            self.output_record['retweet_count_more_than_0'].append(data)
 
         self.output_tweet_stream.for_each(record_output)
 

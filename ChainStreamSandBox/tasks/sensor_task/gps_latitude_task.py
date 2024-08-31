@@ -39,14 +39,14 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_gps_agent")
         self.input_stream = cs.get_stream(self,"all_gps")
-        self.output_stream = cs.get_stream(self,"gps_latitude")
+        self.output_stream = cs.create_stream(self,"country_estimation")
         self.llm = get_model("Text")
     def start(self):
         def process_gps(gps):
             gps_latitude = gps["CapitalLatitude"]
             gps_longitude =  gps["CapitalLongitude"]
             prompt = 'Please determine which country I am in based on the latitude and longitude.Only tell me the name of the country.'
-            response = self.llm.query(cs.llm.make_prompt(prompt,gps_latitude,gps_longitude))  
+            response = self.llm.query(cs.llm.make_prompt(prompt,str(gps_latitude),str(gps_longitude)))  
             self.output_stream.add_item({
                 "country_estimation": response
             })

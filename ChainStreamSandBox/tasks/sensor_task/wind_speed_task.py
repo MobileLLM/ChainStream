@@ -40,7 +40,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.get_stream(self,"weather_wind_speed")
+        self.output_stream = cs.create_stream(self,"weather_wind_speed")
     def start(self):
         def process_weather(weather):
             Wind_Speed_kmh = weather["Wind_Speed_kmh"]
