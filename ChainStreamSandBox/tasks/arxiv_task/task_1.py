@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 import time
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ArxivTask1(SingleAgentTaskConfigBase):

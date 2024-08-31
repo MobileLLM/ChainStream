@@ -1,13 +1,10 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from ChainStreamSandBox.raw_data import GPSData
 from AgentGenerator.io_model import StreamListDescription
 import time
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class WaterFlowerTask(SingleAgentTaskConfigBase):

@@ -1,7 +1,9 @@
 from ChainStreamSandBox.raw_data.three_person_video.sphar.video_list import video_list
 import os
 import PIL.Image as Image
+import random
 
+random.seed(42)
 
 class SpharData:
     def __init__(self):

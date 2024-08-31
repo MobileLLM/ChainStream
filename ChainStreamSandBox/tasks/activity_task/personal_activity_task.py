@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 import time
-
-random.seed(6666)
 
 
 class ActivityTask5(SingleAgentTaskConfigBase):

@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
-import random
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class EmailTask11(SingleAgentTaskConfigBase):
