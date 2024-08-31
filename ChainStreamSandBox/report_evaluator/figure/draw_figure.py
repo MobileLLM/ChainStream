@@ -111,7 +111,7 @@ def plot_different_task_histograms(all_figure_data: dict):
 
             # Set x-axis labels and title
             ax.set_xticks(offsets + (num_generators - 1) * width / 2)
-            ax.set_xticklabels(tasks, rotation=45, ha='right', fontsize=4)
+            ax.set_xticklabels(tasks, rotation=45, ha='right')
             ax.set_ylabel('Score')
             ax.set_title(title)
             ax.set_ylim(0, 1)  # Set y-axis range from 0 to 1
@@ -182,7 +182,9 @@ def load_all_results(base_file_path):
         "result-langchain_zeroshot",
         "result-chainstream_cot",
         "result-chainstream_cot_1shot",
-        "result-gpt-4o"
+        "result-gpt-4o",
+        "result-chainstream_fewshot_1shot",
+        "result-chainstream_fewshot_3shot",
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -225,6 +227,11 @@ def rename_generator(name):
         return "LC-0shot"
     elif name == "result-gpt-4o":
         return "GPT-4o-0shot"
+    elif name == "result-chainstream_fewshot_1shot":
+        return "CS-Fews-1shot"
+    elif name == "result-chainstream_fewshot_3shot":
+        return "CS-Fews-3shot"
+
     raise ValueError("Invalid generator name")
 
 
@@ -326,6 +333,12 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "Py-0shot"
         elif generator == "gpt-4o_native_gpt_4o":
             return "GPT-4o-0shot"
+        elif generator == "chainstream_fewshot_1shot":
+            return "CS-Fews-1shot"
+        elif generator == "chainstream_fewshot_3shot":
+            return "CS-Fews-3shot"
+        elif generator == "human_written":
+            return "Human"
         else:
             raise ValueError("Invalid generator name")
 
@@ -439,11 +452,11 @@ def draw_success_rate(base_file_path):
 
 
 if __name__ == '__main__':
-    base_file_path = r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\report_evaluator\result'
+    base_file_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/report_evaluator/result'
     eval_result = load_all_results(base_file_path)
     # draw_different_generator_score_for_specific_Metric(eval_result, 'code_similarity')
 
     draw_different_generator_score_for_specific_Metric(eval_result, 'output_similarity')
-    # draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
+    draw_different_task_score_for_specific_Metric(eval_result, 'output_similarity')
 
-    # draw_success_rate(base_file_path)
+    draw_success_rate(base_file_path)

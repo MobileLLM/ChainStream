@@ -146,7 +146,7 @@ class AgentExampleSelector:
 
         except Exception as e:
             print(f"[AgentExampleSelectorError]: {e}, response: {response}")
-            return None, "[AgentExampleSelectorError]: {e}, response: {response}"
+            return None, f"[AgentExampleSelectorError]: {e}, response: {response}"
 
 
 if __name__ == "__main__":
