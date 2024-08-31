@@ -15,7 +15,7 @@ class HealthTask20(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 "SystolicBP": "The systolic blood pressure detected, float"
             }
@@ -23,7 +23,7 @@ class HealthTask20(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "systolic_blood_pressure",
-                "description": "A series of the detected systolic blood pressure",
+                "description": "A stream of the detected systolic blood pressure",
                 "fields": {
                     "SystolicBP": "The systolic blood pressure detected, float"}
             }

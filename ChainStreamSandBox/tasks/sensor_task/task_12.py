@@ -29,7 +29,7 @@ class HealthTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "health_advice_for_engineers",
-                "description": "A series of the reasonable advice for the company's engineer according to their ages "
+                "description": "A stream of the reasonable advice for the company's engineer according to their ages "
                                "and sleeping time,with every two copies of health sensor data are packaged as a batch "
                                "after filtering the occupation which is 'Engineer'",
                 "fields": {

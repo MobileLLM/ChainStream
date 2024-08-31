@@ -27,7 +27,7 @@ class HealthTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_check",
-                "description": "A series of reminders to go to the hospital for a check when the blood sugar is over "
+                "description": "A stream of reminders to go to the hospital for a check when the blood sugar is over "
                                "8.4,with every two copies of health sensor data are packaged as a batch after "
                                "filtering the blood sugar which is over 8.4",
                 "fields": {

@@ -15,7 +15,7 @@ class HealthTask13(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 'SystolicBP': "The systolic blood pressure detected, float",
                 'DiastolicBP': "The diastolic blood pressure detected, float",
@@ -27,7 +27,7 @@ class HealthTask13(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emotion_estimation",
-                "description": "A series of the analysis of the mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', "
+                "description": "A stream of the analysis of the mood chosen from ['Happy', 'Sad', 'Angry', 'Excited', "
                                "'Anxious', 'Relaxed', 'Not sure'] based on the health data",
                 "fields": {
                     "mood_estimation": "The estimation of the mood chosen from['Happy', 'Sad', 'Angry', 'Excited', "

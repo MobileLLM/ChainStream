@@ -26,7 +26,7 @@ class VideoTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_actions",
-                "description": "A series of the scenes that are detected in real time from the camera chosen from ["
+                "description": "A stream of the scenes that are detected in real time from the camera chosen from ["
                                "'driving', 'jumping', 'roll', 'walking', 'swimming', 'climbing', 'skating']",
                 "fields": {
                     "analysis_result": "the scene detected from the video chosen from ['driving', 'jumping roll', "

@@ -15,17 +15,20 @@ class GPSTask12(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
-            "description": "A series of landmarks information",
+            "description": "A stream of landmarks information",
             "fields": {
-                "NumberofFloors": "The number of the floors in the landmark, int"
+                "NumberofFloors": "The number of the floors in the landmark, int",
+                "PropertyName": "The name of the landmark, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "landmarks_floors",
-                "description": "A series of the numbers of the floors in the landmark",
+                "stream_id": "floors_over_10",
+                "description": "A stream of the numbers of the floors in the landmark that are over 10",
                 "fields": {
-                    "NumberofFloors": "The number of the floors in the landmark, int"}
+                    "floors_over_10": "The number of floors in the landmark that is over 10, int",
+                    "PropertyName": "The name of the landmark, string"
+                }
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -36,25 +39,27 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_landmark_agent")
         self.input_stream = cs.get_stream(self,"all_landmarks")
-        self.output_stream = cs.get_stream(self,"landmarks_floors")
+        self.output_stream = cs.get_stream(self,"floors_over_10")
         self.llm = get_model("Text")
     def start(self):
         def process_landmark(landmark):
-            Number_of_Floors = landmark["NumberofFloors"]        
-            self.output_stream.add_item({
-                "NumberofFloors": Number_of_Floors
-            })
+            Number_of_Floors = landmark["NumberofFloors"]
+            if  Number_of_Floors > 10:    
+                self.output_stream.add_item({
+                    "floors_over_10": Number_of_Floors,
+                    "PropertyName": landmark["PropertyName"]
+                })
         self.input_stream.for_each(process_landmark)
 
         '''
 
     def init_environment(self, runtime):
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
-        self.output_landmark_stream = cs.stream.create_stream(self, 'landmarks_floors')
+        self.output_landmark_stream = cs.stream.create_stream(self, 'floors_over_10')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['landmarks_floors'].append(data)
+            self.output_record['floors_over_10'].append(data)
 
         self.output_landmark_stream.for_each(record_output)
 
@@ -62,11 +67,11 @@ class testAgent(cs.agent.Agent):
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
 
     def init_output_stream(self, runtime):
-        self.output_landmark_stream = cs.stream.get_stream(self, 'landmarks_floors')
+        self.output_landmark_stream = cs.stream.get_stream(self, 'floors_over_10')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['landmarks_floors'].append(data)
+            self.output_record['floors_over_10'].append(data)
 
         self.output_landmark_stream.for_each(record_output)
 

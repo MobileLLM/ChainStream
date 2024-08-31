@@ -18,7 +18,7 @@ class StockTask3(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stocks",
-            "description": "A series of stock information",
+            "description": "A stream of stock information",
             "fields": {
                 "open": "The open price of the stock, float",
                 "close": "The close price of the price, float",
@@ -30,7 +30,7 @@ class StockTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "recommendation_buy_stock",
-                "description": "A series of the recommendations for stock purchases based on the open,close,high and "
+                "description": "A stream of the recommendations for stock purchases based on the open,close,high and "
                                "low price",
                 "fields": {
                     "buy": "Decision on whether to buy the stock or not, string = yes or no",

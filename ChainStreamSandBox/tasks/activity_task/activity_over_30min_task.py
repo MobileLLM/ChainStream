@@ -19,7 +19,7 @@ class ActivityTask2(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "Date": "The date of the activities recorded, string",
                 "activity": "The specific activity, string",
@@ -29,7 +29,7 @@ class ActivityTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "activity_over_30min",
-                "description": "A series of records when the activities are more than 30 minutes",
+                "description": "A stream of records when the activities are more than 30 minutes",
                 "fields": {
                     "Date": "the date when exercising more than 30 minutes, string",
                     "activity": "The specific activity, string",

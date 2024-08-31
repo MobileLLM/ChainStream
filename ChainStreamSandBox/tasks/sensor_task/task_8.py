@@ -28,7 +28,7 @@ class HealthTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_medicine",
-                "description": "A series of reminders to take some medicine when the systolic blood pressure is over "
+                "description": "A stream of reminders to take some medicine when the systolic blood pressure is over "
                                "120 and the diastolic blood pressure is over 70,with every two copies of health sensor "
                                "data packaged as a batch after filtering the systolic blood pressure which is "
                                "over 120 and the diastolic blood pressure which is over 70",

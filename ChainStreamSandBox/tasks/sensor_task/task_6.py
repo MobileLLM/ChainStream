@@ -28,7 +28,7 @@ class WeatherTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_rainfall",
-                "description": "A series of reminders to wear rain boots outside if the precipitation is over 5 mm,"
+                "description": "A stream of reminders to wear rain boots outside if the precipitation is over 5 mm,"
                                "with every two copies of weather data packaged as a batch after filtering the "
                                "precipitation which is over 5 mm",
                 "fields": {

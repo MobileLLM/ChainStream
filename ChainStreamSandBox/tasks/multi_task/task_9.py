@@ -36,7 +36,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "A series of commands of automatically closing the window when the humidity percentage "
+                "description": "A stream of commands of automatically closing the window when the humidity percentage "
                                "is over 60 but no one is home(home property name:'Maple Ridge Apartments'), with every "
                                "two copies of weather data packaged as a batch after judging the home street address "
                                "from gps data",

@@ -37,7 +37,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "A series of replied emails, excluding advertisements in the office (office street "
+                "description": "A stream of replied emails, excluding advertisements in the office (office street "
                                "address: '3127 Edgemont Boulevard'), with every two emails packaged into a batch after "
                                "filtering out the advertisements.",
                 "fields": {

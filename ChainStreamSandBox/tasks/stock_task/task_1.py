@@ -30,7 +30,7 @@ class StockTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "up_or_down",
-                "description": "A series of the change percentages with the volume of the MLM stock if it has fallen",
+                "description": "A stream of the change percentages with the volume of the MLM stock if it has fallen",
                 "fields": {
                     "change_percentage": "The percentage change in the stock price, float",
                     "volume": "the trading volume of the stock, float"

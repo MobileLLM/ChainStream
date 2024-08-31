@@ -15,7 +15,7 @@ class TweetTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A series of twitter information",
+            "description": "A stream of twitter information",
             "fields": {
                 "negative_reason": "The reason of negativeness, string",
                 "text": "The text of the tweet, string"
@@ -24,7 +24,7 @@ class TweetTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tweets_negative_reason",
-                "description": "A series of tweet texts with a range of reasons for negative reviews",
+                "description": "A stream of tweet texts with a range of reasons for negative reviews",
                 "fields": {
                     "text": "The text of the tweet, string",
                     "negative_reason": "The reason why the tweet on airline is negative, string"

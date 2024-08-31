@@ -15,7 +15,7 @@ class DialogueTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Audio)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
-            "description": "A series of dialogues record",
+            "description": "A stream of dialogues record",
             "fields": {
                 "id": "The id of the speaker, string",
                 "dialog": "The dialogues contents, string",
@@ -24,7 +24,7 @@ class DialogueTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "dialogues_part_of_the_day",
-                "description": "A series of dialogues record with the analysis of part of the day when the "
+                "description": "A stream of dialogues record with the analysis of part of the day when the "
                                "conversation happened chosen from morning, afternoon,and evening",
                 "fields": {
                     "id": "The id of the speaker, string",

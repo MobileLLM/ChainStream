@@ -36,7 +36,7 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_message",
-                "description": "An alarm message series when the gas stove is safe when no one is home(home "
+                "description": "An alarm message stream when the gas stove is safe when no one is home(home "
                                "street address:'123 Main St')",
                 "fields": {
                     "notice": "Information reflecting the safe status of the gas stove, string = 'Your gas stove is "

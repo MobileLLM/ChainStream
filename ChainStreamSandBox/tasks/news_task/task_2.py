@@ -29,7 +29,7 @@ class NewsTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "extract_characters",
-                "description": "A extraction of the characters from the politics news with the date, with every two "
+                "description": "An extraction of the characters from the politics news with the date, with every two "
                                "pieces of news packaged as a batch after filtering the politics topic",
                 "fields": {
                     "characters": "the characters extracted from the political news, string",

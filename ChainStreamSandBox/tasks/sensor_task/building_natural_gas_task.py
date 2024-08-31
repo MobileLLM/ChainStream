@@ -15,7 +15,7 @@ class GPSTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Gas_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
-            "description": "A series of landmarks information",
+            "description": "A stream of landmarks information",
             "fields": {
                 "NaturalGas(therms)": "The natural gas emissions by the landmark, float"
 
@@ -23,10 +23,11 @@ class GPSTask6(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "landmarks_natural_gas",
-                "description": "A series of the calculation of the natural gas emissions by the landmark",
+                "stream_id": "natural_gas_over_5k",
+                "description": "A stream of the calculation of the natural gas emissions by the landmark which is "
+                               "over 5000 thermos",
                 "fields": {
-                    "NaturalGas(therms)": "The natural gas emissions by the landmark, float"}
+                    "natural_gas_over_5k": "The natural gas emissions by the landmark which is over 5000 thermos, float"}
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -37,13 +38,14 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_landmark_agent")
         self.input_stream = cs.get_stream(self,"all_landmarks")
-        self.output_stream = cs.get_stream(self,"landmarks_natural_gas")
+        self.output_stream = cs.get_stream(self,"natural_gas_over_5k")
         self.llm = get_model("Text")
     def start(self):
         def process_landmark(landmark):
-            NaturalGas = landmark["NaturalGas(therms)"]        
+            NaturalGas = landmark["NaturalGas(therms)"]
+            if NaturalGas > 5000:  
             self.output_stream.add_item({
-                "NaturalGas(therms)": NaturalGas
+                "natural_gas_over_5k": NaturalGas
             })
         self.input_stream.for_each(process_landmark)
 
@@ -51,11 +53,11 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
-        self.output_landmark_stream = cs.stream.create_stream(self, 'landmarks_natural_gas')
+        self.output_landmark_stream = cs.stream.create_stream(self, 'natural_gas_over_5k')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['landmarks_natural_gas'].append(data)
+            self.output_record['natural_gas_over_5k'].append(data)
 
         self.output_landmark_stream.for_each(record_output)
 
@@ -63,11 +65,11 @@ class testAgent(cs.agent.Agent):
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
 
     def init_output_stream(self, runtime):
-        self.output_landmark_stream = cs.stream.get_stream(self, 'landmarks_natural_gas')
+        self.output_landmark_stream = cs.stream.get_stream(self, 'natural_gas_over_5k')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['landmarks_natural_gas'].append(data)
+            self.output_record['natural_gas_over_5k'].append(data)
 
         self.output_landmark_stream.for_each(record_output)
 

@@ -15,7 +15,7 @@ class HealthTask19(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 "Stress Level": "The level of stress detected, int"
             }
@@ -23,7 +23,7 @@ class HealthTask19(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "stress_level",
-                "description": "A series of the detected stress level",
+                "description": "A stream of the detected stress level",
                 "fields": {
                     "Stress Level": "The level of stress detected, int"}
             }

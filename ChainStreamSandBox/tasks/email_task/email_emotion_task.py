@@ -18,7 +18,7 @@ class EmailTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_emails",
-            "description": "A series of emails",
+            "description": "A stream of emails",
             "fields": {
                 "Subject": "The subject of the email, string",
                 "Content": "The content of the email, string"
@@ -27,7 +27,7 @@ class EmailTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emails_emotion",
-                "description": "A series of emails with the analysis of the emotion chosen from ['positive', "
+                "description": "A stream of emails with the analysis of the emotion chosen from ['positive', "
                                "'negative', 'neutral', 'other'] based on the contents",
                 "fields": {
                     "Subject": "The subject of the email, string",

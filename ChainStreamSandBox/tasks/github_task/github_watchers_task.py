@@ -28,7 +28,7 @@ class GithubTask10(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "count_github_watchers",
-                "description": "A series of the current watchers of the github repositories",
+                "description": "A stream of the current watchers of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "watchers": "the current number of watchers of the github repository, int"

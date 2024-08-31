@@ -19,7 +19,7 @@ class ArxivTask11(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "journal-ref": "The journal reference of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -28,10 +28,10 @@ class ArxivTask11(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_reference",
-                "description": "A series of arxiv articles with their references provided",
+                "description": "A stream of arxiv articles with their translated references provided",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "journal-ref": "The journal reference of the arxiv article, string"
+                    "journal-ref-Chinese": "The journal reference of the arxiv article translated in Chinese, string"
                 }
             }
         ])
@@ -49,11 +49,13 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_paper(paper):
             paper_title = paper["title"]
-            paper_reference = paper["journal-ref"]      
+            paper_reference = paper["journal-ref"]
+            prompt = 'Please translate the following paper reference into Chinese.'  
+            res = self.llm.query(cs.llm.make_prompt(prompt,paper_reference))    
             if paper_reference is not None: 
                 self.output_stream.add_item({
                     "title": paper_title,
-                    "journal-ref": paper_reference
+                    "journal-ref-Chinese": res
                 })
         self.input_stream.for_each(process_paper)
 

@@ -18,7 +18,7 @@ class MessageTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_sms",
-            "description": "A series of messages information",
+            "description": "A stream of messages information",
             "fields": {
                 "text": "The content of the message, string"
             }
@@ -26,7 +26,7 @@ class MessageTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_summary",
-                "description": "A series of the summary of the message reports",
+                "description": "A stream of the summary of the message reports",
                 "fields": {
                     "text": "The content of the message, string",
                     "summary": "The summary of the message report, string"

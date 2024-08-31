@@ -28,7 +28,7 @@ class WeatherTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "clothing_recommendation",
-                "description": "A series of the recommendations of the suitable clothing according to the temperature "
+                "description": "A stream of the recommendations of the suitable clothing according to the temperature "
                                "in May each year,with every two copies of weather data packaged as a batch after "
                                "filtering the weather in May each year chosen from ['T-shirt', 'Tank top', 'Sweater', "
                                "'Hoodie', 'Jacket']",

@@ -18,7 +18,7 @@ class MessageTask2(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_sms",
-            "description": "A series of messages information",
+            "description": "A stream of messages information",
             "fields": {
                 "text": "The content of the message, string"
             }
@@ -26,7 +26,7 @@ class MessageTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_emotion",
-                "description": "A series of the analysis of the emotion of the messages chosen from positive, "
+                "description": "A stream of the analysis of the emotion of the messages chosen from positive, "
                                "negative, neutral and other based on the text",
                 "fields": {
                     "text": "The text content of the message, string",

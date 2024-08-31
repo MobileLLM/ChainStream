@@ -28,7 +28,7 @@ class GithubTask8(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "github_licence",
-                "description": "A series of the licences of the github repositories",
+                "description": "A stream of the licences of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "licence": "the licence of the github repository, string"

@@ -15,7 +15,7 @@ class TweetTask7(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A series of twitter information",
+            "description": "A stream of twitter information",
             "fields": {
                 "text": "The text of the tweet, string"
             }

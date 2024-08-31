@@ -15,19 +15,23 @@ class HealthTask11(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 "DiastolicBP": "The diastolic blood pressure detected, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "diastolic_blood_pressure",
-                "description": "A series of the detected diastolic blood pressure",
+                "stream_id": "diastolicBP_over_80",
+                "description": "A stream of diastolic blood pressure readings where the value is greater than or "
+                               "equal to 80",
                 "fields": {
-                    "DiastolicBP": "The diastolic blood pressure detected, float"}
+                    "diastolicBP_over_80": "The diastolic blood pressure detected where the value is greater than or "
+                                           "equal to 80, float"
+                }
             }
         ])
+
         self.health_data = HealthData().get_health_data(10)
         self.agent_example = '''
 import chainstream as cs
@@ -36,24 +40,25 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"diastolic_blood_pressure")
+        self.output_stream = cs.get_stream(self,"diastolicBP_over_80")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
-            DiastolicBP = health["DiastolicBP"]        
-            self.output_stream.add_item({
-                "DiastolicBP": DiastolicBP
-                })
+            DiastolicBP = health["DiastolicBP"]
+            if DiastolicBP >= 80:  
+                self.output_stream.add_item({
+                    "diastolicBP_over_80": DiastolicBP
+                    })
         self.input_stream.for_each(process_health)
         '''
 
     def init_environment(self, runtime):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_health_stream = cs.stream.create_stream(self, 'diastolic_blood_pressure')
+        self.output_health_stream = cs.stream.create_stream(self, 'diastolicBP_over_80')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['diastolic_blood_pressure'].append(data)
+            self.output_record['diastolicBP_over_80'].append(data)
 
         self.output_health_stream.for_each(record_output)
 
@@ -61,11 +66,11 @@ class testAgent(cs.agent.Agent):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
 
     def init_output_stream(self, runtime):
-        self.output_health_stream = cs.stream.get_stream(self, 'diastolic_blood_pressure')
+        self.output_health_stream = cs.stream.get_stream(self, 'diastolicBP_over_80')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['diastolic_blood_pressure'].append(data)
+            self.output_record['diastolicBP_over_80'].append(data)
 
         self.output_health_stream.for_each(record_output)
 

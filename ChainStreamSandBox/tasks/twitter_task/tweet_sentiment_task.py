@@ -15,7 +15,7 @@ class TweetTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A series of twitter information",
+            "description": "A stream of twitter information",
             "fields": {
                 "airline_sentiment": "The sentiment of the twitter on airline, string",
                 "text": "The text of the tweet, string"
@@ -24,7 +24,7 @@ class TweetTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tweets_sentiment",
-                "description": "A series of tweet texts with the sentiment analysis of the tweets",
+                "description": "A stream of tweet texts with the sentiment analysis of the tweets",
                 "fields": {
                     "text": "The text of the tweet, string",
                     "airline_sentiment": "The sentiment analysed from the tweet on the airline, string"

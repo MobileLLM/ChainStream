@@ -29,7 +29,7 @@ class EmailTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "purpose_of_work_email",
-                "description": "A series of purposes for each work-related email from June to December, with emails "
+                "description": "A stream of purposes for each work-related email from June to December, with emails "
                                "filtered for work-related topics first, followed by packaging every two emails into a "
                                "batch, then filtering by date, and finally summarizing the purposes",
                 "fields": {

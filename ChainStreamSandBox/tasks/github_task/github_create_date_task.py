@@ -28,7 +28,7 @@ class GithubTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "filter_github_date",
-                "description": "A series of the created-dates of the github repositories",
+                "description": "A stream of the created-dates of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "created_at": "the created-date the github repository, string"

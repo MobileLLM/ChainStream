@@ -19,7 +19,7 @@ class ArxivTask7(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "authors": "The authors of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -28,7 +28,7 @@ class ArxivTask7(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_with_more_than_three_authors",
-                "description": "A series of arxiv articles with more than three authors",
+                "description": "A stream of arxiv articles with more than three authors",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "authors": "The authors of the arxiv article, string",

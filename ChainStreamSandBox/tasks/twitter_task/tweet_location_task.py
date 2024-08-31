@@ -15,7 +15,7 @@ class TweetTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A series of twitter information",
+            "description": "A stream of twitter information",
             "fields": {
                 "text": "The text of the tweet, string",
                 "tweet_location": "The location of the tweet, string"
@@ -24,7 +24,7 @@ class TweetTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tweets_location",
-                "description": "A series of tweet texts with the locations of the twitter users",
+                "description": "A stream of tweet texts with the locations of the twitter users",
                 "fields": {
                     "text": "The text of the tweet, string",
                     "tweet_location": "The location where the tweet was sent by the user, string"

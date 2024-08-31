@@ -29,7 +29,7 @@ class ArxivTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_of_arxiv",
-                "description": "A series of summaries of arxiv papers in the computer science domain, with articles "
+                "description": "A stream of summaries of arxiv papers in the computer science domain, with articles "
                                "filtered for the computer science topic first, then packaged into batches every two "
                                "seconds, and finally summarized",
                 "fields": {

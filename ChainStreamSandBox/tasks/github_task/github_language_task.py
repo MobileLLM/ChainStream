@@ -28,7 +28,7 @@ class GithubTask7(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "filter_github_language",
-                "description": "A series of the primary programming language of the github repositories",
+                "description": "A stream of the primary programming language of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "primary_language": "the primary programming language of the github repository, string"

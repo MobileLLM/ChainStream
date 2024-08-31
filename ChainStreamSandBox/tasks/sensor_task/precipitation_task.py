@@ -15,7 +15,7 @@ class WeatherTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
-            "description": "A series of the weather information",
+            "description": "A stream of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
                 "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
@@ -25,7 +25,7 @@ class WeatherTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_precipitation",
-                "description": "A series of the precipitation of the zones",
+                "description": "A stream of the precipitation of the zones",
                 "fields": {
                     "Humidity_pct": "The humidity percentage of the zone, float",
                     "Location": "The location of the zone, string",

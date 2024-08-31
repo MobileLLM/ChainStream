@@ -27,7 +27,7 @@ class EmailTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_email_reply",
-                "description": "A series of replied emails, excluding advertisements, with emails filtered for "
+                "description": "A stream of replied emails, excluding advertisements, with emails filtered for "
                                "advertisements first, followed by packaging every two emails into a batch, "
                                "and then listing the replies",
                 "fields": {

@@ -15,7 +15,7 @@ class HealthTask18(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 "Quality of Sleep": "The evaluation of the quality of sleep, int"
             }
@@ -23,7 +23,7 @@ class HealthTask18(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sleep_quality",
-                "description": "A series of the evaluation of the quality of sleep",
+                "description": "A stream of the evaluation of the quality of sleep",
                 "fields": {
                     "Quality of Sleep": "The evaluation of the quality of sleep, int"}
             }

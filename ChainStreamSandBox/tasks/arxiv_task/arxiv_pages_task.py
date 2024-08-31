@@ -19,7 +19,7 @@ class ArxivTask12(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "comments": "The comments of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -27,12 +27,15 @@ class ArxivTask12(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "numbers_of_pages_and_charts",
-                "description": "Arxiv articles with their pages and charts extracted from the comments (The number of "
-                               "pages and charts are included in the comments field)",
+                "stream_id": "numbers_of_pages",
+                "description": "Arxiv articles titles with their number of pages extracted from the comments field, "
+                               "but only if the 'comments' field contains the keyword 'pages' (The format: ××× pages "
+                               "is included in the 'comments' field.).",
                 "fields": {
                     "title": "The title of the arxiv article, string",
-                    "numbers_of_pages_and_charts": "Directly from the comments of the arxiv article, string"
+                    "number_of_pages": "their number of pages extracted from the comments field, but only if the "
+                                       "'comments' field contains the keyword 'pages' (The format: ××× pages is "
+                                       "included in the 'comments' field.), string "
                 }
             }
         ])
@@ -41,33 +44,36 @@ class ArxivTask12(SingleAgentTaskConfigBase):
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
+import re
 class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "numbers_of_pages_and_charts")
+        self.output_stream = cs.get_stream(self, "numbers_of_pages")
         self.llm = get_model("Text")
     def start(self):
         def process_paper(paper):
             paper_title = paper["title"]
             paper_comments = paper["comments"]      
             if paper_comments is not None: 
-                self.output_stream.add_item({
-                    "title": paper_title,
-                    "comments": paper_comments
-                })
+                if "pages" in text:
+                    match = re.search(r'(\d+)\s*pages', text)
+                    self.output_stream.add_item({
+                        "title": paper_title,
+                        "comments": match
+                    })
         self.input_stream.for_each(process_paper)
         
         '''
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'numbers_of_pages_and_charts')
+        self.output_paper_stream = cs.stream.create_stream(self, 'numbers_of_pages')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['numbers_of_pages_and_charts'].append(data)
+            self.output_record['numbers_of_pages'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
@@ -75,12 +81,12 @@ class testAgent(cs.agent.Agent):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
 
     def init_output_stream(self, runtime):
-        self.output_paper_stream = cs.stream.get_stream(self, 'numbers_of_pages_and_charts')
+        self.output_paper_stream = cs.stream.get_stream(self, 'numbers_of_pages')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['numbers_of_pages_and_charts'].append(data)
+            self.output_record['numbers_of_pages'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 

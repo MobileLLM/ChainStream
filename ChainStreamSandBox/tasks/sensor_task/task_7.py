@@ -28,7 +28,7 @@ class WeatherTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "take_clothes_down",
-                "description": "A series of reminders to take down clothes in the balcony if the wind speed is over 20 "
+                "description": "A stream of reminders to take down clothes in the balcony if the wind speed is over 20 "
                                "kmh,with every two copies of weather data packaged as a batch after filtering the "
                                "wind speed which is over 20 kmh",
                 "fields": {

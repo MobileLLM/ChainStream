@@ -19,7 +19,7 @@ class ActivityTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "Steps": "The steps calculated in the activity, int",
                 "Date": "The date of the activities recorded, string",
@@ -29,7 +29,7 @@ class ActivityTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "steps_over_5k",
-                "description": "A series of records of the activities which are over 5000 steps",
+                "description": "A stream of records of the activities which are over 5000 steps",
                 "fields": {
                     "Date": "The date of the activities recorded, string",
                     "activity": "The specific activity, string",

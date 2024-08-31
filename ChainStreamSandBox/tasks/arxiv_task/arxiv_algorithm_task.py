@@ -19,7 +19,7 @@ class ArxivTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "abstract": "The abstract of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -28,7 +28,7 @@ class ArxivTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tag_algorithm",
-                "description": "A series of arxiv articles with tags on algorithm chosen from ['Deep Learning', "
+                "description": "A stream of arxiv articles with tags on algorithm chosen from ['Deep Learning', "
                                "'Machine Learning', 'Classical', 'Heuristic','Evolutionary','Other'] based on their "
                                "abstracts",
                 "fields": {

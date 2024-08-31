@@ -28,7 +28,7 @@ class GithubTask9(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "count_github_stars",
-                "description": "A series of the numbers of the github stars",
+                "description": "A stream of the numbers of the github stars",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "stars_count": "the current number of stars of the github repository, int"

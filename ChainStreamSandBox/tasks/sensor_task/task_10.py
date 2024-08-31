@@ -27,8 +27,8 @@ class HealthTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_exercise",
-                "description": "A series of reminders to take some exercise when the BMI is 'Overweight' or 'Obese',with "
-                               "every two copies of health sensor data packaged as a batch after filtering the "
+                "description": "A stream of reminders to take some exercise when the BMI is 'Overweight' or 'Obese',"
+                               "with every two copies of health sensor data packaged as a batch after filtering the "
                                "BMI which is 'Overweight' or 'Obese'",
                 "fields": {
                     "BMI Category": "the BMI category of the body check, string",

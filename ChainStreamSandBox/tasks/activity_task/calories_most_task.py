@@ -19,7 +19,7 @@ class ActivityTask3(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records (every five copies of activities data are packaged as a "
+            "description": "A stream of activities records (every five copies of activities data are packaged as a "
                            "batch)",
             "fields": {
                 "Date": "The date of the activities recorded, string",
@@ -30,7 +30,7 @@ class ActivityTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "calories_burned_most",
-                "description": "A series of records of the most calories-burned activities",
+                "description": "A stream of calories burned activities sorted in descending order.",
                 "fields": {
                     "Date": "The date of the activities recorded, string",
                     "activity": "The specific activity, string",

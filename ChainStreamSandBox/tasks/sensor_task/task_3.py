@@ -29,7 +29,7 @@ class GPSTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "street_of_school",
-                "description": "A series of the street addresses of all the 'K-12 School' around,with every two copies "
+                "description": "A stream of the street addresses of all the 'K-12 School' around,with every two copies "
                                "of location data packaged as a batch after filtering K-12 School property type",
                 "fields": {
                     "Street Address": "the street address of my location, string",

@@ -29,7 +29,7 @@ class GPSTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "city_identification",
-                "description": "A series of the city identifications according to the longitude and latitude sensor in "
+                "description": "A stream of the city identifications according to the longitude and latitude sensor in "
                                "North America,with every two copies of location data packaged as a batch after "
                                "filtering the gps data in North America",
                 "fields": {

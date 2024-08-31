@@ -39,7 +39,7 @@ class MultiTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_search",
-                "description": "A series of weather information search based on the name mentioned in dialogues",
+                "description": "A stream of weather information search based on the name mentioned in dialogues",
                 "fields": {
                     "Location": "the location mentioned in the travel dialogues, string",
                     "Temperature_C": "the temperature of the location, float",

@@ -15,17 +15,18 @@ class GPSTask13(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
-            "description": "A series of landmarks information",
+            "description": "A stream of landmarks information",
             "fields": {
-                "Street Address": "The street address of the landmark, string"
+                "Street Address": "The street address of the landmark, string",
+                "PropertyName": "The name of the landmark, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "landmarks_location",
-                "description": "A series of the location of the landmarks",
+                "description": "A stream of the concatenated field presenting the street address of the landmarks",
                 "fields": {
-                    "Street Address": "The street address of the landmark, string"}
+                    "property_with_address": "The name with the street address of the landmark, string"}
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -40,9 +41,11 @@ class testAgent(cs.agent.Agent):
         self.llm = get_model("Text")
     def start(self):
         def process_landmark(landmark):
-            Location = landmark["Street Address"]        
+            Location = landmark["Street Address"]
+            Name = landmark["PropertyName"]
+            tag = Location + ',' + Name        
             self.output_stream.add_item({
-                "Street Address": Location
+                "property_with_address": tag
             })
         self.input_stream.for_each(process_landmark)
 

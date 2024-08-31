@@ -19,7 +19,7 @@ class ActivityTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "Total_Distance": "The total distance statistic recorded, float",
                 "Date": "The date of the activities recorded, string"
@@ -28,7 +28,7 @@ class ActivityTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "distance_over_5k",
-                "description": "A series of activities records when more than 5km",
+                "description": "A stream of activities records when more than 5km",
                 "fields": {
                     "Date": "the date when exercising more than 5 km, string",
                     "Total_Distance": "The total distance statistic recorded when exercising more than 5 km, string"}

@@ -29,7 +29,7 @@ class GithubTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "language_from_most_pr",
-                "description": "A series of code language used in the github projects with most number of "
+                "description": "A stream of code language used in the github projects with most number of "
                                "pull-requests, with every three github repositories packaged as a batch",
                 "fields": {
                     "pull_requests": "the name of the github repository",

@@ -19,7 +19,7 @@ class ArxivTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "abstract": "The abstract of the arxiv article, string",
                 "title": "The title of the arxiv article, string",
@@ -30,7 +30,7 @@ class ArxivTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "computer_science_arxiv",
-                "description": "A series of arxiv articles on computer science domain filtered by the abstracts",
+                "description": "A stream of arxiv articles on computer science domain filtered by the abstracts",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "authors": "The authors of the arxiv article, string",

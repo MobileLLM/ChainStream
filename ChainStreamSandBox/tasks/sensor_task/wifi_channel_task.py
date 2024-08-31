@@ -15,7 +15,7 @@ class WifiTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Wifi_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_wifi",
-            "description": "A series of the wifi information",
+            "description": "A stream of the wifi information",
             "fields": {
                 "Channel": "The channel of the wifi signal, int"
             }
@@ -23,7 +23,7 @@ class WifiTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "wifi_channel",
-                "description": "A series of the wifi channel statistics",
+                "description": "A stream of the wifi channel statistics",
                 "fields": {
                     "Channel": "The channel of the wifi signal, int"
                 }

@@ -15,7 +15,7 @@ class NewsTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "A series of news information",
+            "description": "A stream of news information",
             "fields": {
                 "headline": "The headline of the news, string",
                 "short_description": "The short description of the news, string"
@@ -24,7 +24,7 @@ class NewsTask9(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "news_description",
-                "description": "A series of the short description of the news",
+                "description": "A stream of the short description of the news",
                 "fields": {
                     "headline": "The headline of the news, string",
                     "short_description": "The short description of the news, string"

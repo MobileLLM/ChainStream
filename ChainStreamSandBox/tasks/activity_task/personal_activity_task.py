@@ -20,7 +20,7 @@ class ActivityTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "activity": "The specific activity, string",
                 "user": "The user id, string"
@@ -29,7 +29,7 @@ class ActivityTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "activity_for_each_user",
-                "description": "A series of activities grouped by each user, with batches packaged every 10 seconds",
+                "description": "A stream of activities grouped by each user, with batches packaged every 10 seconds",
                 "fields": {
                     "users_activities": "A record of the activities grouped by each user, string"}
             }

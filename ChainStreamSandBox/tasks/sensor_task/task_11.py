@@ -27,7 +27,7 @@ class HealthTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_rest",
-                "description": "A series of reminders to take a rest when the heart rate is over 85,with every two "
+                "description": "A stream of reminders to take a rest when the heart rate is over 85,with every two "
                                "copies of health sensor data are packaged as a batch after filtering the heart rate "
                                "which is over 85",
                 "fields": {

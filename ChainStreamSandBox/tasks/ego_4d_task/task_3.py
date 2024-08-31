@@ -26,7 +26,7 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "description": "A stream of judgments on whether I am in the meeting room",
                 "fields": {
                     "meeting": "An indication of whether I am in a meeting, bool"
                 }

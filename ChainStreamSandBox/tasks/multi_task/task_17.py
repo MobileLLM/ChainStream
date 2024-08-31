@@ -38,7 +38,7 @@ class MultiTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "github_search",
-                "description": "A series of github information search based on the repository name mentioned in "
+                "description": "A stream of github information search based on the repository name mentioned in "
                                "dialogues",
                 "fields": {
                     "name": "the name of the github repository, string",

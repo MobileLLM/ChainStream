@@ -29,7 +29,7 @@ class NewsTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "USA_news_in_July",
-                "description": "A series of the extraction of the USA news in July with the headline and the category "
+                "description": "A stream of the extraction of the USA news in July with the headline and the category "
                                "of them, with every two pieces of news are packaged as a batch after filtering the "
                                "USA news happened in July",
                 "fields": {

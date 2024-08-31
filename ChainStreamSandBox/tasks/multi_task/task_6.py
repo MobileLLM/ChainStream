@@ -36,9 +36,9 @@ class CatFoodTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "cat_food_reminder",
-                "description": "A reminder series for refilling the cat food if the bowl is empty when I am not at home "
-                               "(home street address: 123 Main St), with every two copies of video data packaged into "
-                               "a batch after determining the home street address from GPS data",
+                "description": "A reminder stream for refilling the cat food if the bowl is empty when I am not at "
+                               "home (home street address: 123 Main St), with every two copies of video data packaged "
+                               "into a batch after determining the home street address from GPS data",
                 "fields": {
                     "reminder": "There is no cat food already. Please refill it."
                 }

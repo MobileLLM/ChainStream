@@ -19,7 +19,7 @@ class ArxivTask15(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "title": "The title of the arxiv article, string",
                 "versions": "The published version and the time of the arxiv article, string"

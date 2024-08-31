@@ -29,7 +29,7 @@ class GithubTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "most_forks_with_licence",
-                "description": "A series of fork number of github repositories with licence, with every three github "
+                "description": "A stream of fork number of github repositories with licence, with every three github "
                                "repositories packaged as a batch after filtering the github with licence",
                 "fields": {
                     "licence": "the licence of the github repository, string",

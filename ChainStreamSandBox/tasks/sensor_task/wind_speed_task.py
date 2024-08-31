@@ -15,7 +15,7 @@ class WeatherTask10(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
-            "description": "A series of the wifi information",
+            "description": "A stream of the wifi information",
             "fields": {
                 "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
                 "Location": "the location of the weather sensor, string",
@@ -25,7 +25,7 @@ class WeatherTask10(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_wind_speed",
-                "description": "A series of the wind speed of the zones",
+                "description": "A stream of the wind speed of the zones",
                 "fields": {
                     "Location": "The location of the zone, string",
                     "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",

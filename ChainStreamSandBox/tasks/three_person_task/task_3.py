@@ -26,7 +26,7 @@ class VideoTask12(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "detect_person",
-                "description": "A series of analysis on whether the secret base has been invaded by person",
+                "description": "A stream of analysis on whether the secret base has been invaded by person",
                 "fields": {
                     "analysis_result": "the detection of whether a person is in the secret base, string = y or n"}
             }
