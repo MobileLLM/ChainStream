@@ -11,7 +11,7 @@ class StockTask2(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_stock_stream = None
         self.input_stock_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stocks",

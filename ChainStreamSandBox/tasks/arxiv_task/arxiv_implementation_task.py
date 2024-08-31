@@ -5,7 +5,6 @@ from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 
 
-
 class ArxivTask10(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
