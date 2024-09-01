@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class EmailTask2(SingleAgentTaskConfigBase):
@@ -29,7 +26,7 @@ class EmailTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "purpose_of_work_email",
-                "description": "A series of purposes for each work-related email from June to December, with emails "
+                "description": "A stream of purposes for each work-related email from June to December, with emails "
                                "filtered for work-related topics first, followed by packaging every two emails into a "
                                "batch, then filtering by date, and finally summarizing the purposes",
                 "fields": {
@@ -49,7 +46,7 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_email_task_2"):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
-        self.email_output = cs.get_stream(self, "purpose_of_work_email")
+        self.email_output = cs.create_stream(self, "purpose_of_work_email")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -74,13 +71,15 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
 
             
         def sum_by_content(emails):
-            content = [email['Content'] for email in emails['email_list']]
-            prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']. Please only give me the choice."
-            res = self.llm.query(cs.llm.make_prompt(content, prompt))
-            self.email_output.add_item({
-                "Content": content,
-                "purpose": res
-            })
+            print(emails)
+            for email in emails['email_list']:
+                content = email['Content']
+                prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']. Please only give me the choice."
+                res = self.llm.query(cs.llm.make_prompt(content, prompt))
+                self.email_output.add_item({
+                    "Content": content,
+                    "purpose": res
+                })
 
         self.email_input.for_each(filter_work).batch(by_count=2).for_each(filter_date).for_each(sum_by_content)
 '''

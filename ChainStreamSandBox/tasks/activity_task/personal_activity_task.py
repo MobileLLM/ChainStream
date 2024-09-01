@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
 import time
-
-random.seed(6666)
 
 
 class ActivityTask5(SingleAgentTaskConfigBase):
@@ -20,7 +17,7 @@ class ActivityTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "activity": "The specific activity, string",
                 "user": "The user id, string"
@@ -29,7 +26,7 @@ class ActivityTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "activity_for_each_user",
-                "description": "A series of activities grouped by each user, with batches packaged every 10 seconds",
+                "description": "A stream of activities grouped by each user, with batches packaged every 10 seconds",
                 "fields": {
                     "users_activities": "A record of the activities grouped by each user, string"}
             }
@@ -43,7 +40,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_distance_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "activity_for_each_user")
+        self.output_stream = cs.create_stream(self, "activity_for_each_user")
 
     def start(self):
         def group_by_user(activities_list):

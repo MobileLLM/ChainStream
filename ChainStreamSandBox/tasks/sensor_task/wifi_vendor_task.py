@@ -15,7 +15,7 @@ class WifiTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Wifi_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_wifi",
-            "description": "A series of the wifi information",
+            "description": "A stream of the wifi information",
             "fields": {
                 "Vendor": "The vendor of the wifi signal, string"
             }
@@ -23,7 +23,7 @@ class WifiTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "wifi_vendor",
-                "description": "A series of the wifi vendor information statistics",
+                "description": "A stream of the wifi vendor information statistics",
                 "fields": {
                     "Vendor": "The vendor of the wifi signal, string"
                 }
@@ -36,7 +36,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_wifi_agent")
         self.input_stream = cs.get_stream(self,"all_wifi")
-        self.output_stream = cs.get_stream(self,"wifi_vendor")
+        self.output_stream = cs.create_stream(self,"wifi_vendor")
     def start(self):
         def process_wifi(wifi):
             Vendor = wifi["Vendor"]        

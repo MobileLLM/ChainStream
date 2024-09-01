@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import Ego4DData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class WorkReminderTask(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.input_gps_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_location",
             "description": "all of my gps information",
@@ -36,7 +33,7 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_command",
-                "description": "A series of recordings when the GPS detects that I am in the office buliding and the "
+                "description": "A stream of recordings when the GPS detects that I am in the office buliding and the "
                                "surveillance video detects that I am talking in the office conference room.("
                                "PropertyName: 'Century Technology Light Building')",
                 "fields": {
@@ -61,9 +58,9 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_first_person")
         self.gps_input = cs.get_stream(self, "all_location")
-        self.command_output = cs.get_stream(self, "auto_command")
+        self.command_output = cs.create_stream(self, "auto_command")
         self.video_buffer = Buffer()
-        self.is_office_event = cs.get_stream(self, "is_office_event")
+        self.is_office_event = cs.create_stream(self, "is_office_event")
         self.llm = cs.llm.get_model("image")
 
     def start(self):
@@ -75,7 +72,7 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
             if is_office_event is not None:
                 videos = self.video_buffer.get_all()
                 for video in videos:
-                    prompt = "Am I talking in the office?Simply answer y or n"
+                    prompt = "Am I talking in the office? Simply answer y or n"
                     res = self.llm.query(cs.llm.make_prompt(video['frame'], prompt))
                     if res.lower() == 'y':
                         self.command_output.add_item({

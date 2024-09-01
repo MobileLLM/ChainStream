@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class VideoTask3(SingleAgentTaskConfigBase):
@@ -26,7 +23,7 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the meeting room",
+                "description": "A stream of judgments on whether I am in the meeting room",
                 "fields": {
                     "meeting": "An indication of whether I am in a meeting, bool"
                 }
@@ -39,7 +36,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.first_person_input = cs.get_stream(self, "first_person_perspective_data")
-        self.analysis_output = cs.get_stream(self, "analysis_scenario")
+        self.analysis_output = cs.create_stream(self, "analysis_scenario")
         self.llm = cs.llm.get_model("image")
 
     def start(self):

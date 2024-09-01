@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import NewsData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class NewsTask2(SingleAgentTaskConfigBase):
@@ -15,7 +12,7 @@ class NewsTask2(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
@@ -29,7 +26,7 @@ class NewsTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "extract_characters",
-                "description": "A extraction of the characters from the politics news with the date, with every two "
+                "description": "An extraction of the characters from the politics news with the date, with every two "
                                "pieces of news packaged as a batch after filtering the politics topic",
                 "fields": {
                     "characters": "the characters extracted from the political news, string",
@@ -46,7 +43,7 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_news_task_2"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
-        self.news_output = cs.get_stream(self, "extract_characters")
+        self.news_output = cs.create_stream(self, "extract_characters")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

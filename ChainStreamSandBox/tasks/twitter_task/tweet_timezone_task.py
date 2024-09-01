@@ -15,7 +15,7 @@ class TweetTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_tweets",
-            "description": "A series of twitter information",
+            "description": "A stream of twitter information",
             "fields": {
                 "text": "The text of the tweet, string",
                 "user_timezone": "The timezone of the twitter user, string"
@@ -24,7 +24,7 @@ class TweetTask9(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "tweets_timezone",
-                "description": "A series of tweet texts with the statistics on the timezone of the twitter user",
+                "description": "A stream of tweet texts with the statistics on the timezone of the twitter user",
                 "fields": {
                     "text": "The text of the tweet, string",
                     "user_timezone": "The timezone of the twitter user, string"
@@ -39,7 +39,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_twitter_agent")
         self.input_stream = cs.get_stream(self,"all_tweets")
-        self.output_stream = cs.get_stream(self,"tweets_timezone")
+        self.output_stream = cs.create_stream(self,"tweets_timezone")
         self.llm = get_model("Text")
     def start(self):
         def process_tweet(tweets):

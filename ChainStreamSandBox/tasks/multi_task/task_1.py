@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class EmailTaskTest(SingleAgentTaskConfigBase):
@@ -20,7 +17,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
-                                modality=Modality_Task_tag.Text)
+                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.GPS_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
             "description": "All email messages",
@@ -37,7 +34,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_in_office",
-                "description": "A series of replied emails, excluding advertisements in the office (office street "
+                "description": "A stream of replied emails, excluding advertisements in the office (office street "
                                "address: '3127 Edgemont Boulevard'), with every two emails packaged into a batch after "
                                "filtering out the advertisements.",
                 "fields": {
@@ -62,9 +59,9 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
         self.location_input = cs.get_stream(self, "all_location")
-        self.email_output = cs.get_stream(self, "auto_reply_in_office")
+        self.email_output = cs.create_stream(self, "auto_reply_in_office")
         self.email_buffer = Buffer()
-        self.is_office_event = cs.get_stream(self, "is_office_event")
+        self.is_office_event = cs.create_stream(self, "is_office_event")
         self.llm = cs.llm.get_model("Text")
         
     def start(self):
@@ -73,7 +70,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.email_input.for_each(save_email)
         
         def filter_advertisements(is_office_event):
-            if is_office_event:
+            if is_office_event is not None:
                 emails = self.email_buffer.pop_all()
                 matching_emails = []
                 for email in emails:
@@ -142,6 +139,42 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.is_office_event.for_each(record_output_2)
 
     def start_task(self, runtime) -> dict:
+        hotels = [
+            {
+                'PrimaryPropertyType': 'Hotel',
+                'PropertyName': 'SUNSET VIEW HOTEL',
+                'Street Address': '3127 Edgemont Boulevard',
+                'Neighborhood': 'MIDTOWN',
+                'YearBuilt': 1985,
+                'NumberofFloors': 8,
+                'Electricity(kWh)': 750000.0,
+                'NaturalGas(therms)': 9500.0,
+                'GHGEmissions(MetricTonsCO2e)': 180.25
+            },
+            {
+                'PrimaryPropertyType': 'Hotel',
+                'PropertyName': 'LUXURY INN',
+                'Street Address': '3127 Edgemont Boulevard',
+                'Neighborhood': 'DOWNTOWN',
+                'YearBuilt': 2000,
+                'NumberofFloors': 15,
+                'Electricity(kWh)': 1200000.0,
+                'NaturalGas(therms)': 11000.0,
+                'GHGEmissions(MetricTonsCO2e)': 220.75
+            },
+            {
+                'PrimaryPropertyType': 'Hotel',
+                'PropertyName': 'CITYSCAPE RESORT',
+                'Street Address': '3127 Edgemont Boulevard',
+                'Neighborhood': 'UPTOWN',
+                'YearBuilt': 2010,
+                'NumberofFloors': 10,
+                'Electricity(kWh)': 950000.0,
+                'NaturalGas(therms)': 10500.0,
+                'GHGEmissions(MetricTonsCO2e)': 195.60
+            }
+        ]
+        self.location_data.extend(hotels)
         sent_info = {"all_email": [], "all_location": []}
         for email in self.email_data:
             sent_info["all_email"].append(email)

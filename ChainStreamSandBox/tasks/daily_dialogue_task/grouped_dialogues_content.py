@@ -16,7 +16,7 @@ class DialogueTask6(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Audio)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
-            "description": "A series of dialogues record",
+            "description": "A stream of dialogues record",
             "fields": {
                 "topic": "The id of the speaker, string",
                 "dialog": "The dialogues dict with the keys: 'text', 'act', 'emotion', dict"
@@ -30,7 +30,7 @@ class DialogueTask6(SingleAgentTaskConfigBase):
                                "containing two items.",
                 "fields": {
                     "topic": "the topic of the grouped dialogues, string",
-                    "dialog": "The dialogues of the same topic, string"}
+                    "dialog": "The list of dialogues of the same topic, list"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_dialogues")
-        self.output_stream = cs.get_stream(self,"work_dialogues")
+        self.output_stream = cs.create_stream(self,"work_dialogues")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_screenshot")
-        self.output_stream = cs.get_stream(self,"screenshot_details")
+        self.output_stream = cs.create_stream(self,"screenshot_details")
         self.llm = get_model("image")
     def start(self):
         def process_screenshot(screenshot):

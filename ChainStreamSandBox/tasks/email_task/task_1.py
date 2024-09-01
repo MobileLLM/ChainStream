@@ -1,10 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-random.seed(6666)
 
 
 class EmailTask1(SingleAgentTaskConfigBase):
@@ -27,7 +25,7 @@ class EmailTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_by_sender",
-                "description": "A list of email summaries for each email sender, with advertisements filtered out "
+                "description": "A stream of email summaries for each email sender, with advertisements filtered out "
                                "first, followed by packaging every two emails into a batch, then grouping by sender, "
                                "and finally summarizing",
                 "fields": {
@@ -45,7 +43,7 @@ class AgentExampleForEmailTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_email_task_1"):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
-        self.email_output = cs.get_stream(self, "summary_by_sender")
+        self.email_output = cs.create_stream(self, "summary_by_sender")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

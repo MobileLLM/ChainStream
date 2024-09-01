@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ActivityTask3(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class ActivityTask3(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records (every five copies of activities data are packaged as a "
+            "description": "A stream of activities records (every five copies of activities data are packaged as a "
                            "batch)",
             "fields": {
                 "Date": "The date of the activities recorded, string",
@@ -30,7 +27,7 @@ class ActivityTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "calories_burned_most",
-                "description": "A series of records of the most calories-burned activities",
+                "description": "A stream of calories burned activities sorted in descending order.",
                 "fields": {
                     "Date": "The date of the activities recorded, string",
                     "activity": "The specific activity, string",
@@ -46,7 +43,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("calories_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "calories_burned_most")
+        self.output_stream = cs.create_stream(self, "calories_burned_most")
 
     def start(self):
         def process_activity(activity_dict):
@@ -84,6 +81,8 @@ class ActivityDistanceAgent(cs.agent.Agent):
 
         def record_output(data):
             self.output_record['calories_burned_most'].append(data)
+
+        self.output_activity_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
         activity_dict = {'all_activities': []}

@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import NewsData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class NewsTask3(SingleAgentTaskConfigBase):
@@ -15,21 +12,21 @@ class NewsTask3(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_USA_news",
             "description": "All news items",
             "fields": {
                 "category": "the category of the news, string",
-                "date": "ISO 8601 datetime format, string",
+                "date": "ISO 8601 datetime format, datetime",
                 "headline": "the headline of the news event, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "USA_news_in_July",
-                "description": "A series of the extraction of the USA news in July with the headline and the category "
+                "description": "A stream of the extraction of the USA news in July with the headline and the category "
                                "of them, with every two pieces of news are packaged as a batch after filtering the "
                                "USA news happened in July",
                 "fields": {
@@ -46,7 +43,7 @@ class AgentExampleForNewsTask3(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_news_task_3"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_USA_news")
-        self.news_output = cs.get_stream(self, "USA_news_in_July")
+        self.news_output = cs.create_stream(self, "USA_news_in_July")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

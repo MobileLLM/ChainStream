@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class KitchenSafetyTask(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Living, Domain_Task_tag.Location]),
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_video",
             "description": "all video data in my kitchen",
@@ -36,7 +33,7 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "alarm_message",
-                "description": "An alarm message series when the gas stove is safe when no one is home(home "
+                "description": "An alarm message stream when the gas stove is safe when no one is home(home "
                                "street address:'123 Main St')",
                 "fields": {
                     "notice": "Information reflecting the safe status of the gas stove, string = 'Your gas stove is "
@@ -54,7 +51,7 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.message_output = cs.get_stream(self, "alarm_message")
+        self.message_output = cs.create_stream(self, "alarm_message")
         self.video_buffer = Buffer()
         self.llm = cs.llm.get_model("image")
 

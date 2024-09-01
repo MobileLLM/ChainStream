@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ActivityTask4(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class ActivityTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "Steps": "The steps calculated in the activity, int",
                 "Date": "The date of the activities recorded, string",
@@ -29,7 +26,7 @@ class ActivityTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "steps_over_5k",
-                "description": "A series of records of the activities which are over 5000 steps",
+                "description": "A stream of records of the activities which are over 5000 steps",
                 "fields": {
                     "Date": "The date of the activities recorded, string",
                     "activity": "The specific activity, string",
@@ -46,7 +43,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_steps_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "steps_over_5k")
+        self.output_stream = cs.create_stream(self, "steps_over_5k")
 
     def start(self):
         def process_activity(activity):

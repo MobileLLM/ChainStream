@@ -1,13 +1,10 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from ChainStreamSandBox.raw_data import GPSData
 from AgentGenerator.io_model import StreamListDescription
 import time
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class WaterFlowerTask(SingleAgentTaskConfigBase):
@@ -37,7 +34,7 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "reminder",
-                "description": "A reminder series for watering the flowers after a period of time if I am not at home ("
+                "description": "A reminder stream for watering the flowers after a period of time if I am not at home ("
                                "home street address: 123 Main St), with every two copies of video data packaged into "
                                "a batch after determining the home street address from GPS data",
                 "fields": {
@@ -55,7 +52,7 @@ class AgentExampleForMultiTask7(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_input = cs.get_stream(self, "all_video")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.message_output = cs.get_stream(self, "reminder")
+        self.message_output = cs.create_stream(self, "reminder")
         self.video_buffer = Buffer()
         self.llm = cs.llm.get_model("image")
 

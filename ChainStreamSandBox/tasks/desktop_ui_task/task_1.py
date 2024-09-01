@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DesktopData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ImageTask1(SingleAgentTaskConfigBase):
@@ -26,7 +23,7 @@ class ImageTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_software",
-                "description": "Analysis of a series of software names for work",
+                "description": "Analysis of a stream of software names for work",
                 "fields": {
                     "analysis_result": "A stream of the software name currently used for work."
                 }
@@ -39,7 +36,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
         self.screenshot_input = cs.get_stream(self, "desktop_screenshot")
-        self.analysis_output = cs.get_stream(self, "analysis_software")
+        self.analysis_output = cs.create_stream(self, "analysis_software")
         self.llm = cs.llm.get_model("image")
 
     def start(self):

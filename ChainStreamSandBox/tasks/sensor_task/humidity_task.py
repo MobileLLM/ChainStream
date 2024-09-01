@@ -15,7 +15,7 @@ class WeatherTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
-            "description": "A series of the weather information",
+            "description": "A stream of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
                 "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
@@ -24,10 +24,10 @@ class WeatherTask5(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "humidity_percentage",
-                "description": "A series of the humidity percentage of the zones",
+                "stream_id": "Humidity_pct_over_70",
+                "description": "A stream of the humidity percentage of the zones",
                 "fields": {
-                    "Humidity_pct": "The humidity percentage of the zone, float",
+                    "Humidity_pct_over_70%": "The humidity percentage of the zone which is over 70, float",
                     "Location": "The location of the zone, string",
                     "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
                 }
@@ -40,27 +40,28 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.get_stream(self,"humidity_percentage")
+        self.output_stream = cs.create_stream(self,"Humidity_pct_over_70")
     def start(self):
         def process_weather(weather):
             humidity = weather["Humidity_pct"]
             location = weather["Location"]
-            time = weather["Date_Time"] 
-            self.output_stream.add_item({
-                "Humidity_pct": humidity,
-                "Location": location,
-                "Date_Time": time
-            })
+            time = weather["Date_Time"]
+            if humidity > 70:  
+                self.output_stream.add_item({
+                    "Humidity_pct_over_70%": humidity,
+                    "Location": location,
+                    "Date_Time": time
+                })
         self.input_stream.for_each(process_weather)
         '''
 
     def init_environment(self, runtime):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
-        self.output_weather_stream = cs.stream.create_stream(self, 'humidity_percentage')
+        self.output_weather_stream = cs.stream.create_stream(self, 'Humidity_pct_over_70')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['humidity_percentage'].append(data)
+            self.output_record['Humidity_pct_over_70'].append(data)
 
         self.output_weather_stream.for_each(record_output)
 
@@ -68,11 +69,11 @@ class testAgent(cs.agent.Agent):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
 
     def init_output_stream(self, runtime):
-        self.output_weather_stream = cs.stream.get_stream(self, 'humidity_percentage')
+        self.output_weather_stream = cs.stream.get_stream(self, 'Humidity_pct_over_70')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['humidity_percentage'].append(data)
+            self.output_record['Humidity_pct_over_70'].append(data)
 
         self.output_weather_stream.for_each(record_output)
 

@@ -1,13 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SMSData
 from ChainStreamSandBox.raw_data import StockData
 from AgentGenerator.io_model import StreamListDescription
-import time
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class MessageStockTask(SingleAgentTaskConfigBase):
@@ -41,7 +37,7 @@ class MessageStockTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "stock_output",
-                "description": "A series of messages to remind all buyers when the stock plummets (write a function "
+                "description": "A stream of messages to remind all buyers when the stock plummets (write a function "
                                "that uses the buffer module to store stock items, with every two items packaged into "
                                "a batch after calculating the change percentage for stocks)",
                 "fields": {
@@ -60,7 +56,7 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         super().__init__(agent_id)
         self.message_input = cs.get_stream(self, "all_message")
         self.stock_input = cs.get_stream(self, "all_stock")
-        self.stock_output = cs.get_stream(self, "stock_output")
+        self.stock_output = cs.create_stream(self, "stock_output")
         self.message_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
 

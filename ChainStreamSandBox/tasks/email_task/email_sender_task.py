@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
-import random
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class EmailTask9(SingleAgentTaskConfigBase):
@@ -18,7 +15,7 @@ class EmailTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_emails",
-            "description": "A series of emails",
+            "description": "A stream of emails",
             "fields": {
                 "From": "The sender of the email,string",
                 "Subject": "The subject of the email, string",
@@ -28,7 +25,7 @@ class EmailTask9(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "emails_sender",
-                "description": "A series of emails with the extraction of the sender",
+                "description": "A stream of emails with the extraction of the sender",
                 "fields": {
                     "Subject": "The subject of the email, string",
                     "sender": "The sender of the email extracted directly from the 'From' field, string"}
@@ -43,7 +40,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_email_agent")
         self.input_stream = cs.get_stream(self,"all_emails")
-        self.output_stream = cs.get_stream(self,"emails_sender")
+        self.output_stream = cs.create_stream(self,"emails_sender")
         self.llm = get_model("Text")
     def start(self):
         def process_email(email):

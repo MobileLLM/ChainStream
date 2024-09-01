@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DesktopData
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class StudentInClassTask(SingleAgentTaskConfigBase):
@@ -60,8 +57,8 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         super().__init__(agent_id)
         self.classroom_input = cs.get_stream(self, "all_classroom")
         self.screenshot_input = cs.get_stream(self, "all_screenshot")
-        self.numbers_output = cs.get_stream(self, "students_number")
-        self.warning_board_output = cs.get_stream(self, "warning_board")
+        self.numbers_output = cs.create_stream(self, "students_number")
+        self.warning_board_output = cs.create_stream(self, "warning_board")
         self.llm = cs.llm.get_model("image")
         self.output_buffer = Buffer()
     def start(self):

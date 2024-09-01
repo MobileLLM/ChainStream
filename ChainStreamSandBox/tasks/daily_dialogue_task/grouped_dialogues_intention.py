@@ -16,7 +16,7 @@ class DialogueTask7(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Audio)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
-            "description": "A series of dialogues record",
+            "description": "A stream of dialogues record",
             "fields": {
                 "topic": "The id of the speaker, string",
                 "dialog": "The dialogues dict with the keys: 'text', 'act', 'emotion', dict"
@@ -30,7 +30,7 @@ class DialogueTask7(SingleAgentTaskConfigBase):
                                "containing two items.",
                 "fields": {
                     "topic": "The topic of the grouped dialogues, string",
-                    "dialog_intention": "The intention of the dialogues, string"}
+                    "dialog_intention": "The list of intention of the dialogues, list"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_dialogues")
-        self.output_stream = cs.get_stream(self,"ordinary_life_dialog_intention")
+        self.output_stream = cs.create_stream(self,"ordinary_life_dialog_intention")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

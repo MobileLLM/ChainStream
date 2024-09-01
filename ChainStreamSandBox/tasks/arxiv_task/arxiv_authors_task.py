@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ArxivTask7(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class ArxivTask7(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "authors": "The authors of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -28,7 +25,7 @@ class ArxivTask7(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_with_more_than_three_authors",
-                "description": "A series of arxiv articles with more than three authors",
+                "description": "A stream of arxiv articles with more than three authors",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "authors": "The authors of the arxiv article, string",
@@ -44,16 +41,9 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "arxiv_with_more_than_three_authors")
+        self.output_stream = cs.create_stream(self, "arxiv_with_more_than_three_authors")
         self.llm = get_model("Text")
     def start(self):
-        # def process_paper(paper):
-        #     paper_title = paper["title"]
-        #     paper_authors = paper["authors"]      
-        #     prompt = "Now I give you the information on the authors of these papers.Are there more than three authors? Please simply answer y or n."
-        #     response = self.llm.query(cs.llm.make_prompt(prompt,paper_authors))
-        #     if response.lower()== "y":
-        #         return paper
         def process_paper(paper):
             paper_title = paper["title"]
             paper_authors = paper["authors"]

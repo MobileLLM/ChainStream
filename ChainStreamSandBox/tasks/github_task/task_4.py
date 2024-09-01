@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GitHubData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class GithubTask4(SingleAgentTaskConfigBase):
@@ -29,7 +26,7 @@ class GithubTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "language_from_most_pr",
-                "description": "A series of code language used in the github projects with most number of "
+                "description": "A stream of code language used in the github projects with most number of "
                                "pull-requests, with every three github repositories packaged as a batch",
                 "fields": {
                     "pull_requests": "the name of the github repository",
@@ -47,7 +44,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "language_from_most_pr")
+        self.github_output = cs.create_stream(self, "language_from_most_pr")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

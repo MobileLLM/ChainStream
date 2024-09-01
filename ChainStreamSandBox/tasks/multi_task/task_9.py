@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class CloseWindowTask(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Living, Domain_Task_tag.Weather]),
-                                modality=Modality_Task_tag.Text)
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Weather_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
             "description": "all of my gps data",
@@ -36,7 +33,7 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_close_window",
-                "description": "A series of commands of automatically closing the window when the humidity percentage "
+                "description": "A stream of commands of automatically closing the window when the humidity percentage "
                                "is over 60 but no one is home(home property name:'Maple Ridge Apartments'), with every "
                                "two copies of weather data packaged as a batch after judging the home street address "
                                "from gps data",
@@ -56,7 +53,7 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         super().__init__(agent_id)
         self.weather_input = cs.get_stream(self, "all_weather")
         self.gps_input = cs.get_stream(self, "all_gps")
-        self.action_output = cs.get_stream(self, "auto_close_window")
+        self.action_output = cs.create_stream(self, "auto_close_window")
         self.weather_buffer = Buffer()
         self.llm = cs.llm.get_model("text")
 

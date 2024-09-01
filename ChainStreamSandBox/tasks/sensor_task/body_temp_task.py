@@ -15,17 +15,19 @@ class HealthTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 "BodyTemp": "The checked body temperature, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "body_temperature",
-                "description": "A series of the statistics of the body temperature",
+                "stream_id": "body_temperature_range",
+                "description": "A prompt if the temperature is within the range of 97 to 99.",
                 "fields": {
-                    "BodyTemp": "The checked body temperature, float"}
+                    "temperature_value": "The checked body temperature value filtered in the range of 97 to 99, float",
+                    "Notice": "A prompt indicating a normal temperature, string = 'Normal body temperature range'"
+                }
             }
         ])
         self.health_data = HealthData().get_health_data(10)
@@ -36,24 +38,26 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"body_temperature")
+        self.output_stream = cs.create_stream(self,"body_temperature_range")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
-            BodyTemp = health["BodyTemp"]        
-            self.output_stream.add_item({
-                "BodyTemp": BodyTemp
-                })
+            BodyTemp = health["BodyTemp"]
+            if BodyTemp > 97 and  BodyTemp < 99:
+                self.output_stream.add_item({
+                    "temperature_value": BodyTemp,
+                    "Notice":"Normal body temperature range"
+                    })
         self.input_stream.for_each(process_health)
         '''
 
     def init_environment(self, runtime):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
-        self.output_health_stream = cs.stream.create_stream(self, 'body_temperature')
+        self.output_health_stream = cs.stream.create_stream(self, 'body_temperature_range')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['body_temperature'].append(data)
+            self.output_record['body_temperature_range'].append(data)
 
         self.output_health_stream.for_each(record_output)
 
@@ -61,11 +65,11 @@ class testAgent(cs.agent.Agent):
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
 
     def init_output_stream(self, runtime):
-        self.output_health_stream = cs.stream.get_stream(self, 'body_temperature')
+        self.output_health_stream = cs.stream.get_stream(self, 'body_temperature_range')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['body_temperature'].append(data)
+            self.output_record['body_temperature_range'].append(data)
 
         self.output_health_stream.for_each(record_output)
 

@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
 from ChainStreamSandBox.raw_data import Ego4DData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ReadingLightTask(SingleAgentTaskConfigBase):
@@ -21,7 +18,8 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.is_reading_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Living, Domain_Task_tag.Weather]),
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
+                                modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video,
+                                              Modality_Task_tag.Light_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_first_person",
             "description": "first_person perspective camera data in my study",
@@ -72,9 +70,9 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         super().__init__(agent_id)
         self.gps_input = cs.get_stream(self, "all_gps")
         self.video_input = cs.get_stream(self, "all_first_person")
-        self.command_output = cs.get_stream(self, "adjust_light")
+        self.command_output = cs.create_stream(self, "adjust_light")
         self.light_input = cs.get_stream(self, "light_intensity")
-        self.is_reading = cs.get_stream(self, "is_reading")
+        self.is_reading = cs.create_stream(self, "is_reading")
         self.llm = cs.llm.get_model("image")
         self.video_buffer = Buffer()
     

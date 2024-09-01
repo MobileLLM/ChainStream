@@ -15,7 +15,7 @@ class HealthTask14(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Health_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_health",
-            "description": "A series of health information",
+            "description": "A stream of health information",
             "fields": {
                 'SystolicBP': "The systolic blood pressure detected, float",
                 'DiastolicBP': "The diastolic blood pressure detected, float",
@@ -27,7 +27,7 @@ class HealthTask14(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "occupation_estimation",
-                "description": "A series of the analysis of the occupation of the person chosen from ['Software "
+                "description": "A stream of the analysis of the occupation of the person chosen from ['Software "
                                "Engineer', 'Nurse', 'Construction Worker', 'Teacher', 'Corporate Lawyer', 'Chef', "
                                "'Financial Analyst', 'Research Scientist', 'Sales Executive', 'Emergency Dispatcher', "
                                "'Not Sure'] based on the health data",
@@ -46,7 +46,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_health_agent")
         self.input_stream = cs.get_stream(self,"all_health")
-        self.output_stream = cs.get_stream(self,"occupation_estimation")
+        self.output_stream = cs.create_stream(self,"occupation_estimation")
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):

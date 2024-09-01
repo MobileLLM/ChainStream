@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SMSData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class MessageTask5(SingleAgentTaskConfigBase):
@@ -18,19 +15,19 @@ class MessageTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_sms",
-            "description": "A series of messages information",
+            "description": "A stream of messages information",
             "fields": {
                 "text": "The content of the message, string",
-                "time": "The time of the message, string"
+                "time": "The time of the message with the format of '%Y.%m.%d %H:%M:%S', datetime"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "sms_time",
-                "description": "A series of the release time of the message reports",
+                "stream_id": "sms_in_January",
+                "description": "A stream of the message texts in January (the month with the '01' format)",
                 "fields": {
-                    "text": "The content of the message, string",
-                    "time": "The time extracted from the message report, string"
+                    "text": "The content of the message in January (the month with the '01' format), string",
+                    "time": "The time of the message with the format of '%Y.%m.%d %H:%M:%S', datetime"
                 }
             }
         ])
@@ -42,28 +39,32 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_message_agent")
         self.input_stream = cs.get_stream(self,"all_sms")
-        self.output_stream = cs.get_stream(self,"sms_time")
-
+        self.output_stream = cs.create_stream(self,"sms_in_January")
+        self.llm = cs.llm.get_model("Text")
     def start(self):
         def process_sms(sms):
             sms_time = sms["time"]
             sms_text = sms["text"]
-            self.output_stream.add_item({
-                "text": sms_text,
-                "time": sms_time
-            })
+            date_parts = sms_time.split(' ')
+            date = date_parts[0]
+            year, month, day = date.split('.')
+            if month == '01':
+                self.output_stream.add_item({
+                    "text": sms_text,
+                    "sms_time": sms_time
+                })
         self.input_stream.for_each(process_sms)
         
         '''
 
     def init_environment(self, runtime):
         self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
-        self.output_sms_stream = cs.stream.create_stream(self, 'sms_time')
+        self.output_sms_stream = cs.stream.create_stream(self, 'sms_in_January')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['sms_time'].append(data)
+            self.output_record['sms_in_January'].append(data)
 
         self.output_sms_stream.for_each(record_output)
 
@@ -71,12 +72,12 @@ class testAgent(cs.agent.Agent):
         self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
 
     def init_output_stream(self, runtime):
-        self.output_sms_stream = cs.stream.get_stream(self, 'sms_time')
+        self.output_sms_stream = cs.stream.get_stream(self, 'sms_in_January')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['sms_time'].append(data)
+            self.output_record['sms_in_January'].append(data)
 
         self.output_sms_stream.for_each(record_output)
 

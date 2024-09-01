@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import HealthData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class HealthTask5(SingleAgentTaskConfigBase):
@@ -29,7 +26,7 @@ class HealthTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "health_advice_for_engineers",
-                "description": "A series of the reasonable advice for the company's engineer according to their ages "
+                "description": "A stream of the reasonable advice for the company's engineer according to their ages "
                                "and sleeping time,with every two copies of health sensor data are packaged as a batch "
                                "after filtering the occupation which is 'Engineer'",
                 "fields": {
@@ -48,7 +45,7 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_health_task_5"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_health")
-        self.sensor_output = cs.get_stream(self, "health_advice_for_engineers")
+        self.sensor_output = cs.create_stream(self, "health_advice_for_engineers")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

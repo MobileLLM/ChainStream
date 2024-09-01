@@ -15,19 +15,20 @@ class WeatherTask8(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
-            "description": "A series of the weather information",
+            "description": "A stream of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
-                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
+                "Temperature_C": "The temperature of the zone, float"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_location",
-                "description": "A series of the location of the zones",
+                "stream_id": "temperatures_grouped_by_specific_location",
+                "description": "A stream of the temperatures grouped by the same location with each six items "
+                               "grouped as a batch.",
                 "fields": {
-                    "Location": "The location of the zone, string",
-                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
+                    "location": "The location of the zone, string",
+                    "temperatures_list": "The list of the temperatures grouped by the specific location, list"
                 }
             }
         ])
@@ -38,25 +39,31 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.get_stream(self,"weather_location")
+        self.output_stream = cs.create_stream(self,"temperatures_grouped_by_specific_location")
     def start(self):
-        def process_weather(weather):
-            Location = weather["Location"]
-            time = weather["Date_Time"]           
-            self.output_stream.add_item({
-                "Location": Location,
-                "Date_Time": time
-            })
-        self.input_stream.for_each(process_weather)
+        def grouped_location(weather_data):
+            weather_list = weather_data['item_list']
+            location_group = {}
+            for weather in weather_list:
+                if weather['Location'] not in location_group:
+                    location_group[weather['Location']] = [weather['Temperature_C']]
+                else:
+                    location_group[weather['Location']].append(weather['Temperature_C'])
+                self.output_stream.add_item({
+                    'location': weather['Location'],
+                    'temperatures_list': list(location_group.values())
+                })
+            return list(location_group.values())
+        self.input_stream.batch(by_count = 6).for_each(grouped_location)
         '''
 
     def init_environment(self, runtime):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
-        self.output_weather_stream = cs.stream.create_stream(self, 'weather_location')
+        self.output_weather_stream = cs.stream.create_stream(self, 'temperatures_grouped_by_specific_location')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['weather_location'].append(data)
+            self.output_record['temperatures_grouped_by_specific_location'].append(data)
 
         self.output_weather_stream.for_each(record_output)
 
@@ -64,11 +71,11 @@ class testAgent(cs.agent.Agent):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
 
     def init_output_stream(self, runtime):
-        self.output_weather_stream = cs.stream.get_stream(self, 'weather_location')
+        self.output_weather_stream = cs.stream.get_stream(self, 'temperatures_grouped_by_specific_location')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['weather_location'].append(data)
+            self.output_record['temperatures_grouped_by_specific_location'].append(data)
 
         self.output_weather_stream.for_each(record_output)
 

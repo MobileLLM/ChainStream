@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import EmailData
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class MultiTask1(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class MultiTask1(SingleAgentTaskConfigBase):
         self.input_arxiv_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
+                                domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_email",
@@ -37,7 +34,7 @@ class MultiTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_recommendation",
-                "description": "A series of arxiv recommendation based on the subject keyword mentioned in the emails",
+                "description": "A stream of arxiv recommendation based on the subject keyword mentioned in the emails",
                 "fields": {
                     "title": "the title of the recommended arxiv paper, string"
                 }
@@ -53,7 +50,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.email_input = cs.get_stream(self, "all_email")
         self.arxiv_input = cs.get_stream(self, "all_arxiv")
-        self.arxiv_output = cs.get_stream(self, "arxiv_recommendation")
+        self.arxiv_output = cs.create_stream(self, "arxiv_recommendation")
         self.arxiv_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
 

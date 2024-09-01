@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 import chainstream as cs
-import random
 from ChainStreamSandBox.raw_data import EmailData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class EmailTask8(SingleAgentTaskConfigBase):
@@ -18,7 +15,7 @@ class EmailTask8(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_emails",
-            "description": "A series of emails",
+            "description": "A stream of emails",
             "fields": {
                 "Content": "The content of the email, string",
                 "Subject": "The subject of the email, string"
@@ -27,7 +24,7 @@ class EmailTask8(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "auto_reply_emails",
-                "description": "A series of auto-reply emails based on the contents",
+                "description": "A stream of auto-reply emails based on the contents",
                 "fields": {
                     "Subject": "The subject of the email, string",
                     "reply": "The auto-reply message of the email, string = 'Received!'"}
@@ -42,7 +39,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_email_agent")
         self.input_stream = cs.get_stream(self,"all_emails")
-        self.output_stream = cs.get_stream(self,"auto_reply_emails")
+        self.output_stream = cs.create_stream(self,"auto_reply_emails")
         self.llm = get_model("Text")
     def start(self):
         def process_email(email):

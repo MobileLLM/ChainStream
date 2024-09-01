@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class WeatherTask4(SingleAgentTaskConfigBase):
@@ -28,7 +25,7 @@ class WeatherTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "take_clothes_down",
-                "description": "A series of reminders to take down clothes in the balcony if the wind speed is over 20 "
+                "description": "A stream of reminders to take down clothes in the balcony if the wind speed is over 20 "
                                "kmh,with every two copies of weather data packaged as a batch after filtering the "
                                "wind speed which is over 20 kmh",
                 "fields": {
@@ -47,7 +44,7 @@ class AgentExampleForSensorTask7(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_weather_task_6"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_weather")
-        self.sensor_output = cs.get_stream(self, "take_clothes_down")
+        self.sensor_output = cs.create_stream(self, "take_clothes_down")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

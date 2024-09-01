@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import NewsData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class NewsTask4(SingleAgentTaskConfigBase):
@@ -15,7 +12,7 @@ class NewsTask4(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_news_stream = None
         self.input_news_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
@@ -29,7 +26,7 @@ class NewsTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "extract_entertainment_news_website",
-                "description": "A series of extraction of the entertainment news website links with their short "
+                "description": "A stream of extraction of the entertainment news website links with their short "
                                "descriptions, with every two pieces of news are packaged as a batch after filtering "
                                "the entertainment topic",
                 "fields": {
@@ -47,7 +44,7 @@ class AgentExampleForNewsTask4(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_news_task_4"):
         super().__init__(agent_id)
         self.news_input = cs.get_stream(self, "all_news")
-        self.news_output = cs.get_stream(self, "extract_entertainment_news_website")
+        self.news_output = cs.create_stream(self, "extract_entertainment_news_website")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

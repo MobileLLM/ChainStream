@@ -15,7 +15,7 @@ class GPSTask11(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",
-            "description": "A series of the gps data",
+            "description": "A stream of the gps data",
             "fields": {
                 "CapitalLongitude": "The capital longitude of the location, float",
             }
@@ -23,7 +23,7 @@ class GPSTask11(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "gps_longitude",
-                "description": "A series of the capital longitude extracted from the gps data",
+                "description": "A stream of the capital longitude extracted from the gps data",
                 "fields": {
                     "CapitalLongitude": "The capital longitude of the location, float"}
             }
@@ -36,7 +36,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_gps_agent")
         self.input_stream = cs.get_stream(self,"all_gps")
-        self.output_stream = cs.get_stream(self,"gps_longitude")
+        self.output_stream = cs.create_stream(self,"gps_longitude")
         self.llm = get_model("Text")
     def start(self):
         def process_gps(gps):

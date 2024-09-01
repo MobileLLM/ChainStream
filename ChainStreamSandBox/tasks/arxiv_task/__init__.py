@@ -9,7 +9,7 @@ from .arxiv_date_task import ArxivTask8
 from .arxiv_focus_area_task import ArxivTask9
 from .arxiv_implementation_task import ArxivTask10
 from .arxiv_journal_reference_task import ArxivTask11
-from .arxiv_pages_and_charts_task import ArxivTask12
+from .arxiv_pages_task import ArxivTask12
 from .arxiv_topic_task import ArxivTask13
 from .arxiv_url_task import ArxivTask14
 from .arxiv_version_task import ArxivTask15

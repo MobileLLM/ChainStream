@@ -15,7 +15,7 @@ class WifiTask3(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Wifi_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_wifi",
-            "description": "A series of the wifi information",
+            "description": "A stream of the wifi information",
             "fields": {
                 "Signal": "The signal strength of the wifi signal, int"
             }
@@ -23,7 +23,7 @@ class WifiTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "wifi_signal_strength",
-                "description": "A series of the wifi signal strength statistics",
+                "description": "A stream of the wifi signal strength statistics",
                 "fields": {
                     "Signal": "The signal strength of the wifi signal, int"
                 }
@@ -36,7 +36,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_wifi_agent")
         self.input_stream = cs.get_stream(self,"all_wifi")
-        self.output_stream = cs.get_stream(self,"wifi_signal_strength")
+        self.output_stream = cs.create_stream(self,"wifi_signal_strength")
     def start(self):
         def process_wifi(wifi):
             Signal_Strength = wifi["Signal"]        

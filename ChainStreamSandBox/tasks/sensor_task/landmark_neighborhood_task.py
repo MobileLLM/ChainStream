@@ -15,17 +15,20 @@ class GPSTask15(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_landmarks",
-            "description": "A series of landmarks information",
+            "description": "A stream of landmarks information",
             "fields": {
+                "PropertyName": "The property name of the landmark, string",
                 "Neighborhood": "The neighborhood of the landmark, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "landmarks_neighborhood",
-                "description": "A series of the neighborhoods of the landmarks",
+                "stream_id": "property_with_neighborhood",
+                "description": "A stream of the concatenated field presenting the name with the neighborhood of the "
+                               "landmarks",
                 "fields": {
-                    "Neighborhood": "The neighborhood names of the landmark, string"}
+                    "property_with_neighborhood": "The concatenated field presenting the name with the type of the "
+                                                  "landmarks, string"}
             }
         ])
         self.landmark_data = LandmarkData().get_landmarks(10)
@@ -36,13 +39,15 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_landmark_agent")
         self.input_stream = cs.get_stream(self,"all_landmarks")
-        self.output_stream = cs.get_stream(self,"landmarks_neighborhood")
+        self.output_stream = cs.create_stream(self,"property_with_neighborhood")
         self.llm = get_model("Text")
     def start(self):
         def process_landmark(landmark):
-            Neighborhood = landmark["Neighborhood"]        
+            Neighborhood = landmark["Neighborhood"]
+            property_name = landmark["PropertyName"]
+            tag = "Neighborhood" + "," + "property_name"        
             self.output_stream.add_item({
-                "Neighborhood": Neighborhood
+                "property_with_neighborhood": tag
             })
         self.input_stream.for_each(process_landmark)
 
@@ -50,11 +55,11 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
-        self.output_landmark_stream = cs.stream.create_stream(self, 'landmarks_neighborhood')
+        self.output_landmark_stream = cs.stream.create_stream(self, 'property_with_neighborhood')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['landmarks_neighborhood'].append(data)
+            self.output_record['property_with_neighborhood'].append(data)
 
         self.output_landmark_stream.for_each(record_output)
 
@@ -62,11 +67,11 @@ class testAgent(cs.agent.Agent):
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
 
     def init_output_stream(self, runtime):
-        self.output_landmark_stream = cs.stream.get_stream(self, 'landmarks_neighborhood')
+        self.output_landmark_stream = cs.stream.get_stream(self, 'property_with_neighborhood')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['landmarks_neighborhood'].append(data)
+            self.output_record['property_with_neighborhood'].append(data)
 
         self.output_landmark_stream.for_each(record_output)
 

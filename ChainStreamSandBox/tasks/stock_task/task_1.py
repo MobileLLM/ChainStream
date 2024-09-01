@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import StockData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class StockTask1(SingleAgentTaskConfigBase):
@@ -30,7 +27,7 @@ class StockTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "up_or_down",
-                "description": "A series of the change percentages with the volume of the MLM stock if it has fallen",
+                "description": "A stream of the change percentages with the volume of the MLM stock if it has fallen",
                 "fields": {
                     "change_percentage": "The percentage change in the stock price, float",
                     "volume": "the trading volume of the stock, float"
@@ -46,7 +43,7 @@ class AgentExampleForStockTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_stock_task_1"):
         super().__init__(agent_id)
         self.stock_input = cs.get_stream(self, "all_stock")
-        self.stock_output = cs.get_stream(self, "up_or_down")
+        self.stock_output = cs.create_stream(self, "up_or_down")
         self.llm = cs.llm.get_model("Text")
 
         def filter_mlm_stocks(stock_dict):

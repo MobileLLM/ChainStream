@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import StockData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class StockTask2(SingleAgentTaskConfigBase):
@@ -14,11 +11,11 @@ class StockTask2(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_stock_stream = None
         self.input_stock_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Daily_information,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Daily_information,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stocks",
-            "description": "A series of stock information (every ten stock information are packaged as a batch)",
+            "description": "A stream of stock information (every ten stock information are packaged as a batch)",
             "fields": {
                 "symbol": "The symbol of the stock, string",
                 "volume": "The trading volume of the stock, float"
@@ -27,7 +24,7 @@ class StockTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "top_five_volume_stock",
-                "description": "A series of the filtered stocks with top five trading volume",
+                "description": "A stream of the filtered stocks with top five trading volume",
                 "fields": {
                     "symbol": "The symbol of the stock, string",
                     "volume": "The trading volume of the stock, float"
@@ -42,7 +39,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_stocks")
-        self.output_stream = cs.get_stream(self,"top_five_volume_stock")
+        self.output_stream = cs.create_stream(self,"top_five_volume_stock")
         self.llm = get_model("Text")
     def start(self):
         def process_stocks(stock_dict):

@@ -15,7 +15,7 @@ class DialogueTask5(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Audio)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
-            "description": "A series of dialogues record",
+            "description": "A stream of dialogues record",
             "fields": {
                 "id": "The id of the speaker, string",
                 "dialog": "The dialogues contents, string",
@@ -24,7 +24,7 @@ class DialogueTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "dialogues_topic",
-                "description": "A series of dialogues record with the analysis of their topics chosen from ["
+                "description": "A stream of dialogues record with the analysis of their topics chosen from ["
                                "'Technology', 'Health', 'Travel', 'Entertainment', 'Current Events','Other']",
                 "fields": {
                     "id": "The id of the speaker, string",
@@ -40,7 +40,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_dialogues")
-        self.output_stream = cs.get_stream(self,"dialogues_topic")
+        self.output_stream = cs.create_stream(self,"dialogues_topic")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GitHubData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class GithubTask3(SingleAgentTaskConfigBase):
@@ -29,7 +26,7 @@ class GithubTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "most_forks_with_licence",
-                "description": "A series of fork number of github repositories with licence, with every three github "
+                "description": "A stream of fork number of github repositories with licence, with every three github "
                                "repositories packaged as a batch after filtering the github with licence",
                 "fields": {
                     "licence": "the licence of the github repository, string",
@@ -47,7 +44,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "most_forks_with_licence")
+        self.github_output = cs.create_stream(self, "most_forks_with_licence")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import StockData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class StockTask4(SingleAgentTaskConfigBase):
@@ -18,7 +15,7 @@ class StockTask4(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_stocks",
-            "description": "A series of stock information",
+            "description": "A stream of stock information",
             "fields": {
                 "open": "The open price of the stock, float",
                 "close": "The close price of the price, float",
@@ -30,7 +27,7 @@ class StockTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "recommendation_sell_stock",
-                "description": "A series of the recommendations for selling stocks based on the open,close,high and "
+                "description": "A stream of the recommendations for selling stocks based on the open,close,high and "
                                "low price",
                 "fields": {
                     "sell": "Decision on whether to sell the stock or not, string = yes or no",
@@ -47,7 +44,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_stocks")
-        self.output_stream = cs.get_stream(self,"recommendation_sell_stock")
+        self.output_stream = cs.create_stream(self,"recommendation_sell_stock")
         self.llm = get_model("Text")
 
     def start(self):

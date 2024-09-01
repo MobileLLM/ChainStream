@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GPSData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class GPSTask1(SingleAgentTaskConfigBase):
@@ -15,7 +12,7 @@ class GPSTask1(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_sensor_stream = None
         self.input_sensor_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Location,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Location,
                                 modality=Modality_Task_tag.GPS_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_locations",
@@ -29,13 +26,12 @@ class GPSTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "city_identification",
-                "description": "A series of the city identifications according to the longitude and latitude sensor in "
-                               "North America,with every two copies of location data packaged as a batch after "
-                               "filtering the gps data in North America",
+                "description": "A stream of the city identifications according to the longitude and latitude sensor in "
+                               "South America",
                 "fields": {
-                    "CapitalLongitude": "the longitude of my location, string",
-                    "CapitalLatitude": "the latitude of my location, string",
-                    "CapitalName": "the name of my city, string"
+                    "CapitalLongitude": "the longitude of my location in South America, string",
+                    "CapitalLatitude": "the latitude of my location in South America, string",
+                    "CapitalName": "the name of my city in South America, string"
                 }
             }
         ])
@@ -48,28 +44,26 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_gps_task_1"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_locations")
-        self.sensor_output = cs.get_stream(self, "city_identification")
+        self.sensor_output = cs.create_stream(self, "city_identification")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
         def filter_location(location):
             continent = location['ContinentName']
-            if continent == "North America":
+            if continent == "South America":
                 return location
 
-        def analysis_location(location_list):
-            location_list = location_list['item_list']
-            for location in location_list:
-                latitude = location.get('CapitalLatitude')
-                longitude = location.get('CapitalLongitude')
-                capital = location.get('CapitalName')
-                self.sensor_output.add_item({
-                    "CapitalLatitude": latitude,
-                    "CapitalLongitude": longitude,
-                    "CapitalName": capital
-                })
+        def analysis_location(location):
+            latitude = location.get('CapitalLatitude')
+            longitude = location.get('CapitalLongitude')
+            capital = location.get('CapitalName')
+            self.sensor_output.add_item({
+                "CapitalLatitude": latitude,
+                "CapitalLongitude": longitude,
+                "CapitalName": capital
+            })
 
-        self.sensor_input.for_each(filter_location).batch(by_count=2).for_each(analysis_location)
+        self.sensor_input.for_each(filter_location).for_each(analysis_location)
         '''
 
     def init_environment(self, runtime):

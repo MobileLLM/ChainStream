@@ -15,7 +15,7 @@ class NewsTask13(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_news",
-            "description": "A series of news information",
+            "description": "A stream of news information",
             "fields": {
                 "headline": "The headline of the news, string"
             }
@@ -23,7 +23,7 @@ class NewsTask13(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "news_title",
-                "description": "A series of the headline of the news",
+                "description": "A stream of the headline of the news",
                 "fields": {
                     "headline": "The headline of the news, string"
                 }
@@ -38,7 +38,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_news")
-        self.output_stream = cs.get_stream(self,"news_title")
+        self.output_stream = cs.create_stream(self,"news_title")
         self.llm = get_model("Text")
     def start(self):
         def process_news(news):

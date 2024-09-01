@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import HealthData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class HealthTask4(SingleAgentTaskConfigBase):
@@ -27,7 +24,7 @@ class HealthTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "remind_rest",
-                "description": "A series of reminders to take a rest when the heart rate is over 85,with every two "
+                "description": "A stream of reminders to take a rest when the heart rate is over 85,with every two "
                                "copies of health sensor data are packaged as a batch after filtering the heart rate "
                                "which is over 85",
                 "fields": {
@@ -45,7 +42,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_health_task_4"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_health")
-        self.sensor_output = cs.get_stream(self, "remind_rest")
+        self.sensor_output = cs.create_stream(self, "remind_rest")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

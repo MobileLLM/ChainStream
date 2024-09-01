@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import GitHubData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class GithubTask10(SingleAgentTaskConfigBase):
@@ -28,7 +25,7 @@ class GithubTask10(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "count_github_watchers",
-                "description": "A series of the current watchers of the github repositories",
+                "description": "A stream of the current watchers of the github repositories",
                 "fields": {
                     "name": "the name of the github repository, string",
                     "watchers": "the current number of watchers of the github repository, int"
@@ -44,7 +41,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "count_github_watchers")
+        self.github_output = cs.create_stream(self, "count_github_watchers")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):

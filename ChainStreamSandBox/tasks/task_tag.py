@@ -38,6 +38,7 @@ class Modality_Task_tag(Enum):
     Wifi_Sensor = "Wifi_Sensor"
     Weather_Sensor = "Weather_Sensor"
     Activity_Sensor = "Activity_Sensor"
+    Light_Sensor = "Light_Sensor"
 
 
 class TaskTag(BaseModel):

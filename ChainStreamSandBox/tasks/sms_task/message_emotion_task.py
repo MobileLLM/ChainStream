@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SMSData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class MessageTask2(SingleAgentTaskConfigBase):
@@ -18,7 +15,7 @@ class MessageTask2(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_sms",
-            "description": "A series of messages information",
+            "description": "A stream of messages information",
             "fields": {
                 "text": "The content of the message, string"
             }
@@ -26,7 +23,7 @@ class MessageTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sms_emotion",
-                "description": "A series of the analysis of the emotion of the messages chosen from positive, "
+                "description": "A stream of the analysis of the emotion of the messages chosen from positive, "
                                "negative, neutral and other based on the text",
                 "fields": {
                     "text": "The text content of the message, string",
@@ -44,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_message_agent")
         self.input_stream = cs.get_stream(self,"all_sms")
-        self.output_stream = cs.get_stream(self,"sms_emotion")
+        self.output_stream = cs.create_stream(self,"sms_emotion")
         self.llm = get_model("Text")
     def start(self):
         def process_sms(sms):

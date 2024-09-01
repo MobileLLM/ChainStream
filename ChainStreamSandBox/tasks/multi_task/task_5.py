@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DialogData
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class TravelTask(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.input_dialogue_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
                                 domain=str([Domain_Task_tag.Interpersonal_relationship, Domain_Task_tag.Weather]),
-                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Audio]))
+                                modality=str([Modality_Task_tag.Weather_Sensor, Modality_Task_tag.Audio]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
             "description": "All weather information",
@@ -37,7 +34,7 @@ class TravelTask(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_report",
-                "description": "A series of the places extracted from the dialogues with the temperature, with every "
+                "description": "A stream of the places extracted from the dialogues with the temperature, with every "
                                "two pieces of dialogues packaged as a batch after filtering the topic of trip from "
                                "the dialogues",
                 "fields": {
@@ -56,7 +53,7 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
         super().__init__(agent_id)
         self.weather_input = cs.get_stream(self, "all_weather")
         self.dialogue_input = cs.get_stream(self, "all_dialogue")
-        self.message_output = cs.get_stream(self, "weather_report")
+        self.message_output = cs.create_stream(self, "weather_report")
         self.weather_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
         

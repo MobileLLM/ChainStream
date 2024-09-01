@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import SpharData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ShopStockTask(SingleAgentTaskConfigBase):
@@ -57,9 +54,9 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         super().__init__(agent_id)
         self.clock_input = cs.get_stream(self, "clock")
         self.shop_input = cs.get_stream(self, "all_first_person_shop")
-        self.message_output = cs.get_stream(self, "output_messages")
+        self.message_output = cs.create_stream(self, "output_messages")
         self.llm = cs.llm.get_model("image")
-        self.work_trigger = cs.get_stream(self, "work_trigger")
+        self.work_trigger = cs.create_stream(self, "work_trigger")
 
     def start(self):
         def business_hours(clock_input):

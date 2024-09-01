@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DialogData
 from ChainStreamSandBox.raw_data import WeatherData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class MultiTask3(SingleAgentTaskConfigBase):
@@ -19,8 +16,8 @@ class MultiTask3(SingleAgentTaskConfigBase):
         self.input_weather_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
-                                modality=Modality_Task_tag.Text)
+                                domain=str([Domain_Task_tag.Daily_information, Domain_Task_tag.Weather]),
+                                modality=str([Modality_Task_tag.Audio, Modality_Task_tag.Weather_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
             "description": "All dialogues record",
@@ -39,7 +36,7 @@ class MultiTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "weather_search",
-                "description": "A series of weather information search based on the name mentioned in dialogues",
+                "description": "A stream of weather information search based on the name mentioned in dialogues",
                 "fields": {
                     "Location": "the location mentioned in the travel dialogues, string",
                     "Temperature_C": "the temperature of the location, float",
@@ -57,7 +54,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.dialogues_input = cs.get_stream(self, "all_dialogues")
         self.weather_input = cs.get_stream(self, "all_weather")
-        self.weather_output = cs.get_stream(self, "weather_search")
+        self.weather_output = cs.create_stream(self, "weather_search")
         self.weather_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
 

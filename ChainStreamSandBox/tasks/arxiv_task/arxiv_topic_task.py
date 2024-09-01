@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ArxivData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ArxivTask13(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class ArxivTask13(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_arxiv",
-            "description": "A series of arxiv articles",
+            "description": "A stream of arxiv articles",
             "fields": {
                 "abstract": "The abstract of the arxiv article, string",
                 "title": "The title of the arxiv article, string"
@@ -28,7 +25,7 @@ class ArxivTask13(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_topic",
-                "description": "A series of arxiv articles with their topic analysed chosen from ['Artificial "
+                "description": "A stream of arxiv articles with their topic analysed chosen from ['Artificial "
                                "Intelligence', 'Computer Vision and Pattern Recognition', 'Machine Learning', "
                                "'Neural and Evolutionary Computing', 'Robotics', 'Graphics', 'Human-Computer "
                                "Interaction', 'Multiagent Systems', 'Software Engineering', 'Other'] based on their "
@@ -51,7 +48,7 @@ class TestAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.get_stream(self, "arxiv_topic")
+        self.output_stream = cs.create_stream(self, "arxiv_topic")
         self.llm = get_model("Text")
 
     def start(self):

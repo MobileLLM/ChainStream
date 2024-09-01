@@ -15,19 +15,21 @@ class WeatherTask9(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Weather_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_weather",
-            "description": "A series of the weather information",
+            "description": "A stream of the weather information",
             "fields": {
                 "Location": "The location of the zone, string",
-                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
+                "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime",
+                "Temperature_C": "The temperature of the zone, float",
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "weather_time",
-                "description": "A series of the time of the zones",
+                "stream_id": "temperature_in_April",
+                "description": "A stream of the weather of the zones in April",
                 "fields": {
                     "Location": "The location of the zone, string",
-                    "Date_Time": "The time of the zone with the format of '%Y/%m/%d %H:%M', datetime"
+                    "Temperature": "The temperature of the zone in April, float"
+
                 }
             }
         ])
@@ -38,25 +40,29 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_weather_agent")
         self.input_stream = cs.get_stream(self,"all_weather")
-        self.output_stream = cs.get_stream(self,"weather_time")
+        self.output_stream = cs.create_stream(self,"temperature_in_April")
     def start(self):
         def process_weather(weather):
             Location = weather["Location"]
-            Date_Time = weather["Date_Time"]        
-            self.output_stream.add_item({
-                "Location": Location,
-                "Date_Time": Date_Time
-            })
+            Date_Time = weather["Date_Time"]
+            Temperature = weather["Temperature_C"]
+            date_part = Date_Time.split(' ')[0] 
+            year, month, day = date_part.split('/')
+            if month == '4':
+                self.output_stream.add_item({
+                    "Location": Location,
+                    "Temperature": Temperature
+                })
         self.input_stream.for_each(process_weather)
         '''
 
     def init_environment(self, runtime):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
-        self.output_weather_stream = cs.stream.create_stream(self, 'weather_time')
+        self.output_weather_stream = cs.stream.create_stream(self, 'temperature_in_April')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['weather_time'].append(data)
+            self.output_record['temperature_in_April'].append(data)
 
         self.output_weather_stream.for_each(record_output)
 
@@ -64,11 +70,11 @@ class testAgent(cs.agent.Agent):
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
 
     def init_output_stream(self, runtime):
-        self.output_weather_stream = cs.stream.get_stream(self, 'weather_time')
+        self.output_weather_stream = cs.stream.get_stream(self, 'temperature_in_April')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['weather_time'].append(data)
+            self.output_record['temperature_in_April'].append(data)
 
         self.output_weather_stream.for_each(record_output)
 

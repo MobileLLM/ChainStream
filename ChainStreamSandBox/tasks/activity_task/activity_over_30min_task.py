@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import ActivityData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class ActivityTask2(SingleAgentTaskConfigBase):
@@ -19,7 +16,7 @@ class ActivityTask2(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_activities",
-            "description": "A series of activities records",
+            "description": "A stream of activities records",
             "fields": {
                 "Date": "The date of the activities recorded, string",
                 "activity": "The specific activity, string",
@@ -29,7 +26,7 @@ class ActivityTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "activity_over_30min",
-                "description": "A series of records when the activities are more than 30 minutes",
+                "description": "A stream of records when the activities are more than 30 minutes",
                 "fields": {
                     "Date": "the date when exercising more than 30 minutes, string",
                     "activity": "The specific activity, string",
@@ -45,7 +42,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("activity_time_agent")
         self.input_stream = cs.get_stream(self, "all_activities")
-        self.output_stream = cs.get_stream(self, "activity_over_30min")
+        self.output_stream = cs.create_stream(self, "activity_over_30min")
 
     def start(self):
         def process_activity(activity):

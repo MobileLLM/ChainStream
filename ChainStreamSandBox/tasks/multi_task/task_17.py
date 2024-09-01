@@ -1,12 +1,9 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import DialogData
 from ChainStreamSandBox.raw_data import GitHubData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class MultiTask2(SingleAgentTaskConfigBase):
@@ -19,8 +16,8 @@ class MultiTask2(SingleAgentTaskConfigBase):
         self.input_github_stream = None
         self.is_office_event = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Office, Domain_Task_tag.Location]),
-                                modality=Modality_Task_tag.Text)
+                                domain=str([Domain_Task_tag.Daily_information, Domain_Task_tag.Office]),
+                                modality=str([Modality_Task_tag.Text, Modality_Task_tag.Audio]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_dialogues",
             "description": "All dialogues record",
@@ -38,7 +35,7 @@ class MultiTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "github_search",
-                "description": "A series of github information search based on the repository name mentioned in "
+                "description": "A stream of github information search based on the repository name mentioned in "
                                "dialogues",
                 "fields": {
                     "name": "the name of the github repository, string",
@@ -56,7 +53,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         super().__init__(agent_id)
         self.dialogues_input = cs.get_stream(self, "all_dialogues")
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.get_stream(self, "github_search")
+        self.github_output = cs.create_stream(self, "github_search")
         self.github_buffer = Buffer()
         self.llm = cs.llm.get_model("Text")
 
@@ -112,7 +109,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'Can you help me export the Export-Photoshop-Layer-For-Android project?',
+                        'text': 'Can you help me export the AnkiconnectAndroid project?',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
@@ -123,7 +120,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'We need to configure the ktor-api for the project.',
+                        'text': 'We need to configure the STM32F4 for the project.',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
@@ -134,13 +131,24 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'Please apply the hyper-named-css-colors to the design.',
+                        'text': 'Please apply the QQrobotFramework to the design.',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
                 ],
                 'topic': 'Work',
                 'id': 20003
+            },
+            {
+                'dialog': [
+                    {
+                        'text': 'The docker-nginx-angular project is really wonderful!',
+                        'act': 'directive',
+                        'emotion': 'excited'
+                    }
+                ],
+                'topic': 'Work',
+                'id': 20004
             }
         ]
 

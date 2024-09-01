@@ -1,11 +1,8 @@
 from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
-import random
 import chainstream as cs
 from ChainStreamSandBox.raw_data import LandmarkData
 from AgentGenerator.io_model import StreamListDescription
 from ..task_tag import *
-
-random.seed(6666)
 
 
 class GPSTask3(SingleAgentTaskConfigBase):
@@ -29,7 +26,7 @@ class GPSTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "street_of_school",
-                "description": "A series of the street addresses of all the 'K-12 School' around,with every two copies "
+                "description": "A stream of the street addresses of all the 'K-12 School' around,with every two copies "
                                "of location data packaged as a batch after filtering K-12 School property type",
                 "fields": {
                     "Street Address": "the street address of my location, string",
@@ -46,7 +43,7 @@ class AgentExampleForSensorTask3(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_gps_task_2"):
         super().__init__(agent_id)
         self.sensor_input = cs.get_stream(self, "all_locations")
-        self.sensor_output = cs.get_stream(self, "street_of_school")
+        self.sensor_output = cs.create_stream(self, "street_of_school")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
