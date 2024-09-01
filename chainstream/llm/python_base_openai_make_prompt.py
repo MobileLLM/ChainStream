@@ -17,8 +17,8 @@ from PIL import Image
 logger = logging.getLogger(__name__)
 
 GPT_CONFIG = {
-    "url": "https://api.openai-proxy.org",
-    "key": "sk-43Kn6GuGNxD0KwGB1XgiEyQ8htVDan44XXdnQqXA7VkZ7sMI"
+    "url": "https://tbnx.plus7.plus/v1",
+    "key": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
 }
 
 
