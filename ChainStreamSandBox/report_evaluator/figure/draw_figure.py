@@ -185,6 +185,7 @@ def load_all_results(base_file_path):
         "result-gpt-4o",
         "result-chainstream_fewshot_1shot",
         "result-chainstream_fewshot_3shot",
+        "result-chainstream_feedback_example"
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -231,6 +232,8 @@ def rename_generator(name):
         return "CS-Fews-1shot"
     elif name == "result-chainstream_fewshot_3shot":
         return "CS-Fews-3shot"
+    elif name == "result-chainstream_feedback_example":
+        return "CS-Feedback-example"
 
     raise ValueError("Invalid generator name")
 
@@ -339,6 +342,8 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "CS-Fews-3shot"
         elif generator == "human_written":
             return "Human"
+        elif generator == "test":
+            return "Test"
         else:
             raise ValueError("Invalid generator name")
 

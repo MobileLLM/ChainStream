@@ -68,6 +68,7 @@ if __name__ == "__main__":
         # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-30_20-38-19_human_written_test_after_fixing\test_log.json'
         r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-53-25_chainstream_fewshot_1shot/test_log.json',
         r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_04-25-40_chainstream_fewshot_3shot/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_05-34-44_test/test_log.json',
         r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-28-16_human_written/test_log.json'
         ]
     first_n = [
@@ -89,6 +90,7 @@ if __name__ == "__main__":
         # [1]
         [1, 3, 5],
         [1, 3, 5],
+        [1, 2],
         [1]
     ]
     evaluator_success_rate = EvaluatorSuccessRate(base_folder_path)
