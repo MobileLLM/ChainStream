@@ -61,7 +61,7 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             }
         ])
         self.gps_data = LandmarkData().get_landmarks(number)
-        self.video_data = Ego4DData().load_for_action()
+        self.video_data = Ego4DData().load_for_object_detection()
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -80,7 +80,21 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         def save_video(video_data):
             self.video_buffer.append(video_data)
         self.video_input.for_each(save_video)
+        
+        def check_place(gps_data):
+            if gps_data["PropertyName"] == "Maple Ridge Apartments":
+                first_person_data = self.video_buffer.pop_all()
+                return first_person_data
 
+        def check_reading(first_person_data):
+            prompt = "Please check whether I am reading books.Simply answer y or n."
+            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
+            print(res)
+            if res.lower()== "y" :
+                self.is_reading.add_item({"Status":True})
+                return first_person_data
+            else:
+                return None
         def check_light(light_inputs):
             if self.is_reading is not None:
                 intensity = light_inputs["Light intensity outdoor"]
@@ -95,23 +109,8 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
                         "command": 'Please draw the curtains closed.'
                     })
             return light_inputs
-        self.light_input.for_each(check_light)
-        
-        def check_place(gps_data):
-            if gps_data["PropertyName"] == "Maple Ridge Apartments":
-                first_person_data = self.video_buffer.pop_all()
-                return first_person_data
-
-        def check_reading(first_person_data):
-            prompt = "Please check whether I am reading books.Simply answer y or n."
-            res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
-            if res.lower()== "y" :
-                self.is_reading.add_item({"Status":True})
-                return first_person_data
-            else:
-                return None
-
         self.gps_input.for_each(check_place).for_each(check_reading)
+        self.light_input.for_each(check_light)
         '''
 
     def init_environment(self, runtime):
@@ -151,6 +150,8 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.is_reading_stream.for_each(record_output2)
 
     def start_task(self, runtime) -> dict:
+        import random
+        tmp_random = random.Random(42)
         properties = [
             {
                 'PrimaryPropertyType': 'Mid-Rise Multifamily',
@@ -195,7 +196,7 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
             sent_info['all_gps'].append(gps)
             self.input_gps_stream.add_item(gps)
         for _ in range(10):
-            light_intensity = random.uniform(0, 1000)
+            light_intensity = tmp_random.uniform(0, 1000)
             sent_info['light_intensity'].append(light_intensity)
             self.input_light_stream.add_item({"Light intensity outdoor": light_intensity})
         return sent_info

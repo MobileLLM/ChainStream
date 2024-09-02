@@ -40,7 +40,6 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def kitchen_risk(ego_data):
-            print(ego_data)
             prompt = "Tell me whether I am cooking in the kitchen?Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             if res.lower()=="y":

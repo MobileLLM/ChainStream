@@ -47,7 +47,7 @@ class testAgent(cs.agent.Agent):
         def process_dialogues(dialogues):
             dialogues_id = dialogues["id"]
             dialogues_text = dialogues["dialog"]
-            prompt = "Examine the dialogue below and determine the time of day during which the conversation takes place: morning, afternoon, or evening.Only tell me the choice."
+            prompt = "Examine the dialogue below and determine the time of day during which the conversation takes place: 'morning', 'afternoon', 'evening' or 'not sure'.Only tell me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
             "id": dialogues_id,

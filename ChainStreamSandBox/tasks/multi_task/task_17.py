@@ -109,7 +109,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'Can you help me export the AnkiconnectAndroid project?',
+                        'text': 'Can you help me export the Brook-GUI-For-Linux project?',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
@@ -120,29 +120,29 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
             {
                 'dialog': [
                     {
-                        'text': 'We need to configure the STM32F4 for the project.',
+                        'text': 'We need to integrate tweet-baker into our social media platform.',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
                 ],
                 'topic': 'Work',
-                'id': 20002
+                'id': 20004
             },
             {
                 'dialog': [
                     {
-                        'text': 'Please apply the QQrobotFramework to the design.',
+                        'text': 'Please incorporate dnn-speech for improved voice recognition.',
                         'act': 'directive',
                         'emotion': 'no emotion'
                     }
                 ],
                 'topic': 'Work',
-                'id': 20003
+                'id': 20005
             },
             {
                 'dialog': [
                     {
-                        'text': 'The docker-nginx-angular project is really wonderful!',
+                        'text': 'The flask-webapp-quickstart project is really wonderful!',
                         'act': 'directive',
                         'emotion': 'excited'
                     }

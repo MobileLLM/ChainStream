@@ -40,8 +40,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_surveillance(third_person_data):
-            prompt = "The following images were captured by a surveillance camera at a secret base. Judge if there is "
-            "personnel in the secret base? Simply answer y or n"
+            prompt = "The following images were captured by a surveillance camera at a secret base. Judge if there is personnel in the secret base? Simply answer y or n"
             res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
             self.analysis_output.add_item({
                 "analysis_result": res

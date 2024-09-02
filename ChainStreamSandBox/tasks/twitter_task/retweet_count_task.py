@@ -78,8 +78,11 @@ class testAgent(cs.agent.Agent):
         self.output_tweet_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
+        import random
         twitter_dict = {'all_tweets': []}
         for info in self.tweet_data:
+            tmp_random = random.Random(42)
+            info['retweet_count'] += tmp_random.randint(0, 20)
             self.input_tweet_stream.add_item(info)
             twitter_dict['all_tweets'].append(info)
         return twitter_dict
