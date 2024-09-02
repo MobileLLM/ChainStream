@@ -23,5 +23,5 @@ def check_feedback_loop_history(log_path):
 
 
 if __name__ == '__main__':
-    log_path = '/Users/liou/Desktop/reports (2)/2024-08-31_09-27-48_chainstream feedback with example/test_log.json'
+    log_path = '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-10-14_chainstream_feedback_1example/test_log.json'
     check_feedback_loop_history(log_path)

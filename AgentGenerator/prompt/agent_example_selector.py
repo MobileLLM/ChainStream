@@ -138,10 +138,18 @@ class AgentExampleSelector:
             example_name = ast.literal_eval(response)
             if isinstance(example_name, str):
                 example_name = example_name.strip().strip(',')[0]
+                if example_name.startswith('"') and example_name.endswith('"'):
+                    example_name = example_name[1:-1]
+                if example_name.startswith("'") and example_name.endswith("'"):
+                    example_name = example_name[1:-1]
             if isinstance(example_name, list):
                 example_name = example_name[0]
                 if isinstance(example_name, list):
                     example_name = example_name[0]
+                if isinstance(example_name, str) and example_name.startswith('"') and example_name.endswith('"'):
+                    example_name = example_name[1:-1]
+                if isinstance(example_name, str) and example_name.startswith("'") and example_name.endswith("'"):
+                    example_name = example_name[1:-1]
             if example_name not in self.agent_example_list:
                 raise ValueError("Invalid example name")
             example = self.agent_example_list[example_name]

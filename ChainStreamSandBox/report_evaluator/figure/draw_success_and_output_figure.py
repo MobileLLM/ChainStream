@@ -3,11 +3,15 @@ import matplotlib.pyplot as plt
 import json
 import os
 import numpy as np
+import matplotlib.cm as cm
 
 from ChainStreamSandBox.tasks import get_task_with_data_batch
+from ChainStreamSandBox.tasks.tmp_task_instances import get_all_task_instances
 
 ALL_TASK_LIST = get_task_with_data_batch().keys()
 print("ALL_TASK_LIST:", len(ALL_TASK_LIST))
+ALL_TASK_INSTANCES_LIST = get_all_task_instances()
+ALL_TASK_TAG_LIST = {k: v.task_tag for k, v, in ALL_TASK_INSTANCES_LIST.items()}
 
 
 def get_score(eval_result, N, Metric, metric, task=None):
@@ -31,6 +35,71 @@ def get_score(eval_result, N, Metric, metric, task=None):
             raise ValueError('Invalid Metric')
 
     return score
+
+def generate_colors(num_colors):
+    """
+    Generate a list of distinct colors.
+
+    Parameters:
+    - num_colors: The number of distinct colors needed.
+
+    Returns:
+    A list of color codes.
+    """
+    colors = cm.get_cmap('tab20', num_colors)
+    return [colors(i) for i in range(num_colors)]
+
+
+def plot_task_tag_histograms(data_dict):
+    """
+    Plot histograms with multiple subplots using the new data_dict structure, arranged vertically.
+
+    Parameters:
+    - data_dict: A dictionary with keys as subplot titles and values as dictionaries of tags,
+      where each tag has a dictionary of generator names and their corresponding scores.
+
+    Example of data_dict structure:
+    {
+        "Subplot 1": {
+            "Tag1": {"Gen1": 10, "Gen2": 15},
+            "Tag2": {"Gen1": 8, "Gen2": 12}
+        },
+        "Subplot 2": {
+            "Tag1": {"Gen1": 20, "Gen2": 18},
+            "Tag2": {"Gen1": 25, "Gen2": 22}
+        }
+    }
+    """
+
+    # Determine the number of subplots needed
+    num_subplots = len(data_dict)
+    fig, axs = plt.subplots(num_subplots, 1, figsize=(8, 5 * num_subplots), constrained_layout=True)
+
+    if num_subplots == 1:
+        axs = [axs]  # Make sure axs is iterable
+
+    # Iterate over each subplot
+    for ax, (title, tags_data) in zip(axs, data_dict.items()):
+        tags = list(tags_data.keys())
+        generator_names = {generator_name for tag_data in tags_data.values() for generator_name in tag_data}
+
+        num_generators = len(generator_names)
+        colors = generate_colors(num_generators)
+        generator_color_map = {name: colors[i] for i, name in enumerate(generator_names)}
+
+        x = np.arange(len(tags))  # the label locations
+        width = 0.8 / num_generators  # the width of the bars
+
+        for i, generator_name in enumerate(generator_names):
+            values = [tags_data[tag].get(generator_name, 0) for tag in tags]
+            ax.bar(x + i * width, values, width, label=generator_name, color=generator_color_map[generator_name])
+
+        ax.set_title(title)
+        ax.set_xticks(x + width * (num_generators - 1) / 2)
+        ax.set_xticklabels(tags)
+        ax.legend(title="Generators")
+
+    plt.show()
 
 
 def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
@@ -57,8 +126,10 @@ def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
     all_eval_result = all_eval_result[Metric]
 
     all_figure_data = {}
+    all_figure_data_with_tag = {}
     for metric in metric_list:
         all_figure_data[metric] = {}
+
         for task in ALL_TASK_LIST:
             all_figure_data[metric][task] = {}
             for generator_name, generator_result in all_eval_result.items():
@@ -67,6 +138,147 @@ def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
                                                                               task=task)
 
     plot_different_task_histograms(all_figure_data)
+
+    task_tag_score = {k: _process_for_task_tag_plot(v) for k, v in all_figure_data.items()}
+
+    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'bleu')])
+    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'ed')])
+
+
+# def _plot_task_tag_histograms(al_data_dict):
+#     # Determine number of subplots based on the number of keys in the data_dict
+#     num_subplots = len(al_data_dict)
+#
+#     # Create subplots
+#     fig, axes = plt.subplots(3, 1, figsize=(5 * num_subplots, 5 * num_subplots), sharey=True)
+#     if num_subplots == 1:
+#         axes = [axes]  # Ensure axes is always a list for consistent indexing
+#
+#     # Define colors and width for bars
+#     bar_width = 0.15
+#     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+#     colors = cm.get_cmap('tab20', 15)
+#     colors = [colors(i) for i in range(15)]
+#
+#     # Iterate through each subplot
+#     for ax, (title, data_list) in zip(axes, al_data_dict.items()):
+#         ax.set_title(title)
+#         num_tags = len(data_list)
+#         indices = np.arange(num_tags)
+#         tags = list(data_list.keys())
+#         generators = list(data_list[tags[0]].keys())
+#         num_generators = len(generators)
+#
+#         # Plot bars for each generator in each tag
+#         i = 1
+#         for tag, bar_list in data_list.items():
+#             j = 1
+#             for generator_name, generator_value in bar_list.items():
+#                 ax.bar(indices[i] + j * bar_width, generator_value, bar_width, color=colors[j % len(colors)],
+#                        label=generator_name if i == 0 else "")
+#                 j += 1
+#             i += 1
+#
+#         # Set tag labels and remove x-tick labels
+#         ax.set_xticks(indices + (num_generators - 1) * bar_width / 2)
+#         ax.set_xticklabels([tag for tag, _ in data_list.items()])
+#         ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=True)
+#
+#         ax.legend(title="Generator")
+#
+#     # Add legend to the figure
+#     # fig.legend(loc='upper center', ncol=len(colors))
+#
+#     # Display the plot
+#     plt.tight_layout()
+#     plt.show()
+#
+#     a = 1
+
+
+def _process_for_task_tag_plot(eval_result):
+    data_dict = {
+        "Difficulty": {},
+        "Modality": {},
+        "Scene": {}
+    }
+    data_count_dict = {
+        "Difficulty": {},
+        "Modality": {},
+        "Scene": {}
+    }
+    for task_name, task_score_list in eval_result.items():
+        task_tag = ALL_TASK_TAG_LIST[task_name]
+
+        tmp_difficulty = task_tag.difficulty
+        tmp_modality = task_tag.modality
+        tmp_scene = task_tag.domain
+
+        if tmp_difficulty not in data_dict['Difficulty']:
+            data_dict['Difficulty'][tmp_difficulty] = {}
+        if tmp_difficulty not in data_count_dict['Difficulty']:
+            data_count_dict['Difficulty'][tmp_difficulty] = 0
+        data_count_dict['Difficulty'][tmp_difficulty] += 1
+
+        new_tmp_modality_list = []
+        if tmp_modality[0] == "[":
+            tmp_modality_list = tmp_modality.split(",")
+            for tmp_modality_item in tmp_modality_list:
+                tmp_modality_item = tmp_modality_item.split(":")[-1].split("'")[-2]
+                new_tmp_modality_list.append(tmp_modality_item)
+        else:
+            new_tmp_modality_list = [tmp_modality]
+        for tmp_modality_item in new_tmp_modality_list:
+            if tmp_modality_item not in data_dict['Modality']:
+                data_dict['Modality'][tmp_modality_item] = {}
+            if tmp_modality_item not in data_count_dict['Modality']:
+                data_count_dict['Modality'][tmp_modality_item] = 0
+            data_count_dict['Modality'][tmp_modality_item] += 1
+
+        new_tmp_scene_list = []
+        if tmp_scene[0] == "[":
+            tmp_scene_list = tmp_scene.split(",")
+            for tmp_scene_item in tmp_scene_list:
+                tmp_scene_item = tmp_scene_item.split(":")[-1].split("'")[-2]
+                new_tmp_scene_list.append(tmp_scene_item)
+        else:
+            new_tmp_scene_list = [tmp_scene]
+        for tmp_scene_item in new_tmp_scene_list:
+            if tmp_scene_item not in data_dict['Scene']:
+                data_dict['Scene'][tmp_scene_item] = {}
+            if tmp_scene_item not in data_count_dict['Scene']:
+                data_count_dict['Scene'][tmp_scene_item] = 0
+            data_count_dict['Scene'][tmp_scene_item] += 1
+
+        for generator_name, generator_result in task_score_list.items():
+            if generator_name not in data_dict['Difficulty'][tmp_difficulty]:
+                data_dict['Difficulty'][tmp_difficulty][generator_name] = 0.0
+            data_dict['Difficulty'][tmp_difficulty][generator_name] += generator_result
+
+            for tmp_modality_item in new_tmp_modality_list:
+                if generator_name not in data_dict['Modality'][tmp_modality_item]:
+                    data_dict['Modality'][tmp_modality_item][generator_name] = 0.0
+                data_dict['Modality'][tmp_modality_item][generator_name] += generator_result
+
+            for tmp_scene_item in new_tmp_scene_list:
+                if generator_name not in data_dict['Scene'][tmp_scene_item]:
+                    data_dict['Scene'][tmp_scene_item][generator_name] = 0.0
+                data_dict['Scene'][tmp_scene_item][generator_name] += generator_result
+
+    for difficulty, difficulty_data in data_dict['Difficulty'].items():
+        for generator_name, generator_result in difficulty_data.items():
+            data_dict['Difficulty'][difficulty][generator_name] = generator_result / data_count_dict['Difficulty'][
+                difficulty]
+
+    for modality, modality_data in data_dict['Modality'].items():
+        for generator_name, generator_result in modality_data.items():
+            data_dict['Modality'][modality][generator_name] = generator_result / data_count_dict['Modality'][modality]
+
+    for scene, scene_data in data_dict['Scene'].items():
+        for generator_name, generator_result in scene_data.items():
+            data_dict['Scene'][scene][generator_name] = generator_result / data_count_dict['Scene'][scene]
+
+    return data_dict
 
 
 def plot_different_task_histograms(all_figure_data: dict):
@@ -183,9 +395,15 @@ def load_all_results(base_file_path):
         "result-chainstream_cot",
         "result-chainstream_cot_1shot",
         "result-gpt-4o",
+        "result-chainstream_fewshot_0shot",
         "result-chainstream_fewshot_1shot",
         "result-chainstream_fewshot_3shot",
-        "result-chainstream_feedback_example"
+        "result-chainstream_feedback_example",
+        "result-chainstream_feedback_0shot_0example_old",
+        "result-chainstream_feedback_0shot_0example_new",
+        "result-chainstream_feedback_0shot_1example_new",
+        "result-chainstream_feedback_0shot_3example_new",
+        "result-chainstream_feedback_1shot_0example",
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -228,12 +446,24 @@ def rename_generator(name):
         return "LC-0shot"
     elif name == "result-gpt-4o":
         return "GPT-4o-0shot"
+    elif name == "result-chainstream_fewshot_0shot":
+        return "CS-Fews-0shot"
     elif name == "result-chainstream_fewshot_1shot":
         return "CS-Fews-1shot"
     elif name == "result-chainstream_fewshot_3shot":
         return "CS-Fews-3shot"
     elif name == "result-chainstream_feedback_example":
         return "CS-Feedback-example"
+    elif name == "result-chainstream_feedback_0shot_0example_old":
+        return "CS-Feedback-0Shot-0example-old"
+    elif name == "result-chainstream_feedback_0shot_0example_new":
+        return "CS-Feedback-0Shot-0example-new"
+    elif name == "result-chainstream_feedback_0shot_1example_new":
+        return "CS-Feedback-0Shot-1example-new"
+    elif name == "result-chainstream_feedback_0shot_3example_new":
+        return "CS-Feedback-0Shot-3example-new"
+    elif name == "result-chainstream_feedback_1shot_0example":
+        return "CS-Feedback-1Shot-0example"
 
     raise ValueError("Invalid generator name")
 
@@ -324,6 +554,8 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "CS-0shot"
         elif generator == 'native_python_zero_shot':
             return "Py-0shot"
+        elif generator == 'native_python':
+            return "Py"
         elif generator == 'chainstream_1shot':
             return "CS-1shot"
         elif generator == "chainstream_cot_zero_shot":
@@ -334,8 +566,10 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "LC-0shot"
         elif generator == "stream_native_python_zeroshot":
             return "Py-0shot"
-        elif generator == "gpt-4o_native_gpt_4o":
+        elif generator == "gpt-4o_native_gpt4o":
             return "GPT-4o-0shot"
+        elif generator == "chainstream_fewshot_0shot":
+            return "CS-Fews-0shot"
         elif generator == "chainstream_fewshot_1shot":
             return "CS-Fews-1shot"
         elif generator == "chainstream_fewshot_3shot":
@@ -344,6 +578,20 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "Human"
         elif generator == "test":
             return "Test"
+        elif generator == "chainstream_feedback_0example":
+            return "CS-Feedback-0Example"
+        elif generator == "chainstream_feedback_1example":
+            return "CS-Feedback-1Example"
+        elif generator == "chainstream_feedback_1shot_0example":
+            return "CS-Feedback-1Shot-0Example"
+        elif generator == "chainstream_feedback_0shot_0example_old":
+            return "CS-Feedback-0Shot-0example_old"
+        elif generator == "chainstream_feedback_0shot_0example_after_debug":
+            return "CS-Feedback-0Shot-0example_new"
+        elif generator == "chainstream_feedback_0shot_1example_after_debug":
+            return "CS-Feedback-0Shot-1example"
+        elif generator == "chainstream_feedback_0shot_3example_after_debug":
+            return "CS-Feedback-0Shot-3example"
         else:
             raise ValueError("Invalid generator name")
 
@@ -454,6 +702,29 @@ def draw_success_rate(base_file_path):
 
     _draw_avg_success_rate(generator_avg_success_rate)
     _draw_success_rate_for_tasks(generator_success_rate_for_tasks)
+
+
+
+
+
+def test_task_tag_plot():
+    # Example usage with the new data_dict structure
+    data_dict = {
+        "Subplot 1": {
+            "Tag1": {"Gen1": 10, "Gen2": 15, "Gen3": 12},
+            "Tag2": {"Gen1": 8, "Gen2": 12, "Gen3": 14}
+        },
+        "Subplot 2": {
+            "Tag1": {"Gen1": 20, "Gen2": 18, "Gen3": 19},
+            "Tag2": {"Gen1": 25, "Gen2": 22, "Gen3": 24}
+        },
+        "Subplot 3": {
+            "Tag1": {"Gen1": 5, "Gen2": 7, "Gen3": 6},
+            "Tag2": {"Gen1": 9, "Gen2": 11, "Gen3": 10}
+        }
+    }
+
+    plot_histograms(data_dict)
 
 
 if __name__ == '__main__':

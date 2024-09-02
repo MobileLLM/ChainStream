@@ -17,5 +17,5 @@ class FewShotEvaluator(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = FewShotEvaluator(task_list)
+    evaluator = FewShotEvaluator(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-37-55_chainstream_fewshot_1shot/test_log.json")
     evaluator.start()

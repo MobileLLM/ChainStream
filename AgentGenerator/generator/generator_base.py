@@ -369,6 +369,9 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
                     tmp_thought_code = thought_code.strip()[:-len(f"Finish.")]
                     if f"\nCode {i}:" in tmp_thought_code:
                         thought, code = tmp_thought_code.strip().split(f"\nCode {i}:")
+                        code = code.strip()
+                        if code.startswith("```python") and code.endswith("```"):
+                            code = code[len("```python"):-len("```")]
                         self.last_agent_code = code
                     all_prompt += thought_code.strip()
                     self.history = all_prompt
@@ -386,6 +389,7 @@ class FeedbackGuidedAgentGeneratorWithTask(AgentGeneratorBase):
                 thought = thought_code.strip().split('\n')[0]
                 code = self._query_llm(all_prompt + f"Thought {i}: {thought}\nCode {i}:", stop=[f"\n"]).strip()
 
+            code = code.strip()
             if code.startswith("```python") and code.endswith("```"):
                 code = code[len("```python"):-len("```")]
 

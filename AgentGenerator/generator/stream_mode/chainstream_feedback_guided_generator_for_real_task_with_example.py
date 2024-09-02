@@ -9,17 +9,18 @@ class ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(FeedbackGuidedAge
         React with sandbox starting error ability
     """
 
-    def __init__(self, task_name_now, max_loop=20, sandbox_type='chainstream', only_print_last=False, framework_example_number=0, feedback_example_number=3):
+    def __init__(self, task_name_now, max_loop=20, sandbox_type='chainstream', only_print_last=False,
+                 framework_example_number=0, feedback_example_number=3):
         super().__init__(max_loop=max_loop, sandbox_type=sandbox_type, only_print_last=only_print_last)
 
         self.task_name_now = task_name_now
 
-        self.feedback_processor = FilterErrorWithExampleFeedbackProcessor(self.task_name_now, feedback_example_num=feedback_example_number)
+        self.feedback_processor = FilterErrorWithExampleFeedbackProcessor(self.task_name_now,
+                                                                          feedback_example_num=feedback_example_number)
 
         self.framework_example_number = framework_example_number
 
         self.selected_example_name = []
-
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(output_stream, input_stream,
@@ -54,9 +55,11 @@ class ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(FeedbackGuidedAge
 
 if __name__ == '__main__':
     from ChainStreamSandBox.tasks import get_task_with_data_batch
+
     all_tasks = get_task_with_data_batch()
     task = all_tasks["MultiTask1"]()
-    generator = ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(task.__class__.__name__, framework_example_number=0)
+    generator = ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(task.__class__.__name__,
+                                                                         framework_example_number=0)
     haha = generator.generate_agent(
         task.output_stream_description
         ,

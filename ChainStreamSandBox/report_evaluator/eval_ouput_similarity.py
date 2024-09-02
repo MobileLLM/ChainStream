@@ -210,36 +210,32 @@ class EvalOutputSimilarity(EvaluatorBase):
 if __name__ == '__main__':
     # ['result-native_python_zeroshot', 'result-chainstream_with_real_task', 'result-human_written', "result-chainstream_zeroshot", "result-chainstream_1shot"]
     tmp_list = {
-        # "result-chainstream_cot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_09-32-44_chainstream_cot/test_log.json",
-        # "result-chainstream_cot_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-26_16-45-07_chainstream_cot_1shot/test_log.json",
-        # "result-chainstream_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-32-10_chainstream_zero_shot/test_log.json",
-        # "result-chainstream_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-27-20_chainstream_1shot/test_log.json" ,
-        # "result-chainstream_feedback_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-30-23_chainstream_real_task_framework_1shot/test_log.json",
-        # "result-native_python_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_09-31-41_stream_native_python_zeroshot/test_log.json",
-        # "result-langchain_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_10-38-14_stream_langchain_zeroshot/test_log.json",
-        # "result-native_python_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_18-59-07_native_python_zero_shot\test_log.json',
-        # "result-langchain_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-02-44_langchain_zero_shot\test_log.json',
-        # "result-gpt-4o": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-04-07_gpt-4o_native_gpt_4o\test_log.json',
-        # "result-chainstream_zeroshot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-05-29_chainstream_zero_shot\test_log.json',
-        # "result-chainstream_cot": r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-09-40_chainstream_cot_zero_shot\test_log.json',
-        # "result-chainstream_feedback_0shot": r"C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_02-51-10_chainstream_with_real_task_0_shot\test_log.json"
-        "result-chainstream_fewshot_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-53-25_chainstream_fewshot_1shot/test_log.json",
-        "result-chainstream_fewshot_3shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_04-25-40_chainstream_fewshot_3shot/test_log.json",
-        "result-chainstream_feedback_example": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_05-34-44_test/test_log.json",
-        "result-human_written": r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-28-16_human_written/test_log.json'
+        "result-native_python_zeroshot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-07-01_native_python/test_log.json",
+        "result-chainstream_feedback_0shot_0example_old": "/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_01-30-51_chainstream_feedback_0shot_0example_old/test_log.json",
+        "result-chainstream_feedback_0shot_0example_new": "/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_02-50-45_chainstream_feedback_0shot_0example_after_debug/test_log.json",
+        "result-chainstream_feedback_0shot_1example_new": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_02-51-35_chainstream_feedback_0shot_1example_after_debug/test_log.json",
+        "result-chainstream_feedback_0shot_3example_new": '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_02-52-19_chainstream_feedback_0shot_3example_after_debug/test_log.json',
+        "result-chainstream_feedback_1shot_0example": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-16-07_chainstream_feedback_1shot_0example/test_log.json",
+
+        "result-chainstream_fewshot_0shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-37-02_chainstream_fewshot_0shot/test_log.json",
+        "result-chainstream_fewshot_1shot": r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-37-55_chainstream_fewshot_1shot/test_log.json",
+        "result-human_written": r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-20-05_human_written/test_log.json',
+        "result-gpt-4o": "/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_21-54-11_gpt-4o_native_gpt4o/test_log.json",
     }
     # result_folder_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json'
-    agent_by_human_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-28-16_human_written/test_log.json'
+    agent_by_human_path = r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-20-05_human_written/test_log.json'
 
     first_n_list = {
-        "result-human_written": [1],
-        "result-chainstream_fewshot_1shot": [1, 3, 5],
-        "result-chainstream_fewshot_3shot": [1, 3, 5],
-        "result-chainstream_feedback_example": [1, 2],
-        # "result-chainstream_1shot": [1, 3, 5],
-        # "result-chainstream_feedback_1shot": [1, 2],
-        # "result-chainstream_cot_1shot": [1, 3, 5],
         "result-native_python_zeroshot": [1, 3, 5],
+        "result-chainstream_feedback_0shot_0example_old": [1],
+        "result-chainstream_feedback_0shot_0example_new": [1],
+        "result-chainstream_feedback_0shot_1example_new": [1],
+        "result-chainstream_feedback_0shot_3example_new": [1],
+        "result-chainstream_feedback_1shot_0example": [1],
+        "result-chainstream_fewshot_0shot": [1, 3, 5],
+        "result-chainstream_fewshot_1shot": [1, 3, 5],
+        "result_gpt-4o": [1, 3, 5],
+        "result-human_written": [1],
         "result-chainstream_feedback_0shot": [1, 2, 3],
         "result-gpt-4o": [1, 3, 5],
         "result-chainstream_zeroshot": [1, 3, 5],

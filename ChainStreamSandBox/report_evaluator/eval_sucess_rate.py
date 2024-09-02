@@ -50,48 +50,30 @@ class EvaluatorSuccessRate(EvaluatorBase):
 
 if __name__ == "__main__":
     base_folder_path = [
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_09-32-44_chainstream_cot/test_log.json",
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-26_16-45-07_chainstream_cot_1shot/test_log.json",
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_17-32-10_chainstream_zero_shot/test_log.json",
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-27-20_chainstream_1shot/test_log.json",
-        # r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_05-04-12_chainstream_with_real_task_stdout_err_msg/test_log.json',
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-24_04-30-23_chainstream_real_task_framework_1shot/test_log.json",
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_09-31-41_stream_native_python_zeroshot/test_log.json",
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-25_10-38-14_stream_langchain_zeroshot/test_log.json",
-        # r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-23_19-56-23_chainstream_human_written_code_task_with_data/test_log.json",
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_18-59-07_native_python_zero_shot\test_log.json',
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-02-44_langchain_zero_shot\test_log.json',
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-04-07_gpt-4o_native_gpt_4o\test_log.json',
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-05-29_chainstream_zero_shot\test_log.json',
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_19-09-40_chainstream_cot_zero_shot\test_log.json',
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-29_02-51-10_chainstream_with_real_task_0_shot\test_log.json',
-        # r'C:\Users\86137\Desktop\chainstream-new\ChainStream\ChainStreamSandBox\batch_simulation_scripts\result\2024-08-30_20-38-19_human_written_test_after_fixing\test_log.json'
-        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-53-25_chainstream_fewshot_1shot/test_log.json',
-        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_04-25-40_chainstream_fewshot_3shot/test_log.json',
-        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_05-34-44_test/test_log.json',
-        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-08-31_02-28-16_human_written/test_log.json'
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-07-01_native_python/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-37-02_chainstream_fewshot_0shot/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-37-55_chainstream_fewshot_1shot/test_log.json',
+        r"/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_01-30-51_chainstream_feedback_0shot_0example_old/test_log.json",
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_02-50-45_chainstream_feedback_0shot_0example_after_debug/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_02-51-35_chainstream_feedback_0shot_1example_after_debug/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_02-52-19_chainstream_feedback_0shot_3example_after_debug/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-10-14_chainstream_feedback_1example/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-16-07_chainstream_feedback_1shot_0example/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_15-20-05_human_written/test_log.json',
+        r'/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-01_21-54-11_gpt-4o_native_gpt4o/test_log.json'
         ]
     first_n = [
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 2],
-        # [1, 2],
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1]
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 3, 5],
-        # [1, 2, 3],
-        # [1]
         [1, 3, 5],
         [1, 3, 5],
-        [1, 2],
-        [1]
+        [1, 3, 5],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1, 3, 5],
     ]
     evaluator_success_rate = EvaluatorSuccessRate(base_folder_path)
     evaluator_success_rate.calculate_success_rate(first_n)
