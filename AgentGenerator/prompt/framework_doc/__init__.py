@@ -7,8 +7,6 @@ from AgentGenerator.prompt.agent_example_selector import AgentExampleSelector
 # FIXME: This is a temporary solution to import the task instances from ChainStreamSandBox
 from ChainStreamSandBox.tasks.tmp_task_instances import get_all_task_instances
 
-import random
-
 
 def get_framework_doc(framework, example_num=None, task_now=None):
     if framework == "chainstream":

@@ -1,7 +1,8 @@
 import csv
 import random
 import os
-random.seed(498)
+
+
 class ActivityData:
     def __init__(self):
         self.data_path = os.path.join(os.path.dirname(__file__), 'activity.csv')
@@ -54,24 +55,25 @@ class ActivityData:
         return self.activity_data[index]
 
     def get_random_activity_data(self):
+        tmp_random = random.Random(42)
         activity_sequence = self.get_activity_sequence()
         result = []
         for activity in activity_sequence:
-            num_entries = random.randint(0, 20)
-            activity_entries = random.sample([entry for entry in self.activity_data if entry['activity'].lower() == activity.lower()], num_entries)
+            num_entries = tmp_random.randint(0, 20)
+            activity_entries = tmp_random.sample([entry for entry in self.activity_data if entry['activity'].lower() == activity.lower()], num_entries)
             result.extend(activity_entries)
 
         return result
 
     def get_activity_sequence(self):
         activity_sequence = []
+        tmp_random = random.Random(42)
+        act_num = tmp_random.randint(1, 4)
 
-        act_num = random.randint(1, 4)
-
-        act_seq = [random.choice(self.activity) for _ in range(act_num)]
+        act_seq = [tmp_random.choice(self.activity) for _ in range(act_num)]
 
         for act in act_seq:
-            act_len = random.randint(1, 5)
+            act_len = tmp_random.randint(1, 5)
             activity_sequence.extend([act for i in range(act_len)])
 
         return activity_sequence
