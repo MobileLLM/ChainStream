@@ -2,7 +2,6 @@ import json
 import random
 import os
 
-random.seed(42)
 
 
 def _split_messages(messages):
@@ -51,17 +50,19 @@ class SMSData:
         return len(self.en_data) + len(self.zh_data)
 
     def __getitem__(self, index):
+        tmp_random = random.Random(42)
         if index < len(self.en_data):
-            return random.choice(self.en_data[index])
+            return tmp_random.choice(self.en_data[index])
         else:
-            return random.choice(self.zh_data[index - len(self.en_data)])
+            return tmp_random.choice(self.zh_data[index - len(self.en_data)])
 
     def get_random_message(self, language='en'):
+        tmp_random = random.Random(42)
         if language == 'en':
-            k = random.choice(list(self.en_data.keys()))
+            k = tmp_random.choice(list(self.en_data.keys()))
             return self.en_data[k]
         elif language == 'zh':
-            k = random.choice(list(self.zh_data.keys()))
+            k = tmp_random.choice(list(self.zh_data.keys()))
             return self.zh_data[k]
         else:
             raise ValueError("Invalid language")

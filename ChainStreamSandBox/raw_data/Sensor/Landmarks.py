@@ -1,7 +1,6 @@
 import csv
 import random
 import os
-random.seed(42)
 
 
 class LandmarkData:
@@ -43,7 +42,8 @@ class LandmarkData:
         return self.landmark_data[index]
 
     def get_landmarks(self, num_landmarks):
-        tmp = random.sample(self.landmark_data, num_landmarks)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.landmark_data, num_landmarks)
         return tmp
 
 

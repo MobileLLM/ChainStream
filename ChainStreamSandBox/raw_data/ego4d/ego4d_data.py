@@ -1,9 +1,6 @@
 from ChainStreamSandBox.raw_data.ego4d.video_list import video_list
 import os
 import PIL.Image as Image
-import random
-
-random.seed(42)
 
 
 class Ego4DData:

@@ -1,7 +1,6 @@
 import csv
 import random
 import os
-random.seed(42)
 
 class GitHubData:
     def __init__(self):
@@ -41,7 +40,8 @@ class GitHubData:
         return self.github_data[index]
 
     def get_github_data(self, num_entries):
-        tmp = random.sample(self.github_data, num_entries)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.github_data, num_entries)
         return tmp
 
 

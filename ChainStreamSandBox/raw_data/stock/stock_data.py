@@ -2,7 +2,6 @@ import csv
 import random
 from datetime import datetime
 import os
-random.seed(42)
 
 
 class StockData:
@@ -38,7 +37,8 @@ class StockData:
         return self.stock_data[index]
 
     def get_stocks(self, stock_num=10):
-        tmp = random.sample(self.stock_data, stock_num)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.stock_data, stock_num)
         tmp.sort(key=lambda x: datetime.strptime(x['date'], '%Y-%m-%d'), reverse=True)
         return tmp
 

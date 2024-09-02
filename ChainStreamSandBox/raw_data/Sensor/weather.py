@@ -1,7 +1,6 @@
 import csv
 import random
 import os
-random.seed(42)
 
 
 class WeatherData:
@@ -37,7 +36,8 @@ class WeatherData:
         return self.weather_data[index]
 
     def get_weather(self, num_entries):
-        tmp = random.sample(self.weather_data, num_entries)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.weather_data, num_entries)
         return tmp
 
 

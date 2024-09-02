@@ -1,7 +1,6 @@
 import json
 import random
 import os
-random.seed(42)
 
 
 class NewsData:
@@ -31,10 +30,12 @@ class NewsData:
         return self.news_articles[index]
 
     def get_random_article(self):
-        return random.choice(self.news_articles)
+        tmp_random = random.Random(42)
+        return tmp_random.choice(self.news_articles)
 
     def get_random_articles(self, num_articles):
-        tmp_list = random.sample(self.news_articles, num_articles)
+        tmp_random = random.Random(42)
+        tmp_list = tmp_random.sample(self.news_articles, num_articles)
         return sorted(tmp_list, key=lambda x: x['date'], reverse=True)
 
 

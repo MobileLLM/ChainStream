@@ -2,8 +2,6 @@ import csv
 import random
 import os
 
-random.seed(42)
-
 
 class GPSData:
     def __init__(self):
@@ -39,7 +37,8 @@ class GPSData:
         return self.gps_data[index]
 
     def get_gps(self, num_gps):
-        tmp = random.sample(self.gps_data, num_gps)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.gps_data, num_gps)
         return tmp
 
 

@@ -1,7 +1,6 @@
 import csv
 import random
 import os
-random.seed(42)
 
 
 class WifiData:
@@ -37,7 +36,8 @@ class WifiData:
         return self.wifi_data[index]
 
     def get_wifi(self, num_entries):
-        tmp = random.sample(self.wifi_data, num_entries)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.wifi_data, num_entries)
         return tmp
 
 

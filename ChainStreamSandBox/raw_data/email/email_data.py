@@ -2,8 +2,6 @@ import csv
 import random
 import os
 
-random.seed(42)
-
 csv.field_size_limit(2 ** 31 - 1)
 
 
@@ -61,7 +59,8 @@ class EmailData:
         return self.emails[index]
 
     def get_emails(self, num_emails=None):
-        tmp_emails = random.sample(self.emails, num_emails)
+        tmp_random = random.Random(42)
+        tmp_emails = tmp_random.sample(self.emails, num_emails)
         tmp_emails.sort(key=lambda x: x['Date'], reverse=True)
         return tmp_emails
 

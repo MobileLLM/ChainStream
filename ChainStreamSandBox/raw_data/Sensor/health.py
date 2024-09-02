@@ -2,8 +2,6 @@ import csv
 import random
 import os
 
-random.seed(42)
-
 
 class HealthData:
     def __init__(self):
@@ -52,7 +50,8 @@ class HealthData:
         return self.health_data[index]
 
     def get_health_data(self, num_entries):
-        tmp = random.sample(self.health_data, num_entries)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.health_data, num_entries)
         return tmp
 
 
@@ -61,3 +60,4 @@ if __name__ == '__main__':
     print(len(health_data))
     print(health_data[0])
     print(health_data.get_health_data(5))
+
