@@ -2,7 +2,6 @@ import json
 import random
 import os
 
-random.seed(42)
 
 
 class ArxivData:
@@ -38,10 +37,12 @@ class ArxivData:
         return self.paper_data[index]
 
     def get_random_paper(self):
-        return random.choice(self.paper_data)
+        tmp_random = random.Random(42)
+        return tmp_random.choice(self.paper_data)
 
     def get_random_papers(self, num_papers):
-        tmp = random.sample(self.paper_data, num_papers)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.paper_data, num_papers)
         return sorted(tmp, key=lambda x: x['update_date'], reverse=True)
 
 

@@ -3,8 +3,6 @@ import random
 import json
 import PIL.Image as Image
 
-random.seed(42)
-
 
 class AndroidUIData:
     def __init__(self):
@@ -44,11 +42,12 @@ class AndroidUIData:
     def get_random_data(self, app_num_max=5, repid_max=5):
 
         res_list = []
-        app_num = random.randint(1, app_num_max)
-        app_list = [random.choice(self.data) for _ in range(app_num)]
+        tmp_random = random.Random(42)
+        app_num = tmp_random.randint(1, app_num_max)
+        app_list = [tmp_random.choice(self.data) for _ in range(app_num)]
 
         for app in app_list:
-            repid_num = random.randint(1, repid_max)
+            repid_num = tmp_random.randint(1, repid_max)
             res_list.extend([app for _ in range(repid_num)])
 
         return res_list

@@ -1,7 +1,6 @@
 import csv
 import random
 import os
-random.seed(42)
 
 
 class AirlineTwitterData:
@@ -42,7 +41,8 @@ class AirlineTwitterData:
         return self.airline_data[index]
 
     def get_twitter(self, num_twitter):
-        tmp = random.sample(self.airline_data, num_twitter)
+        tmp_random = random.Random(42)
+        tmp = tmp_random.sample(self.airline_data, num_twitter)
         return tmp
 
 

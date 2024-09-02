@@ -1,7 +1,6 @@
 import csv
 import random
 import os
-random.seed(42)
 
 """Here are some explanations about the files:
 
@@ -75,13 +74,14 @@ class DialogData:
         return self.dialog_data[idx]
 
     def get_dialog_batch(self, batch_size, topic=None):
+        tmp_random = random.Random(42)
         if topic is None:
-            dialog_batch = random.sample(self.dialog_data, batch_size)
+            dialog_batch = tmp_random.sample(self.dialog_data, batch_size)
         else:
             if topic not in topic_idx_to_text.values():
                 raise ValueError("Invalid topic name")
             dialog_batch = [dialog for dialog in self.dialog_data if dialog["topic"] == topic]
-            dialog_batch = random.sample(dialog_batch, batch_size)
+            dialog_batch = tmp_random.sample(dialog_batch, batch_size)
         return dialog_batch
 
 

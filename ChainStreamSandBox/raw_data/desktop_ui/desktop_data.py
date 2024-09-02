@@ -3,8 +3,6 @@ import json
 import random
 import PIL.Image as Image
 
-random.seed(42)
-
 
 class DesktopData:
     def __init__(self):
@@ -38,7 +36,8 @@ class DesktopData:
         return self.data[index]
 
     def get_random_sample(self, num_samples=5):
-        tmp_list = random.sample(self.data, num_samples)
+        tmp_random = random.Random(42)
+        tmp_list = tmp_random.sample(self.data, num_samples)
         return tmp_list
 
 
