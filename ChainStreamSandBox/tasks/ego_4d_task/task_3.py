@@ -14,7 +14,7 @@ class VideoTask3(SingleAgentTaskConfigBase):
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Activity,
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
-            "stream_id": "first_person_perspective_data",
+            "stream_id": "first_person_perspective_video_frame",
             "description": "All first person perspective images from the portable camera presenting what I see",
             "fields": {
                 "frame": "image file in the Jpeg format processed using PIL, PIL.Image"
@@ -35,7 +35,7 @@ import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_image_task"):
         super().__init__(agent_id)
-        self.first_person_input = cs.get_stream(self, "first_person_perspective_data")
+        self.first_person_input = cs.get_stream(self, "first_person_perspective_video_frame")
         self.analysis_output = cs.create_stream(self, "analysis_scenario")
         self.llm = cs.llm.get_model("image")
 
@@ -55,7 +55,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
+        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_video_frame')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_scenario')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -66,7 +66,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_ui_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
-        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_data')
+        self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_video_frame')
 
     def init_output_stream(self, runtime):
         self.output_ui_stream = cs.stream.get_stream(self, 'analysis_scenario')
@@ -79,8 +79,8 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_ui_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
-        processed_results = {'first_person_perspective_data': []}
+        processed_results = {'first_person_perspective_video_frame': []}
         for frame in self.ego_4d_data:
-            processed_results['first_person_perspective_data'].append(frame)
+            processed_results['first_person_perspective_video_frame'].append(frame)
             self.input_ui_stream.add_item({"frame": frame})
         return processed_results
