@@ -8,7 +8,9 @@ from AgentGenerator.prompt.agent_example_selector import AgentExampleSelector
 from ChainStreamSandBox.tasks.tmp_task_instances import get_all_task_instances
 
 
-def get_framework_doc(framework, example_num=None, task_now=None):
+def get_framework_doc(framework, example_num=None, task_now=None, example_select_policy='random'):
+    if example_select_policy not in ['random', 'llm']:
+        raise ValueError('example_select_policy must be random or llm')
     if framework == "chainstream":
         prompt = chainstream_english_doc
         if example_num is not None and example_num != 0:
@@ -18,7 +20,10 @@ def get_framework_doc(framework, example_num=None, task_now=None):
             selector = AgentExampleSelector(task_now)
             prompt += f"\nHere's {example_num} example of how to use chainstream to solve the problem:\n"
             for i in range(example_num):
-                prompt += f"Example {i}:\n```python\n{selector.get_random_agent_example()}\n```\n"
+                if example_select_policy == 'random':
+                    prompt += f"Example {i}:\n```python\n{selector.get_random_agent_example()}\n```\n"
+                elif example_select_policy == 'llm':
+                    prompt += f"Example {i}:\n```python\n{selector.get_llm_agent_example()}\n```\n"
         return prompt
     elif framework == "batch_native_python":
         return BATCH_NATIVE_PYTHON_ENGLISH_PROMPT

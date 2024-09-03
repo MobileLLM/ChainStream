@@ -4,10 +4,11 @@ from AgentGenerator.io_model import StreamListDescription
 
 
 class ChainStreamFewShotGenerator(DirectAgentGenerator):
-    def __init__(self, example_number=0):
+    def __init__(self, framework_example_number=0, base_prompt_example_select_policy='random'):
         super().__init__()
 
-        self.example_number = example_number
+        self.example_number = framework_example_number
+        self.base_prompt_example_select_policy = base_prompt_example_select_policy
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         return get_base_prompt(output_stream, input_stream,
@@ -16,7 +17,8 @@ class ChainStreamFewShotGenerator(DirectAgentGenerator):
                                mission_name="stream",
                                command_name="few_shot",
                                need_feedback_example=False,
-                               task_now=self.task.__class__.__name__
+                               task_now=self.task.__class__.__name__,
+                               example_select_policy=self.base_prompt_example_select_policy
                                )
 
     def process_response(self, response) -> str:

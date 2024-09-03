@@ -36,6 +36,7 @@ def get_score(eval_result, N, Metric, metric, task=None):
 
     return score
 
+
 def generate_colors(num_colors):
     """
     Generate a list of distinct colors.
@@ -50,7 +51,7 @@ def generate_colors(num_colors):
     return [colors(i) for i in range(num_colors)]
 
 
-def plot_task_tag_histograms(data_dict):
+def plot_task_tag_histograms(data_dict, title):
     """
     Plot histograms with multiple subplots using the new data_dict structure, arranged vertically.
 
@@ -99,6 +100,7 @@ def plot_task_tag_histograms(data_dict):
         ax.set_xticklabels(tags)
         ax.legend(title="Generators")
 
+    plt.title(title)
     plt.show()
 
 
@@ -141,8 +143,8 @@ def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
 
     task_tag_score = {k: _process_for_task_tag_plot(v) for k, v in all_figure_data.items()}
 
-    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'bleu')])
-    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'ed')])
+    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'bleu')], "('hard_list_metric', 'bleu')")
+    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'ed')], "('hard_list_metric', 'ed')")
 
 
 # def _plot_task_tag_histograms(al_data_dict):
@@ -403,7 +405,7 @@ def load_all_results(base_file_path):
         "result-chainstream_feedback_0shot_0example_new",
         "result-chainstream_feedback_0shot_1example_new",
         "result-chainstream_feedback_0shot_3example_new",
-        "result-chainstream_feedback_1shot_0example",
+        "result-chainstream_feedback_1shot_0example_old",
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -462,8 +464,8 @@ def rename_generator(name):
         return "CS-Feedback-0Shot-1example-new"
     elif name == "result-chainstream_feedback_0shot_3example_new":
         return "CS-Feedback-0Shot-3example-new"
-    elif name == "result-chainstream_feedback_1shot_0example":
-        return "CS-Feedback-1Shot-0example"
+    elif name == "result-chainstream_feedback_1shot_0example_old":
+        return "CS-Feedback-1Shot-0example-old"
 
     raise ValueError("Invalid generator name")
 
@@ -576,14 +578,16 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "CS-Fews-3shot"
         elif generator == "human_written":
             return "Human"
+        elif generator == "chainstream_human_written":
+            return "Human"
         elif generator == "test":
             return "Test"
         elif generator == "chainstream_feedback_0example":
             return "CS-Feedback-0Example"
         elif generator == "chainstream_feedback_1example":
             return "CS-Feedback-1Example"
-        elif generator == "chainstream_feedback_1shot_0example":
-            return "CS-Feedback-1Shot-0Example"
+        elif generator == "chainstream_feedback_1shot_0example_old":
+            return "CS-Feedback-1Shot-0Example-old"
         elif generator == "chainstream_feedback_0shot_0example_old":
             return "CS-Feedback-0Shot-0example_old"
         elif generator == "chainstream_feedback_0shot_0example_after_debug":
@@ -592,6 +596,12 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "CS-Feedback-0Shot-1example"
         elif generator == "chainstream_feedback_0shot_3example_after_debug":
             return "CS-Feedback-0Shot-3example"
+        elif generator == 'chainstream_feedback_0shot_0example_new':
+            return "CS-Feedback-0Shot-0example_new"
+        elif generator == 'chainstream_feedback_0shot_1example_new':
+            return "CS-Feedback-0Shot-1example_new"
+        elif generator == 'chainstream_feedback_0shot_3example_new':
+            return "CS-Feedback-0Shot-3example_new"
         else:
             raise ValueError("Invalid generator name")
 
@@ -704,9 +714,6 @@ def draw_success_rate(base_file_path):
     _draw_success_rate_for_tasks(generator_success_rate_for_tasks)
 
 
-
-
-
 def test_task_tag_plot():
     # Example usage with the new data_dict structure
     data_dict = {
@@ -724,7 +731,7 @@ def test_task_tag_plot():
         }
     }
 
-    plot_histograms(data_dict)
+    plot_task_tag_histograms(data_dict)
 
 
 if __name__ == '__main__':

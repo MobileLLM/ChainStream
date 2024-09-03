@@ -43,13 +43,13 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
             {
                 "stream_id": "adjust_light",
                 "description": "A automatic command to adjust the light in the study when the camera detects that I "
-                               "am reading a book at home(the property name is: 'Maple Ridge Apartments').If the "
+                               "am reading a book at home(the property name is: 'Maple Ridge Apartments'). If the "
                                "light exceeds 500, draw the curtains closed. If the light is less than 300, "
                                "turn on the desk lamp.",
                 "fields": {
                     "command": "the command to turn on the desk lamp or draw the curtains closed, string = 'Please "
                                "turn on the desk lamp.' if the light intensity is lower than 300, or 'Please draw the "
-                               "curtains closed.'if the light intensity is over 500 "
+                               "curtains closed.' if the light intensity is over 500 "
                 }
             },
             {

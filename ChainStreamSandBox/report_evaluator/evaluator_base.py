@@ -48,10 +48,9 @@ class EvaluatorBase:
             os.makedirs(self.save_folder)
 
         self.save_path = os.path.join(
-            self.save_folder, "result", datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.save_name + ".json") \
+            self.save_folder, "result",
+            datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + self.save_name + ".json") \
             if self.save_folder is not None else None
-
-
 
     def _check_and_load_task_reports(self):
         reports = {}
@@ -100,7 +99,6 @@ class EvaluatorBase:
 
     # def __del__(self):
     #     self._save_results()
-
 
 # if __name__ == '__main__':
 #     Evaluator_base = EvaluatorBase()

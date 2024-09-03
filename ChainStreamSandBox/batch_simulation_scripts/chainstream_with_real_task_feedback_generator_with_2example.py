@@ -9,7 +9,7 @@ class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task, verbose=True, only_print_last=True):
-        generator = ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(task_name_now=task.__class__.__name__, max_loop=10, only_print_last=only_print_last, framework_example_number=0, feedback_example_number=0)
+        generator = ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(task_name_now=task.__class__.__name__, max_loop=10, only_print_last=only_print_last, framework_example_number=0, feedback_example_number=2)
         generator.set_verbose(verbose)
         # TODO: fix this para with a new output description
         agent, latency, tokens, loop_count, history, selected_example = generator.generate_agent(task.output_stream_description, task.input_stream_description,
@@ -19,5 +19,5 @@ class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_23-31-57_chainstream_feedback_0shot_0example_new/test_log.json")
+    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_23-33-52_chainstream_feedback_0shot_2example_new/test_log.json")
     evaluator.start()

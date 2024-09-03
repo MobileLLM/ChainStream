@@ -56,12 +56,18 @@ class FilterErrorFeedbackProcessor(FeedbackProcessorBase):
                         feedback += "... "
                     else:
                         feedback += ". "
+
+            feedback += " You can debug your code by using print statements and checking the stdout message. Do not use loggers in your code because log messages will not be visible in the sandbox output.\n"
             return feedback
 
 
 class FilterErrorWithExampleFeedbackProcessor(FeedbackProcessorBase):
-    def __init__(self, task_now=None, feedback_example_num=3):
+    def __init__(self, task_now=None, feedback_example_num=3, feedback_example_select_policy="llm"):
         super().__init__()
+
+        if feedback_example_select_policy not in ['llm', 'random']:
+            raise ValueError(f"Invalid select_policy: {feedback_example_select_policy}, select_policy should be 'llm' or 'random'.")
+        self.feedback_example_select_policy = feedback_example_select_policy
 
         self.agent_example_selector = AgentExampleSelector(task_now, max_example_num=feedback_example_num)
 
@@ -115,7 +121,13 @@ class FilterErrorWithExampleFeedbackProcessor(FeedbackProcessorBase):
 
             example_name = None
             try:
-                example_code, example_name = self.agent_example_selector.get_llm_agent_example((str_err, str_stdout, str_output), current_code=last_code)
+                example_code = None
+                if self.feedback_example_select_policy == "llm":
+                    example_code, example_name = self.agent_example_selector.get_llm_agent_example(
+                        (str_err, str_stdout, str_output), current_code=last_code)
+                elif self.feedback_example_select_policy == "random":
+                    example_code, example_name = self.agent_example_selector.get_random_agent_example()
+
                 if example_code is not None:
                     example_prompt = f"\nHere is an example code may help you solve the problem, example name: {example_name}, target_stream: {self.agent_example_selector.get_target_stream_by_name(example_name)}.\n```python\n{example_code}```\n"
                     feedback = f"{feedback}\n{example_prompt}"

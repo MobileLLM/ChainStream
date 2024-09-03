@@ -95,7 +95,8 @@ class AgentExampleSelector:
         self.selected_example_count += 1
         example = self.agent_example_list[selected_agent_example]
         self.agent_example_list.pop(selected_agent_example)
-        return example
+
+        return example, selected_agent_example
 
     def get_llm_agent_example(self, feedback: tuple = None, current_code: str = None):
         if self.selected_example_count >= self.max_example_count:
@@ -131,7 +132,7 @@ class AgentExampleSelector:
 
         response = self.llm.query(prompt).strip()
 
-        if response.startswith("```json") and response.startswith("```"):
+        if response.startswith("```json") and response.endswith("```"):
             response = response[7:-3].strip()
 
         try:
