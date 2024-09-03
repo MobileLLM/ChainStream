@@ -27,8 +27,8 @@ class TweetTask6(SingleAgentTaskConfigBase):
                                "neutral",
                 "fields": {
                     "text": "The text of the tweet, string",
-                    "airline_sentiment": "The sentiment analysed from the tweet on the airline chosen from positive, "
-                                         "negative or neutral, string "
+                    "tweet_airline_sentiment": "The sentiment analysed from the tweet on the airline chosen from "
+                                               "positive, negative or neutral, string "
                 }
             }
         ])
@@ -49,7 +49,7 @@ class testAgent(cs.agent.Agent):
             res = self.llm.query(cs.llm.make_prompt(prompt, text))        
             self.output_stream.add_item({
                 "text": text,
-                "airline_sentiment": res
+                "tweet_airline_sentiment": res
             })
         self.input_stream.for_each(process_tweet)
         '''
