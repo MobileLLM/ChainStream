@@ -41,7 +41,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def analyze_screenshot(ego_data):
+        def analyze_video(ego_data):
             prompt = "Detect what I am doing now. Choose from the following scenes: ['driving', 'jumping roll', 'walking', 'swimming', 'climbing', 'skating'], and simply tell me which one."
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             
@@ -49,7 +49,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
                 "analysis_result": res
             })
 
-        self.screenshot_input.for_each(analyze_screenshot)
+        self.screenshot_input.for_each(analyze_video)
         '''
 
     def init_environment(self, runtime):

@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def start(self):
         def process_gps(gps):
             gps_country = gps["CountryName"]
-            prompt = 'Please translate the continent name to French.Only give me the name'
+            prompt = 'Please translate the country name to French.Only give me the name'
             response = self.llm.query(cs.llm.make_prompt(prompt,gps_country))      
             self.output_stream.add_item({
                 "country_French": response

@@ -39,7 +39,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.llm = cs.llm.get_model("image")
 
     def start(self):
-        def kitchen_risk(ego_data):
+        def detect_scenario(ego_data):
             prompt = "Tell me whether I am cooking in the kitchen?Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,ego_data['frame']))
             if res.lower()=="y":
@@ -51,7 +51,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
                     "cooking": False
                 })
             
-        self.ego_input.for_each(kitchen_risk)
+        self.ego_input.for_each(detect_scenario)
         '''
 
     def init_environment(self, runtime):

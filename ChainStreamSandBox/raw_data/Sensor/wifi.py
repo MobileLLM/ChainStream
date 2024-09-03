@@ -24,8 +24,8 @@ class WifiData:
                     'MAC.Address': row['MAC.Address'],
                     'Vendor': row['Vendor'],
                     'SSID': row['SSID'],
-                    'Signal': row['Signal.Strength'],
-                    'Channel': row['Channel']
+                    'Signal': int(row['Signal.Strength']),
+                    'Channel': int(row['Channel'])
                 }
                 self.wifi_data.append(wifi_entry)
 

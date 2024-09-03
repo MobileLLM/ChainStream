@@ -51,9 +51,6 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def count_stars(github_dicts):
-            date = github_dicts['created_at']
-            return github_dicts
         def count_commit(github_list):
             github_list2 = github_list['item_list']
             sorted_dicts = sorted(github_list2, key=lambda x: int(x['commit_count']), reverse=True)
@@ -66,7 +63,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
                     "name": name,
                     "commit_count": commit_count
                 })
-        self.github_input.for_each(count_stars).batch(by_count=10).for_each(count_commit)
+        self.github_input.batch(by_count=10).for_each(count_commit)
         '''
 
     def init_environment(self, runtime):

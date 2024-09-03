@@ -29,7 +29,7 @@ class EmailTask4(SingleAgentTaskConfigBase):
                                "and then listing the replies",
                 "fields": {
                     "Content": "the content of the email, string",
-                    "Auto_reply": "Reply of the email, string = Received!"
+                    "receipt Acknowledgment": "Reply of the email, string = Received!"
                 }
             }
         ])
@@ -59,7 +59,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
                 if content:
                     self.email_output.add_item({
                         "Content": content,
-                        "Auto_reply": "Received!"
+                        "receipt Acknowledgment": "Received!"
                     })
 
         self.email_input.for_each(filter_advertisements).batch(by_count=2).for_each(auto_reply)

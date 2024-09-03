@@ -34,7 +34,8 @@ class MultiTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "arxiv_recommendation",
-                "description": "A stream of arxiv recommendation based on the subject keyword mentioned in the emails",
+                "description": "A stream of arxiv recommendation based on the subject keyword mentioned in the emails "
+                               "with every 13 items grouped as a batch",
                 "fields": {
                     "title": "the title of the recommended arxiv paper, string"
                 }

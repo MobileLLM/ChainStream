@@ -25,7 +25,7 @@ class VideoTask12(SingleAgentTaskConfigBase):
                 "stream_id": "detect_person",
                 "description": "A stream of analysis on whether the secret base has been invaded by person",
                 "fields": {
-                    "analysis_result": "the detection of whether a person is in the secret base, string = y or n"}
+                    "analysis_result": "the detection of whether a person is in the secret base, bool = True or False"}
             }
         ])
         self.Sphar_data = SpharData().load_for_person_detection()
@@ -40,11 +40,16 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_surveillance(third_person_data):
-            prompt = "The following images were captured by a surveillance camera at a secret base. Judge if there is personnel in the secret base? Simply answer y or n"
-            res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
-            self.analysis_output.add_item({
-                "analysis_result": res
-            })
+            prompt = "Analyze the image and determine if there is a person in the secret base. Simply answer 'y' or 'n'"
+            res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))            
+            if res.lower() == "y":
+                self.analysis_output.add_item({
+                    "analysis_result": True
+                })
+            else:
+                self.analysis_output.add_item({
+                    "analysis_result": False
+                })
 
         self.surveillance_input.for_each(analyze_surveillance)
         '''

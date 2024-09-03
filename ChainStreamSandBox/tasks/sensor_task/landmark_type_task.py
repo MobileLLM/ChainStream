@@ -49,10 +49,10 @@ class testAgent(cs.agent.Agent):
                     type_group[building['PrimaryPropertyType']] = [building['PropertyName']]
                 else:
                     type_group[building['PrimaryPropertyType']].append(building['PropertyName'])
-                self.output_stream.add_item({
-                    'type': building['PrimaryPropertyType'],
-                    'names': list(type_group.values())
-                })
+            self.output_stream.add_item({
+                'type': building['PrimaryPropertyType'],
+                'names': list(type_group.values())
+            })
             return list(type_group.values())
         self.input_stream.batch(by_count=6).for_each(grouped_landmark_type)
         '''

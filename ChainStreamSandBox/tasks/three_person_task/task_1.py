@@ -26,7 +26,7 @@ class VideoTask10(SingleAgentTaskConfigBase):
                 "description": "A stream of analysis on whether there are accidents happened on the road",
                 "fields": {
                     "analysis_result": "The analysis of whether there is an accident occurred in the surveillance "
-                                       "video, string = y or n"}
+                                       "video, bool = True or False"}
             }
         ])
         self.Sphar_data = SpharData().load_for_traffic()
@@ -43,10 +43,14 @@ class AgentExampleForImageTask(cs.agent.Agent):
         def analyze_surveillance(third_person_data):
             prompt = " Analyze whether there are accidents on the road?simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
-            self.analysis_output.add_item({
-                "analysis_result": res
-            })
-
+            if res.lower() == "y":
+                self.analysis_output.add_item({
+                    "analysis_result": True
+                })
+            else:
+                self.analysis_output.add_item({
+                    "analysis_result": False
+                })
         self.surveillance_input.for_each(analyze_surveillance)
         '''
 

@@ -53,7 +53,7 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
             if news_type == "POLITICS":
                 return news
 
-        def extract_from_dialogues(news_list):
+        def extract_characters_from_news(news_list):
             news_list = news_list['item_list']
             for news in news_list:
                 date = news.get('date')
@@ -65,7 +65,7 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
                     "date": date
                 })
 
-        self.news_input.for_each(filter_news).batch(by_count=2).for_each(extract_from_dialogues)
+        self.news_input.for_each(filter_news).batch(by_count=2).for_each(extract_characters_from_news)
         '''
 
     def init_environment(self, runtime):

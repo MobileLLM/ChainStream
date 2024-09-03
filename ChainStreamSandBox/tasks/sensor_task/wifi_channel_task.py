@@ -22,10 +22,12 @@ class WifiTask1(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "wifi_channel",
-                "description": "A stream of the wifi channel statistics",
+                "stream_id": "wifi_ssid_same_channel",
+                "description": "A stream of wifi SSID information grouped by the same wifi channel statistics,"
+                               "with every two copies of data grouped into a batch",
                 "fields": {
-                    "Channel": "The channel of the wifi signal, int"
+                    "Channel": "The channel of the wifi stream, int",
+                    "SSID": "A group of SSIDs from wifi stream that share the same channel, list of int",
                 }
             }
         ])
@@ -36,23 +38,31 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_wifi_agent")
         self.input_stream = cs.get_stream(self,"all_wifi")
-        self.output_stream = cs.create_stream(self,"wifi_channel")
+        self.output_stream = cs.create_stream(self,"wifi_ssid_same_channel")
     def start(self):
-        def process_wifi(wifi):
-            Channel = wifi["Channel"]        
+        def group_by_wifi_channel(wifi):
+            wifi_list = wifi['item_list']
+            channel_group = {}
+            for wifi in wifi_list:
+                if wifi['Channel'] not in channel_group:
+                    channel_group[wifi['Channel']] = [wifi['SSID']]
+                else:
+                    channel_group[wifi['Channel']].append(wifi['SSID'])
             self.output_stream.add_item({
-                "Channel": Channel
+                'Channel': wifi['Channel'],
+                'SSID': list(channel_group.values())
             })
-        self.input_stream.for_each(process_wifi)
+            return list(channel_group.values())
+        self.input_stream.batch(by_count=2).for_each(group_by_wifi_channel)
         '''
 
     def init_environment(self, runtime):
         self.input_wifi_stream = cs.stream.create_stream(self, 'all_wifi')
-        self.output_wifi_stream = cs.stream.create_stream(self, 'wifi_channel')
+        self.output_wifi_stream = cs.stream.create_stream(self, 'wifi_ssid_same_channel')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['wifi_channel'].append(data)
+            self.output_record['wifi_ssid_same_channel'].append(data)
 
         self.output_wifi_stream.for_each(record_output)
 
@@ -60,11 +70,11 @@ class testAgent(cs.agent.Agent):
         self.input_wifi_stream = cs.stream.create_stream(self, 'all_wifi')
 
     def init_output_stream(self, runtime):
-        self.output_wifi_stream = cs.stream.get_stream(self, 'wifi_channel')
+        self.output_wifi_stream = cs.stream.get_stream(self, 'wifi_ssid_same_channel')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['wifi_channel'].append(data)
+            self.output_record['wifi_ssid_same_channel'].append(data)
 
         self.output_wifi_stream.for_each(record_output)
 

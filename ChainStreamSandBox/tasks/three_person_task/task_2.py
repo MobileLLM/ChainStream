@@ -25,7 +25,7 @@ class VideoTask11(SingleAgentTaskConfigBase):
                 "stream_id": "analysis_violence",
                 "description": "A stream of analysis of whether violence has occurred in the surveillance video",
                 "fields": {
-                    "analysis_result": "analyze whether there are any violent incidents, string = y or n"}
+                    "analysis_result": "analyze whether there are any violent incidents, bool = True or False"}
             }
         ])
         self.Sphar_data = SpharData().load_for_violence()
@@ -40,11 +40,16 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def analyze_surveillance(third_person_data):
-            prompt = "Determine whether violence has occurred in the surveillance video?simply answer y or n."
+            prompt = "Determine whether violence has occurred in the surveillance video?Simply answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,third_person_data["frame"]))
-            self.analysis_output.add_item({
-                "analysis_result": res
-            })
+            if res.lower() == "y":
+                self.analysis_output.add_item({
+                    "analysis_result": True
+                })
+            else:
+                self.analysis_output.add_item({
+                    "analysis_result": False
+                })
 
         self.surveillance_input.for_each(analyze_surveillance)
         '''

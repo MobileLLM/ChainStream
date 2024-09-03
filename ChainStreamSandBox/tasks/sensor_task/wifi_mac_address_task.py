@@ -17,15 +17,15 @@ class WifiTask2(SingleAgentTaskConfigBase):
             "stream_id": "all_wifi",
             "description": "A stream of the wifi information",
             "fields": {
-                "MAC.Address": "The mac address of the wifi signal, string"
+                "MAC.Address": "The mac address of the wifi signal with the format of 'XX:XX:XX:XX:XX', string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "wifi_address",
-                "description": "A stream of the wifi mac address statistics",
+                "stream_id": "wifi_address_without_colons",
+                "description": "A stream of wifi mac address statistics with colons replaced by spaces",
                 "fields": {
-                    "MAC.Address": "The mac address of the wifi signal, string"
+                    "mac_address": "The mac address of the wifi stream with colons replaced by spaces, string"
                 }
             }
         ])
@@ -36,23 +36,24 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_wifi_agent")
         self.input_stream = cs.get_stream(self,"all_wifi")
-        self.output_stream = cs.create_stream(self,"wifi_address")
+        self.output_stream = cs.create_stream(self,"wifi_address_without_colons")
     def start(self):
         def process_wifi(wifi):
-            MAC_Address = wifi["MAC.Address"]        
+            MAC_Address = wifi["MAC.Address"]
+            mac_address_processed = MAC_Address.replace(":", "")        
             self.output_stream.add_item({
-                "MAC.Address": MAC_Address
+                "mac_address": mac_address_processed
             })
         self.input_stream.for_each(process_wifi)
         '''
 
     def init_environment(self, runtime):
         self.input_wifi_stream = cs.stream.create_stream(self, 'all_wifi')
-        self.output_wifi_stream = cs.stream.create_stream(self, 'wifi_address')
+        self.output_wifi_stream = cs.stream.create_stream(self, 'wifi_address_without_colons')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['wifi_address'].append(data)
+            self.output_record['wifi_address_without_colons'].append(data)
 
         self.output_wifi_stream.for_each(record_output)
 
@@ -60,11 +61,11 @@ class testAgent(cs.agent.Agent):
         self.input_wifi_stream = cs.stream.create_stream(self, 'all_wifi')
 
     def init_output_stream(self, runtime):
-        self.output_wifi_stream = cs.stream.get_stream(self, 'wifi_address')
+        self.output_wifi_stream = cs.stream.get_stream(self, 'wifi_address_without_colons')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['wifi_address'].append(data)
+            self.output_record['wifi_address_without_colons'].append(data)
 
         self.output_wifi_stream.for_each(record_output)
 

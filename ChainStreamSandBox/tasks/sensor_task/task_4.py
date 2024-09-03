@@ -28,7 +28,7 @@ class WeatherTask1(SingleAgentTaskConfigBase):
                 "description": "A stream of clothing recommendations based on the temperature in May each year ("
                                "formatted as '5' for the month in the 'Date_Time' field), with every two pieces of "
                                "weather data packaged together in a batch after filtering for the month of May, "
-                               "and choosing from the following options: ['T-shirt', 'Tank top', 'Sweater', 'Hoodie', "
+                               "and chosen from the following options: ['T-shirt', 'Tank top', 'Sweater', 'Hoodie', "
                                "'Jacket']",
                 "fields": {
                     "Temperature_C": "temperature in degrees Celsius, string",

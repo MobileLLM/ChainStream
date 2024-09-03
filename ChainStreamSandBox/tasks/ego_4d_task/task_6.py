@@ -23,9 +23,9 @@ class VideoTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_scenario",
-                "description": "A series of judgments on whether I am in the playground",
+                "description": "A series of judgments on whether I am exercising in the playground",
                 "fields": {
-                    "exercising": "An indication of whether I am in a playground, bool"
+                    "exercising": "An indication of whether I am exercising in the playground, bool"
                 }
             }
         ])
@@ -41,7 +41,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
 
     def start(self):
         def detect_scenario(first_person_data):
-            prompt = "Detect whether I am exercising in the playground, just tell me y or n."
+            prompt = "Detect whether I am in exercising in the playground, just tell me y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,first_person_data["frame"]))
             if res.lower()=="y":
                 self.analysis_output.add_item({

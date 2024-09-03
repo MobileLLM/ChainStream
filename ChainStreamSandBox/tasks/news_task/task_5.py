@@ -27,8 +27,8 @@ class NewsTask5(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "summary_output",
-                "description": "A stream of the summaries on the CEOs' opinions on 'POLITICS', with filtered "
-                               "'POLITICS' news in the 'category' field sent in batches every second",
+                "description": "A stream of the summaries on the CEOs' opinions on 'POLITICS' with the news headline, "
+                               "with filtered 'POLITICS' news in the 'category' field sent in batches every second",
                 "fields": {
                     "headline": "the headline of the news event, string",
                     "summary": "the summary of the CEOs' opinions on 'POLITICS' news category, string"

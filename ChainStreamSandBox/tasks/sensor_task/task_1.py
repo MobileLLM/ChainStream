@@ -20,18 +20,19 @@ class GPSTask1(SingleAgentTaskConfigBase):
             "fields": {
                 "CapitalLatitude": "the latitude of my location, string",
                 "CapitalLongitude": "the longitude of my location, string",
-                "CapitalName": "the name of the capital, string"
+                "ContinentName": "the name of the continent, string"
             }
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "city_identification",
-                "description": "A stream of the city identifications according to the longitude and latitude sensor in "
-                               "South America",
+                "description": "A stream of the city identifications according to the capital longitude and latitude "
+                               "sensor filtered 'South America' in the field 'ContinentName'",
                 "fields": {
-                    "CapitalLongitude": "the longitude of my location in South America, string",
-                    "CapitalLatitude": "the latitude of my location in South America, string",
-                    "CapitalName": "the name of my city in South America, string"
+                    "CapitalLongitude": "the longitude of the capital of the countries in South America, string",
+                    "CapitalLatitude": "the latitude of the capital of the countries in South America, string",
+                    "CapitalName": "the name of the capital of the countries analysed from the longitude and latitude "
+                                   "information in South America, string "
                 }
             }
         ])
@@ -56,11 +57,12 @@ class AgentExampleForSensorTask1(cs.agent.Agent):
         def analysis_location(location):
             latitude = location.get('CapitalLatitude')
             longitude = location.get('CapitalLongitude')
-            capital = location.get('CapitalName')
+            prompt = 'Please recognize the capital based on the latitude and longitude of the following capital location.Only tell me the name of the capital'
+            res = self.llm.query(cs.llm.make_prompt(prompt, latitude, longitude))
             self.sensor_output.add_item({
                 "CapitalLatitude": latitude,
                 "CapitalLongitude": longitude,
-                "CapitalName": capital
+                "CapitalName": res
             })
 
         self.sensor_input.for_each(filter_location).for_each(analysis_location)
