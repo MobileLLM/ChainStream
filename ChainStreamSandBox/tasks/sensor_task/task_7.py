@@ -59,7 +59,7 @@ class AgentExampleForSensorTask7(cs.agent.Agent):
                 date_time = weather.get('Date_Time')
                 self.sensor_output.add_item({
                     "Date_Time": date_time,
-                    "Wind_Speed_kmh": str(wind_speed)+"km/h",
+                    "Wind_Speed_kmh": str(wind_speed),
                     "reminder": "Collect the clothes in the balcony!"
                 })
         self.sensor_input.for_each(filter_precipitation).batch(by_count=2).for_each(reminder)

@@ -47,10 +47,10 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
-        def filter_work(email):
-            prompt = "is this email work-related? answer y or n"
+        def filter_advertisements(email):
+            prompt = "is this email an advertisement? answer y or n"
             res = self.llm.query(cs.llm.make_prompt(email['Content'], prompt))
-            if res.lower() == 'y':
+            if res.lower() == 'n':
                 return email
 
         def group_by_receiver(email_list):
@@ -73,7 +73,7 @@ class AgentExampleForEmailTask3(cs.agent.Agent):
                     "summary": res
                 })
 
-        self.email_input.for_each(filter_work).batch(by_count=2).for_each(group_by_receiver).for_each(sum_by_receiver)
+        self.email_input.for_each(filter_advertisements).batch(by_count=2).for_each(group_by_receiver).for_each(sum_by_receiver)
         '''
 
     def init_environment(self, runtime):

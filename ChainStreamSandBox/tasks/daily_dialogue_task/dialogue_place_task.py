@@ -25,7 +25,8 @@ class DialogueTask3(SingleAgentTaskConfigBase):
             {
                 "stream_id": "dialogues_place",
                 "description": "A stream of dialogues record with the analysis of the place where the conversation "
-                               "happened chosen from ['Home', 'Office', 'Café', 'Park', 'Restaurant']",
+                               "happened chosen from ['Home', 'Office', 'Café', 'Park', 'Restaurant'] based on the "
+                               "'dialog' field",
                 "fields": {
                     "id": "The id of the speaker, string",
                     "place": "The place where the conversation happened chosen from ['Home', 'Office', 'Café', "

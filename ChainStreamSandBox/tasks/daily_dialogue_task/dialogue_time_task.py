@@ -25,7 +25,8 @@ class DialogueTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "dialogues_part_of_the_day",
                 "description": "A stream of dialogues record with the analysis of part of the day when the "
-                               "conversation happened chosen from morning, afternoon,and evening",
+                               "conversation happened chosen from morning, afternoon,and evening based on the "
+                               "'dialog' field",
                 "fields": {
                     "id": "The id of the speaker, string",
                     "time": "The part of the day when the conversation happened chosen from ['morning','afternoon',"
@@ -47,7 +48,7 @@ class testAgent(cs.agent.Agent):
         def process_dialogues(dialogues):
             dialogues_id = dialogues["id"]
             dialogues_text = dialogues["dialog"]
-            prompt = "Examine the dialogue below and determine the time of day during which the conversation takes place: morning, afternoon, or evening.Only tell me the choice."
+            prompt = "Examine the dialogue below and determine the time of day during which the conversation takes place: 'morning', 'afternoon', 'evening' or 'not sure'.Only tell me the choice."
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
             "id": dialogues_id,

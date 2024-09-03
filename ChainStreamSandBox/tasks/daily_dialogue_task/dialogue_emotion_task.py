@@ -28,7 +28,7 @@ class DialogueTask1(SingleAgentTaskConfigBase):
                                "from positive, negative, neutral and other",
                 "fields": {
                     "id": "The id of the speaker, string",
-                    "emotion": "The emotion analysed from the conversation based on the dialog field, string"}
+                    "atmosphere": "The atmosphere analysed from the conversation based on the 'dialog' field, string"}
             }
         ])
         self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
@@ -50,7 +50,7 @@ class testAgent(cs.agent.Agent):
             response = self.llm.query(cs.llm.make_prompt(prompt,str(dialogues_text)))
             self.output_stream.add_item({
                 "id": dialogues_id,
-                "emotion": response
+                "atmosphere": response
                 })
 
         self.input_stream.for_each(process_dialogues)

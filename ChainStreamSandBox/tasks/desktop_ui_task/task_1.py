@@ -15,7 +15,7 @@ class ImageTask1(SingleAgentTaskConfigBase):
                                 modality=Modality_Task_tag.Video)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "desktop_screenshot",
-            "description": "All desktop ui images",
+            "description": "All desktop screenshot images",
             "fields": {
                 "image_file": "image file in the Jpeg format processed using PIL, PIL.Image"
             }
@@ -23,9 +23,11 @@ class ImageTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "analysis_software",
-                "description": "Analysis of a stream of software names for work",
+                "description": "A stream of the software currently being used, as analyzed from the desktop "
+                               "screenshot image file",
                 "fields": {
-                    "analysis_result": "A stream of the software name currently used for work."
+                    "analysis_result": "The software currently being used, as analyzed from the desktop screenshot "
+                                       "image file, string"
                 }
             }
         ])

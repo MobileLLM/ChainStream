@@ -23,9 +23,9 @@ class WifiTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "wifi_ssid",
-                "description": "A stream of the wifi ssid information statistics",
+                "description": "A WiFi SSID information stream with the keyword 'Guest' in the field 'SSID'",
                 "fields": {
-                    "SSID": "The signal strength of the wifi signal, int"
+                    "SSID": "The service set identifier of the wifi signal, string"
                 }
             }
         ])
@@ -39,10 +39,11 @@ class testAgent(cs.agent.Agent):
         self.output_stream = cs.create_stream(self,"wifi_ssid")
     def start(self):
         def process_wifi(wifi):
-            SSID = wifi["SSID"]        
-            self.output_stream.add_item({
-                "SSID": SSID
-            })
+            SSID = wifi["SSID"]
+            if 'Guest' in SSID:        
+                self.output_stream.add_item({
+                    "SSID": SSID
+                })
         self.input_stream.for_each(process_wifi)
         '''
 

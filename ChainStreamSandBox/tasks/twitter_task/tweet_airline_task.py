@@ -24,10 +24,10 @@ class TweetTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "American_airline_tweets",
-                "description": "A stream of the filtered American airlines tweets",
+                "description": "A stream of the filtered American airlines tweets from the field 'airline'",
                 "fields": {
                     "text": "The text of the tweet, string",
-                    "airline": "The American type airline, string"
+                    "airline": "The filtered American type airline, string"
                 }
             }
         ])
@@ -45,7 +45,7 @@ class testAgent(cs.agent.Agent):
         def process_tweet(tweets):
             airline = tweets["airline"]
             text = tweets["text"]
-            prompt = "Is the airline mentioned in the tweet American?Only answer y or n."
+            prompt = "Is the airline mentioned in the tweet American? Only answer y or n."
             res = self.llm.query(cs.llm.make_prompt(prompt,airline))
             if res.lower() == "y":          
                 self.output_stream.add_item({

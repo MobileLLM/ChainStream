@@ -25,9 +25,9 @@ class DialogueTask6(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "work_dialogues",
-                "description": "A stream of dialogue texts, grouped by the same topic ones within the 'topic' "
-                               "field and extracted from the 'text' key within the 'dialog' field, with each batch "
-                               "containing two items.",
+                "description": "A stream of dialogue texts, grouped by the same topic as specified in the 'topic' "
+                               "field and extracted from the 'text' key within the 'dialog' field. Each batch "
+                               "contains two items.",
                 "fields": {
                     "topic": "the topic of the grouped dialogues, string",
                     "dialog": "The list of dialogues of the same topic, list"}

@@ -26,13 +26,11 @@ class ArxivTask12(SingleAgentTaskConfigBase):
             {
                 "stream_id": "comments_info_with_pages",
                 "description": "Arxiv articles titles with their comments field, but only if the 'comments' field "
-                               "contains the keyword 'pages' (The format: ××× pages is included in the 'comments' "
-                               "field.).",
+                               "contains the keyword 'pages'",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "number_of_pages": "The information extracted from the comments field, but only if the 'comments' "
-                                       "field contains the keyword 'pages' (The format: '××× pages' is included in "
-                                       "the 'comments' field.), string "
+                                       "field contains the keyword 'pages', string "
                 }
             }
         ])

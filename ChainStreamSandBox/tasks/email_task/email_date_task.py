@@ -23,7 +23,7 @@ class EmailTask5(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "email_subject_in_June",
+                "stream_id": "email_subject_in_Apr",
                 "description": "A stream of emails in 'Apr' extracted from the field 'Date'",
                 "fields": {
                     "Subject": "The subject of the email in 'Apr', string"
@@ -38,7 +38,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_email_agent")
         self.input_stream = cs.get_stream(self,"all_emails")
-        self.output_stream = cs.create_stream(self,"email_subject_in_June")
+        self.output_stream = cs.create_stream(self,"email_subject_in_Apr")
         self.llm = get_model("Text")
     def start(self):
         def process_email(email):
@@ -55,12 +55,12 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_email_stream = cs.stream.create_stream(self, 'all_emails')
-        self.output_email_stream = cs.stream.create_stream(self, 'email_subject_in_June')
+        self.output_email_stream = cs.stream.create_stream(self, 'email_subject_in_Apr')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['email_subject_in_June'].append(data)
+            self.output_record['email_subject_in_Apr'].append(data)
 
         self.output_email_stream.for_each(record_output)
 
@@ -68,12 +68,12 @@ class testAgent(cs.agent.Agent):
         self.input_email_stream = cs.stream.create_stream(self, 'all_emails')
 
     def init_output_stream(self, runtime):
-        self.output_email_stream = cs.stream.get_stream(self, 'email_subject_in_June')
+        self.output_email_stream = cs.stream.get_stream(self, 'email_subject_in_Apr')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['email_subject_in_June'].append(data)
+            self.output_record['email_subject_in_Apr'].append(data)
 
         self.output_email_stream.for_each(record_output)
 

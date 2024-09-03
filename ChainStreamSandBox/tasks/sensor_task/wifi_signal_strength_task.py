@@ -23,9 +23,9 @@ class WifiTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "wifi_signal_strength",
-                "description": "A stream of the wifi signal strength statistics",
+                "description": "A stream of WiFi signal strength statistics where the signal strength is less than -50",
                 "fields": {
-                    "Signal": "The signal strength of the wifi signal, int"
+                    "Signal": "The signal strength of the wifi stream which is less than -50, int"
                 }
             }
         ])
@@ -39,10 +39,11 @@ class testAgent(cs.agent.Agent):
         self.output_stream = cs.create_stream(self,"wifi_signal_strength")
     def start(self):
         def process_wifi(wifi):
-            Signal_Strength = wifi["Signal"]        
-            self.output_stream.add_item({
-                "Signal": Signal_Strength
-            })
+            Signal_Strength = wifi["Signal"]
+            if Signal_Strength < -50:  
+                self.output_stream.add_item({
+                    "Signal": Signal_Strength
+                })
         self.input_stream.for_each(process_wifi)
         '''
 

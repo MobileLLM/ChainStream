@@ -26,7 +26,7 @@ class GithubTask3(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "most_forks_with_licence",
-                "description": "A stream of fork number of github repositories with licence, with every three github "
+                "description": "A stream of fork numbers of github repositories with licence, with every three github "
                                "repositories packaged as a batch after filtering the github with licence",
                 "fields": {
                     "licence": "the licence of the github repository, string",
@@ -55,8 +55,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         def count_forks(github_list):
             github_list2 = github_list['item_list']
             sorted_dicts = sorted(github_list2, key=lambda x: int(x['forks_count']), reverse=True)
-            top_10_dicts = sorted_dicts[:10]
-            for github in top_10_dicts:
+            for github in sorted_dicts:
                 forks_count = github.get('forks_count')
                 name = github.get('name')
                 licence =  github.get('licence')

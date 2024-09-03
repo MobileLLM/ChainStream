@@ -39,7 +39,7 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
                                "filtering out the advertisements.",
                 "fields": {
                     "Content": "the content of the emails, string",
-                    "Auto_reply": "An auto reply message, string = 'Received!'"
+                    "receipt Acknowledgment": "An auto reply message, string = 'Received!'"
                 }
             }, {
                 "stream_id": "is_office_event",
@@ -87,7 +87,7 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
                 if content:
                     self.email_output.add_item({
                         "Content": content,
-                        "Auto_reply": "Received!"
+                        "receipt Acknowledgment": "Received!"
                     })
                     
         def analysis_location(location):

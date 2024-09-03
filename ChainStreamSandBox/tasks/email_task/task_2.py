@@ -71,7 +71,6 @@ class AgentExampleForEmailTask2(cs.agent.Agent):
 
             
         def sum_by_content(emails):
-            print(emails)
             for email in emails['email_list']:
                 content = email['Content']
                 prompt = "Analyze the purposes of these emails chosen from ['Request for Information', 'Meeting Scheduling', 'Project Update', 'Task Assignment', 'Feedback Request', 'Report Submission', 'Inquiry', 'Clarification', 'Approval Request', 'Status Update', 'Other']. Please only give me the choice."

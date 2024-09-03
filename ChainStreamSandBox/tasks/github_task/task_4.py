@@ -51,8 +51,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         def count_pr(github_dicts):
             github_list = github_dicts['item_list']
             sorted_dicts = sorted(github_list, key=lambda x: x['pull_requests'], reverse=True)
-            top_10_dicts = sorted_dicts[:10]
-            return top_10_dicts
+            return sorted_dicts
         def find_language(github_list):
             pull_requests = github_list.get('pull_requests')
             languages_used = github_list.get('languages_used')

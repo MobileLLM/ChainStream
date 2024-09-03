@@ -24,10 +24,10 @@ class DialogueTask7(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "ordinary_life_dialog_intention",
-                "description": "A stream of dialogue texts, grouped by the same topic ones within the 'topic' "
-                               "field and extracted from the 'act' key within the 'dialog' field, with each batch "
-                               "containing two items.",
+                "stream_id": "dialogues_intentions_of_the_same_topic",
+                "description": "A stream of dialogue texts, grouped by the same topic as specified in the 'topic' "
+                               "field and extracted from the 'act' key within the 'dialog' field. Each batch contains"
+                               " two items.",
                 "fields": {
                     "topic": "The topic of the grouped dialogues, string",
                     "dialog_intention": "The list of intention of the dialogues, list"}
@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_news_agent")
         self.input_stream = cs.get_stream(self,"all_dialogues")
-        self.output_stream = cs.create_stream(self,"ordinary_life_dialog_intention")
+        self.output_stream = cs.create_stream(self,"dialogues_intentions_of_the_same_topic")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -65,12 +65,12 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
-        self.output_dialogue_stream = cs.stream.create_stream(self, 'ordinary_life_dialog_intention')
+        self.output_dialogue_stream = cs.stream.create_stream(self, 'dialogues_intentions_of_the_same_topic')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['ordinary_life_dialog_intention'].append(data)
+            self.output_record['dialogues_intentions_of_the_same_topic'].append(data)
 
         self.output_dialogue_stream.for_each(record_output)
 
@@ -78,12 +78,12 @@ class testAgent(cs.agent.Agent):
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
 
     def init_output_stream(self, runtime):
-        self.output_dialogue_stream = cs.stream.get_stream(self, 'ordinary_life_dialog_intention')
+        self.output_dialogue_stream = cs.stream.get_stream(self, 'dialogues_intentions_of_the_same_topic')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['ordinary_life_dialog_intention'].append(data)
+            self.output_record['dialogues_intentions_of_the_same_topic'].append(data)
 
         self.output_dialogue_stream.for_each(record_output)
 

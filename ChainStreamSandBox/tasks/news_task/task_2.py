@@ -26,10 +26,11 @@ class NewsTask2(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "extract_characters",
-                "description": "An extraction of the characters from the politics news with the date, with every two "
-                               "pieces of news packaged as a batch after filtering the politics topic",
+                "description": "An analysis of the characters from the politics news 'short_description' field with "
+                               "the news date, with every two pieces of news packaged as a batch after filtering the "
+                               "'POLITICS' value of the key 'category'",
                 "fields": {
-                    "characters": "the characters extracted from the political news, string",
+                    "characters": "the characters analysed from the political news, string",
                     "date": "the date of the political news, string"
                 }
             }
@@ -52,7 +53,7 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
             if news_type == "POLITICS":
                 return news
 
-        def extract_from_dialogues(news_list):
+        def extract_characters_from_news(news_list):
             news_list = news_list['item_list']
             for news in news_list:
                 date = news.get('date')
@@ -64,7 +65,7 @@ class AgentExampleForNewsTask2(cs.agent.Agent):
                     "date": date
                 })
 
-        self.news_input.for_each(filter_news).batch(by_count=2).for_each(extract_from_dialogues)
+        self.news_input.for_each(filter_news).batch(by_count=2).for_each(extract_characters_from_news)
         '''
 
     def init_environment(self, runtime):

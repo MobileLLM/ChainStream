@@ -23,7 +23,8 @@ class HealthTask16(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "sleep_disorder_evaluation",
-                "description": "A stream of the evaluation on the sleep disorder problem",
+                "description": "A stream of the evaluation on the sleep disorder problem extracted from the key "
+                               "'Sleep Disorder' if the value is not 'None'.",
                 "fields": {
                     "Sleep Disorder": "The type of the sleep disorder, string"}
             }
@@ -40,10 +41,11 @@ class testAgent(cs.agent.Agent):
         self.llm = get_model("Text")
     def start(self):
         def process_health(health):
-            Sleep_Disorder = health["Sleep Disorder"]        
-            self.output_stream.add_item({
-                "Sleep Disorder": Sleep_Disorder
-                })
+            Sleep_Disorder = health["Sleep Disorder"]
+            if Sleep_Disorder != 'None': 
+                self.output_stream.add_item({
+                    "Sleep Disorder": Sleep_Disorder
+                    })
         self.input_stream.for_each(process_health)
         '''
 
