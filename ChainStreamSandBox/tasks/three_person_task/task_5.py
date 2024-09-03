@@ -23,9 +23,9 @@ class VideoTask14(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "number_of_cars",
-                "description": "A stream of the number of cars in the captured images",
+                "description": "A stream of the number of cars analysed from the captured image frames",
                 "fields": {
-                    "analysis_result": "the number of cars, int"}
+                    "analysis_result": "the number of cars analysed from the captured image frames, int"}
             }
         ])
         self.Sphar_data = SpharData().load_for_person_detection()

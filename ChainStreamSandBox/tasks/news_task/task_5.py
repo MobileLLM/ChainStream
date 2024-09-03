@@ -28,10 +28,10 @@ class NewsTask5(SingleAgentTaskConfigBase):
             {
                 "stream_id": "summary_output",
                 "description": "A stream of the summaries on the CEOs' opinions on 'POLITICS', with filtered "
-                               "'POLITICS' news sent in batches every second",
+                               "'POLITICS' news in the 'category' field sent in batches every second",
                 "fields": {
                     "headline": "the headline of the news event, string",
-                    "summary": "the summary of the CEOs' opinions on 'POLITICS', string"
+                    "summary": "the summary of the CEOs' opinions on 'POLITICS' news category, string"
                 }
             }
         ])

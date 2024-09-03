@@ -25,7 +25,8 @@ class DialogueTask5(SingleAgentTaskConfigBase):
             {
                 "stream_id": "dialogues_topic",
                 "description": "A stream of dialogues record with the analysis of their topics chosen from ["
-                               "'Technology', 'Health', 'Travel', 'Entertainment', 'Current Events','Other']",
+                               "'Technology', 'Health', 'Travel', 'Entertainment', 'Current Events','Other'] based on "
+                               "the 'dialog' field",
                 "fields": {
                     "id": "The id of the speaker, string",
                     "topic": "The topic of the conversation chosen from ['Technology', 'Health', 'Travel', "

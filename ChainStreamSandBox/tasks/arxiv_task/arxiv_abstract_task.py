@@ -46,7 +46,6 @@ class testAgent(cs.agent.Agent):
         self.llm = cs.llm.get_model("Text")
     def start(self):
         def process_paper(paper):
-            # print(paper)
             paper_content = paper["abstract"]
             title = paper["title"]
             authors = paper["authors"]

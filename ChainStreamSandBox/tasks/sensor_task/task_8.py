@@ -26,13 +26,12 @@ class HealthTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "remind_medicine",
                 "description": "A stream of reminders to take some medicine when the systolic blood pressure is over "
-                               "120 and the diastolic blood pressure is over 70,with every two copies of health sensor "
-                               "data packaged as a batch after filtering the systolic blood pressure which is "
-                               "over 120 and the diastolic blood pressure which is over 70",
+                               "120 and the diastolic blood pressure is over 70, with every two copies of health "
+                               "sensor data packaged as a batch",
                 "fields": {
                     "SystolicBP": "the systolic blood pressure data from the health sensor, float",
                     "DiastolicBP": "the diastolic blood pressure data from the health sensor, float",
-                    "reminder": "An auto reminder, string = Remember to take your medicine!"
+                    "reminder": "An auto reminder, string = 'Remember to take your medicine!'"
                 }
             }
         ])
@@ -52,7 +51,7 @@ class AgentExampleForSensorTask8(cs.agent.Agent):
         def filter_abnormal(health):
             SystolicBP = health['SystolicBP']
             DiastolicBP = health['DiastolicBP']
-            if SystolicBP >= 120 and DiastolicBP >= 70:
+            if SystolicBP > 120 and DiastolicBP > 70:
                 return health
 
         def reminder(health_list):
@@ -60,8 +59,8 @@ class AgentExampleForSensorTask8(cs.agent.Agent):
                 SystolicBP = health['SystolicBP']
                 DiastolicBP = health['DiastolicBP']
                 self.sensor_output.add_item({
-                    "SystolicBP": str(SystolicBP) + "mmHg",
-                    "DiastolicBP": str(DiastolicBP) + "mmHg",
+                    "SystolicBP": str(SystolicBP),
+                    "DiastolicBP": str(DiastolicBP),
                     "reminder": "Remember to take your medicine!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)

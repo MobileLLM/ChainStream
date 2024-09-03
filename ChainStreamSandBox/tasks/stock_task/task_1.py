@@ -26,10 +26,11 @@ class StockTask1(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "up_or_down",
-                "description": "A stream of the change percentages with the volume of the MLM stock if it has fallen",
+                "stream_id": "fallen_price_stock",
+                "description": "A stream of the change percentages with the volume of the 'MLM' stock in the field "
+                               "'symbol' if the change percentage is lower than 0",
                 "fields": {
-                    "change_percentage": "The percentage change in the stock price, float",
+                    "change_percentage": "The percentage change in the fallen-price stock, float",
                     "volume": "the trading volume of the stock, float"
                 }
             }
@@ -43,37 +44,38 @@ class AgentExampleForStockTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_stock_task_1"):
         super().__init__(agent_id)
         self.stock_input = cs.get_stream(self, "all_stock")
-        self.stock_output = cs.create_stream(self, "up_or_down")
+        self.stock_output = cs.create_stream(self, "fallen_price_stock")
         self.llm = cs.llm.get_model("Text")
 
         def filter_mlm_stocks(stock_dict):
-            mlm_stocks = [stock for stock in stock_dict if isinstance(stock, dict) and stock.get('symbol') == 'MLM']
-            return mlm_stocks
+            if stock_dict['symbol'] == "MLM":
+                return stock_dict
         
         def up_or_down(stock):
-            open_price = stock['open']
-            close_price = stock['close']
-            volume = stock['volume']
+            open_price = float(stock['open'])
+            close_price = float(stock['close'])
+            volume = float(stock['volume'])
             if open_price != 0:
                 change_percentage = (close_price - open_price) / open_price * 100
             else:
                 change_percentage = 0.0
-            self.stock_output.add_item({
-                "change_percentage": change_percentage,
-                "volume": volume
-            }) 
+            if change_percentage < 0:
+                self.stock_output.add_item({
+                    "change_percentage": change_percentage,
+                    "volume": volume
+                }) 
 
-        self.stock_input.for_each(up_or_down)
+        self.stock_input.for_each(filter_mlm_stocks).for_each(up_or_down)
         '''
 
     def init_environment(self, runtime):
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
-        self.output_stock_stream = cs.stream.create_stream(self, 'up_or_down')
+        self.output_stock_stream = cs.stream.create_stream(self, 'fallen_price_stock')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['up_or_down'].append(data)
+            self.output_record['fallen_price_stock'].append(data)
 
         self.output_stock_stream.for_each(record_output)
 
@@ -81,16 +83,64 @@ class AgentExampleForStockTask1(cs.agent.Agent):
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
 
     def init_output_stream(self, runtime):
-        self.output_stock_stream = cs.stream.get_stream(self, 'up_or_down')
+        self.output_stock_stream = cs.stream.get_stream(self, 'fallen_price_stock')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['up_or_down'].append(data)
+            self.output_record['fallen_price_stock'].append(data)
 
         self.output_stock_stream.for_each(record_output)
 
     def start_task(self, runtime) -> dict:
+        stock_data = [
+            {
+                "date": "2024-09-01",
+                "symbol": "MLM",
+                "open": "85.00",
+                "close": "84.50",
+                "low": "83.75",
+                "high": "85.20",
+                "volume": "800000.0"
+            },
+            {
+                "date": "2024-09-02",
+                "symbol": "MLM",
+                "open": "84.75",
+                "close": "84.00",
+                "low": "83.50",
+                "high": "85.00",
+                "volume": "750000.0"
+            },
+            {
+                "date": "2024-09-03",
+                "symbol": "MLM",
+                "open": "85.20",
+                "close": "84.80",
+                "low": "84.00",
+                "high": "85.50",
+                "volume": "780000.0"
+            },
+            {
+                "date": "2024-09-04",
+                "symbol": "MLM",
+                "open": "84.90",
+                "close": "84.30",
+                "low": "83.90",
+                "high": "85.10",
+                "volume": "770000.0"
+            },
+            {
+                "date": "2024-09-05",
+                "symbol": "MLM",
+                "open": "85.10",
+                "close": "84.60",
+                "low": "84.00",
+                "high": "85.30",
+                "volume": "790000.0"
+            }
+        ]
+        self.stock_data.extend(stock_data)
         sent_stock = {'all_stock': []}
         for stock in self.stock_data:
             sent_stock['all_stock'].append(stock)

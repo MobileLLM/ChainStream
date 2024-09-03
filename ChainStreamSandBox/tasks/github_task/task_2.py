@@ -12,7 +12,7 @@ class GithubTask2(SingleAgentTaskConfigBase):
         self.clock_stream = None
         self.output_github_stream = None
         self.input_github_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard, domain=Domain_Task_tag.Office,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Medium, domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Text)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_github",
@@ -26,9 +26,10 @@ class GithubTask2(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "commit_most_this_year",
-                "description": "Ten GitHub repositories with the most commits in 2024, with every ten GitHub "
-                               "repositories packaged into a batch after filtering for repositories created in 2024.",
+                "stream_id": "most_commit_github",
+                "description": "A stream of github repositories information (including the name, the created date and "
+                               "the commit count) sorted in descending order by the commit count, with every ten "
+                               "repositories packaged into a batch.",
                 "fields": {
                     "created_at": "the time that the github repository was created at using ISO 8601 datetime format, "
                                   "datetime",
@@ -46,7 +47,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
     def __init__(self, agent_id="agent_example_for_github_task_1"):
         super().__init__(agent_id)
         self.github_input = cs.get_stream(self, "all_github")
-        self.github_output = cs.create_stream(self, "commit_most_this_year")
+        self.github_output = cs.create_stream(self, "most_commit_github")
         self.llm = cs.llm.get_model("Text")
 
     def start(self):
@@ -56,8 +57,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         def count_commit(github_list):
             github_list2 = github_list['item_list']
             sorted_dicts = sorted(github_list2, key=lambda x: int(x['commit_count']), reverse=True)
-            top_10_dicts = sorted_dicts[:10]
-            for github in top_10_dicts:
+            for github in sorted_dicts:
                 created_at = github.get('created_at')
                 commit_count = github.get('commit_count')
                 name = github.get('name')
@@ -71,12 +71,12 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
-        self.output_github_stream = cs.stream.create_stream(self, 'commit_most_this_year')
+        self.output_github_stream = cs.stream.create_stream(self, 'most_commit_github')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['commit_most_this_year'].append(data)
+            self.output_record['most_commit_github'].append(data)
 
         self.output_github_stream.for_each(record_output)
 
@@ -84,12 +84,12 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
 
     def init_output_stream(self, runtime):
-        self.output_github_stream = cs.stream.get_stream(self, 'commit_most_this_year')
+        self.output_github_stream = cs.stream.get_stream(self, 'most_commit_github')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['commit_most_this_year'].append(data)
+            self.output_record['most_commit_github'].append(data)
 
         self.output_github_stream.for_each(record_output)
 

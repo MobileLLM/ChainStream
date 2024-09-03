@@ -23,11 +23,11 @@ class ScreenshotTask1(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "screenshot_usage",
-                "description": "The analysis of the screenshot usage chosen from ['Work', 'Social', 'Entertainment', "
-                               "'Other']",
+                "description": "The analysis of the phone usage chosen from ['Work', 'Social', 'Entertainment', "
+                               "'Other'] analysed from the screenshot image file",
                 "fields": {
-                    "usage": "The analysis of the screenshot usage chosen from ['Work', 'Social', 'Entertainment', "
-                             "'Other'], string "
+                    "usage": "The analysis of the phone usage chosen from ['Work', 'Social', 'Entertainment', "
+                             "'Other'] analysed from the screenshot image file, string "
                 }
             }
         ])

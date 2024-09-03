@@ -25,7 +25,8 @@ class DialogueTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "dialogues_part_of_the_day",
                 "description": "A stream of dialogues record with the analysis of part of the day when the "
-                               "conversation happened chosen from morning, afternoon,and evening",
+                               "conversation happened chosen from morning, afternoon,and evening based on the "
+                               "'dialog' field",
                 "fields": {
                     "id": "The id of the speaker, string",
                     "time": "The part of the day when the conversation happened chosen from ['morning','afternoon',"

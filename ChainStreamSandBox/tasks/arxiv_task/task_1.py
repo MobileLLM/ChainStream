@@ -27,8 +27,8 @@ class ArxivTask1(SingleAgentTaskConfigBase):
             {
                 "stream_id": "summary_of_arxiv",
                 "description": "A stream of summaries of arxiv papers in the computer science domain, with articles "
-                               "filtered for the computer science topic first, then packaged into batches every two "
-                               "seconds, and finally summarized",
+                               "filtered for the computer science topic in the 'title' field first, then packaged "
+                               "into batches every two seconds, and finally summarized",
                 "fields": {
                     "title": "the title of each arxiv article, string",
                     "summary": "the summary of each arxiv article on computer science, string"

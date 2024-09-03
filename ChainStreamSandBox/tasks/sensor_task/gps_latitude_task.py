@@ -24,8 +24,7 @@ class GPSTask10(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "country_estimation",
-                "description": "A stream of the estimations on the country based on the latitude and longitude of my "
-                               "location",
+                "description": "A stream of the estimations on the country based on the capital latitude and longitude",
                 "fields": {
                     "country_estimation": "The country estimated based on the latitude and longitude of the capital, "
                                           "string"}

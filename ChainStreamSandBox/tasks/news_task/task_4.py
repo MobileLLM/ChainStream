@@ -26,12 +26,12 @@ class NewsTask4(SingleAgentTaskConfigBase):
         self.output_stream_description = StreamListDescription(streams=[
             {
                 "stream_id": "extract_entertainment_news_website",
-                "description": "A stream of extraction of the entertainment news website links with their short "
-                               "descriptions, with every two pieces of news are packaged as a batch after filtering "
-                               "the entertainment topic",
+                "description": "A stream of website links and their short descriptions, filtered by the "
+                               "'ENTERTAINMENT' category from the 'category' field, with every two pieces of news "
+                               "packaged together in a batch after filtering by the entertainment topic",
                 "fields": {
-                    "description": "the short description of the news, string",
-                    "link": "the website link that presents the news, string"
+                    "short_description": "the short description of the 'ENTERTAINMENT' news, string",
+                    "link": "the website link that presents the specific 'ENTERTAINMENT' news, string"
                 }
             }
         ])
@@ -59,7 +59,7 @@ class AgentExampleForNewsTask4(cs.agent.Agent):
                 link = news.get('link')
                 description = news.get('short_description')
                 self.news_output.add_item({
-                    "description": description,
+                    "short_description": description,
                     "link": link
                 })
 

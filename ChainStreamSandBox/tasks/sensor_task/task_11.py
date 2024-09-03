@@ -25,7 +25,7 @@ class HealthTask4(SingleAgentTaskConfigBase):
             {
                 "stream_id": "remind_rest",
                 "description": "A stream of reminders to take a rest when the heart rate is over 85,with every two "
-                               "copies of health sensor data are packaged as a batch after filtering the heart rate "
+                               "copies of health sensor data packaged as a batch after filtering the heart rate "
                                "which is over 85",
                 "fields": {
                     "HeartRate": "the heart rate data from the health sensor, float",
@@ -54,7 +54,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
             for health in health_list['item_list']:
                 HeartRate = health['HeartRate']
                 self.sensor_output.add_item({
-                    "HeartRate": str(HeartRate)+"/min",
+                    "HeartRate": str(HeartRate),
                     "reminder": "Heart rate is too high!Remember to rest yourself!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)

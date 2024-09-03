@@ -25,12 +25,12 @@ class HealthTask2(SingleAgentTaskConfigBase):
             {
                 "stream_id": "remind_check",
                 "description": "A stream of reminders to go to the hospital for a check when the blood sugar is over "
-                               "8.4,with every two copies of health sensor data are packaged as a batch after "
+                               "8.4,with every two copies of health sensor data packaged as a batch after "
                                "filtering the blood sugar which is over 8.4",
                 "fields": {
                     "Blood_sugar": "the blood sugar data from the health sensor, float",
-                    "reminder": "An auto reminder, string = High blood sugar！You'd better go to the hospital to check "
-                                "your body! "
+                    "reminder": "An auto reminder, string = 'High blood sugar！You'd better go to the hospital to check "
+                                "your body!' "
                 }
             }
         ])
@@ -56,7 +56,7 @@ class AgentExampleForSensorTask9(cs.agent.Agent):
             for health in health_list['item_list']:
                 Blood_sugar = health['BS']
                 self.sensor_output.add_item({
-                    "Blood_sugar": str(Blood_sugar)+"mmol/L",
+                    "Blood_sugar": str(Blood_sugar),
                     "reminder": "High blood sugar！You'd better go to the hospital to check your body!"
                 })
         self.sensor_input.for_each(filter_abnormal).batch(by_count=2).for_each(reminder)

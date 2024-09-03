@@ -24,8 +24,8 @@ class ArxivTask11(SingleAgentTaskConfigBase):
         }])
         self.output_stream_description = StreamListDescription(streams=[
             {
-                "stream_id": "arxiv_reference",
-                "description": "A stream of arxiv articles with their translated references provided",
+                "stream_id": "arxiv_reference_in_French",
+                "description": "A stream of arxiv articles titles with their translated references in French provided",
                 "fields": {
                     "title": "The title of the arxiv article, string",
                     "journal-ref-French": "The journal reference of the arxiv article translated in French, string"
@@ -41,7 +41,7 @@ class testAgent(cs.agent.Agent):
     def __init__(self):
         super().__init__("test_arxiv_agent")
         self.input_stream = cs.get_stream(self, "all_arxiv")
-        self.output_stream = cs.create_stream(self, "arxiv_reference")
+        self.output_stream = cs.create_stream(self, "arxiv_reference_in_French")
         self.llm = get_model("Text")
     def start(self):
         def process_paper(paper):
@@ -60,12 +60,12 @@ class testAgent(cs.agent.Agent):
 
     def init_environment(self, runtime):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
-        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_reference')
+        self.output_paper_stream = cs.stream.create_stream(self, 'arxiv_reference_in_French')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['arxiv_reference'].append(data)
+            self.output_record['arxiv_reference_in_French'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 
@@ -73,12 +73,12 @@ class testAgent(cs.agent.Agent):
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
 
     def init_output_stream(self, runtime):
-        self.output_paper_stream = cs.stream.get_stream(self, 'arxiv_reference')
+        self.output_paper_stream = cs.stream.get_stream(self, 'arxiv_reference_in_French')
 
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
 
         def record_output(data):
-            self.output_record['arxiv_reference'].append(data)
+            self.output_record['arxiv_reference_in_French'].append(data)
 
         self.output_paper_stream.for_each(record_output)
 

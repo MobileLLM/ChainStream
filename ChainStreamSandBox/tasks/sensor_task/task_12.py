@@ -27,8 +27,9 @@ class HealthTask5(SingleAgentTaskConfigBase):
             {
                 "stream_id": "health_advice_for_engineers",
                 "description": "A stream of the reasonable advice for the company's engineer according to their ages "
-                               "and sleeping time,with every two copies of health sensor data are packaged as a batch "
-                               "after filtering the occupation which is 'Engineer'",
+                               "and sleeping time information, with every two copies of health sensor data packaged "
+                               "as a batch after filtering the occupation which is 'Engineer' in the 'Occupation' "
+                               "field.",
                 "fields": {
                     "Age": "the age of the engineer, int",
                     "Sleep Duration": "the average sleep duration of the engineer, float",
@@ -58,12 +59,11 @@ class AgentExampleForSensorTask10(cs.agent.Agent):
             for health in health_list['item_list']:
                 sleep_time = health['Sleep Duration']
                 age = health['Age']
-                prompt = ("These are the ages and the sleep duration of all the software engineers in our company."
-                          "Do you think the sleeping time is enough? Simply answer y or n.If the answer is n,give some suggestions.")
+                prompt = "These are the ages and the sleep duration of all the software engineers in our company.Please provide personalized health advice for each engineer."
                 res = self.llm.query(cs.llm.make_prompt(f"Age: {age}, Sleep Duration: {sleep_time} hours", prompt))
                 self.sensor_output.add_item({
                     "Age": age,
-                    "Sleep Duration": str(sleep_time) + "h",
+                    "Sleep Duration": str(sleep_time),
                     "advice": res
                 })
 

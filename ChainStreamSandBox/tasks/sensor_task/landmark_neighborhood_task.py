@@ -45,7 +45,7 @@ class testAgent(cs.agent.Agent):
         def process_landmark(landmark):
             Neighborhood = landmark["Neighborhood"]
             property_name = landmark["PropertyName"]
-            tag = "Neighborhood" + "," + "property_name"        
+            tag = Neighborhood + "," + property_name        
             self.output_stream.add_item({
                 "property_with_neighborhood": tag
             })
