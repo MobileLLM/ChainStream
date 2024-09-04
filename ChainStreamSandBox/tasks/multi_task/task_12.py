@@ -17,7 +17,7 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
         self.adjust_light_stream = None
         self.is_reading_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Living, Domain_Task_tag.Weather]),
+                                domain=str([Domain_Task_tag.Home, Domain_Task_tag.Weather]),
                                 modality=str([Modality_Task_tag.GPS_Sensor, Modality_Task_tag.Video,
                                               Modality_Task_tag.Light_Sensor]))
         self.input_stream_description = StreamListDescription(streams=[{

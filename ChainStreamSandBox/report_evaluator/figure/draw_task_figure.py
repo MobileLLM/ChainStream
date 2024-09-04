@@ -24,12 +24,12 @@ def plot_histograms(ax_data):
 
         colorn = plt.cm.viridis(np.linspace(0, 1, len(bar_values)))
         ax.bar(bar_names, bar_values)
-
-        ax.set_title(ax_name)
+        ax.tick_params(axis='y', labelsize=16)
+        ax.set_title(ax_name, fontsize=16)
         # ax.set_xlabel('类别')
-        ax.set_ylabel('Number')
+        ax.set_ylabel('Number', fontsize=16)
 
-        ax.set_xticklabels(bar_names, rotation=45, ha='right')
+        ax.set_xticklabels(bar_names, rotation=45, ha='right', fontsize=16)
 
     plt.tight_layout()
     plt.show()
@@ -51,9 +51,9 @@ def draw_task_tag_figure():
     print(task_tag)
 
     data_dict = {
-        "Difﬁculty": {},
-        "Modality": {},
-        "Scene": {}
+        "Difficulty": {},
+        "Data Type": {},
+        "Task Type": {}
     }
 
     for task_name, task_tag_dict in task_tag.items():
@@ -61,9 +61,9 @@ def draw_task_tag_figure():
         tmp_modality = task_tag_dict.modality
         tmp_scene = task_tag_dict.domain
 
-        if tmp_difficulty not in data_dict["Difﬁculty"]:
-            data_dict["Difﬁculty"][tmp_difficulty] = 0
-        data_dict["Difﬁculty"][tmp_difficulty] += 1
+        if tmp_difficulty not in data_dict["Difficulty"]:
+            data_dict["Difficulty"][tmp_difficulty] = 0
+        data_dict["Difficulty"][tmp_difficulty] += 1
 
         new_tmp_modality_list = []
         if tmp_modality[0] == "[":
@@ -74,9 +74,9 @@ def draw_task_tag_figure():
         else:
             new_tmp_modality_list = [tmp_modality]
         for tmp_modality_item in new_tmp_modality_list:
-            if tmp_modality_item not in data_dict["Modality"]:
-                data_dict["Modality"][tmp_modality_item] = 0
-            data_dict["Modality"][tmp_modality_item] += 1
+            if tmp_modality_item not in data_dict["Data Type"]:
+                data_dict["Data Type"][tmp_modality_item] = 0
+            data_dict["Data Type"][tmp_modality_item] += 1
 
         new_tmp_scene_list = []
         if tmp_scene[0] == "[":
@@ -87,16 +87,16 @@ def draw_task_tag_figure():
         else:
             new_tmp_scene_list = [tmp_scene]
         for tmp_scene_item in new_tmp_scene_list:
-            if tmp_scene_item not in data_dict["Scene"]:
-                data_dict["Scene"][tmp_scene_item] = 0
-            data_dict["Scene"][tmp_scene_item] += 1
+            if tmp_scene_item not in data_dict["Task Type"]:
+                data_dict["Task Type"][tmp_scene_item] = 0
+            data_dict["Task Type"][tmp_scene_item] += 1
 
-    sorted_difficulty = sorted(data_dict["Difﬁculty"].items(), key=lambda x: x[1], reverse=True)
-    data_dict["Difﬁculty"] = {item[0]: item[1] for item in sorted_difficulty}
-    sorted_modality = sorted(data_dict["Modality"].items(), key=lambda x: x[1], reverse=True)
-    data_dict["Modality"] = {item[0]: item[1] for item in sorted_modality}
-    sorted_scene = sorted(data_dict["Scene"].items(), key=lambda x: x[1], reverse=True)
-    data_dict["Scene"] = {item[0]: item[1] for item in sorted_scene}
+    sorted_difficulty = sorted(data_dict["Difficulty"].items(), key=lambda x: x[1], reverse=True)
+    data_dict["Difficulty"] = {item[0]: item[1] for item in sorted_difficulty}
+    sorted_modality = sorted(data_dict["Data Type"].items(), key=lambda x: x[1], reverse=True)
+    data_dict["Data Type"] = {item[0]: item[1] for item in sorted_modality}
+    sorted_scene = sorted(data_dict["Task Type"].items(), key=lambda x: x[1], reverse=True)
+    data_dict["Task Type"] = {item[0]: item[1] for item in sorted_scene}
     # 调用绘图函数
     plot_histograms(data_dict)
 

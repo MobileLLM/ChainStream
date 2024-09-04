@@ -16,7 +16,7 @@ class WaterFlowerTask(SingleAgentTaskConfigBase):
         self.input_video_stream = None
         self.gps_stream = None
         self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Hard,
-                                domain=str([Domain_Task_tag.Living, Domain_Task_tag.Location]),
+                                domain=str([Domain_Task_tag.Home, Domain_Task_tag.Location]),
                                 modality=str([Modality_Task_tag.Text, Modality_Task_tag.Video]))
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_gps",

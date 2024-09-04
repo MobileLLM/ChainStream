@@ -11,7 +11,7 @@ class WifiTask1(SingleAgentTaskConfigBase):
         self.output_record = None
         self.output_wifi_stream = None
         self.input_wifi_stream = None
-        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Living,
+        self.task_tag = TaskTag(difficulty=Difficulty_Task_tag.Easy, domain=Domain_Task_tag.Office,
                                 modality=Modality_Task_tag.Wifi_Sensor)
         self.input_stream_description = StreamListDescription(streams=[{
             "stream_id": "all_wifi",

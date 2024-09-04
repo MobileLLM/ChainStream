@@ -4,23 +4,22 @@ from typing import Optional
 
 
 class Difficulty_Task_tag(Enum):
-    Easy = "Easy"
-    Medium = "Medium"
-    Hard = "Hard"
+    Easy = "Single-step"
+    Medium = "Multi-step"
+    Hard = "Multi-step"
 
 
 class Domain_Task_tag(Enum):
     Health = "Health"
     Location = "Location"
     Weather = "Weather"
-    Interpersonal_relationship = "Interpersonal_relationship"
-    Daily_information = "Daily_information"
-    Living = "Living"
+    Interpersonal_relationship = "Social"
+    Daily_information = "Daily Info"
     # Travel = "Travel"
     Office = "Office"
     # Hospital = "Hospital"
     # School = "School"
-    # Home = "Home"
+    Home = "Home"
     # Traffic = "Traffic"
     # Shop = "Shop"
     Activity = "Activity"
@@ -32,13 +31,13 @@ class Modality_Task_tag(Enum):
     Video = "Video"
     Text = "Text"
     Image = "Image"
-    GPS_Sensor = "GPS_Sensor"
-    Gas_Sensor = "Gas_Sensor"
-    Health_Sensor = "Health_Sensor"
-    Wifi_Sensor = "Wifi_Sensor"
-    Weather_Sensor = "Weather_Sensor"
-    Activity_Sensor = "Activity_Sensor"
-    Light_Sensor = "Light_Sensor"
+    GPS_Sensor = "GPS"
+    Gas_Sensor = "Gas"
+    Health_Sensor = "Health Monitor"
+    Wifi_Sensor = "Wifi"
+    Weather_Sensor = "Weather"
+    Activity_Sensor = "Activity Monitor"
+    Light_Sensor = "Light"
 
 
 class TaskTag(BaseModel):
