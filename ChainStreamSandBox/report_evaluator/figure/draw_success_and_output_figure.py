@@ -387,25 +387,25 @@ def load_all_results(base_file_path):
     #                   'result-chainstream-one-shot', 'result-human-written', 'result-langchain-zero-shot']
     Metric_list = ['output_similarity', 'code_similarity']
     generator_list = [
-        "result-chainstream_zeroshot",
-        "result-chainstream_1shot",
-        'result-chainstream_feedback_0shot',
-        'result-chainstream_feedback_1shot',
-        'result-native_python_zeroshot',
+        # "result-chainstream_zeroshot",
+        # "result-chainstream_1shot",
+        # 'result-chainstream_feedback_0shot',
+        # 'result-chainstream_feedback_1shot',
+        # 'result-native_python_zeroshot',
         'result-human_written',
-        "result-langchain_zeroshot",
-        "result-chainstream_cot",
-        "result-chainstream_cot_1shot",
-        "result-gpt-4o",
-        "result-chainstream_fewshot_0shot",
-        "result-chainstream_fewshot_1shot",
-        "result-chainstream_fewshot_3shot",
-        "result-chainstream_feedback_example",
-        "result-chainstream_feedback_0shot_0example_old",
-        "result-chainstream_feedback_0shot_0example_new",
-        "result-chainstream_feedback_0shot_1example_new",
-        "result-chainstream_feedback_0shot_3example_new",
-        "result-chainstream_feedback_1shot_0example_old",
+        # "result-langchain_zeroshot",
+        # "result-chainstream_cot",
+        # "result-chainstream_cot_1shot",
+        # "result-gpt-4o",
+        # "result-chainstream_fewshot_0shot",
+        # "result-chainstream_fewshot_1shot",
+        # "result-chainstream_fewshot_3shot",
+        # "result-chainstream_feedback_example",
+        # "result-chainstream_feedback_0shot_0example_old",
+        # "result-chainstream_feedback_0shot_0example_new",
+        # "result-chainstream_feedback_0shot_1example_new",
+        # "result-chainstream_feedback_0shot_3example_new",
+        # "result-chainstream_feedback_1shot_0example_old",
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -490,6 +490,8 @@ def plot_different_generator_histograms(all_figure_data: dict):
             one_generator_data = one_figure_data[generator]
             Ns = list(one_generator_data.keys())
             scores = list(one_generator_data.values())
+
+            print(f"Eval: {title}, Generator {generator} has scores: {scores}")
 
             # Plot each generator's bars
             ax.bar(offsets[i] + np.arange(len(Ns)) * width, scores, width, label=f'{rename_generator(generator)}')
@@ -602,6 +604,12 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "CS-Feedback-0Shot-1example_new"
         elif generator == 'chainstream_feedback_0shot_3example_new':
             return "CS-Feedback-0Shot-3example_new"
+        elif generator == 'native_python_zeroshot':
+            return "Py-0shot"
+        elif generator == 'langchain_zeroshot':
+            return "LC-0shot"
+        elif generator == 'chainstream-0-shot-0-example':
+            return "CS_feedback_0shot_0example_old"
         else:
             raise ValueError("Invalid generator name")
 

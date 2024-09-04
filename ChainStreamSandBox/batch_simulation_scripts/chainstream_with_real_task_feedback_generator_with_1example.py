@@ -9,7 +9,13 @@ class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task, verbose=True, only_print_last=True):
-        generator = ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(task_name_now=task.__class__.__name__, max_loop=10, only_print_last=only_print_last, framework_example_number=0, feedback_example_number=1)
+        generator = ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(task_name_now=task.__class__.__name__,
+                                                                             max_loop=10,
+                                                                             only_print_last=only_print_last,
+                                                                             base_prompt_example_select_policy='random',
+                                                                             feedback_example_select_policy='llm',
+                                                                             framework_example_number=0,
+                                                                             feedback_example_number=1)
         generator.set_verbose(verbose)
         # TODO: fix this para with a new output description
         agent, latency, tokens, loop_count, history, selected_example = generator.generate_agent(task.output_stream_description, task.input_stream_description,
@@ -19,5 +25,5 @@ class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_23-32-48_chainstream_feedback_0shot_1example_new/test_log.json")
+    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-03_17-34-15_chainstream_feedback_0shot_1llm_new/test_log.json")
     evaluator.start()

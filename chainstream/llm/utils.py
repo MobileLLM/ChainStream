@@ -8,6 +8,11 @@ GPT_CONFIG = {
     "key": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
 }
 
+# GPT_CONFIG = {
+#     "url": "https://api.openai-proxy.org/v1",
+#     "key": "sk-43Kn6GuGNxD0KwGB1XgiEyQ8htVDan44XXdnQqXA7VkZ7sMI"
+# }
+
 
 def convert_audio_to_text(audio_path, model="whisper-1", temperature=0.9):
     client = OpenAI(api_key=GPT_CONFIG["key"], api_endpoint=GPT_CONFIG["url"])

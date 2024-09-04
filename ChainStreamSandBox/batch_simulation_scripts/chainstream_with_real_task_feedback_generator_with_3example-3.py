@@ -5,7 +5,7 @@ from ChainStreamSandBox.tasks import get_task_with_data_batch
 
 
 class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
-    def __init__(self, task_list, repeat_time=2, result_path='./result', task_log_path=None):
+    def __init__(self, task_list, repeat_time=1, result_path='./result', task_log_path=None):
         super().__init__(task_list, repeat_time, result_path, task_log_path, sandbox_type="chainstream")
 
     def get_agent_for_specific_task(self, task, verbose=True, only_print_last=True):
@@ -25,5 +25,5 @@ class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-03_21-25-14_chainstream_feedback_0shot_3llm_new/test_log.json")
+    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-04_13-19-46_chainstream_feedback_0shot_3llm_new-3/test_log.json")
     evaluator.start()
