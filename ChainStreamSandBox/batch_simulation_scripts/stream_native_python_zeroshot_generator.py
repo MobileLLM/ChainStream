@@ -16,5 +16,5 @@ class StreamNativePythonZeroshotGeneratorBatch(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = StreamNativePythonZeroshotGeneratorBatch(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-02_15-23-36_native_python/test_log.json")
+    evaluator = StreamNativePythonZeroshotGeneratorBatch(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-03_17-01-29_native_python_zeroshot/test_log.json")
     evaluator.start()

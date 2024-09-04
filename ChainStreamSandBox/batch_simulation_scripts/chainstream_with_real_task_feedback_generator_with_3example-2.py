@@ -25,5 +25,5 @@ class EvalFeedbackGuidedGeneratorForRealTaskWithExample(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-03_21-25-14_chainstream_feedback_0shot_3llm_new/test_log.json")
+    evaluator = EvalFeedbackGuidedGeneratorForRealTaskWithExample(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-04_00-27-00_chainstream_feedback_0shot_3llm_new-2/test_log.json")
     evaluator.start()
