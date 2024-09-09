@@ -72,3 +72,67 @@ openai_base_url = os.environ.get("OPENAI_BASE_URL")
 
 Please write fully functional code directly. We will not review the code details but will test the correctness of the code. All code should adhere to PEP8 standards.
 """
+
+STREAM_NATIVE_LANGCHAIN_EXAMPLE = """
+Example Target stream:
+
+{
+    "stream_id": "tag_algorithm",
+    "description": "A stream of arxiv articles with tags on algorithm chosen from ['Deep Learning', "
+                   "'Machine Learning', 'Classical', 'Heuristic','Evolutionary','Other'] based on their "
+                   "abstracts",
+    "fields": {
+        "title": "The title of the arxiv article, string",
+        "algorithm": "The algorithm tag of the arxiv article, string"
+    }
+}
+
+ExampleCode:
+'''
+from langchain import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+import os
+import threading
+from chainstream.stream import get_stream_interface
+
+
+def process_data(is_stop: threading.Event) -> None:
+    input_stream_id = 'all_arxiv'
+    output_stream_id = 'tag_algorithm'
+    input_stream = get_stream_interface(input_stream_id)
+    output_stream = get_stream_interface(output_stream_id)
+
+    # Initialize the OpenAI LLM through LangChain
+    llm = OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
+
+    # Define the prompt template
+    prompt_template = PromptTemplate(
+        input_variables=["abstract", "algorithms_tags"],
+        template="Give you an abstract of a paper: {abstract}. What tag would you like to add to this paper? Choose from the following: {algorithms_tags}"
+    )
+
+    # Initialize the LLMChain with the LLM and the prompt template
+    chain = LLMChain(llm=llm, prompt=prompt_template)
+
+    algorithms_tags = ['Deep Learning', 'Machine Learning', 'Classical', 'Heuristic', 'Evolutionary', 'Other']
+
+    while not is_stop.is_set():
+        item = input_stream.get(timeout=1)
+        if item is None:
+            continue
+
+        title = item.get('title')
+        abstract = item.get('abstract')
+
+        # Run the LLMChain
+        response = chain.run(abstract=abstract, algorithms_tags=', '.join(algorithms_tags))
+
+        output_stream.put({
+            "title": title,
+            "algorithm": response,
+        })
+'''
+Example End.
+
+"""

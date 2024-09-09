@@ -16,12 +16,14 @@ def concat_logs(log_path_list, new_base_path):
     log_data_list = _load_sandbox_logs(log_path_list)
 
     first_repeat_time = log_data_list[0]['repeat_time']
+    print(f"First repeat time: {first_repeat_time}")
     first_task_list = log_data_list[0]['task_list']
     first_generator_name = log_data_list[0]['generator']['generator_class_name']
 
     for i in range(1, len(log_data_list)):
-        if log_data_list[i]['repeat_time']!= first_repeat_time:
-            raise ValueError('Repeat time of different logs is not equal.')
+        print(f"Repeat time: {log_data_list[i]['repeat_time']}")
+        # if log_data_list[i]['repeat_time'] != first_repeat_time:
+        #     raise ValueError('Repeat time of different logs is not equal.')
         if log_data_list[i]['generator']['generator_class_name'] != first_generator_name:
             raise ValueError('Generator name of different logs is not equal.')
         if log_data_list[i]['task_list']!= first_task_list:
@@ -67,13 +69,11 @@ def concat_logs(log_path_list, new_base_path):
 
 
 if __name__ == '__main__':
-    new_base_path = "/Users/liou/Desktop/2024-09-03_19-36-37_chainstream-0-shot-0-example"
+    new_base_path = "/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result"
     log_path_list = [
-        '/Users/liou/Desktop/2024-09-03_19-36-37_chainstream-0-shot-0-example/2024-09-03_19-27-33_chainstream-0-shot-0-example/test_log.json',
-        '/Users/liou/Desktop/2024-09-03_19-36-37_chainstream-0-shot-0-example/2024-09-03_19-36-37_chainstream-0-shot-0-example-1/test_log.json',
-        '/Users/liou/Desktop/2024-09-03_19-36-37_chainstream-0-shot-0-example/2024-09-03_19-37-51_chainstream-0-shot-0-example-2/test_log.json',
-        '/Users/liou/Desktop/2024-09-03_19-36-37_chainstream-0-shot-0-example/2024-09-03_19-38-58_chainstream-0-shot-0-example-3/test_log.json',
-        '/Users/liou/Desktop/2024-09-03_19-36-37_chainstream-0-shot-0-example/2024-09-03_19-40-03_chainstream-0-shot-0-example-4/test_log.json',
+        '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-03_21-25-14_chainstream_feedback_0shot_3llm_new/test_log.json',
+        '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-04_00-27-00_chainstream_feedback_0shot_3llm_new-2/test_log.json',
+        '/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-04_13-19-46_chainstream_feedback_0shot_3llm_new-3/test_log.json',
     ]
     concat_logs(log_path_list, new_base_path)
 

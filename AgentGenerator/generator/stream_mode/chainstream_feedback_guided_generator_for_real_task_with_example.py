@@ -10,16 +10,24 @@ class ChainstreamFeedbackGuidedGeneratorForRealTaskWithExample(FeedbackGuidedAge
     """
 
     def __init__(self, task_name_now, max_loop=20, sandbox_type='chainstream', only_print_last=False,
-                 framework_example_number=0, feedback_example_number=3, base_prompt_example_select_policy='random', feedback_example_select_policy='llm'):
+                 framework_example_number=0, feedback_example_number=3, base_prompt_example_select_policy='random', feedback_example_select_policy='llm',
+                 without_err=False, without_stdout=False, without_output=False,):
         super().__init__(max_loop=max_loop, sandbox_type=sandbox_type, only_print_last=only_print_last)
 
         self.task_name_now = task_name_now
 
         self.base_prompt_example_select_policy = base_prompt_example_select_policy
 
+        self.without_err = without_err
+        self.without_stdout = without_stdout
+        self.without_output = without_output
+
         self.feedback_processor = FilterErrorWithExampleFeedbackProcessor(self.task_name_now,
                                                                           feedback_example_num=feedback_example_number,
-                                                                          feedback_example_select_policy=feedback_example_select_policy)
+                                                                          feedback_example_select_policy=feedback_example_select_policy,
+                                                                          without_stdout=without_stdout,
+                                                                          without_output=without_output,
+                                                                          without_err=without_err)
 
         self.framework_example_number = framework_example_number
 

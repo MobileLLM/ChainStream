@@ -1,6 +1,6 @@
 from AgentGenerator.prompt.framework_doc.chainstream_doc import chainstream_english_doc
-from AgentGenerator.prompt.framework_doc.native_python_doc import BATCH_NATIVE_PYTHON_ENGLISH_PROMPT, STREAM_NATIVE_PYTHON_ENGLISH_PROMPT
-from AgentGenerator.prompt.framework_doc.langchain_doc import BATCH_LANGCHAIN_ENGLISH_PROMPT, STREAM_LANGCHAIN_ENGLISH_PROMPT
+from AgentGenerator.prompt.framework_doc.native_python_doc import BATCH_NATIVE_PYTHON_ENGLISH_PROMPT, STREAM_NATIVE_PYTHON_ENGLISH_PROMPT, STREAM_NATIVE_PYTHON_EXAMPLE
+from AgentGenerator.prompt.framework_doc.langchain_doc import BATCH_LANGCHAIN_ENGLISH_PROMPT, STREAM_LANGCHAIN_ENGLISH_PROMPT, STREAM_NATIVE_LANGCHAIN_EXAMPLE
 from AgentGenerator.prompt.framework_doc.native_gpt_doc import NATIVE_GPT_PROMPT
 from AgentGenerator.prompt.agent_example_selector import AgentExampleSelector
 
@@ -30,8 +30,18 @@ def get_framework_doc(framework, example_num=None, task_now=None, example_select
     elif framework == "batch_langchain":
         return BATCH_LANGCHAIN_ENGLISH_PROMPT
     elif framework == "stream_native_python":
+        if example_num is not None and example_num != 0:
+            if example_num > 1:
+                raise ValueError("stream native python must be greater than 1")
+            prompt = STREAM_NATIVE_PYTHON_ENGLISH_PROMPT + f"\nHere's an example of how to use native python to solve the problem:\n{STREAM_NATIVE_PYTHON_EXAMPLE}\n"
+            return prompt
         return STREAM_NATIVE_PYTHON_ENGLISH_PROMPT
     elif framework == "stream_langchain":
+        if example_num is not None and example_num != 0:
+            if example_num > 1:
+                raise ValueError("stream langchain must be greater than 1")
+            prompt = STREAM_LANGCHAIN_ENGLISH_PROMPT + f"\nHere's an example of how to use langchain to solve the problem:\n{STREAM_NATIVE_LANGCHAIN_EXAMPLE}\n"
+            return prompt
         return STREAM_LANGCHAIN_ENGLISH_PROMPT
     elif framework == "native_gpt":
         return NATIVE_GPT_PROMPT
@@ -40,4 +50,4 @@ def get_framework_doc(framework, example_num=None, task_now=None, example_select
 
 
 if __name__ == '__main__':
-    print(get_framework_doc("chainstream", 2, task_now="StockTask2"))
+    print(get_framework_doc("stream_langchain", 1, task_now="StockTask2"))

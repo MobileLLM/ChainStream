@@ -110,3 +110,58 @@ openai_base_url = os.environ.get("OPENAI_BASE_URL")
 ```
 
 """
+
+STREAM_NATIVE_PYTHON_EXAMPLE = """
+Example Target stream:
+
+{
+    "stream_id": "tag_algorithm",
+    "description": "A stream of arxiv articles with tags on algorithm chosen from ['Deep Learning', "
+                   "'Machine Learning', 'Classical', 'Heuristic','Evolutionary','Other'] based on their "
+                   "abstracts",
+    "fields": {
+        "title": "The title of the arxiv article, string",
+        "algorithm": "The algorithm tag of the arxiv article, string"
+    }
+}
+
+ExampleCode:
+``` python
+from openai import OpenAI
+import os
+import threading
+from chainstream.stream import get_stream_interface
+
+    
+def process_data(is_stop: threading.Event) -> None:
+    input_stream_id = 'all_arxiv'
+    output_stream_id = 'tag_algorithm'
+    input_stream = get_stream_interface(input_stream_id)
+    output_stream = get_stream_interface(output_stream_id)
+    
+    llm = OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
+    
+    while not is_stop.is_set():
+        item = input_stream.get(timeout=1)
+        if item is None:
+            continue
+            
+        title = item.get('title')
+        abstract = item.get('abstract')
+        algorithms_tags = ['Deep Learning', 'Machine Learning', 'Classical', 'Heuristic', 'Evolutionary', 'Other']
+        prompt = "Give you an abstract of a paper: {}. What tag would you like to add to this paper? Choose from the following: {}".format(abstract, ', '.join(algorithms_tags))
+        response = llm.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": prompt},
+            ]
+        )
+        response = response.choices[0].message.content
+        output_stream.put({
+            "title": title,
+            "algorithm": response,
+        })     
+```
+Example End.
+
+"""

@@ -71,18 +71,55 @@ def plot_task_tag_histograms(data_dict, title):
         }
     }
     """
+    def _rename(name):
+        if name == "chainstream_feedback_0shot_0example_old":
+            return "Ours (0-shot)"
+        elif name == "chainstream_feedback_0shot_1example_new":
+            return "Ours (1-shot)"
+        elif name == "chainstream_feedback_0shot_2example_new":
+            return "Ours (2-shot)"
+        elif name == "chainstream_feedback_0shot_3example_new":
+            return "Ours (3-shot)"
+        elif name == "chainstream_fewshot_0shot":
+            return "Ours without iteration (0-shot)"
+        elif name == "chainstream_fewshot_1shot":
+            return "Ours without iteration (1-shot)"
+        elif name == "chainstream_fewshot_2shot":
+            return "Ours without iteration (2-shot)"
+        elif name == "chainstream_fewshot_3shot":
+            return "Ours without iteration (3-shot)"
+        elif name == "gpt-4o":
+            return "GPT-4o"
+        elif name == "gpt-4":
+            return "GPT-4"
+        elif name == "langchain_oneshot":
+            return "LangChain (1-shot)"
+        elif name == "langchain_zeroshot":
+            return "LangChain (0-shot)"
+        elif name == "native_python_zeroshot":
+            return "Python (0-shot)"
+        elif name == "native_python_oneshot":
+            return "Python (1-shot)"
+        else:
+            raise ValueError(f"Invalid name {name}")
 
     # Determine the number of subplots needed
-    num_subplots = len(data_dict)
-    fig, axs = plt.subplots(num_subplots, 1, figsize=(8, 5 * num_subplots), constrained_layout=True)
+    def add_labels(ax, rects, labels, y_offset, rotation=0):
+        for rect, label in zip(rects, labels):
+            x_position = rect.get_x() + rect.get_width() / 2.
+            ax.text(x_position, y_offset, label, ha='center', va='top', rotation=rotation)
 
-    if num_subplots == 1:
-        axs = [axs]  # Make sure axs is iterable
-
-    # Iterate over each subplot
-    for ax, (title, tags_data) in zip(axs, data_dict.items()):
+    # Generate individual plots for each subplot
+    for title, tags_data in data_dict.items():
         tags = list(tags_data.keys())
-        generator_names = {generator_name for tag_data in tags_data.values() for generator_name in tag_data}
+        if len(tags) == 2:
+            tags.sort(reverse=True)
+        else:
+            tags.sort()
+
+        generator_names = {generator_name.split("result-")[-1] for tag_data in tags_data.values() for generator_name in
+                           tag_data}
+        generator_names = sorted(list(generator_names))
 
         num_generators = len(generator_names)
         colors = generate_colors(num_generators)
@@ -91,17 +128,42 @@ def plot_task_tag_histograms(data_dict, title):
         x = np.arange(len(tags))  # the label locations
         width = 0.8 / num_generators  # the width of the bars
 
+        fig, ax = plt.subplots(figsize=(8, 5))
+
+        max_height = 0
+        all_rects = []
+
+        # Plotting each bar
         for i, generator_name in enumerate(generator_names):
-            values = [tags_data[tag].get(generator_name, 0) for tag in tags]
-            ax.bar(x + i * width, values, width, label=generator_name, color=generator_color_map[generator_name])
+            values = [tags_data[tag].get("result-" + generator_name, 0) for tag in tags]
+            rects = ax.bar(x + i * width, values, width, label=_rename(generator_name),
+                           color=generator_color_map[generator_name])
+            all_rects.append(rects)
+            max_height = max(max_height, max(values))
 
         ax.set_title(title)
-        ax.set_xticks(x + width * (num_generators - 1) / 2)
-        ax.set_xticklabels(tags)
-        ax.legend(title="Generators")
 
-    plt.title(title)
-    plt.show()
+        # Set x-ticks with two levels of labels
+        ax.set_xticks(x + width * (num_generators - 1) / 2)
+        # ax.set_xticklabels(tags)
+
+        # Add bar labels below the x-axis, slightly above the tag labels
+        bar_label_y_offset = -max_height * 0.05
+        # for rects in all_rects:
+        #     add_labels(ax, rects, [_rename(x) for x in generator_names], y_offset=bar_label_y_offset,
+        #                rotation=45)
+        # for gen_name in generator_names:
+        #     add_labels(ax, gen_name, y_offset=bar_label_y_offset, rotation=45)
+
+        # Add tag labels below the bar labels
+        tag_label_y_offset = bar_label_y_offset - max_height * 0.05
+        for i, tag in enumerate(tags):
+            ax.text(x[i] + width * (num_generators - 1) / 2, tag_label_y_offset, tag, ha='center', va='top',
+                    fontsize=10)
+
+        ax.legend(title="Generators")
+        ax.set_ylim(tag_label_y_offset - max_height * 0.1, max_height * 1.1)  # Adjust y-limit to make space for labels
+        plt.show()
 
 
 def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
@@ -143,8 +205,10 @@ def draw_different_task_score_for_specific_Metric(all_eval_result, Metric):
 
     task_tag_score = {k: _process_for_task_tag_plot(v) for k, v in all_figure_data.items()}
 
+    print(task_tag_score[('hard_list_metric', 'bleu')]['Difficulty'])
+
     plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'bleu')], "('hard_list_metric', 'bleu')")
-    plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'ed')], "('hard_list_metric', 'ed')")
+    # plot_task_tag_histograms(task_tag_score[('hard_list_metric', 'ed')], "('hard_list_metric', 'ed')")
 
 
 # def _plot_task_tag_histograms(al_data_dict):
@@ -387,25 +451,38 @@ def load_all_results(base_file_path):
     #                   'result-chainstream-one-shot', 'result-human-written', 'result-langchain-zero-shot']
     Metric_list = ['output_similarity', 'code_similarity']
     generator_list = [
-        # "result-chainstream_zeroshot",
-        # "result-chainstream_1shot",
-        # 'result-chainstream_feedback_0shot',
-        # 'result-chainstream_feedback_1shot',
-        # 'result-native_python_zeroshot',
+        "result-chainstream_zeroshot",
+        "result-chainstream_1shot",
+        'result-chainstream_feedback_0shot',
+        'result-chainstream_feedback_1shot',
+        'result-native_python_zeroshot',
+        "result-native_python_oneshot",
         'result-human_written',
-        # "result-langchain_zeroshot",
-        # "result-chainstream_cot",
-        # "result-chainstream_cot_1shot",
-        # "result-gpt-4o",
-        # "result-chainstream_fewshot_0shot",
-        # "result-chainstream_fewshot_1shot",
-        # "result-chainstream_fewshot_3shot",
-        # "result-chainstream_feedback_example",
-        # "result-chainstream_feedback_0shot_0example_old",
-        # "result-chainstream_feedback_0shot_0example_new",
-        # "result-chainstream_feedback_0shot_1example_new",
-        # "result-chainstream_feedback_0shot_3example_new",
-        # "result-chainstream_feedback_1shot_0example_old",
+        "result-langchain_zeroshot",
+        "result-langchain_oneshot",
+        "result-chainstream_cot",
+        "result-chainstream_cot_1shot",
+        "result-gpt-4o",
+        "result-gpt-4o-new",
+        "result-gpt-4",
+        "result-gpt-4-new",
+        "result-chainstream_fewshot_0shot",
+        "result-chainstream_fewshot_1shot",
+        "result-chainstream_fewshot_2shot",
+        "result-chainstream_fewshot_3shot",
+        "result-chainstream_fewshot_1shot_llm",
+        "result-chainstream_fewshot_2shot_llm",
+        "result-chainstream_fewshot_3shot_llm",
+        "result-chainstream_feedback_example",
+        "result-chainstream_feedback_0shot_0example_old",
+        "result-chainstream_feedback_0shot_0example_new",
+        "result-chainstream_feedback_0shot_1example_new",
+        "result-chainstream_feedback_0shot_2example_new",
+        "result-chainstream_feedback_0shot_3example_new",
+        "result-chainstream_feedback_1shot_0example_old",
+        "result-chainstream_feedback_0example_without_stdout",
+        "result-chainstream_feedback_0example_without_output",
+        "result-chainstream_feedback_0example_without_err"
     ]
 
     all_file_name = os.listdir(base_file_path)
@@ -430,6 +507,8 @@ def load_all_results(base_file_path):
 def rename_generator(name):
     if name == "result-native_python_zeroshot":
         return "Py-0shot"
+    elif name == "result-native_python_oneshot":
+        return "Py-1shot"
     elif name == "result-chainstream_feedback_0shot":
         return "CS-Feedback-0shot"
     elif name == "result-chainstream_feedback_1shot":
@@ -446,14 +525,30 @@ def rename_generator(name):
         return "CS-Cot-1shot"
     elif name == "result-langchain_zeroshot":
         return "LC-0shot"
+    elif name == "result-langchain_oneshot":
+        return "LC-1shot"
     elif name == "result-gpt-4o":
-        return "GPT-4o-0shot"
+        return "GPT-4o-old"
+    elif name == "result-gpt-4o-new":
+        return "GPT-4o-new"
+    elif name == "result-gpt-4":
+        return "GPT-4-0shot"
+    elif name == "result-gpt-4-new":
+        return "GPT-4-new"
     elif name == "result-chainstream_fewshot_0shot":
         return "CS-Fews-0shot"
     elif name == "result-chainstream_fewshot_1shot":
         return "CS-Fews-1shot"
+    elif name == "result-chainstream_fewshot_2shot":
+        return "CS-Fews-2shot"
     elif name == "result-chainstream_fewshot_3shot":
         return "CS-Fews-3shot"
+    elif name == "result-chainstream_fewshot_1shot_llm":
+        return "CS-Fews-1shot-LLM"
+    elif name == "result-chainstream_fewshot_2shot_llm":
+        return "CS-Fews-2shot-LLM"
+    elif name == "result-chainstream_fewshot_3shot_llm":
+        return "CS-Fews-3shot-LLM"
     elif name == "result-chainstream_feedback_example":
         return "CS-Feedback-example"
     elif name == "result-chainstream_feedback_0shot_0example_old":
@@ -462,10 +557,18 @@ def rename_generator(name):
         return "CS-Feedback-0Shot-0example-new"
     elif name == "result-chainstream_feedback_0shot_1example_new":
         return "CS-Feedback-0Shot-1example-new"
+    elif name == "result-chainstream_feedback_0shot_2example_new":
+        return "CS-Feedback-0Shot-2example-new"
     elif name == "result-chainstream_feedback_0shot_3example_new":
         return "CS-Feedback-0Shot-3example-new"
     elif name == "result-chainstream_feedback_1shot_0example_old":
         return "CS-Feedback-1Shot-0example-old"
+    elif name == "result-chainstream_feedback_0example_without_stdout":
+        return "CS-Feedback-0Shot-0example-no-stdout"
+    elif name == "result-chainstream_feedback_0example_without_err":
+        return "CS-Feedback-0Shot-0example-no-err"
+    elif name == "result-chainstream_feedback_0example_without_output":
+        return "CS-Feedback-0Shot-0example-no-output"
 
     raise ValueError("Invalid generator name")
 
@@ -602,11 +705,15 @@ def _draw_avg_success_rate(generator_avg_success_rate):
             return "CS-Feedback-0Shot-0example_new"
         elif generator == 'chainstream_feedback_0shot_1example_new':
             return "CS-Feedback-0Shot-1example_new"
+        elif generator == 'chainstream_feedback_0shot_2example_new':
+            return "CS-Feedback-0Shot-2example_new"
         elif generator == 'chainstream_feedback_0shot_3example_new':
             return "CS-Feedback-0Shot-3example_new"
         elif generator == 'native_python_zeroshot':
             return "Py-0shot"
         elif generator == 'langchain_zeroshot':
+            return "LC-0shot"
+        elif generator == 'langchain_oneshot':
             return "LC-0shot"
         elif generator == 'chainstream-0-shot-0-example':
             return "CS_feedback_0shot_0example_old"

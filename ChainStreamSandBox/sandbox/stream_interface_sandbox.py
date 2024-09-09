@@ -1,4 +1,4 @@
-from .sandbox_base import *
+from ChainStreamSandBox.sandbox.sandbox_base import *
 import threading
 from threading import Event
 import time
@@ -96,37 +96,52 @@ class StreamInterfaceSandBox(SandboxBase):
 if __name__ == "__main__":
     from ChainStreamSandBox.tasks import ALL_TASKS
 
-    Config = ALL_TASKS['EmailTask1']
+    Config = ALL_TASKS['ArxivTask5']
 
     agent_file = '''
+from langchain import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 import os
-from openai import OpenAI
-
-openai_base_url = os.environ.get('OPENAI_BASE_URL')
-openai_api_key = os.environ.get("OPENAI_API_KEY")
-
+import threading
 from chainstream.stream import get_stream_interface
-def process_data(stop_event):
-    all_email_stream = get_stream_interface("all_email")
-    summary_by_sender_stream = get_stream_interface("summary_by_sender")
-    
-    
-    print(openai_base_url)
-    print(openai_api_key)
-    client = OpenAI(base_url=openai_base_url, api_key=openai_api_key)
 
-    completion = client.chat.completions.create(
-      model="gpt-4o",
-      messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "Hello!"}
-      ]
-    )
-    print(completion)
+
+def process_data(is_stop: threading.Event) -> None:
+    input_stream_id = 'all_arxiv'
+    output_stream_id = 'tag_algorithm'
+    input_stream = get_stream_interface(input_stream_id)
+    output_stream = get_stream_interface(output_stream_id)
     
-    while not stop_event.is_set():
-        email_item = all_email_stream.get(timeout=1)
-        summary_by_sender_stream.put(email_item)
+    # Initialize the OpenAI LLM through LangChain
+    llm = OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
+    
+    # Define the prompt template
+    prompt_template = PromptTemplate(
+        input_variables=["abstract", "algorithms_tags"],
+        template="Give you an abstract of a paper: {abstract}. What tag would you like to add to this paper? Choose from the following: {algorithms_tags}"
+    )
+    
+    # Initialize the LLMChain with the LLM and the prompt template
+    chain = LLMChain(llm=llm, prompt=prompt_template)
+    
+    algorithms_tags = ['Deep Learning', 'Machine Learning', 'Classical', 'Heuristic', 'Evolutionary', 'Other']
+    
+    while not is_stop.is_set():
+        item = input_stream.get(timeout=1)
+        if item is None:
+            continue
+            
+        title = item.get('title')
+        abstract = item.get('abstract')
+        
+        # Run the LLMChain
+        response = chain.run(abstract=abstract, algorithms_tags=', '.join(algorithms_tags))
+        
+        output_stream.put({
+            "title": title,
+            "algorithm": response,
+        })
     '''
     config = Config()
     oj = StreamInterfaceSandBox(config, agent_file, save_result=True, only_init_agent=False)

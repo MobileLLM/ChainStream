@@ -46,29 +46,43 @@ class NativePythonBatchSandbox(BatchSandbox):
 if __name__ == "__main__":
     from ChainStreamSandBox.tasks import ALL_TASKS
 
-    Config = ALL_TASKS['EmailTask1']
+    Config = ALL_TASKS['ArxivTask5']
 
     agent_file = '''
 from openai import OpenAI
 import os
+import threading
+from chainstream.stream import get_stream_interface
 
-def process_data(input_dict):
-    print(input_dict)
-    # print(os.environ['OPENAI_API_KEY'])
-    # print(os.environ['OPENAI_BASE_URL'])
+    
+def process_data(is_stop: threading.Event) -> None:
+    input_stream_id = 'all_arxiv'
+    output_stream_id = 'tag_algorithm'
+    input_stream = get_stream_interface(input_stream_id)
+    output_stream = get_stream_interface(output_stream_id)
+    
     llm = OpenAI(api_key=os.environ['OPENAI_API_KEY'], base_url=os.environ['OPENAI_BASE_URL'])
-    response = llm.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Hello!"}
-        ]
-    )
-    print(response)
-    output_dict = {
-        "summary_by_sender" : response.choices[0].message.content,
-    }
-    return output_dict
+    
+    while not is_stop.is_set():
+        item = input_stream.get(timeout=1)
+        if item is None:
+            continue
+            
+        title = item.get('title')
+        abstract = item.get('abstract')
+        algorithms_tags = ['Deep Learning', 'Machine Learning', 'Classical', 'Heuristic', 'Evolutionary', 'Other']
+        prompt = "Give you an abstract of a paper: {}. What tag would you like to add to this paper? Choose from the following: {}".format(paper_content, ', '.join(algorithms_tags))
+        response = llm.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": prompt},
+            ]
+        )
+        output_stream.put({
+            "title": title,
+            "algorithm": response,
+        })
+        
     '''
     config = Config()
     oj = NativePythonBatchSandbox(config, agent_file, save_result=True, only_init_agent=False)
