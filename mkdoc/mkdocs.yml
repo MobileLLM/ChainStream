@@ -18,6 +18,13 @@ nav:
       - Code Structure: SystemOverview/CODE_STRUCTURE.md
   - Demo:
       - Glasses Camera Demo: Demo/GLASSES_CAMERA.md
+  - Agent Generator:
+      - Quick start: AgentGenerator/QUICK_START.md
+      - Generator Sys Design: AgentGenerator/GENERATOR_DESIGN.md
+  - NL-Sense Benchmark:
+      - Quick start: NLSenseBenchmark/QUICK_START.md
+      - Statistical Analysis: NLSenseBenchmark/STATISTIC.md
+      - Customization: NLSenseBenchmark/CUSTOM_TASKS.md
   - User Guide:
       - Quick start: UserGuide/QUICK_START.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -74,7 +81,7 @@ plugins:
             Contributor Guide: 贡献者指南
             Overview: 概览
             Agent Development Guide: Agent开发者指南
-            ChainStream Sys Contribution Guide: ChainStream系统贡献者指南
+            ChainStream Sys Contribution Guide: ChainStream贡献者指南
             Agent Generator: Agent生成器
             Agent Store: Agent商店
             SandBox Usage: Agent沙盒
