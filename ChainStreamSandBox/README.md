@@ -3,12 +3,15 @@
 用于评测ChainStream的agent，主要评测流程如下：
 
 1. 选定待评测的Agent
-2. 选择或者新建一个Task，需继承task_config_base.py的TaskConfig类，覆写三个方法：
-    - init_environment：初始化task环境，创建测试用的agent和stream
-    - start_stream： 启动源头stream，并收集output stream数据
-    - evaluate_stream：对output stream数据进行评测，返回评测结果
+2. 选择或者新建一个Task。
+   - 若创建新task，需继承task_config_base.py的TaskConfig类，覆写三个方法：
+       - init_environment：初始化task环境，创建测试用的agent和stream
+       - start_stream： 启动源头stream，并收集output stream数据
+       - evaluate_stream：对output stream数据进行评测，返回评测结果
+3. 通过sandbox类启动评测
 
 ### task数据集:
+- batch_simulation_scripts: batch test generator
 - task描述，以及最终的output stream
 - 数据源：原始message、email、twitter、image、audio等
 - 人类编写的几个agent例程
@@ -33,12 +36,4 @@
     3. 启动agent，配置各动作监听
     4. 启动task数据源
     5. 数据源结束后收集测试结果，存档并调用评测函数
-
-### TODO list：
-- ~~runtime增加评测模式~~
-- ~~编写OJ~~
-- ~~编写task配置文件~~
-- 完善nl2dsl prompt
-- 编写评测函数
-- 撰写一大堆task，并收集多模态原始数据
 
