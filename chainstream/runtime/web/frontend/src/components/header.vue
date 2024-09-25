@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col class="chainstream" :span="6" style="text-align: center; background-color: #ab2222; justify-content: center;">
-      <h1 style="color: white;">ChainStream Runtime</h1>
+      <h1 style="color: white;">ChainStream Dashboard</h1>
     </el-col>
     <el-col class="menu" :span="18" style="text-align: right; background-color: #d71111; justify-content: right;">
       <span style="align-self: center;">

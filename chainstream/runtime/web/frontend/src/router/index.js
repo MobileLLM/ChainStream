@@ -104,6 +104,17 @@ const routes= [
         ]
     },
     {
+        path: '/generator',
+        name: 'AgentGenerator',
+        children: [
+            {
+                path: 'Generator',
+                name: 'AgentGenerator',
+                component: () => import('@/components/view/generator/generator.vue')
+            },
+        ]
+    },
+    {
         path: '/home',
         name: 'Home',
         component: Home
