@@ -9,6 +9,9 @@ _model_instances = {}
 
 
 def reset_model_instances():
+    """
+    Reset all model instances, used for runtime or sandbox restarting
+    """
     global _model_instances
     for k in list(_model_instances.keys()):
         del _model_instances[k]
@@ -16,6 +19,9 @@ def reset_model_instances():
 
 
 def check_has_model_working():
+    """
+    Check if all model instances message queue is empty, used for sandbox judging the end of the simulation
+    """
     global _model_instances
     for k in list(_model_instances.keys()):
         if _model_instances[k].is_working.is_set():
@@ -23,10 +29,13 @@ def check_has_model_working():
     return False
 
 
-
 def get_model(llm_type=['text']):
     '''
-    name: list of model llm_type, e.g. ['text', 'image', 'audio']
+    `chainstream.llm.get_model(List[Union[Literal["text", "image", "audio"]]]) -> chainstream.llm.LLM`: Instantiate
+    an `LLM` object to obtain a model for data processing. The parameter specifies the types of data the model needs
+    to handle.
+
+    llm_type: list of model llm_type, e.g. ['text', 'image', 'audio']
     '''
 
     if llm_type is None:
@@ -73,6 +82,14 @@ def get_model(llm_type=['text']):
 
 def make_prompt(*args, system_prompt=None):
     '''
+    `chainstream.llm.make_prompt(Union[Literal['str'], dict, chainstream.context.Buffer]) -> str`: Process and
+    concatenate all input parameters, converting dictionaries and Buffer contents to strings, and returning a single
+    prompt string.
+
+    Note that the `make_prompt` method only directly processes and concatenates all input content
+    without any additional processing, you must provide a task description prompt for LLM to describe your processing
+    needs in detail.
+
     args:
     - string: user input
     - PIL.Image: user image
@@ -88,6 +105,7 @@ def make_prompt(*args, system_prompt=None):
     image_prompt = make_prompt("front camera shot is here", [image1, image2])
     audio_prompt = make_prompt("audio recording is here", audio)
     audio_image_prompt = make_prompt("front camera shot is here", image, "audio recording is here", audio)
+
     '''
     message_prompt = []
     if system_prompt is not None:

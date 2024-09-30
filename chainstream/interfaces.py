@@ -5,9 +5,6 @@ class AgentInterface:
     def stop(self):
         pass
 
-    def query(self, query):
-        pass
-
 
 class StreamInterface:
     def add_item(self, agent, data_item):

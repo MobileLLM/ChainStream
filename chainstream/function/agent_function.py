@@ -6,6 +6,19 @@ from .batch_function import BatchFunction
 
 
 class AgentFunction:
+    """
+    AgentFunction is a wrapper class for agent listening functions. It is responsible for handling the function call
+    and output stream, as well as recording the function behavior.
+
+    Note the function in `Stream.batch(by_func=func)` is wrapped by `BatchFunction` class, which is treated as a
+    special type of `AgentFunction`. BatchFunction is responsible for handling the batch processing of the input
+    stream, so ti has a `kwargs` attribute to store the state of the batch processing.
+
+    Another notable attribute is `output_stream`, it's designed to support multiple `Stream.for_each` functions,
+    each of which can have its own anonymous output stream to connect to the next function, which is the
+    `output_stream` here.
+
+    """
     def __init__(self, agent, func, output_stream=None):
         self.id = str(uuid.uuid4())
         self.agent = agent
@@ -31,8 +44,11 @@ class AgentFunction:
         result = None
         try:
             if self.is_batch_func:
+                # BatchFunction has a `kwargs` attribute to store the state of the batch processing, so we pass it to
+                # the function as the second argument
                 result, self.kwargs = self.func(args[0], self.kwargs)
             else:
+                # Non-batch function just call the function with the input arguments
                 result = self.func(*args, **kwargs)
 
             if self.output_stream is not None and result is not None:

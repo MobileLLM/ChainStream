@@ -15,6 +15,10 @@ import inspect
 
 
 class StreamForAgent:
+    """
+    The wrapper of stream for agent, which is used to provide agent-specific methods for stream. Every Stream will be
+    wrapped automatically by a StreamForAgent object when it is created or accessed by an agent.
+    """
     def __init__(self, agent, stream):
         self.stream_id = stream.stream_id
         self.stream = stream

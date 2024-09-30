@@ -5,6 +5,12 @@
 <template>
 <h1>Agent Generator</h1>
 
+<!--  <el-form ref="generator-form" :model="form" label-width="100px">-->
+<!--    <el-form-item label="agent_id">-->
+<!--      // TODO: finish the form-->
+<!--    </el-form-item>-->
+<!--  </el-form>-->
+
   <div class="agent-generator">
     <el-input
       type="textarea"
@@ -21,7 +27,7 @@
       <pre v-html="highlightedCode" class="hljs"></pre>
       <el-button @click="saveCode" style="margin-top: 10px; " >Save Code</el-button>
     </div>
-  </div>
+    </div>
 </template>
 
 <script>

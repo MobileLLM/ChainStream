@@ -5,6 +5,11 @@ from chainstream.context import Buffer
 
 
 class BatchFunction:
+    """
+    BatchFunction is a wrapper around a function for `Stream.batch(by_func=BatchFunction)`. It takes two arguments,
+    first is same as `AgentFunction` and second is a dictionary of parameters to be passed to the function,
+    which is used to save golbal batch state.
+    """
 
     def __init__(self, func, params):
         self.kwargs = params
