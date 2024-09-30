@@ -2,6 +2,7 @@ import logging
 from .stream_manager import StreamManager
 from .agent_manager import AgentManager
 from .error_manager import ErrorManager
+from .device_manager import DeviceManager
 from chainstream.llm import reset_model_instances
 
 
@@ -16,6 +17,7 @@ class RuntimeCoreOp:
         self.agent_manager = AgentManager()
         self.stream_manager = StreamManager()
         self.error_manager = ErrorManager()
+        self.device_manager = DeviceManager()
 
     def config(self, *args, **kwargs):
         self.verbose = kwargs.get('verbose', False)
