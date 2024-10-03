@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private Boolean is_server_running;
 
     private LogReaderTask mLogReaderTask;
+
+    private TextView mIPAddrTextView;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -99,6 +102,18 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
                 startService(intent);
 
+                mIPAddrTextView = findViewById(R.id.ip_address);
+
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+                @SuppressLint("DefaultLocale") String ipAddressString = String.format("%d.%d.%d.%d",
+                        (ipAddress & 0xff),
+                        (ipAddress >> 8 & 0xff),
+                        (ipAddress >> 16 & 0xff),
+                        (ipAddress >> 24 & 0xff));
+                ipAddressString = ipAddressString + ":6666";
+                mIPAddrTextView.setText(ipAddressString);
+
                 is_server_running = Boolean.TRUE;
                 Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
             } else {
@@ -111,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
                 stopService(intent);
+
+                mIPAddrTextView.setText("xxx.xxx.xxx.xxx:xxxx");
 
                 is_server_running = Boolean.FALSE;
                 Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
