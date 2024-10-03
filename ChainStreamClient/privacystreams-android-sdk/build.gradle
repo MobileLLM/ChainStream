@@ -1,20 +1,20 @@
-plugins {
-    id "com.jfrog.bintray" version "1.7"
-}
+//plugins {
+//    id "com.jfrog.bintray" version "1.7"
+//}
 
 apply plugin: 'com.android.library'
 //apply plugin: 'kotlin-android'
 
 ext {
-    bintrayName = 'PrivacyStreams-Android-SDK'
+//    bintrayName = 'PrivacyStreams-Android-SDK'
     artifact = 'privacystreams-android-sdk'
 
     libraryName = 'PrivacyStreams Android SDK'
     libraryDescription = 'An Android library for easy and privacy-friendly personal data processing.'
     libraryVersion = "0.1.7"
 
-    bintrayRepo = 'PrivacyStreams'
-    bintrayOrganization = "privacystreams"
+//    bintrayRepo = 'PrivacyStreams'
+//    bintrayOrganization = "privacystreams"
     publishedGroupId = 'io.github.privacystreams'
 
     siteUrl = 'https://github.com/PrivacyStreams/PrivacyStreams'
@@ -117,35 +117,36 @@ artifacts {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-//        userOrg = bintrayOrganization
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        issueTrackerUrl = siteUrl+'/issues'
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        githubRepo = githubRepository //Optional Github repository
-        githubReleaseNotesFile = 'README.md' //Optional Github readme file
-        publish = false
-        publicDownloadNumbers = true
-
-        version {
-            desc = libraryDescription
-            gpg {
-                sign = true // Determines whether to GPG sign the files. The default is false
-                passphrase = properties.getProperty("bintray.gpg.password") // Optional. The passphrase for GPG signing'
-            }
-        }
-    }
-}
+//bintray {
+//    user = properties.getProperty("bintray.user")
+//    key = properties.getProperty("bintray.apikey")
+//
+//    configurations = ['archives']
+//    pkg {
+//        repo = bintrayRepo
+//        name = bintrayName
+////        userOrg = bintrayOrganization
+//        desc = libraryDescription
+//        websiteUrl = siteUrl
+//        issueTrackerUrl = siteUrl+'/issues'
+//        vcsUrl = gitUrl
+//        licenses = allLicenses
+//        githubRepo = githubRepository //Optional Github repository
+//        githubReleaseNotesFile = 'README.md' //Optional Github readme file
+//        publish = false
+//        publicDownloadNumbers = true
+//
+//        version {
+//            desc = libraryDescription
+//            gpg {
+//                sign = true // Determines whether to GPG sign the files. The default is false
+//                passphrase = properties.getProperty("bintray.gpg.password") // Optional. The passphrase for GPG signing'
+//            }
+//        }
+//    }
+//}
 
 repositories {
     mavenCentral()
+    maven { url 'https://plugins.gradle.org/m2' }
 }

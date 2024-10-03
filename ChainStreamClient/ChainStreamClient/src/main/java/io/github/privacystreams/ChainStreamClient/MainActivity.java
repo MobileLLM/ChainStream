@@ -26,12 +26,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.xuhao.didi.socket.client.sdk.OkSocket;
-import com.xuhao.didi.socket.client.sdk.client.ConnectionInfo;
-import com.xuhao.didi.socket.client.sdk.client.OkSocketOptions;
-import com.xuhao.didi.socket.client.sdk.client.action.SocketActionAdapter;
-import com.xuhao.didi.socket.client.sdk.client.connection.IConnectionManager;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
