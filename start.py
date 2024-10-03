@@ -1,5 +1,6 @@
 # helper file of chainstream
 # it parses command arguments and send the options to ChainStream
+import yaml
 import argparse
 import logging
 # import chainstream as cs
@@ -22,6 +23,11 @@ def parse_args():
                         choices=['web', 'shell'], 
                         help='runtime core server platform: web or shell')
     args = parser.parse_args()
+
+    with open("/config.yml", 'r') as stream:
+        yaml_config = yaml.safe_load(stream)
+        # merge yaml config with command line options
+
     # print options
     return args
 
