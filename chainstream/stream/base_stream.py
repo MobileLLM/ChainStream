@@ -4,12 +4,10 @@ import logging
 import datetime
 import queue
 import threading
-import inspect
 from threading import Event
 from ..context import Buffer
-from ..function import AgentFunction, BatchFunction
+from chainstream.runtime.function import AgentFunction, BatchFunction
 from .stream_interface import StreamInOutInterface
-import os
 from typing import Callable
 import inspect
 
