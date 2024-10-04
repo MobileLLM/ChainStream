@@ -73,6 +73,12 @@ const routes= [
                 path: 'Device',
                 name: 'Device',
                 component: () => import('@/components/view/devices/devices.vue')
+            },
+            {
+                path: 'Sensor',
+                name: 'Sensor',
+                component: () => import('@/components/view/devices/sensors.vue')
+
             }
         ]
     },

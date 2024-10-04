@@ -18,19 +18,27 @@ import Generator from "@/components/view/generator/generator.vue";
 
       <el-sub-menu index="2">
         <template #title>
+          <el-icon><Iphone /></el-icon>Devices
+        </template>
+        <el-menu-item index="/device/device">Devices</el-menu-item>
+        <el-menu-item index="/device/sensor">Sensors</el-menu-item>
+      </el-sub-menu>
+
+      <el-sub-menu index="3">
+        <template #title>
           <el-icon><ShoppingTrolley /></el-icon>Agent Store
         </template>
         <el-menu-item index="/store/store">Agent Store</el-menu-item>
       </el-sub-menu>
 
-      <el-sub-menu index="3">
+      <el-sub-menu index="4">
         <template #title>
           <el-icon><edit /></el-icon>Agent Generator
         </template>
         <el-menu-item index="/generator/generator">Agent Generator</el-menu-item>
       </el-sub-menu>
 
-      <el-sub-menu index="4">
+      <el-sub-menu index="5">
         <template #title>
           <el-icon><monitor /></el-icon>Runtime Monitor
         </template>
@@ -39,14 +47,14 @@ import Generator from "@/components/view/generator/generator.vue";
         <el-menu-item index="/monitor/StreamGraph">Stream Graph</el-menu-item>
       </el-sub-menu>
 
-      <el-sub-menu index="5">
+      <el-sub-menu index="6">
         <template #title>
           <el-icon><Memo /></el-icon>Memory
         </template>
         <el-menu-item index="/memory/Memory">Memroy</el-menu-item>
       </el-sub-menu>
 
-      <el-sub-menu index="6">
+      <el-sub-menu index="7">
         <template #title>
           <el-icon><Brush /></el-icon>Tools
         </template>
@@ -55,19 +63,14 @@ import Generator from "@/components/view/generator/generator.vue";
         <el-menu-item index="/tools/tools">Tools</el-menu-item>
       </el-sub-menu>
 
-      <el-sub-menu index="7">
+      <el-sub-menu index="8">
         <template #title>
           <el-icon><DataLine /></el-icon>Analysis
         </template>
         <el-menu-item index="/analysis/analysis">Analysis(尚未开发)</el-menu-item>
       </el-sub-menu>
 
-      <el-sub-menu index="8">
-        <template #title>
-          <el-icon><Iphone /></el-icon>Devices
-        </template>
-        <el-menu-item index="/device/device">Devices</el-menu-item>
-      </el-sub-menu>
+
 
 
 
