@@ -2,9 +2,6 @@ import collections
 import logging
 from chainstream.stream import register_stream_manager
 import time
-from .agent_manager import AgentManager
-import threading
-from threading import Event
 from chainstream.stream import reset_stream
 
 # from chainstream.stream.base_stream import BaseStream
