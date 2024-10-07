@@ -90,8 +90,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import device_card from "@/components/view/devices/utils/device_card.vue"
+import { getDeviceCards, getAgentList, checkDevice, addDevice} from "@/api/devices/devices.js"
 
 const dialogFormVisible = ref(false)
 
@@ -143,7 +144,64 @@ const resetForm = () => {
   deviceForm.type = ''
   isNewDeviceChecked.value = false
   // sensorForm.clear()
-
 }
+
+const fetchAgentList = () => {
+  try {
+    getAgentList().then(response => {
+      agent_list.length = 0
+      agent_list.push(...response.data)
+    })
+  } catch (error) {
+    console.error('Failed to fetch agents:', error)
+  }
+}
+
+const fetchDeviceCards = () => {
+  try {
+    getDeviceCards().then(response => {
+      device_cards.length = 0
+      device_cards.push(...response.data)
+    })
+  } catch (error) {
+    console.error('Failed to fetch device cards:', error)
+  }
+}
+
+const checkDeviceForm = () => {
+  try {
+    checkDevice(deviceForm).then(response => {
+      sensorForm.length = 0
+      sensorForm.push(...response.data)
+      isNewDeviceChecked.value = true
+    })
+  } catch (error) {
+    console.error('Failed to add device:', error)
+  }
+}
+
+const addNewDevice = () => {
+  try {
+    const payload = {
+      device_form: deviceForm,
+      sensor_form: sensorForm,
+    }
+    addDevice(payload).then(response => {
+      console.log('New device added:', response.data)
+
+      dialogFormVisible.value = false
+      resetForm()
+      fetchDeviceCards()
+    })
+  } catch (error) {
+    console.error('Failed to add device:', error)
+  }
+}
+
+// 在页面加载时获取代理列表和设备卡片
+onMounted(() => {
+  fetchAgentList()
+  fetchDeviceCards()
+})
 
 </script>
