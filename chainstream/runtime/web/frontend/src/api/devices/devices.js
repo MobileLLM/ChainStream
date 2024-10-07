@@ -16,7 +16,7 @@ export function getAgentList() {
 
 export function checkDevice(device_form) {
   return request({
-    url: '/devices/agentList',
+    url: '/devices/checkDevice',
     method: 'post',
     data: device_form
   })

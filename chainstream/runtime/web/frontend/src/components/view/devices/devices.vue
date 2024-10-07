@@ -4,7 +4,9 @@
     <el-col :span="12">
       <el-text style="font-size: 24px; text-align: center; font-weight: bold" type="primary">Devices</el-text>
     </el-col>
+
     <el-col :span="12" style="display: flex; justify-content: flex-end; text-align: right">
+<!--      <el-button type="primary" @click="fetchDeviceCards()">Refresh</el-button>-->
       <el-button type="primary" style="float: right; margin-top: 10px" @click="dialogFormVisible = true">+ Add Device</el-button>
     </el-col>
   </el-row>
@@ -79,13 +81,12 @@
     </template>
   </el-dialog>
 
-  <el-container>
-    <el-row style=" width: 100%; margin: 0; padding: 0" align="middle" justify="start">
-      <!-- 使用v-for循环遍历cards数组 -->
-      <el-col v-for="(card, index) in device_cards" :key="index" :span="6" style="align-content: center; justify-content: center;">
-        <device_card :model_name="card.model_name"></device_card>
-      </el-col>
-    </el-row>
+  <el-container v-loading="isLoading">
+  <el-row style="width: 100%;" align="middle" justify="start">
+    <el-col v-for="(card, index) in device_cards" :key="index" :span="6">
+      <device_card :model_name="card.model_name"></device_card>
+    </el-col>
+  </el-row>
   </el-container>
 </template>
 
@@ -99,6 +100,8 @@ const dialogFormVisible = ref(false)
 const isNewDeviceChecked = ref(false)
 
 const formLabelWidth = '140px'
+
+const isLoading = ref(true)
 
 const deviceForm = reactive({
   name: '',
@@ -121,9 +124,6 @@ const sensorForm = reactive([
 ])
 
 const device_cards = [
-  { model_name: "Phone", content: 'Content of card'},
-  { model_name: "Watch", content: 'Content of card'},
-  { model_name: "Edge Sensor", content: 'Content of card'}
 ]
 
 const agent_list = [
@@ -159,12 +159,18 @@ const fetchAgentList = () => {
 
 const fetchDeviceCards = () => {
   try {
+
+    isLoading.value = true
     getDeviceCards().then(response => {
+      // console.log(JSON.stringify(response.data))
       device_cards.length = 0
-      device_cards.push(...response.data)
+      device_cards.value = response.data
+      console.log(device_cards)
     })
   } catch (error) {
     console.error('Failed to fetch device cards:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 

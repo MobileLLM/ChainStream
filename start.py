@@ -24,7 +24,7 @@ def parse_args():
                         help='runtime core server platform: web or shell')
     args = parser.parse_args()
 
-    with open("/config.yml", 'r') as stream:
+    with open("./config.yaml", 'r') as stream:
         yaml_config = yaml.safe_load(stream)
         # merge yaml config with command line options
 
