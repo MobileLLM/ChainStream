@@ -11,6 +11,7 @@
     </el-col>
   </el-row>
 
+
   <el-dialog v-model="dialogFormVisible" title="Add New Device" width="800" @close="resetForm()">
 
 <!--    <el-text size="large">Device base information</el-text>-->
@@ -92,7 +93,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
-import device_card from "@/components/view/devices/utils/device_card.vue"
+import device_card from '@/components/view/devices/utils/device_card.vue'
 import { getDeviceCards, getAgentList, checkDevice, addDevice} from "@/api/devices/devices.js"
 
 const dialogFormVisible = ref(false)
@@ -123,10 +124,9 @@ const sensorForm = reactive([
     },
 ])
 
-const device_cards = [
-]
+const device_cards = reactive([])
 
-const agent_list = [
+const agent_list = reactive([
   {
     value: 'agent1',
     label: 'Agent 1',},
@@ -136,7 +136,7 @@ const agent_list = [
     {
     value: 'agent3',
     label: 'Agent 3',},
-]
+])
 
 const resetForm = () => {
   deviceForm.name = ''
@@ -157,16 +157,14 @@ const fetchAgentList = () => {
   }
 }
 
-const fetchDeviceCards = () => {
+const fetchDeviceCards = async () => {
   try {
-
     isLoading.value = true
-    getDeviceCards().then(response => {
-      // console.log(JSON.stringify(response.data))
-      device_cards.length = 0
-      device_cards.value = response.data
-      console.log(device_cards)
-    })
+    const response = await getDeviceCards()
+    // console.log(JSON.stringify(response.data))
+    device_cards.splice(0, device_cards.length, ...response.data)
+    console.log("   device_cards:")
+    console.log(device_cards)
   } catch (error) {
     console.error('Failed to fetch device cards:', error)
   } finally {

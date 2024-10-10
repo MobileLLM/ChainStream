@@ -12,8 +12,8 @@ import Generator from "@/components/view/generator/generator.vue";
         <template #title>
           <el-icon><setting /></el-icon>System Config
         </template>
-        <el-menu-item index="">Stream Graph(尚未开发)</el-menu-item>
-        <el-menu-item index="">Agents(尚未开发)</el-menu-item>
+        <el-menu-item index="/config/llms">LLMs</el-menu-item>
+        <el-menu-item index="/config/tools">Tools</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="2">
@@ -54,16 +54,16 @@ import Generator from "@/components/view/generator/generator.vue";
         <el-menu-item index="/memory/Memory">Memroy</el-menu-item>
       </el-sub-menu>
 
+<!--      <el-sub-menu index="7">-->
+<!--        <template #title>-->
+<!--          <el-icon><Brush /></el-icon>Tools-->
+<!--        </template>-->
+
+<!--        <el-menu-item index="/tools/llms">LLMs</el-menu-item>-->
+<!--        <el-menu-item index="/tools/tools">Tools</el-menu-item>-->
+<!--      </el-sub-menu>-->
+
       <el-sub-menu index="7">
-        <template #title>
-          <el-icon><Brush /></el-icon>Tools
-        </template>
-
-        <el-menu-item index="/tools/llms">LLMs</el-menu-item>
-        <el-menu-item index="/tools/tools">Tools</el-menu-item>
-      </el-sub-menu>
-
-      <el-sub-menu index="8">
         <template #title>
           <el-icon><DataLine /></el-icon>Analysis
         </template>

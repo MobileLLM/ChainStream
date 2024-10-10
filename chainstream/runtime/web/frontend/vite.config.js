@@ -25,6 +25,9 @@ export default defineConfig({
         },
       }
     },
+  build: {
+    target: 'es2015'  // 确保生成的代码符合 ES2015 规范
+  }
   // devServer: {
   //   proxy: {
   //     '/api': {

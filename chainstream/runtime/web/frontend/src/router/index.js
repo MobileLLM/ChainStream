@@ -83,8 +83,8 @@ const routes= [
         ]
     },
     {
-        path: '/tools',
-        name: 'Tools',
+        path: '/config',
+        name: 'Config',
         children: [
             {
                 path: 'Tools',
