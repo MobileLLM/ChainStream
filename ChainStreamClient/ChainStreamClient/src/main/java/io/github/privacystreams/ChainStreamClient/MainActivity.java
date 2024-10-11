@@ -6,18 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.Settings;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,14 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-
-//import io.github.privacystreams.test.R;
-import io.github.privacystreams.ChainStreamClient.service.ForegroundService;
-import io.github.privacystreams.utils.Logging;
+import io.github.privacystreams.ChainStreamClient.utils.SensorUtils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -96,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mButtonStart.setOnClickListener(view -> {
+//            String deviceInfoJson = null;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//                deviceInfoJson = SensorUtils.getDeviceInfoAsJson(this);
+//            }
+//            Log.d("DeviceInfo", "Device Info JSON: " + deviceInfoJson);
+
             if (is_server_running == Boolean.FALSE) {
                 mLogReaderTask.startReadingLogs();
 
