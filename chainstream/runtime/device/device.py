@@ -1,4 +1,6 @@
 from enum import Enum
+import collections
+import websocket
 
 
 class DeviceOpType(Enum):
@@ -26,6 +28,9 @@ class DeviceBase:
         self.device_meta = None
         self.refresh_device_meta(**kwargs)
 
+        self.sensor_list = collections.OrderedDict()
+        self.agent_list = collections.OrderedDict()
+
     def refresh_device_meta(self, *args, **kwargs):
         # TODO: add refresh limit
         self.device_meta = DeviceMeta(**kwargs)
@@ -43,5 +48,25 @@ class DeviceBase:
         pass
 
 
+class SocketDeviceBase(DeviceBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ws = websocket.WebSocketApp(
+            self.device_meta.device_id,
+        )
 
+    def check_sensor_list(self):
+        sensor_list = None
 
+        def check_sensor(ws):
+            ws.send("check_sensors")
+
+        def on_message(ws, message):
+            global sensor_list
+            sensor_list = message
+
+        ws = websocket.WebSocketApp(
+            self.device_meta.device_id,
+            on_open=check_sensor,
+            on_message=on_message,
+        )
