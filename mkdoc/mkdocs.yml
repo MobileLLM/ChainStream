@@ -24,6 +24,7 @@ nav:
   - NL-Sense Benchmark:
       - Quick start: NLSenseBenchmark/QUICK_START.md
       - Statistical Analysis: NLSenseBenchmark/STATISTIC.md
+      - Eval Other Agent: NLSenseBenchmark/EVAL_OTHER_AGENT.md
       - Customization: NLSenseBenchmark/CUSTOM_TASKS.md
   - User Guide:
       - Quick start: UserGuide/QUICK_START.md
@@ -100,6 +101,7 @@ plugins:
             Demo: 示例
             Glasses Camera Demo: 智能眼镜摄像头Demo
             Design Blog: 设计笔记
+            Eval Other Agent: 评估其他框架Agent
 
 
 theme:

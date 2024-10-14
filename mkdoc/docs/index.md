@@ -23,16 +23,17 @@ For everyone, we suggest you read:
 
 - [:octicons-book-24: ChainStream Overview](SystemOverview/WHAT_IS_CHAINSTREAM/){ .md-button } to get an overview of ChainStream's basic concepts and features.
 
-This documentation is written for three main audiences:
+This documentation is written for four main audiences:
 
-- [:fontawesome-solid-user: ChainStream User](UserGuide/QUICK_START/){ .md-button } This audience is for those who want to use ChainStream to build their own agent or integrate it into their existing system.
-- [:material-robot-excited-outline: Agent Developer](AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW/){ .md-button } This audience is for those who want to understand the inner workings of ChainStream and build their own agent.
-- [:fontawesome-solid-code: ChainStream Sys Contributor](ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW/){ .md-button } This audience is for those who want to contribute to the development of ChainStream.
+- **Chainstream Users**: Users who want to build their own agents with ChainStream or integrate it into existing systems. Please read the [:fontawesome-solid-user: User Guide](UserGuide/QUICK_START/){ .md-button }
+- **Agent Developers**: Developers who want to understand the inner workings of ChainStream and build their own agents. Please read the [:material-robot-excited-outline: Agent Developer Guide](AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW/){ .md-button }
+- **Chainstream System Contributors**: System developers who want to contribute to the development of ChainStream. Please read the [:fontawesome-solid-code: System Contributor Guide](ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW/){ .md-button }
+- **Scholars**: Scholars who want to replicate paper results or use the NL-Sense Benchmark dataset for research. Please read the [:fontawesome-solid-graduation-cap: Agent Generator](AgentGenerator/QUICK_START/){ .md-button } and [:fontawesome-solid-graduation-cap: NL-Sense Benchmark](NLSenseBenchmark/QUICK_START/){ .md-button }
 
 ## Updates
 
 - 2024.06: [ChainStream website](https://mobilellm.github.io/ChainStream/) is launched.
-- 2024.06: ChainStream project team participated in Mobisys2024 in Tokyo and presented a report at EdgeFM Workshop. The paper will be published soon.
+- 2024.06: ChainStream project team participated in Mobisys2024 in Tokyo and presented a report at EdgeFM Workshop. Paper link: [ChainStream: A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing](https://doi.org/10.1145/3662006.3662063).
 - 2024.06: [ChainStream Github Repo](https://github.com/MobileLLM/ChainStream) is launched.
 - 2024.05: The introduction paper of ChainStream was accepted by [MobiSys 2024, Workshop on Edge and Mobile Foundation Models](https://edgefm.github.io/).
 - 2023.12: The project of ChainStream started preliminary development.

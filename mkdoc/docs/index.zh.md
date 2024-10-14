@@ -23,16 +23,18 @@ hide:
 
 - [:octicons-book-24: ChainStream概览](SystemOverview/WHAT_IS_CHAINSTREAM/){ .md-button } 了解ChainStream的基本概念和功能。
 
-本文档面向三个主要受众：
+本文档面向四个主要受众：
 
-- [:fontawesome-solid-user: ChainStream用户](UserGuide/QUICK_START/){ .md-button } 适用于希望使用ChainStream构建自己的智能体或将其集成到现有系统中的用户。
-- [:material-robot-excited-outline: Agent开发者](AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW/){ .md-button } 适用于希望了解ChainStream的内部工作原理并构建自己的智能体的开发者。
-- [:fontawesome-solid-code: ChainStream系统贡献者](ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW/){ .md-button } 适用于希望为ChainStream的开发做出贡献的系统开发者。
+- **Chainstream 用户**：希望使用ChainStream构建自己的智能体或将其集成到现有系统中的用户。请阅读 [:fontawesome-solid-user: 用户指南](UserGuide/QUICK_START/){ .md-button }
+- **Agent开发者**：希望了解ChainStream的内部工作原理并构建自己的智能体的开发者。请阅读 [:material-robot-excited-outline: Agent开发者指南](AgentDevelopmentGuide/AGENT_DEVELOPMENT_OVERVIEW/){ .md-button }
+- **Chainstream系统贡献者**：希望为ChainStream的开发做出贡献的系统开发者。请阅读 [:fontawesome-solid-code: 系统贡献者者指南](ChainStreamDevelopmentGuide/CHAINSTREAM_SYS_DEVELOPMENT_OVERVIEW/){ .md-button }
+- **学者**：希望复现论文结果，或者使用NL-Sense Benchmark的数据集进行研究的学者。请阅读 [:fontawesome-solid-graduation-cap: Agent生成器](AgentGenerator/QUICK_START/){ .md-button } 和 [:fontawesome-solid-graduation-cap: NL-Sense Benchmark](NLSenseBenchmark/QUICK_START/){ .md-button }
+
 
 ## 更新日志
 
 - 2024.06: [ChainStream网页](https://mobilellm.github.io/ChainStream/)上线。
-- 2024.06: ChainStream项目组于东京参加Mobisys2024并在EdgeFM Workshop上做报告。会议论文之后将被检索。
+- 2024.06: ChainStream项目组于东京参加Mobisys2024并在EdgeFM Workshop上做报告。文章链接：[ChainStream: A Stream-based LLM Agent Framework for Continuous Context Sensing and Sharing](https://doi.org/10.1145/3662006.3662063)。
 - 2024.06: [ChainStream Github Repo](https://github.com/MobileLLM/ChainStream) 上线。
 - 2024.05: ChainStream介绍论文被[MobiSys 2024, Workshop on Edge and Mobile Foundation Models](https://edgefm.github.io/)接受。
 - 2023.12: ChainStream开始前期开发。
