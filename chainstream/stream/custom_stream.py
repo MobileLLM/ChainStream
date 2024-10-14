@@ -6,9 +6,9 @@ class CustomStream(BaseStream):
     def __init__(self) -> None:
         super().__init__()
 
-    def register_listener(self, agent, listener_func):
+    def for_each(self, agent, listener_func):
         pass
 
-    def unregister_listener(self, agent, listener_func=None):
+    def unregister_all(self, agent, listener_func=None):
         pass
 

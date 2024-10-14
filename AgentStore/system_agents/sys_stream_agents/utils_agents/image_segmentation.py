@@ -28,7 +28,7 @@ class ImageSegmentationAgent(cs.agent.Agent):
             # Save the segmentation result (segmentation mask) as an image
             self.detection_buffer.save(result[OutputKeys.MASKS])
         try:
-            self._source1.register_listener(self, handle_input)
+            self._source1.for_each(self, handle_input)
             return True
         except Exception as e:
             print("Error in Image Segmentation Agent: ", e)

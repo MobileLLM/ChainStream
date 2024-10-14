@@ -1,7 +1,11 @@
 import collections
 import logging
 from chainstream.stream import register_stream_manager
+import time
 from .agent_manager import AgentManager
+import threading
+from threading import Event
+from chainstream.stream import reset_stream
 
 # from chainstream.stream.base_stream import BaseStream
 
@@ -17,7 +21,6 @@ class StreamAnalyzer:
     def get_stream_info(self):
         stream_info = [x.get_meta_data() for x in self.streams.values()]
         return stream_info
-
 
     def get_graph_statistics(self, file_path_to_agent_id):
         stream_info = [x.get_record_data() for x in self.streams.values()]
@@ -69,7 +72,7 @@ class StreamManager(StreamAnalyzer):
 
     def register_stream(self, stream):
         if stream.metaData.stream_id in self.streams:
-            raise ValueError(f"Stream with id {stream.metaData.stream_id} already exists")
+            raise KeyError(f"Stream with id {stream.metaData.stream_id} already exists")
         self.streams[stream.metaData.stream_id] = stream
         self.thread_list[stream.metaData.stream_id] = stream.thread
         self.recorders[stream.metaData.stream_id] = stream.recorder
@@ -79,7 +82,7 @@ class StreamManager(StreamAnalyzer):
 
     def get_stream(self, stream_id):
         if stream_id not in self.streams:
-            raise ValueError(f"Stream with id {stream_id} not found")
+            raise KeyError(f"Stream with id {stream_id} not found")
         return self.streams.get(stream_id)
 
     def get_stream_list(self):
@@ -96,3 +99,34 @@ class StreamManager(StreamAnalyzer):
             for target_agent in target_agents:
                 edges.append((source_agent, stream, target_agent))
         return edges
+
+    def wait_all_stream_clear(self):
+        from chainstream.llm import check_has_model_working
+        # TODO: use threading.Event to wait for all streams to be clear
+        count = 5
+        while True:
+            # print(f"count: {count}")
+            if all(stream.is_clear.is_set() for stream in self.streams.values()) and not check_has_model_working():
+                # print(f"coundown {count}")
+                count -= 1
+                if count == 0:
+                    return True
+            else:
+                count = 5
+            time.sleep(1)
+
+    def shutdown(self):
+
+        reset_stream()
+
+        # print(self.thread_list)
+        for stream in self.streams.values():
+            stream.shutdown()
+        # print(self.thread_list)
+        for thread in self.thread_list.values():
+            if thread.is_alive():
+                thread.join()
+
+        self.streams = collections.OrderedDict()
+
+        return True

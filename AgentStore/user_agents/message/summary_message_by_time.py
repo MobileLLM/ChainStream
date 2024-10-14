@@ -23,12 +23,12 @@ class SummaryMessageEveryDay(Agent):
             summary = self.llm.query(prompt)
             self.output_stream.add_item({"summary": summary, "timestamp": new_day})
 
-        self.clock.register_listener(self, summary_message_every_day)
-        self.input_stream.register_listener(self, receive_message)
+        self.clock.for_each(self, summary_message_every_day)
+        self.input_stream.for_each(self, receive_message)
 
     def stop(self):
-        self.clock.unregister_listener(self)
-        self.input_stream.unregister_listener(self)
+        self.clock.unregister_all(self)
+        self.input_stream.unregister_all(self)
 
 
 class SummaryMessageEveryHour(Agent):
@@ -49,12 +49,12 @@ class SummaryMessageEveryHour(Agent):
             summary = self.llm.query(prompt)
             self.output_stream.add_item({"summary": summary, "timestamp": new_hour})
 
-        self.clock.register_listener(self, summary_message_every_hour)
-        self.input_stream.register_listener(self, receive_message)
+        self.clock.for_each(self, summary_message_every_hour)
+        self.input_stream.for_each(self, receive_message)
 
     def stop(self):
-        self.clock.unregister_listener(self)
-        self.input_stream.unregister_listener(self)
+        self.clock.unregister_all(self)
+        self.input_stream.unregister_all(self)
 
 
 class SummaryMessageEveryMonth(Agent):
@@ -75,9 +75,9 @@ class SummaryMessageEveryMonth(Agent):
             summary = self.llm.query(prompt)
             self.output_stream.add_item({"summary": summary, "timestamp": new_month})
 
-        self.clock.register_listener(self, summary_message_every_month)
-        self.input_stream.register_listener(self, receive_message)
+        self.clock.for_each(self, summary_message_every_month)
+        self.input_stream.for_each(self, receive_message)
 
     def stop(self):
-        self.clock.unregister_listener(self)
-        self.input_stream.unregister_listener(self)
+        self.clock.unregister_all(self)
+        self.input_stream.unregister_all(self)

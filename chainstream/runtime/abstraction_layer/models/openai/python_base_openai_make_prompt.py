@@ -1,7 +1,6 @@
 import base64
 import os
 import time
-import random
 from abc import abstractmethod
 
 from openai import OpenAI
@@ -9,25 +8,35 @@ import collections
 import logging
 from pathlib import Path
 
+from threading import Event
+
 from io import BytesIO
 from PIL import Image
 
 logger = logging.getLogger(__name__)
 
 GPT_CONFIG = {
-    "url": "https://api.openai-proxy.org/v1",
-    "key": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9"
+    "url": "https://tbnx.plus7.plus/v1",
+    "key": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
 }
+
+# GPT_CONFIG = {
+#     "url": "https://api.openai-proxy.org/v1",
+#     "key": "sk-43Kn6GuGNxD0KwGB1XgiEyQ8htVDan44XXdnQqXA7VkZ7sMI"
+# }
 
 
 class BaseOpenAI:
-    def __init__(self, model='gpt-3.5-turbo-1106', model_type='text', temperature=0.7, verbose=True, retry=3,
+    def __init__(self, model='gpt-4o', model_type='text', temperature=0.7, verbose=True, retry=3,
                  timeout=15, identifier=""):
         self.prompt_tokens = 0
         self.completion_tokens = 0
         self.history = collections.OrderedDict()
 
         self.model = model
+
+        self.is_working = Event()
+        self.is_working.clear()
 
         if model_type in ['text', 'image', 'audio']:
             self.model_type = model_type
@@ -56,15 +65,40 @@ class BaseOpenAI:
         self.identifier = identifier if identifier != "" else model
 
     def query(self, *args, **kwargs):
+        res = None
+        error = None
+        try:
+            self.is_working.set()
+            res = self.query_impl(*args, **kwargs)
+            self.is_working.clear()
+            # print(res)
+        except Exception as e:
+            if self.is_working.is_set():
+                self.is_working.clear()
+            error = e
+            raise e
+        else:
+            return res
+        finally:
+            if self.is_working.is_set():
+                self.is_working.clear()
+            from chainstream.sandbox_recorder import SANDBOX_RECORDER
+            import inspect
+            if SANDBOX_RECORDER is not None:
+                inspect_stack = inspect.stack()
+                SANDBOX_RECORDER.record_query(args, kwargs, res, error, inspect_stack)
+
+
+    def query_impl(self, prompt_message) -> str:
         raise RuntimeError("must implement query method")
 
 
 class TextGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-3.5-turbo-1106', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
+    def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 
-    def query(self, prompt_message):
+    def query_impl(self, prompt_message) -> str:
         response = self.client.chat.completions.create(
             model=self.model,
             messages=prompt_message,
@@ -78,56 +112,50 @@ class TextGPTModel(BaseOpenAI):
         return res
 
 
-
 class ImageGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-4-vision-preview', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
+    def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier="",
                  detail='low', resize_width=512):
         super().__init__(model=model, model_type='image', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
         self.detail = detail
         self.resize_width = resize_width
 
-    def query(self, prompt_message):
-    
+    def query_impl(self, prompt_message) -> str:
+
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt_message
-                }
-            ],
+            messages=prompt_message,
             temperature=self.temperature,
             max_tokens=300,
         )
         res = response.choices[0].message.content
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens
-        self.history[prompt] = res
+        self.history[str(prompt_message)] = res
 
         return res
-        pil_image = None
-        if isinstance(image_path, str):
-            pil_image = Image.open(image_path)
-        elif isinstance(image_path, Image.Image):
-            pil_image = image_path
-
-        pil_image = self._resize_maintain_aspect_ratio(pil_image)
-        # Ensure the image is in a supported format
-        if pil_image.format is None or pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
-            # Convert the image to JPEG format, for example
-            pil_image = pil_image.convert("RGB")
-            image_format = "jpeg"
-        else:
-            image_format = pil_image.format.lower()
-
-        # Convert PIL Image to BytesIO
-        image_bytesio = BytesIO()
-        pil_image.save(image_bytesio, format=image_format)
-
-        # Encode the BytesIO as base64
-        base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
-        return f"data:image/{image_format};base64,{base64_image}"
+        # pil_image = None
+        # if isinstance(image_path, str):
+        #     pil_image = Image.open(image_path)
+        # elif isinstance(image_path, Image.Image):
+        #     pil_image = image_path
+        #
+        # pil_image = self._resize_maintain_aspect_ratio(pil_image)
+        # # Ensure the image is in a supported format
+        # if pil_image.format is None or pil_image.format.lower() not in ['png', 'jpeg', 'gif', 'webp']:
+        #     # Convert the image to JPEG format, for example
+        #     pil_image = pil_image.convert("RGB")
+        #     image_format = "jpeg"
+        # else:
+        #     image_format = pil_image.format.lower()
+        #
+        # # Convert PIL Image to BytesIO
+        # image_bytesio = BytesIO()
+        # pil_image.save(image_bytesio, format=image_format)
+        #
+        # # Encode the BytesIO as base64
+        # base64_image = base64.b64encode(image_bytesio.getvalue()).decode('utf-8')
+        # return f"data:image/{image_format};base64,{base64_image}"
 
 
 class AudioGPTModel(BaseOpenAI):
@@ -137,8 +165,7 @@ class AudioGPTModel(BaseOpenAI):
                          timeout=timeout, identifier=identifier)
         self.chat_model = chat_model
 
-    def query(self, prompt_message):
-
+    def query_impl(self, prompt_message) -> str:
         response = self.client.chat.completions.create(
             model=self.chat_model,
             temperature=self.temperature,
@@ -160,8 +187,7 @@ class AudioImageGPTModel(BaseOpenAI):
                          timeout=timeout, identifier=identifier)
         self.chat_model = chat_model
 
-    def query(self, prompt_message):
-
+    def query_impl(self, prompt_message) -> str:
         response = self.client.chat.completions.create(
             model=self.chat_model,
             temperature=self.temperature,
@@ -169,6 +195,7 @@ class AudioImageGPTModel(BaseOpenAI):
         )
 
         res = response.choices[0].message.content
+        # print(res)
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens
         self.history[prompt] = res
@@ -177,6 +204,7 @@ class AudioImageGPTModel(BaseOpenAI):
 
 
 if __name__ == '__main__':
+    from chainstream.llm import make_prompt
     # prompt = "你好，你是什么模型，具体是什么型号?"
     # model = TextGPTModel()
     #
@@ -211,7 +239,8 @@ if __name__ == '__main__':
     #                            image_file_path5, image_file_path5,
     #                            image_file_path5, image_file_path5,
     #                            ]))
-    print(model.query(prompt, [image_file_path1, image_file_path2,
-                               image_file_path3, image_file_path4,
-                               image_file_path5
-                               ]))
+    # print(model.query(prompt, [image_file_path1, image_file_path2,
+    #                            image_file_path3, image_file_path4,
+    #                            image_file_path5
+    #                            ]))
+    print(str(model.query(make_prompt(prompt, image_file_path1, image_file_path2))))

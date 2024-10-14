@@ -1,4 +1,5 @@
-from chainstream.runtime.server.server import ChainStreamServer
+from .server import ChainStreamServer
+from .error_manager import ErrorType
 
 cs_server = ChainStreamServer()
 cs_server_core = cs_server.get_chainstream_core()
@@ -13,6 +14,14 @@ cs_server_core = cs_server.get_chainstream_core()
 #     elif monitor_mode == 'shell':
 #         cs_server = ChainStreamServerShell(*args, **kwargs)
 #         cs_server_core = cs_server.get_chainstream_core()
+
+
+def reset_chainstream_server():
+    global cs_server, cs_server_core
+    del cs_server, cs_server_core
+    cs_server = ChainStreamServer()
+    cs_server_core = cs_server.get_chainstream_core()
+    # print('ChainStream server reset')
 
 
 def platform():

@@ -49,6 +49,7 @@ class AgentManager(AgentAnalyzer):
         self.agents[agent.agent_id] = agent
         self.agents_metaData[agent.agent_id] = agent.metaData
         self.path_to_agentId[agent.metaData.agent_file_path] = agent.agent_id
+        agent.set_agent_store_base_path(self.predefined_agents_path)
 
     def unregister_agent(self, agent):
         self.agents.pop(agent.agent_id)
@@ -78,6 +79,24 @@ class AgentManager(AgentAnalyzer):
                     agent_list.append(os.path.relpath(os.path.join(root, file), start=self.predefined_agents_path))
         agent_list = self._path_to_json(agent_list)
         return agent_list
+
+    def shutdown(self):
+        try:
+            try:
+                for agent in self.agents.values():
+                    try:
+                        agent.stop()
+                    except Exception as e:
+                        logger.error(f'failed to stop agent {agent.agent_id}: {e}')
+                    finally:
+                        self.agents[agent.agent_id] = None
+            except Exception as e:
+                logger.error(f'failed to stop all agents: {e}')
+            self.agents = collections.OrderedDict()
+        except Exception as e:
+            logger.error(f'failed to shutdown agent manager: {e}')
+
+        return True
 
     def _path_to_json(self, paths):
         json_data = {}

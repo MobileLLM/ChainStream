@@ -37,5 +37,5 @@ setup(
     package_data={
         'chainstream': [os.path.relpath(x, 'chainstream') for x in findall('chainstream/resources/')]
     },
-    install_requires=['torch', 'pandas', 'flask', 'flask_cors', 'pillow', 'pydub', 'websocket', 'websocket-client'],
+    install_requires=['torch', 'pandas', 'flask', 'flask_cors', 'pillow', 'pydub', 'websocket', 'websocket-client', 'openai'],
 )

@@ -57,5 +57,5 @@ class ArxivAgent(cs.agent.Agent):
             if response.startswith('yes'):
                 self.daily_recommendations_stream.send_item(paper)
 
-        self.clock_hours_stream.register_listener(self, collect_daily_new_papers)
-        self.daily_new_papers_stream.register_listener(self, recommend_paper)
+        self.clock_hours_stream.for_each(self, collect_daily_new_papers)
+        self.daily_new_papers_stream.for_each(self, recommend_paper)
