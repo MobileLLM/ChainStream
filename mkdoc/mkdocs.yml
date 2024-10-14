@@ -18,14 +18,6 @@ nav:
       - Code Structure: SystemOverview/CODE_STRUCTURE.md
   - Demo:
       - Glasses Camera Demo: Demo/GLASSES_CAMERA.md
-  - Agent Generator:
-      - Quick start: AgentGenerator/QUICK_START.md
-      - Generator Sys Design: AgentGenerator/GENERATOR_DESIGN.md
-  - NL-Sense Benchmark:
-      - Quick start: NLSenseBenchmark/QUICK_START.md
-      - Statistical Analysis: NLSenseBenchmark/STATISTIC.md
-      - Eval Other Agent: NLSenseBenchmark/EVAL_OTHER_AGENT.md
-      - Customization: NLSenseBenchmark/CUSTOM_TASKS.md
   - User Guide:
       - Quick start: UserGuide/QUICK_START.md
       - Dashboard: UserGuide/DASHBOARD_GUIDE.md
@@ -45,6 +37,14 @@ nav:
       - ChainStream SDK: ChainStreamDevelopmentGuide/SDK_DEVELOPMENT_GUIDE.md
       - Edge Sensor: ChainStreamDevelopmentGuide/EDGE_SENSOR_DEVELOPMENT_GUIDE.md
       - Dashboard: ChainStreamDevelopmentGuide/DASHBOARD_DEVELOPMENT_GUIDE.md
+  - Agent Generator:
+      - Quick start: AgentGenerator/QUICK_START.md
+      - Generator Sys Design: AgentGenerator/GENERATOR_DESIGN.md
+  - NL-Sense Benchmark:
+      - Quick start: NLSenseBenchmark/QUICK_START.md
+      - Statistical Analysis: NLSenseBenchmark/STATISTIC.md
+      - Eval Other Agent: NLSenseBenchmark/EVAL_OTHER_AGENT.md
+      - Customization: NLSenseBenchmark/CUSTOM_TASKS.md
   - Design Blog:
       - LLM-RuntimeOptimization: DesignBlog/LLMRuntimeOptimize.md
 extra:
