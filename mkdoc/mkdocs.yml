@@ -42,9 +42,9 @@ nav:
       - Generator Sys Design: AgentGenerator/GENERATOR_DESIGN.md
   - NL-Sense Benchmark:
       - Quick start: NLSenseBenchmark/QUICK_START.md
-      - Statistical Analysis: NLSenseBenchmark/STATISTIC.md
-      - Eval Other Agent: NLSenseBenchmark/EVAL_OTHER_AGENT.md
-      - Customization: NLSenseBenchmark/CUSTOM_TASKS.md
+#      - Statistical Analysis: NLSenseBenchmark/STATISTIC.md
+#      - Eval Other Agent: NLSenseBenchmark/EVAL_OTHER_AGENT.md
+#      - Customization: NLSenseBenchmark/CUSTOM_TASKS.md
   - Design Blog:
       - LLM-RuntimeOptimization: DesignBlog/LLMRuntimeOptimize.md
 extra:

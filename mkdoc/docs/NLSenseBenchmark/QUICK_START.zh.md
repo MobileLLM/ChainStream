@@ -51,15 +51,91 @@ NL-Sense Benchmark 共包含Task、Metric和 Sandbox 三个部分。
 
 #### 3.2.1.单任务
 
+你可以选择Benchmark中的某个特定任务来仿真Agent，你只需要选择三类Sandbox中的一种，然后传入agent代码和任务即可。具体来说，如 2.1.Sandbox 所示，我们提供了三种sandbox：
+
+```
+ChainStreamSandbox
+├── __init__.py
+├── batch_langchain_sandbox.py    # Batch模式有LangChain环境Sandbox
+├── batch_native_python_sandbox.py  # Batch模式有Python环境Sandbox
+├── stream_interface_sandbox.py    # StreamInterface模式Sandbox
+├── chainstream_sandbox.py          # ChainStream监听函数式Sandbox
+├── results                         # 存放仿真结果
+│   ├── xxx.json
+├── sandbox_base.py                 # 基类
+└── utils.py    
+```
+
+以ChainStream监听函数式Sandbox为例，其中有脚本如：
+
+```python
+
+if __name__ == "__main__":
+    from ChainStreamSandBox.tasks import ALL_TASKS
+
+    Config = ALL_TASKS['HealthTask4']    # 选择任务
+
+    agent_file = '''    # 编写Agent代码
+import chainstream as cs
+from chainstream.agent import Agent
+
+class HealthMonitorAgent(Agent):
+    def __init__(self, agent_id: str = "health_monitor_agent"):
+        super().__init__(agent_id)
+        self.all_health_stream = cs.get_stream(self, "all_health")
+        self.remind_rest_stream = cs.get_stream(self, "remind_rest")
+
+    def start(self) -> None:
+        def process_heart_rate_batch(items):
+            print(f"Received {items}")
+            for item in items:
+                heart_rate = item.get("HeartRate")
+                if heart_rate and heart_rate > 75:
+                    reminder = {"reminder": "Heart rate is {heart_rate}! Remember to rest yourself!"}
+                    self.remind_rest_stream.add_item(reminder)
+                    break  
+    
+        self.all_health_stream.batch(by_count=1).for_each(process_heart_rate_batch)
+
+    '''
+    task_config = Config()
+    oj = ChainStreamSandBox(task_config, agent_file, save_result=True, only_init_agent=False)    # 初始化Sandbox
+
+    res = oj.start_test_agent(return_report_path=True)    # 启动仿真
+    print(res)
+```
+
+只需修改对应脚本参数即可开始 Agent 仿真。Sandbox支持将仿真结果存储到指定路径。结果会被保存成report.json文件，包含了仿真的配置、运行时间、运行结果等信息。
+
 #### 3.2.2.多任务
+
+对于批次测试多个task的需求，我们提供了批次测试脚本，其主要位于 `ChainStreamSandBox/batch_simulation_scripts` 路径下，每个批次脚本都是 `SandboxBatchInterface` 的子类，其会生成log文件来记录一次生成的多个report文件、支持重复运行、支持断点续跑等功能。
 
 ### 3.3.结果评估
 
-#### 3.3.1.Execute Rate
+对于最终的结果，我们提供两种评估方式：运行成功率和结果相似度。
+#### 3.3.1.运行成功率
 
-#### 3.3.2.Result Score
+成功率评估代码位于 `ChainStreamSandBox/report_evaluator/eval_success_rate.py` 中，该脚本接受某次批量仿真的log文件，能自动计算该次仿真内的成功率。
 
-## 4.评估其他 Agent
+#### 3.3.2.结果相似度
 
-## 5.定制化
+结果相似度计算较为复杂，我们比较标准程序和待测试Agent的输出的相似度，具体来说，一个Agent的输出包含多个流，每个流内是包含多个Item的序列，每个序列是由多个不同类型字段组成的。
+
+我们设计了一个基于动态规划算法的序列比较方法来计算结果相似度，具体公示请参考论文。
+
+代码位于 `ChainStreamSandBox/report_evaluator/eval_output_similarity.py` 中，该脚本接受某次批量仿真的log文件，能自动计算该次仿真内的结果相似度。
+
+## 4.定制化
+
+NL-Sense Benchmark 是一个开源项目，你可以根据自己的需求进行定制化。
+
+最主要的定制化包含以下几方面，定制化仅需继承其对应基类即可：
+
+1. 新增原始数据：将数据放置于 `ChainStreamSandBox/raw_data` 目录下，并为新数据撰写一个DataInterface接口类。
+2. 新增Task：继承 `ChainStreamSandBox/tasks/task_config_base.py` 类，并在 `ChainStreamSandBox/tasks/__init__.py` 中注册。
+3. 新增Generator： 继承 `AgentGenerator/generator/generator_base.py` 类，并在 `AgentGenerator/generator/__init__.py` 中注册。
+4. 新增Sandbox： 继承 `ChainStreamSandBox/sandbox_base.py` 类，并在 `ChainStreamSandBox/__init__.py` 中注册。
+5. 新增批次测试脚本： 继承 `ChainStreamSandBox/batch_simulation_scripts/sandbox_interface.py` 类，并在 `ChainStreamSandBox/batch_simulation_scripts/__init__.py` 中注册。
+6. 新增评测指标： 继承 `ChainStreamSandBox/report_evaluator/evaluator_base.py` 类，并在 `ChainStreamSandBox/report_evaluator/__init__.py` 中注册。
 
