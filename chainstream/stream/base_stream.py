@@ -4,17 +4,19 @@ import logging
 import datetime
 import queue
 import threading
-import inspect
 from threading import Event
 from ..context import Buffer
-from ..function import AgentFunction, BatchFunction
+from chainstream.runtime.function import AgentFunction, BatchFunction
 from .stream_interface import StreamInOutInterface
-import os
 from typing import Callable
 import inspect
 
 
 class StreamForAgent:
+    """
+    The wrapper of stream for agent, which is used to provide agent-specific methods for stream. Every Stream will be
+    wrapped automatically by a StreamForAgent object when it is created or accessed by an agent.
+    """
     def __init__(self, agent, stream):
         self.stream_id = stream.stream_id
         self.stream = stream

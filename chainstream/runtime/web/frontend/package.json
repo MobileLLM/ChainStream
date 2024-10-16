@@ -15,7 +15,8 @@
     "element-plus": "^2.6.1",
     "jquery": "^3.7.1",
     "vue": "^3.4.15",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "highlight.js": "^11.10.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.3",

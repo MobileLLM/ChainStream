@@ -6,6 +6,9 @@ stream_manager = None
 
 
 def reset_stream():
+    """
+    Reset all streams and stream manager. Used for Runtime or sandbox restart.
+    """
     global available_streams
     global stream_manager
 
@@ -18,6 +21,32 @@ def reset_stream():
 
 
 def get_stream_interface(stream_id):
+    """
+    Get the stream interface for a given stream_id. Used for providing a stream data for non-chainstream agent code,
+    mainly for sandbox evaluation.
+
+    For example, assuming we have an agent from native python code, we can get the stream interface for a given
+    stream_id:
+
+    ```python
+    from chainstream.stream import get_stream_interface
+
+    stream_id = "my_stream_id"
+    CSStream = get_stream_interface(stream_id)
+
+    while True:
+        data = CSStream.get()
+
+        # do something with data
+
+        CSStream.put(data)
+
+    ```
+
+    The `CSStream.get()` will block until there is data available in the stream, and `CSStream.put(data)` will add
+    data to the stream.
+
+    """
     global available_streams
     global stream_manager
 
@@ -40,6 +69,13 @@ def get_stream_interface(stream_id):
 
 
 def get_stream(agent, stream_id):
+    """
+    `chainstream.get_stream(agent: chainstream.agent.Agent, stream_id: str) -> chainstream.stream.Stream`: This
+    method retrieves a `Stream` object based on `stream_id`, typically called in the `__init__()` method of the Agent
+    instance. The first parameter, `agent`, refers to the Agent instance obtaining the stream, usually `self` in the
+    `__init__()` method.
+
+    """
     global available_streams
     global stream_manager
 
@@ -101,6 +137,13 @@ def get_stream(agent, stream_id):
 
 
 def create_stream(agent, stream_id, type=None):
+    """
+    `chainstream.create_stream(agent: chainstream.agent.Agent, stream_id: str) -> chainstream.stream.Stream`: This
+    method creates a new `Stream` object based on `stream_id`, typically called in the `__init__()` method of the
+    Agent instance. The first parameter, `agent`, refers to the Agent instance creating the stream, usually `self` in
+    the `__init__()` method.
+
+    """
     global available_streams
     global stream_manager
 
@@ -164,7 +207,10 @@ def register_stream_manager(manager):
 
 
 class Stream:
-    """must create or get a stream by using get_stream or create_stream functions, not directly"""
+    """
+    You must create or get a stream by using get_stream or create_stream functions, not directly.
+    This class is used to provide an exception for LLM-based agent generator.
+    """
     def __init__(self):
         raise RuntimeError("must create or get a stream by using get_stream or create_stream functions, not directly")
 

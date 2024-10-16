@@ -73,12 +73,18 @@ const routes= [
                 path: 'Device',
                 name: 'Device',
                 component: () => import('@/components/view/devices/devices.vue')
+            },
+            {
+                path: 'Sensor',
+                name: 'Sensor',
+                component: () => import('@/components/view/devices/sensors.vue')
+
             }
         ]
     },
     {
-        path: '/tools',
-        name: 'Tools',
+        path: '/config',
+        name: 'Config',
         children: [
             {
                 path: 'Tools',
@@ -100,6 +106,17 @@ const routes= [
                 path: 'Store',
                 name: 'Store',
                 component: () => import('@/components/view/store/store.vue')
+            },
+        ]
+    },
+    {
+        path: '/generator',
+        name: 'AgentGenerator',
+        children: [
+            {
+                path: 'Generator',
+                name: 'AgentGenerator',
+                component: () => import('@/components/view/generator/generator.vue')
             },
         ]
     },

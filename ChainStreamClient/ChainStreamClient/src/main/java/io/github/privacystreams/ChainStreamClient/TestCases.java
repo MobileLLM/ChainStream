@@ -53,7 +53,6 @@ import static io.github.privacystreams.commons.statistic.StatisticOperators.sum;
 import static io.github.privacystreams.commons.string.StringOperators.sha1;
 import static io.github.privacystreams.commons.time.TimeOperators.recent;
 
-import com.xuhao.didi.socket.client.sdk.client.connection.IConnectionManager;
 
 /**
  * Some show cases of PrivacyStreams

@@ -5,6 +5,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import * as echarts from 'echarts'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'highlight.js/styles/github.css'
 // import router from './router/index.js'
 import router from './router'
 

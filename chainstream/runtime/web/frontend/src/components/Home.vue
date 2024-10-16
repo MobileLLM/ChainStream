@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>Welcome to ChainStream Runtime!</h1>
+  <h1>Welcome to ChainStream!</h1>
   <h2>ChainStream Configuration</h2>
   <div style="margin-top: 50px; width: 50%;">
     <el-descriptions

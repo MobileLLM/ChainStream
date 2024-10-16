@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -27,6 +28,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
+import io.github.privacystreams.ChainStreamClient.utils.SensorUtils;
 import io.github.privacystreams.audio.AudioOperators;
 import io.github.privacystreams.core.Callback;
 import io.github.privacystreams.core.Item;
@@ -521,6 +523,15 @@ public class MyWebSocketServer extends WebSocketServer {
                         break;
                 }
                 break;
+            }
+            case "check_sensors": {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    Log.d("MainActivitySensorUtils", SensorUtils.getAvailableSensorStrings(myContext));
+//                    Log.d("MainActivitySensorUtils", SensorUtils.getAvailableCameras(myContext));
+//                    Log.d("MainActivitySensorUtils", SensorUtils.getMicrophoneList(myContext));
+                    String deviceInfoJson = SensorUtils.getDeviceInfoAsJson(myContext);
+                    Log.d("DeviceInfo", "Device Info JSON: " + deviceInfoJson);
+                }
             }
         }
 

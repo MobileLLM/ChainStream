@@ -6,6 +6,9 @@ import datetime
 
 
 class AgentMeta:
+    """
+    AgentMeta is a class that stores metadata of an agent.
+    """
     def __init__(self, *args, **kwargs) -> None:
         self.agent_id = kwargs.get("agent_id")
         self.agent_file_path = kwargs.get("agent_file_path") if kwargs.get("agent_file_path") else ""
@@ -31,6 +34,9 @@ class AgentMeta:
 
 
 def record_start(func):
+    """
+    A decorator that records the start of an agent.
+    """
     def wrapper(self, *args, **kwargs):
         res = func(self, *args, **kwargs)
 
@@ -47,9 +53,26 @@ def record_start(func):
 
 
 class Agent(AgentInterface):
+    """
+    Agent is the base class for all agents. Your Agent instances should inherit from the `chainstream.agent.Agent`
+    class, providing an `agent_id` identifier and implementing the `__init__`, `start()`, and `stop()` methods to
+    manage data stream listening, processing, and output.
+
+    Specifically,
+        1. `__init__` should call `super().__init__(agent_id)` with a valid agent_id and obtain required resources.
+        2. `start` to define listener func and register them to target streams.
+        3. `stop` to unregister listener func and release resources.
+    """
     agent_store_base_path = None
 
-    def __init__(self, agent_id=None) -> None:
+    def __init__(self, agent_id: str = None) -> None:
+        """
+        This method instantiates a new Agent object. The `agent_id` parameter
+        specifies the agent's identifier, which should also be passed to the parent class's `__init__(agent_id)`
+        method. Initialization tasks, such as obtaining or creating data streams and getting LLM models,
+        should be performed here.
+
+        """
         super().__init__()
 
         if agent_id is None:
@@ -74,13 +97,16 @@ class Agent(AgentInterface):
             SANDBOX_RECORDER.record_instantiate(agent_id, inspect_stack)
 
     @record_start
-    def start(self):
+    def start(self) -> None:
+        """
+        Define and bind data stream listener functions in this method.
+        """
         pass
 
-    def stop(self):
-        pass
-
-    def query(self, query):
+    def stop(self) -> None:
+        """
+        Unregister all listener functions attached to the data streams by this Agent in this method.
+        """
         pass
 
     def get_meta_data(self):

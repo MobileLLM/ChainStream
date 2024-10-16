@@ -5,18 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.Settings;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,20 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.xuhao.didi.socket.client.sdk.OkSocket;
-import com.xuhao.didi.socket.client.sdk.client.ConnectionInfo;
-import com.xuhao.didi.socket.client.sdk.client.OkSocketOptions;
-import com.xuhao.didi.socket.client.sdk.client.action.SocketActionAdapter;
-import com.xuhao.didi.socket.client.sdk.client.connection.IConnectionManager;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-
-//import io.github.privacystreams.test.R;
-import io.github.privacystreams.ChainStreamClient.service.ForegroundService;
-import io.github.privacystreams.utils.Logging;
+import io.github.privacystreams.ChainStreamClient.utils.SensorUtils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private Boolean is_server_running;
 
     private LogReaderTask mLogReaderTask;
+
+    private TextView mIPAddrTextView;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -99,11 +82,29 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mButtonStart.setOnClickListener(view -> {
+//            String deviceInfoJson = null;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//                deviceInfoJson = SensorUtils.getDeviceInfoAsJson(this);
+//            }
+//            Log.d("DeviceInfo", "Device Info JSON: " + deviceInfoJson);
+
             if (is_server_running == Boolean.FALSE) {
                 mLogReaderTask.startReadingLogs();
 
                 Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
                 startService(intent);
+
+                mIPAddrTextView = findViewById(R.id.ip_address);
+
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+                @SuppressLint("DefaultLocale") String ipAddressString = String.format("%d.%d.%d.%d",
+                        (ipAddress & 0xff),
+                        (ipAddress >> 8 & 0xff),
+                        (ipAddress >> 16 & 0xff),
+                        (ipAddress >> 24 & 0xff));
+                ipAddressString = ipAddressString + ":6666";
+                mIPAddrTextView.setText(ipAddressString);
 
                 is_server_running = Boolean.TRUE;
                 Toast.makeText(view.getContext(), "server running!", Toast.LENGTH_SHORT).show();
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, ChainStreamClientService.class);
                 stopService(intent);
+
+                mIPAddrTextView.setText("xxx.xxx.xxx.xxx:xxxx");
 
                 is_server_running = Boolean.FALSE;
                 Toast.makeText(view.getContext(), "server stop!", Toast.LENGTH_SHORT).show();
