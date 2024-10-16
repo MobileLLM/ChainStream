@@ -1,4 +1,4 @@
-from .server import ChainStreamServer
+from .server.server import ChainStreamServer
 from .error_manager import ErrorType
 
 cs_server = ChainStreamServer()

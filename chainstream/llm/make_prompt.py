@@ -1,6 +1,6 @@
 from chainstream.context import Buffer
 from PIL import Image
-from chainstream.runtime.abstraction_layer.models.utils.utils import convert_audio_to_text, convert_image_to_base64
+from chainstream.llm.utils import convert_audio_to_text, convert_image_to_base64
 import os
 
 

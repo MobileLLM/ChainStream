@@ -4,9 +4,9 @@ class ChainStreamServerWeb():
         self.port = None
         self.chainstream_core = core
 
-        from .web.backend.core import set_core
+        from chainstream.runtime.web.backend.core import set_core
         set_core(self.chainstream_core)
-        from .web.backend.app import app
+        from chainstream.runtime.web.backend.app import app
         self.app = app
 
     def config(self, *args, **kwargs):

@@ -1,5 +1,5 @@
 from AgentGenerator.prompt.mission_prompt import get_mission_prompt
-from .command_prompt import get_command_prompt
+from AgentGenerator.prompt.command_prompt import get_command_prompt
 from AgentGenerator.prompt.framework_doc import get_framework_doc
 from AgentGenerator.prompt.feedback_processor import FilterErrorFeedbackProcessor, FilterErrorWithExampleFeedbackProcessor
 
