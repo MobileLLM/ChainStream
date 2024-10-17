@@ -430,7 +430,10 @@ class BaseStream(StreamInterface):
                                                           "LangChainBatchSandbox", "StreamInterfaceSandBox"]:
                 func_id = "__[sandbox]__"
             else:
-                func_id = tmp_caller_instance.func_id
+                if hasattr(tmp_caller_instance, "func_id"):
+                    func_id = tmp_caller_instance.func_id
+                else:
+                    func_id = tmp_caller_instance.__class__.__name__ + "." + "unknown_func"
 
             self.recorder.record_new_item(call_from.filename, func_id)
 
