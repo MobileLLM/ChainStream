@@ -174,47 +174,6 @@ public class ServiceFloatingWindow {
             mWindowManager.addView(rootLayout, mWindowParams);
         }
 
-//        Camera mCamera = Camera.open(0);
-//        SurfaceView haha = rootLayout.findViewById(R.id.surfaceView);
-//        SurfaceHolder surfaceHolder = haha.getHolder();
-//        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
-//            @Override
-//            public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-//                try {
-//                    mCamera.setPreviewDisplay(surfaceHolder);
-//                    mCamera.startPreview();
-//                } catch (IOException e) {
-//                    Log.d("main", "Error setting camera preview: " + e.getMessage());
-//                }
-//            }
-//
-//            @Override
-//            public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-//                try {
-//                    mCamera.setPreviewDisplay(surfaceHolder);
-//                    mCamera.startPreview();
-//                } catch (IOException e) {
-//                    Log.d("main", "Error setting camera preview: " + e.getMessage());
-//                }
-//            }
-//
-//            @Override
-//            public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
-//                try {
-//                    mCamera.setPreviewDisplay(surfaceHolder);
-//                    mCamera.startPreview();
-//                } catch (IOException e) {
-//                    Log.d("main", "Error setting camera preview: " + e.getMessage());
-//                }
-//            }
-//
-//        });
-
-
-
-
-//        Intent intent = new Intent(mContext, ChainStreamClientService.class);
-//        mContext.startService(intent);
     }
 
 //    public void updateText(final String s) {

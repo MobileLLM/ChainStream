@@ -42,10 +42,10 @@ class WebSocketClient:
 
 if __name__ == "__main__":
     # 替换成你的服务器地址
-    server_address = "ws://192.168.43.1:6666"
+    server_address = "ws://172.20.10.8:6666"
 
     # 创建WebSocket客户端实例
-    client = WebSocketClient(server_address, on_start_message="video,1")
+    client = WebSocketClient(server_address, on_start_message="video,1,0")
 
     try:
         # 启动WebSocket连接

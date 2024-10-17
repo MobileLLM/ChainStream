@@ -1,6 +1,6 @@
 from datetime import datetime
 import chainstream as cs
-from agents.system_agents.sys_stream_agents.level_raw.socket_hardware_sensor.base_socket_sensor import BaseSocketSensors
+from AgentStore.system_agents.sys_stream_agents.level_raw.socket_hardware_sensor.base_socket_sensor import BaseSocketSensors
 
 from PIL import Image
 
@@ -14,7 +14,7 @@ class VideoSocketSensors(cs.agent.Agent):
         super().__init__(agent_id)
         self.video_fps = video_fps
         self.cmd = f"video,{int(1000 / float(self.video_fps))},{cameraID}"
-        self.stream = cs.stream.create_stream(f"socket_camera{cameraID}_video")
+        self.stream = cs.stream.create_stream(self, f"socket_camera{cameraID}_video")
         self.base_socket = BaseSocketSensors(ip=ip, port=port, cmd=self.cmd)
 
     def start(self):
@@ -32,7 +32,7 @@ class VideoSocketSensors(cs.agent.Agent):
 
 
 if __name__ == '__main__':
-    ip = '192.168.20.134'
+    ip = '192.168.20.223'
     default_sensors_agent = VideoSocketSensors(ip=ip)
     default_sensors_agent.start()
     # while True:

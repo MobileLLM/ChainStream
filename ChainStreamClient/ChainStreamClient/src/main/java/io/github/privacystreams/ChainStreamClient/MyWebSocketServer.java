@@ -144,7 +144,9 @@ public class MyWebSocketServer extends WebSocketServer {
                                     ByteBuffer byteBuffer = ByteBuffer.wrap(imageData);
 
                                     if (conn.isClosed()) {
+                                        Log.d("websocket", "before video uqi stopAll");
                                         uqi.stopAll();
+                                        Log.d("websocket", "after video uqi stopAll");
                                     }
                                     conn.send(byteBuffer);
                                     Logging.debug("send pic" + byteBuffer.capacity());
@@ -559,6 +561,7 @@ public class MyWebSocketServer extends WebSocketServer {
     public void stopServer() {
         // 在这里执行关闭服务器的操作
         // 例如，关闭所有连接、停止监听端口等
+        Log.d("websocket", "stopServer()，WebSocket服务端关闭成功");
         for (WebSocket connection : connections()) {
             connection.close();
         }

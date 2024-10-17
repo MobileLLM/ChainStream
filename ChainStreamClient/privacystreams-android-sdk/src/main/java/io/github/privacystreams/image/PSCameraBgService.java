@@ -2,7 +2,10 @@ package io.github.privacystreams.image;
 
 import io.github.privacystreams.core.R;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,6 +22,8 @@ import android.os.IBinder;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -138,6 +143,25 @@ public class PSCameraBgService extends Service {
     @SuppressLint("InflateParams")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Camera Service";
+            String description = "Channel for camera background service";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel("camera_service_channel", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Notification notification = new NotificationCompat.Builder(this, "camera_service_channel")
+                .setContentTitle("CS Camera Service")
+                .setContentText("CS Taking picture in the background")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build();
+
+        startForeground(1, notification); // 必须提供通知 ID 和通知对象
+
         int cameraId = intent.getIntExtra(CAMERA_ID, 0);
 
         mWindowManager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);

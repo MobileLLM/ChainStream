@@ -48,7 +48,7 @@ public class ChainStreamClientService extends Service {
         super.onCreate();
 
 
-        ServiceFloatingWindow.getInstance().init(getApplicationContext());
+        ServiceFloatingWindow.getInstance().init(this);
         mPreView = ServiceFloatingWindow.getInstance().getPreView();
         ServiceFloatingWindow.getInstance().showFloatWindow();
 
@@ -83,8 +83,9 @@ public class ChainStreamClientService extends Service {
         wakeLock.acquire();
 
 
-//       InetSocketAddress myHost = new InetSocketAddress(getIPAddress(true),6666);
-         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
+       InetSocketAddress myHost = new InetSocketAddress(getIPAddress(true),6666);
+//         InetSocketAddress myHost = new InetSocketAddress("127.0.0.1",6666);
+//        InetSocketAddress myHost = new InetSocketAddress("0.0.0.0",6666);
 
         myWebSocketServer = new MyWebSocketServer(myHost);
         myWebSocketServer.setPreView(mPreView);

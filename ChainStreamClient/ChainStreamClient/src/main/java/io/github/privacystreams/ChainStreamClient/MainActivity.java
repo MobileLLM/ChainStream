@@ -1,6 +1,7 @@
 package io.github.privacystreams.ChainStreamClient;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 import io.github.privacystreams.ChainStreamClient.utils.SensorUtils;
 
@@ -88,6 +91,24 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //            Log.d("DeviceInfo", "Device Info JSON: " + deviceInfoJson);
 
+//            // 检查当前服务是否已经在运行
+//            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//            boolean isServiceRunning = false;
+//
+//            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+//                if (ChainStreamClientService.class.getName().equals(service.service.getClassName())) {
+//                    isServiceRunning = true;
+//                    break;
+//                }
+//            }
+//
+//            // 如果服务已经在运行，强制停止它
+//            if (isServiceRunning) {
+//                Intent stopIntent = new Intent(MainActivity.this, ChainStreamClientService.class);
+//                stopService(stopIntent);
+//                Toast.makeText(view.getContext(), "Detected running service. Stopping it first...", Toast.LENGTH_SHORT).show();
+//            }
+
             if (is_server_running == Boolean.FALSE) {
                 mLogReaderTask.startReadingLogs();
 
@@ -137,15 +158,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Intent intent = new Intent(this, ChainStreamClientService.class);
-        stopService(intent);
+//        Intent intent = new Intent(this, ChainStreamClientService.class);
+//        stopService(intent);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Intent intent = new Intent(this, ChainStreamClientService.class);
-        stopService(intent);
+//        Intent intent = new Intent(this, ChainStreamClientService.class);
+//        stopService(intent);
         super.onDestroy();
         unregisterReceiver(receiver);
     }

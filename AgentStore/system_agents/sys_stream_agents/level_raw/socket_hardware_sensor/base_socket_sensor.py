@@ -13,7 +13,7 @@ from io import BytesIO
 class BaseSocketSensors:
     is_agent = False
 
-    USE_GLOBAL_SOCKET_IP = True
+    USE_GLOBAL_SOCKET_IP = False
     # SOCKET_IP = "192.168.43.226"
     # SOCKET_IP = "192.168.43.41"
     SOCKET_IP = "47.94.168.126"

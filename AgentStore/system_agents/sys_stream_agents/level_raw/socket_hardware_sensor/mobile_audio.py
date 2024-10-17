@@ -1,6 +1,6 @@
 from datetime import datetime
 import chainstream as cs
-from agents.system_agents.sys_stream_agents.level_raw.socket_sensor.base_socket_sensor import BaseSocketSensors
+from AgentStore.system_agents.sys_stream_agents.level_raw.socket_hardware_sensor.base_socket_sensor import BaseSocketSensors
 
 from pydub import AudioSegment
 
@@ -16,7 +16,7 @@ class AudioSocketSensors(cs.agent.Agent):
         self.audio_duration = int(audio_duration) * 1000
         self.audio_interval = int(audio_interval) * 1000
         self.cmd = f"audio,{self.audio_duration},{self.audio_interval}"
-        self.stream = cs.stream.create_stream("socket_audio")
+        self.stream = cs.stream.create_stream(self, "socket_audio")
 
         self.base_socket = BaseSocketSensors(ip=ip, port=port, cmd=self.cmd)
 
@@ -49,7 +49,7 @@ class AudioSocketSensors(cs.agent.Agent):
 
 
 if __name__ == '__main__':
-    ip = '192.168.20.134'
+    ip = '192.168.20.223'
     # default_sensors_agent = VideoSocketSensors(ip=ip)
     default_sensors_agent = AudioSocketSensors(ip=ip)
     # default_sensors_agent = SensorSocketSensors(ip=ip)
