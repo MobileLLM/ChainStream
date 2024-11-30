@@ -1,10 +1,11 @@
 from ..llm_instance_base import LLMInstanceBase
 from openai import OpenAI
+import os
 
 # TODO: change the GPT_CONFIG to a config file
 GPT_CONFIG = {
-    "url": "https://api.openai-proxy.org/v1",
-    "key": "sk-qnAcq9g0VKZt3I49s99JLWPRBXzmxyT0aWYJh0cqGJPeKzx9"
+    "url": os.getenv("GPT_API_URL"),
+    "key": os.getenv("GPT_API_KEY"),
 }
 
 

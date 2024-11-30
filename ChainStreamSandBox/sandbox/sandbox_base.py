@@ -214,13 +214,9 @@ class SandboxBase:
     def start_test_agent(self, return_report_path=False):
 
         env_vars = {
-            "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
-            "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
+            "OPENAI_BASE_URL": os.getenv("GPT_API_URL"),
+            "OPENAI_API_KEY": os.getenv("GPT_API_KEY")
         }
-        # env_vars = {
-        #     "OPENAI_BASE_URL": "https://api.openai-proxy.org/v1",
-        #     "OPENAI_API_KEY": "sk-43Kn6GuGNxD0KwGB1XgiEyQ8htVDan44XXdnQqXA7VkZ7sMI"
-        # }
 
         os.environ.update(env_vars)
         try:

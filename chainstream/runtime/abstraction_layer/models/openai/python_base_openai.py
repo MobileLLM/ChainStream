@@ -15,8 +15,8 @@
 # logger = logging.getLogger(__name__)
 #
 # GPT_CONFIG = {
-#     "url": "https://tbnx.plus7.plus/v1",
-#     "key": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
+#     "url": os.getenv("GPT_API_URL"),
+#     "key": os.getenv("GPT_API_KEY")
 # }
 #
 #

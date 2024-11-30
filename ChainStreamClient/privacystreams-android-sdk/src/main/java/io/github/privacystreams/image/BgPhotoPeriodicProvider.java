@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -57,6 +58,7 @@ class BgPhotoPeriodicProvider extends PStreamProvider {
             alarmScheduler = new AlarmScheduler(ctx, this.getClass().getName()) {
                 @Override
                 protected void run() {
+                    Log.d(TAG, "Alarm triggered");
                     start(ctx);
                 }
             };

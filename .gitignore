@@ -181,3 +181,5 @@ PrivacyStream/local.gradle
 /ChainStreamSandBox/sandbox/results/
 /ChainStreamSandBox/batch_simulation_scripts/result/
 /ChainStreamSandBox/report_evaluator/result/
+
+config.yaml

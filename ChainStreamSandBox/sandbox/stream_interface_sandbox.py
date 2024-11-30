@@ -39,16 +39,6 @@ class StreamInterfaceSandBox(SandboxBase):
     def prepare_output_environment(self):
         pass
 
-        # env_vars = {
-        #     "OPENAI_BASE_URL": "https://tbnx.plus7.plus/v1",
-        #     "OPENAI_API_KEY": "sk-Eau4dcC9o9Bo1N3ID4EcD394F15b4c029bBaEfA9D06b219b"
-        # }
-        #
-        # os.environ.update(env_vars)
-
-    # def start_agent(self) -> object:
-    #     raise NotImplementedError("Subclasses must implement start_agent")
-
     def import_and_init(self, module):
         func_object = None
         for name, obj in module.__dict__.items():

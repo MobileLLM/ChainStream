@@ -1,5 +1,7 @@
 package io.github.privacystreams.image;
 
+import static androidx.core.app.ActivityCompat.startActivityForResult;
+
 import io.github.privacystreams.core.R;
 
 import android.app.Notification;
@@ -16,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -24,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -249,7 +253,6 @@ public class PSCameraBgService extends Service {
                                 camera.takePicture(null, null, mPictureCallback);
                             }
                         });
-//                        mCamera.takePicture(null, null, mPictureCallback);
                     } catch (RuntimeException e) {
                         e.printStackTrace();
                         mCallback.onFail(false, e.getMessage());
@@ -281,6 +284,7 @@ public class PSCameraBgService extends Service {
 //    }
 
     public void onDestroy() {
+        Log.d(TAG, "onDestroy camera: " + mCamera);
         if (mTimer != null) {
             mTimer.cancel();
         }
@@ -288,6 +292,7 @@ public class PSCameraBgService extends Service {
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
+            Log.d(TAG, "camera released: " + mCamera);
         }
         if (mWindowManager != null) {
 //            mWindowManager.removeView(mPreview);
@@ -300,6 +305,7 @@ public class PSCameraBgService extends Service {
         Camera c = null;
         try {
             c = Camera.open(id); // attempt to get a Camera instance
+            Log.d(TAG, "open camera: " + c);
         }
         catch (Exception e){
             // Camera is not available (in use or does not exist)
