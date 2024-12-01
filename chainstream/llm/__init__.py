@@ -28,6 +28,13 @@ def check_has_model_working():
             return True
     return False
 
+API_LLM_TYPE = {
+    "T": ['text'],
+    "TI": ['text', 'image'],
+    "TA": ['text', 'audio'],
+    "TIA": ['text', 'image', 'audio']
+}
+
 
 def get_model(llm_type=['text']):
     '''
@@ -59,16 +66,19 @@ def get_model(llm_type=['text']):
         raise ValueError(f'invalid name: {llm_type}')
 
     if llm_type == ['text']:
-        from chainstream.llm.python_base_openai_make_prompt import TextGPTModel
+        if os.getenv('ERNIE_API_KEY') is not None:
+            from chainstream.runtime.abstraction_layer.models.ernie.ernie_make_prompt import TextGPTModel
+        elif os.getenv('GPT_API_KEY') is None:
+            from chainstream.runtime.abstraction_layer.models.openai.python_base_openai_make_prompt import TextGPTModel
         inst = TextGPTModel()
     elif 'image' in llm_type and 'audio' not in llm_type:
-        from chainstream.llm.python_base_openai_make_prompt import ImageGPTModel
+        from chainstream.runtime.abstraction_layer.models.openai.python_base_openai_make_prompt import ImageGPTModel
         inst = ImageGPTModel()
     elif 'audio' in llm_type and 'image' not in llm_type:
-        from chainstream.llm.python_base_openai_make_prompt import AudioGPTModel
+        from chainstream.runtime.abstraction_layer.models.openai.python_base_openai_make_prompt import AudioGPTModel
         inst = AudioGPTModel()
     else:
-        from chainstream.llm.python_base_openai_make_prompt import AudioImageGPTModel
+        from chainstream.runtime.abstraction_layer.models.openai.python_base_openai_make_prompt import AudioImageGPTModel
         inst = AudioImageGPTModel()
 
     from chainstream.sandbox_recorder import SANDBOX_RECORDER

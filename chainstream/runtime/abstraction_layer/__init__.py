@@ -1,1 +1,1 @@
-from models import LLM_INSTANCES_LIST
+from .models import LLM_INSTANCES_LIST

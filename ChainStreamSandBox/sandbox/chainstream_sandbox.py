@@ -88,7 +88,7 @@ class ChainStreamSandBox(SandboxBase):
 if __name__ == "__main__":
     from ChainStreamSandBox.tasks import ALL_TASKS
 
-    Config = ALL_TASKS['HealthTask4']
+    Config = ALL_TASKS['ArxivTask11']
 
     agent_file = '''
 import chainstream as cs
@@ -98,7 +98,7 @@ class HealthMonitorAgent(Agent):
     def __init__(self, agent_id: str = "health_monitor_agent"):
         super().__init__(agent_id)
         self.all_health_stream = cs.get_stream(self, "all_health")
-        self.remind_rest_stream = cs.get_stream(self, "remind_rest")
+        self.remind_rest_stream = cs.create_stream(self, "remind_rest")
 
     def start(self) -> None:
         def process_heart_rate_batch(items):
@@ -114,7 +114,7 @@ class HealthMonitorAgent(Agent):
 
     '''
     config = Config()
-    oj = ChainStreamSandBox(config, agent_file, save_result=True, only_init_agent=False)
+    oj = ChainStreamSandBox(config, config.agent_example, save_result=True, only_init_agent=False)
 
     res = oj.start_test_agent(return_report_path=True)
     print(res)

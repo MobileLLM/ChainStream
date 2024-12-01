@@ -14,10 +14,7 @@ from chainstream.sandbox_recorder import start_sandbox_recording
 import io
 import sys
 
-if __name__ == '__main__':
-    from utils import extract_imports, escape_string_literals
-else:
-    from .utils import extract_imports, escape_string_literals
+from ChainStreamSandBox.sandbox.utils import extract_imports, escape_string_literals
 
 
 class SandboxError(Exception):

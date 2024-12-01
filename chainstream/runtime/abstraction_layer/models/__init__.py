@@ -3,7 +3,7 @@ from chainstream.llm import API_LLM_TYPE
 
 
 LLM_INSTANCES_LIST = {
-    API_LLM_TYPE['TI']: {
+    'TI': {
         OpenAITextGPT35.model_name: OpenAITextGPT35,
         OpenAITextGPT4.model_name: OpenAITextGPT4
     }
