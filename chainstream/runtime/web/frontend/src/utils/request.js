@@ -1,16 +1,43 @@
 import axios from 'axios';
-
+import { getStoredToken, logout } from '../api/auth.js';
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
 const service = axios.create({
     // axios中请求配置有baseURL选项，表示请求URL公共部分
-    baseURL: import.meta.env.VITE_CHAINSTREAM_BACKEND_API  + '/api/',
+    baseURL: (import.meta.env.VITE_CHAINSTREAM_BACKEND_API || 'http://localhost:6677') + '/api/',
     // 超时
     timeout: 30000,
     // 禁用 Cookie 等信息
     withCredentials: false,
 })
+
+// 请求拦截器 - 添加认证token
+service.interceptors.request.use(config => {
+    const token = getStoredToken();
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+}, error => {
+    console.log('Request error:', error);
+    return Promise.reject(error);
+});
+
+// 响应拦截器 - 处理认证错误
+service.interceptors.response.use(
+    response => {
+        return response.data;
+    },
+    error => {
+        if (error.response && error.response.status === 401) {
+            // Token过期或无效，清除本地存储并跳转到登录页
+            logout();
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
 //
 // service.interceptors.request.use(config => {
 //     // get请求映射params参数

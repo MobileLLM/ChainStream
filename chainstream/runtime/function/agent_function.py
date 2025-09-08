@@ -64,7 +64,7 @@ class AgentFunction:
             }
             from chainstream.runtime import cs_server_core
             cs_server_core.record_error(ErrorType.FUNCTION_ERROR.value, error_message=error_msg,
-                                        error_traceback=traceback.format_exc())
+                                        error_traceback=traceback.format_exc(), user=self.agent.user)
             # raise RuntimeError(f"Error in agent function {self.func_id} from agent {self.agent.agent_id}: {e}")
 
         from chainstream.sandbox_recorder import SANDBOX_RECORDER

@@ -14,12 +14,16 @@ def draw_task_tag():
     difficulty_task_statistics = {tag.value: 0 for tag in Difficulty_Task_tag}
     modality_task_statistics = {tag.value: 0 for tag in Modality_Task_tag}
 
+    hard_tasks = []
+
     for _, task in tqdm.tqdm(TASKS_WITH_DATA.items()):
         task = task()
         domain_task_statistics[task.task_tag.domain] = domain_task_statistics.get(task.task_tag.domain, 0) + 1
+        if task.task_tag.difficulty == Difficulty_Task_tag.Hard.value:
+            hard_tasks.append(task)
         difficulty_task_statistics[task.task_tag.difficulty] = difficulty_task_statistics.get(task.task_tag.difficulty, 0) + 1
         modality_task_statistics[task.task_tag.modality] = modality_task_statistics.get(task.task_tag.modality, 0) + 1
-
+    print(hard_tasks)
     plt.figure(figsize=(10, 5))
     plt.subplot(1, 3, 1)
     plt.bar(domain_task_statistics.keys(), domain_task_statistics.values())

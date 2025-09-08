@@ -55,6 +55,13 @@ class StreamForAgent:
     def unregister_all(self, listener_func=None):
         self.stream.unregister_all(self.agent, listener_func)
 
+    def remove_listener(self, listener_func):
+        """
+        Remove a specific listener function from the stream.
+        This is an alias for unregister_all with a specific listener function.
+        """
+        self.stream.unregister_all(self.agent, listener_func)
+
     def add_item(self, item: [dict, str, list]):
         if isinstance(item, dict) or isinstance(item, str):
             self.stream.add_item(self.agent, item)
@@ -81,29 +88,36 @@ class StreamMeta:
         self.create_time = datetime.datetime.now()
         self.create_by_agent_file = kwargs.get('create_by_agent_file')
         self.is_anonymous = kwargs.get('is_anonymous')
+        self.user = kwargs.get("user")
+        self.encryption_enabled = kwargs.get('encryption_enabled', False)
 
     def __dict__(self):
         return {
             "stream_id": self.stream_id,
             "description": self.description,
             "create_time": self.create_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "create_by": self.create_by_agent_file
+            "create_by": self.create_by_agent_file,
+            "user": self.user.get_username() if self.user else None,
+            "encryption_enabled": self.encryption_enabled
         }
 
 
 class BaseStream(StreamInterface):
     STOP_SIGNAL = object()
 
-    def __init__(self, stream_id, description=None, create_by_agent_file=None, is_anonymous=False) -> None:
+    def __init__(self, stream_id, description=None, create_by_agent_file=None, is_anonymous=False, user=None) -> None:
         super().__init__()
         self.stream_id = stream_id
         self.metaData = StreamMeta(
             stream_id=stream_id,
             description=description,
             create_by_agent_file=create_by_agent_file,
-            is_anonymous=is_anonymous
+            is_anonymous=is_anonymous,
+            user=user
         )
         self.logger = logging.getLogger(self.metaData.stream_id)
+
+        self.user_uuid = user.get_uuid() if user else None
 
         self.is_anonymous = is_anonymous
         self.next_anonymous = {}
@@ -124,7 +138,7 @@ class BaseStream(StreamInterface):
         self.recorder = StreamRecorder(self.metaData, self.queue)
 
         from chainstream.runtime import cs_server_core
-        cs_server_core.register_stream(self)
+        cs_server_core.register_stream(self, user)
 
 
     def create_stream_interface(self):
@@ -154,7 +168,7 @@ class BaseStream(StreamInterface):
                         int(tmp_count) + 1)
 
                 create_by_agent_file = self.metaData.create_by_agent_file
-                next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True)
+                next_stream = BaseStream(next_stream_id, create_by_agent_file=create_by_agent_file, is_anonymous=True, user=self.metaData.user)
                 self.next_anonymous[(agent.agent_id, listener_func.func_id)] = next_stream
 
                 from chainstream.sandbox_recorder import SANDBOX_RECORDER

@@ -6,6 +6,7 @@ import os
 import inspect
 import logging
 import json
+from .user_context import user_context_manager
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +21,48 @@ class AgentAnalyzer:
     def get_path_to_agentId(self):
         return self.path_to_agentId
 
-    # TODO: implement this method
-    def get_running_agents_info_list(self):
-        agents_info = [x.get_meta_data() for x in self.agents.values()]
+    def get_running_agents_info_list(self, user=None):
+        """
+        Get list of running agents, filtered by user level permissions
+        
+        Args:
+            user: User object to filter agents by. If None, returns all agents.
+        
+        Returns:
+            List of agent metadata dictionaries filtered by user level
+        """
+        logger.debug(f"get_running_agents_info_list called with user: {user}")
+        logger.debug(f"Total agents in manager: {len(self.agents)}")
+        
+        if user is None:
+            # Return all agents
+            agents_info = [x.get_meta_data() for x in self.agents.values()]
+            logger.debug(f"Returning all agents: {len(agents_info)}")
+        else:
+            # Filter by user level permissions
+            agents_info = []
+            user_level = user.get_level()
+            user_uuid = user.get_uuid()
+            logger.debug(f"Filtering by user level: {user_level}, UUID: {user_uuid}")
+            
+            for agent in self.agents.values():
+                if agent.user is None:
+                    # Legacy agents without user assignment - only show to high level users
+                    if user_level >= 10:  # Admin level
+                        agents_info.append(agent.get_meta_data())
+                        logger.debug(f"Added legacy agent to filtered list: {agent.get_meta_data()}")
+                else:
+                    agent_user_level = agent.user.get_level()
+                    agent_user_uuid = agent.user.get_uuid()
+                    logger.debug(f"Agent user level: {agent_user_level}, UUID: {agent_user_uuid}")
+                    
+                    # High level users can see their own agents and lower level users' agents
+                    # Same level users can only see their own agents
+                    if (user_level > agent_user_level) or (user_level == agent_user_level and user_uuid == agent_user_uuid):
+                        agents_info.append(agent.get_meta_data())
+                        logger.debug(f"Added agent to filtered list: {agent.get_meta_data()}")
+        
+        logger.debug(f"Returning {len(agents_info)} agents")
         return agents_info
 
     def get_running_agents_name_list(self):
@@ -45,13 +85,24 @@ class AgentManager(AgentAnalyzer):
         super().__init__()
         self.predefined_agents_path = Path(os.path.dirname(__file__)).parent.parent / 'AgentStore'
 
-    def register_agent(self, agent):
+    def register_agent(self, agent, user):
+        logger.debug(f"register_agent called with agent: {agent}, user: {user}")
+        logger.debug(f"agent.user before: {agent.user}")
+        # 确保agent的user信息正确设置
+        if agent.user is None and user is not None:
+            agent.user = user
+            agent.metaData.user = user
+            logger.debug(f"Set agent.user to: {user}")
+        else:
+            logger.debug(f"Not setting user - agent.user: {agent.user}, user: {user}")
+        
+        logger.debug(f"agent.user after registration: {agent.user}")
         self.agents[agent.agent_id] = agent
         self.agents_metaData[agent.agent_id] = agent.metaData
         self.path_to_agentId[agent.metaData.agent_file_path] = agent.agent_id
         agent.set_agent_store_base_path(self.predefined_agents_path)
 
-    def unregister_agent(self, agent):
+    def unregister_agent(self, agent, user):
         self.agents.pop(agent.agent_id)
 
     def get_agent(self, agent_id):
@@ -61,6 +112,30 @@ class AgentManager(AgentAnalyzer):
         if path in self.path_to_agentId:
             return self.get_agent(self.path_to_agentId[path])
         return None
+
+    def get_agents_by_user(self, user):
+        """Get all agents owned by a specific user"""
+        return [
+            agent for agent in self.agents.values() 
+            if agent.user and agent.user.get_uuid() == user.get_uuid()
+        ]
+
+    def get_agent_count_by_user(self, user):
+        """Get count of agents owned by a specific user"""
+        return len(self.get_agents_by_user(user))
+
+    def can_user_access_agent(self, user, agent_id):
+        """Check if user can access a specific agent"""
+        agent = self.get_agent(agent_id)
+        if agent is None:
+            return False
+        
+        # If agent has no user assigned, allow access (legacy agents)
+        if agent.user is None:
+            return True
+        
+        # Check if user owns the agent
+        return agent.user.get_uuid() == user.get_uuid()
 
     def scan_predefined_agents(self):
         agent_list = []
@@ -142,7 +217,7 @@ class AgentManager(AgentAnalyzer):
 
         return list_data
 
-    def start_agent_by_id(self, agent_id):
+    def start_agent_by_id(self, agent_id, user):
         agents_list = self.scan_predefined_agents()
         target_agent_path = None
         for agent_path in agents_list:
@@ -152,23 +227,35 @@ class AgentManager(AgentAnalyzer):
                 break
         if target_agent_path is None:
             return False
-        res = self.start_agent_by_path(target_agent_path)
+        res = self.start_agent_by_path(target_agent_path, user)
         if res:
             return True
         return False
 
-    def stop_agent_by_id(self, agent_id):
+    def stop_agent_by_id(self, agent_id, user):
         agent_id = agent_id.split('.')[0]
         agent = self.get_agent(agent_id)
+        if agent is None:
+            return False  # Agent not found
         agent.stop()
-        self.remove_agent_by_id(agent_id)
+        self.remove_agent_by_id(agent_id, user)
         return True
 
-    def remove_agent_by_id(self, agent_id):
+    def remove_agent_by_id(self, agent_id, user):
         self.agents.pop(agent_id)
         return True
 
-    def start_agent_by_path(self, path):
+    def start_agent_by_path(self, path, user):
+        logger.debug(f"start_agent_by_path called with path: {path}, user: {user}")
+        # If no user is provided, try to get it from the user context
+        if user is None:
+            user = user_context_manager.get_current_user()
+            logger.debug(f"Retrieved user from context: {user}")
+            if user is None:
+                logger.warning("No user provided and no user context available")
+                # For backward compatibility, we'll continue without user
+                # but log a warning
+        
         if not path.startswith('/'):
             path = str(self.predefined_agents_path / path)
         if not os.path.exists(path) or not path.endswith('.py'):
@@ -183,16 +270,39 @@ class AgentManager(AgentAnalyzer):
             if inspect.isclass(obj) and issubclass(obj, Agent) and obj.is_agent:
                 print(name, obj)
                 agent_list.append((name, obj))
+        success_count = 0
         for name, obj in agent_list:
             try:
-                new_agent = obj()
-                res = new_agent.start()
-                if res:
-                    logger.info(f'agent {name} started successfully')
+                # Create agent instance with user information
+                # Try to get agent_id from the class, fallback to name if not available
+                agent_id = getattr(obj, 'agent_id', name)
+                
+                # Check if the agent's __init__ method accepts user parameter
+                init_signature = inspect.signature(obj.__init__)
+                init_params = list(init_signature.parameters.keys())
+                
+                # Prepare arguments for agent instantiation
+                agent_args = {'agent_id': agent_id}
+                if 'user' in init_params:
+                    agent_args['user'] = user
+                    logger.debug(f'Agent {name} accepts user parameter, passing user: {user}')
+                else:
+                    logger.debug(f'Agent {name} does not accept user parameter, skipping user')
+                
+                new_agent = obj(**agent_args)
+                # Call start method (may return None, True, or False)
+                start_result = new_agent.start()
+                
+                # Register the agent with the manager regardless of start() return value
+                # The agent is considered successfully started if it was created without exception
+                logger.info(f'agent {name} started successfully (start() returned: {start_result})')
+                success_count += 1
+                
             except Exception as e:
                 logger.error(f'failed to start agent {name}: {e}')
 
-        return True
+        logger.info(f'Started {success_count} out of {len(agent_list)} agents')
+        return success_count > 0
 
 
 if __name__ == '__main__':

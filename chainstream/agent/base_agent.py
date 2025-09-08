@@ -3,6 +3,7 @@ import logging
 from .agent_recorder import AgentRecorder
 import inspect
 import datetime
+from chainstream.runtime.user_context import user_context_manager
 
 
 class AgentMeta:
@@ -16,6 +17,7 @@ class AgentMeta:
         self.type = kwargs.get("type") if kwargs.get("type") else "base"
         self.created_at = datetime.datetime.now()
         self.status = kwargs.get("status") if kwargs.get("status") else "running"
+        self.user = kwargs.get("user")  # 添加用户信息
 
         # TODO: 增加权限、优先级、分组等属性
         # self.permissions = []
@@ -29,7 +31,8 @@ class AgentMeta:
             "description": self.description,
             "type": self.type,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "status": self.status
+            "status": self.status,
+            "user": self.user.get_username() if self.user else None
         }
 
 
@@ -65,13 +68,17 @@ class Agent(AgentInterface):
     """
     agent_store_base_path = None
 
-    def __init__(self, agent_id: str = None) -> None:
+    def __init__(self, agent_id: str = None, user=None, **kwargs) -> None:
         """
         This method instantiates a new Agent object. The `agent_id` parameter
         specifies the agent's identifier, which should also be passed to the parent class's `__init__(agent_id)`
         method. Initialization tasks, such as obtaining or creating data streams and getting LLM models,
         should be performed here.
 
+        Args:
+            agent_id: The unique identifier for this agent
+            user: The user who owns this agent (optional)
+            **kwargs: Additional keyword arguments (for compatibility with subclasses)
         """
         super().__init__()
 
@@ -81,14 +88,15 @@ class Agent(AgentInterface):
             raise ValueError(f"agent_id must be a string, but got {type(agent_id)}")
 
         self.agent_id = agent_id
+        self.user = user if user is not None else user_context_manager.get_current_user()
         caller_frame = inspect.currentframe().f_back
 
-        self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=caller_frame.f_globals['__file__'])
+        self.metaData = AgentMeta(agent_id=agent_id, agent_file_path=caller_frame.f_globals['__file__'], user=user)
         self.logger = logging.getLogger(self.agent_id)
         self.recorder = AgentRecorder(agentMetaData=self.metaData)
 
         from chainstream.runtime import cs_server_core
-        cs_server_core.register_agent(agent=self)
+        cs_server_core.register_agent(agent=self, user=self.user)
 
         from chainstream.sandbox_recorder import SANDBOX_RECORDER
         if SANDBOX_RECORDER is not None:

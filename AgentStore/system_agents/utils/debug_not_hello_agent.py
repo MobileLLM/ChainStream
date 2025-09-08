@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 
 
-class DebugHelloAgent(cs.agent.Agent):
+class DebugNotHelloAgent(cs.agent.Agent):
     is_agent = True
 
     def __init__(self, agent_id='debug_not_hello_agent'):

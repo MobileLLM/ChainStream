@@ -136,13 +136,20 @@ def get_stream(agent, stream_id):
         raise RuntimeError(f'unknown stream_id: {stream_id}')
 
 
-def create_stream(agent, stream_id, type=None):
+def create_stream(agent, stream_id, type=None, encrypted=False, encryption_key=None, password=None):
     """
-    `chainstream.create_stream(agent: chainstream.agent.Agent, stream_id: str) -> chainstream.stream.Stream`: This
+    `chainstream.create_stream(agent: chainstream.agent.Agent, stream_id: str, type: str = None, encrypted: bool = False, encryption_key: bytes = None, password: str = None) -> chainstream.stream.Stream`: This
     method creates a new `Stream` object based on `stream_id`, typically called in the `__init__()` method of the
     Agent instance. The first parameter, `agent`, refers to the Agent instance creating the stream, usually `self` in
     the `__init__()` method.
 
+    Args:
+        agent: Agent instance creating the stream
+        stream_id: Unique identifier for the stream
+        type: Type of stream ('video' for video streams)
+        encrypted: Whether to create an encrypted stream
+        encryption_key: Pre-generated encryption key (bytes)
+        password: Password to derive encryption key from (str)
     """
     global available_streams
     global stream_manager
@@ -166,24 +173,58 @@ def create_stream(agent, stream_id, type=None):
         stream = StreamForAgent(agent, stream)
     else:
         from .base_stream import BaseStream, StreamForAgent
-        if isinstance(stream_id, str):
-            try:
-                stream = BaseStream(stream_id, create_by_agent_file=create_by_agent_file)
-            except KeyError as e:
-                raise KeyError(f"Failed to create stream with id {stream_id}: {str(e)}")
-            except Exception as e:
-                raise e
-        else:
-            if isinstance(stream_id, dict) and "stream_id" in stream_id:
-                stream_id_ = stream_id["stream_id"]
+        if encrypted:
+            from .encrypted_stream import EncryptedStream
+            if isinstance(stream_id, str):
                 try:
-                    stream = BaseStream(stream_id_, description=stream_id, create_by_agent_file=create_by_agent_file)
+                    stream = EncryptedStream(
+                        stream_id, 
+                        create_by_agent_file=create_by_agent_file,
+                        user=agent.user,
+                        encryption_key=encryption_key,
+                        password=password
+                    )
                 except KeyError as e:
-                    raise KeyError(e)
+                    raise KeyError(f"Failed to create encrypted stream with id {stream_id}: {str(e)}")
                 except Exception as e:
                     raise e
             else:
-                raise ValueError("stream_id should be a string or a dictionary with a key 'stream_id'")
+                if isinstance(stream_id, dict) and "stream_id" in stream_id:
+                    stream_id_ = stream_id["stream_id"]
+                    try:
+                        stream = EncryptedStream(
+                            stream_id_, 
+                            description=stream_id, 
+                            create_by_agent_file=create_by_agent_file,
+                            user=agent.user,
+                            encryption_key=encryption_key,
+                            password=password
+                        )
+                    except KeyError as e:
+                        raise KeyError(e)
+                    except Exception as e:
+                        raise e
+                else:
+                    raise ValueError("stream_id should be a string or a dictionary with a key 'stream_id'")
+        else:
+            if isinstance(stream_id, str):
+                try:
+                    stream = BaseStream(stream_id, create_by_agent_file=create_by_agent_file, user=agent.user)
+                except KeyError as e:
+                    raise KeyError(f"Failed to create stream with id {stream_id}: {str(e)}")
+                except Exception as e:
+                    raise e
+            else:
+                if isinstance(stream_id, dict) and "stream_id" in stream_id:
+                    stream_id_ = stream_id["stream_id"]
+                    try:
+                        stream = BaseStream(stream_id_, description=stream_id, create_by_agent_file=create_by_agent_file, user=agent.user)
+                    except KeyError as e:
+                        raise KeyError(e)
+                    except Exception as e:
+                        raise e
+                else:
+                    raise ValueError("stream_id should be a string or a dictionary with a key 'stream_id'")
         stream = StreamForAgent(agent, stream)
 
     if stream_manager is None:

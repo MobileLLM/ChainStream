@@ -18,9 +18,50 @@ class StreamAnalyzer:
     def get_stream_info(self):
         stream_info = [x.get_meta_data() for x in self.streams.values()]
         return stream_info
+    
+    def get_stream_info_by_user(self, user):
+        """
+        Get stream info filtered by user
+        
+        Args:
+            user: User object to filter streams by
+        
+        Returns:
+            List of stream metadata dictionaries filtered by user
+        """
+        if user is None:
+            return self.get_stream_info()
+        
+        filtered_streams = [
+            x.get_meta_data() for x in self.streams.values() 
+            if x.metaData.user and x.metaData.user.get_uuid() == user.get_uuid()
+        ]
+        return filtered_streams
 
-    def get_graph_statistics(self, file_path_to_agent_id):
-        stream_info = [x.get_record_data() for x in self.streams.values()]
+    def get_graph_statistics(self, file_path_to_agent_id, user):
+        # Filter streams by user level permissions
+        if user is None:
+            filtered_streams = self.streams.values()
+        else:
+            filtered_streams = []
+            user_level = user.get_level()
+            user_uuid = user.get_uuid()
+            
+            for stream in self.streams.values():
+                if stream.metaData.user is None:
+                    # Legacy streams without user assignment - only show to high level users
+                    if user_level >= 10:  # Admin level
+                        filtered_streams.append(stream)
+                else:
+                    stream_user_level = stream.metaData.user.get_level()
+                    stream_user_uuid = stream.metaData.user.get_uuid()
+                    
+                    # High level users can see their own streams and lower level users' streams
+                    # Same level users can only see their own streams
+                    if (user_level > stream_user_level) or (user_level == stream_user_level and user_uuid == stream_user_uuid):
+                        filtered_streams.append(stream)
+        
+        stream_info = [x.get_record_data() for x in filtered_streams]
 
         agent_to_stream_edges = []
         stream_to_agent_edges = []
@@ -40,22 +81,22 @@ class StreamAnalyzer:
                     "target": str(fun_k[0]) + ":" + str(fun_k[1]),
                     "value": fun_v['statistics'][1]
                 })
-        # print("Agent to Stream Edges:")
-        # print(agent_to_stream_edges)
-        # print("Stream to Agent Edges:")
-        # print(stream_to_agent_edges)
 
-        stream_node = self.streams.keys()
+        # Create stream nodes with user information
+        stream_node = []
+        for stream in filtered_streams:
+            user_name = stream.metaData.user.get_username() if stream.metaData.user else 'System'
+            stream_node.append({
+                'name': stream.metaData.stream_id,
+                'user': user_name
+            })
+        
+        # Create agent nodes (agents don't have direct user info in this context)
         agent_node = set(key for s_info in stream_info for key in s_info['agent_to_queue'].keys()).union(
             set(key for s_info in stream_info for key in s_info['queue_to_agent'].keys()))
 
-        # print("Stream Node:")
-        # print(stream_node)
-        # print("Agent Node:")
-        # print(agent_node)
-        agent_node = [str(x[0]) + ":" + str(x[1]) for x in agent_node]
-        node = list(stream_node) + list(agent_node)
-        node = [{'name': x} for x in node]
+        agent_node = [{'name': str(x[0]) + ":" + str(x[1]), 'user': 'Agent'} for x in agent_node]
+        node = stream_node + agent_node
         edge = agent_to_stream_edges + stream_to_agent_edges
 
         return node, edge
@@ -67,14 +108,19 @@ class StreamManager(StreamAnalyzer):
         register_stream_manager(self)
         self.thread_list = {}
 
-    def register_stream(self, stream):
+    def register_stream(self, stream, user):
         if stream.metaData.stream_id in self.streams:
             raise KeyError(f"Stream with id {stream.metaData.stream_id} already exists")
+        
+        # Ensure stream has user information
+        if stream.metaData.user is None and user is not None:
+            stream.metaData.user = user
+        
         self.streams[stream.metaData.stream_id] = stream
         self.thread_list[stream.metaData.stream_id] = stream.thread
         self.recorders[stream.metaData.stream_id] = stream.recorder
 
-    def unregister_stream(self, stream):
+    def unregister_stream(self, stream, user):
         self.streams.pop(stream.stream_id)
 
     def get_stream(self, stream_id):
@@ -82,8 +128,32 @@ class StreamManager(StreamAnalyzer):
             raise KeyError(f"Stream with id {stream_id} not found")
         return self.streams.get(stream_id)
 
-    def get_stream_list(self):
+    def get_stream_list(self, user):
         return list(self.streams.keys())
+    
+    def get_streams_by_user(self, user):
+        """Get all streams owned by a specific user"""
+        return [
+            stream for stream in self.streams.values() 
+            if stream.metaData.user and stream.metaData.user.get_uuid() == user.get_uuid()
+        ]
+    
+    def get_stream_count_by_user(self, user):
+        """Get count of streams owned by a specific user"""
+        return len(self.get_streams_by_user(user))
+    
+    def can_user_access_stream(self, user, stream_id):
+        """Check if user can access a specific stream"""
+        stream = self.streams.get(stream_id)
+        if stream is None:
+            return False
+        
+        # If stream has no user assigned, allow access (legacy streams)
+        if stream.metaData.user is None:
+            return True
+        
+        # Check if user owns the stream
+        return stream.metaData.user.get_uuid() == user.get_uuid()
 
     def get_stream_flow_graph(self):
         """
@@ -97,7 +167,7 @@ class StreamManager(StreamAnalyzer):
                 edges.append((source_agent, stream, target_agent))
         return edges
 
-    def wait_all_stream_clear(self):
+    def wait_all_stream_clear(self, user):
         from chainstream.llm import check_has_model_working
         # TODO: use threading.Event to wait for all streams to be clear
         count = 5
