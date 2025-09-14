@@ -1,4 +1,4 @@
-from abstraction_layer import LLM_INSTANCES_LIST
+from .abstraction_layer import LLM_INSTANCES_LIST
 from collections import OrderedDict
 from chainstream.llm import API_LLM_TYPE
 
@@ -8,7 +8,8 @@ class LLMManager:
         self.llm_instances_class_list = LLM_INSTANCES_LIST
         self.llm_instances = OrderedDict()
         for k, v in API_LLM_TYPE.items():
-            self.llm_instances[v] = {}
+            # Use the key (k) as the dictionary key, not the value (v) which is a list
+            self.llm_instances[k] = {}
         self.llm_interface = OrderedDict()
 
     def register_llm(self, agent, llm_interface):

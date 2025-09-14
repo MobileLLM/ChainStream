@@ -29,37 +29,83 @@ class StreamAnalyzer:
         Returns:
             List of stream metadata dictionaries filtered by user
         """
+        logger.info(f"🔍 DEBUG: get_stream_info_by_user called with user: {user.get_username() if user else 'None'}")
+        logger.info(f"📊 DEBUG: Total streams in manager: {len(self.streams)}")
+        
+        # 暂时绕过用户限制，打印所有stream信息用于调试
+        logger.info("🔍 DEBUG: === ALL STREAMS (bypassing user filter) ===")
+        for stream_id, stream in self.streams.items():
+            logger.info(f"📊 DEBUG: Stream ID: {stream_id}")
+            logger.info(f"📊 DEBUG: Stream user: {stream.metaData.user.get_username() if stream.metaData.user else 'None'}")
+            logger.info(f"📊 DEBUG: Stream user UUID: {stream.metaData.user.get_uuid() if stream.metaData.user else 'None'}")
+            logger.info(f"📊 DEBUG: Stream metadata: {stream.get_meta_data()}")
+        
         if user is None:
+            logger.info("🔍 DEBUG: No user provided, returning all streams")
             return self.get_stream_info()
         
-        filtered_streams = [
-            x.get_meta_data() for x in self.streams.values() 
-            if x.metaData.user and x.metaData.user.get_uuid() == user.get_uuid()
-        ]
+        # Admin users (level >= 10) can see all streams
+        if user.get_level() >= 10:
+            filtered_streams = [x.get_meta_data() for x in self.streams.values()]
+            logger.info(f"🔍 DEBUG: Admin user, returning all {len(filtered_streams)} streams")
+        else:
+            filtered_streams = [
+                x.get_meta_data() for x in self.streams.values() 
+                if x.metaData.user and x.metaData.user.get_uuid() == user.get_uuid()
+            ]
+        
+        logger.info(f"🔍 DEBUG: Filtered streams count: {len(filtered_streams)}")
+        logger.info(f"🔍 DEBUG: Filtered streams: {filtered_streams}")
+        
         return filtered_streams
 
     def get_graph_statistics(self, file_path_to_agent_id, user):
+        logger.info(f"🔍 DEBUG: get_graph_statistics called with user: {user.get_username() if user else 'None'}")
+        logger.info(f"📊 DEBUG: Total streams in manager: {len(self.streams)}")
+        logger.info(f"📊 DEBUG: file_path_to_agent_id: {file_path_to_agent_id}")
+        
+        # 暂时绕过用户限制，打印所有stream信息用于调试
+        logger.info("🔍 DEBUG: === ALL STREAMS FOR GRAPH (bypassing user filter) ===")
+        for stream_id, stream in self.streams.items():
+            logger.info(f"📊 DEBUG: Stream ID: {stream_id}")
+            logger.info(f"📊 DEBUG: Stream user: {stream.metaData.user.get_username() if stream.metaData.user else 'None'}")
+            logger.info(f"📊 DEBUG: Stream user level: {stream.metaData.user.get_level() if stream.metaData.user else 'None'}")
+            logger.info(f"📊 DEBUG: Stream user UUID: {stream.metaData.user.get_uuid() if stream.metaData.user else 'None'}")
+        
         # Filter streams by user level permissions
         if user is None:
+            logger.info("🔍 DEBUG: No user provided, using all streams")
             filtered_streams = self.streams.values()
         else:
-            filtered_streams = []
             user_level = user.get_level()
             user_uuid = user.get_uuid()
+            logger.info(f"🔍 DEBUG: User level: {user_level}, UUID: {user_uuid}")
             
-            for stream in self.streams.values():
-                if stream.metaData.user is None:
-                    # Legacy streams without user assignment - only show to high level users
-                    if user_level >= 10:  # Admin level
-                        filtered_streams.append(stream)
-                else:
-                    stream_user_level = stream.metaData.user.get_level()
-                    stream_user_uuid = stream.metaData.user.get_uuid()
-                    
-                    # High level users can see their own streams and lower level users' streams
-                    # Same level users can only see their own streams
-                    if (user_level > stream_user_level) or (user_level == stream_user_level and user_uuid == stream_user_uuid):
-                        filtered_streams.append(stream)
+            # Admin users (level >= 10) can see all streams
+            if user_level >= 10:
+                filtered_streams = list(self.streams.values())
+                logger.info(f"🔍 DEBUG: Admin user, returning all {len(filtered_streams)} streams")
+            else:
+                filtered_streams = []
+                for stream in self.streams.values():
+                    if stream.metaData.user is None:
+                        # Legacy streams without user assignment - only show to high level users
+                        if user_level >= 10:  # Admin level
+                            filtered_streams.append(stream)
+                            logger.info(f"✅ DEBUG: Added legacy stream {stream.metaData.stream_id} (admin access)")
+                        else:
+                            logger.info(f"❌ DEBUG: Skipped legacy stream {stream.metaData.stream_id} (insufficient level)")
+                    else:
+                        stream_user_level = stream.metaData.user.get_level()
+                        stream_user_uuid = stream.metaData.user.get_uuid()
+                        
+                        # High level users can see their own streams and lower level users' streams
+                        # Same level users can only see their own streams
+                        if (user_level > stream_user_level) or (user_level == stream_user_level and user_uuid == stream_user_uuid):
+                            filtered_streams.append(stream)
+                            logger.info(f"✅ DEBUG: Added stream {stream.metaData.stream_id} (user: {stream_user_uuid})")
+                        else:
+                            logger.info(f"❌ DEBUG: Skipped stream {stream.metaData.stream_id} (user: {stream_user_uuid}, level: {stream_user_level})")
         
         stream_info = [x.get_record_data() for x in filtered_streams]
 
@@ -68,12 +114,22 @@ class StreamAnalyzer:
         for s_info in stream_info:
             new_agent_to_queue = {}
             for fun_k, fun_v in s_info['agent_to_queue'].items():
-                new_agent_to_queue[(file_path_to_agent_id[fun_k[0]], fun_k[1])] = fun_v
-                agent_to_stream_edges.append({
-                    "source": str(file_path_to_agent_id[fun_k[0]]) + ":" + str(fun_k[1]),
-                    "target": s_info['stream_id'],
-                    "value": fun_v['statistics'][1]
-                })
+                # 检查文件路径是否在agent映射中，如果不在则跳过（可能是gRPC相关路径）
+                if fun_k[0] in file_path_to_agent_id:
+                    new_agent_to_queue[(file_path_to_agent_id[fun_k[0]], fun_k[1])] = fun_v
+                    agent_to_stream_edges.append({
+                        "source": str(file_path_to_agent_id[fun_k[0]]) + ":" + str(fun_k[1]),
+                        "target": s_info['stream_id'],
+                        "value": fun_v['statistics'][1]
+                    })
+                else:
+                    # 对于不在映射中的路径（如gRPC路径），使用原始路径作为标识
+                    new_agent_to_queue[(fun_k[0], fun_k[1])] = fun_v
+                    agent_to_stream_edges.append({
+                        "source": str(fun_k[0]) + ":" + str(fun_k[1]),
+                        "target": s_info['stream_id'],
+                        "value": fun_v['statistics'][1]
+                    })
             s_info['agent_to_queue'] = new_agent_to_queue
             for fun_k, fun_v in s_info['queue_to_agent'].items():
                 stream_to_agent_edges.append({

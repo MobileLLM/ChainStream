@@ -5,7 +5,8 @@ import enum
 import sys
 
 # logging.basicConfig(filename='error.log', level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
-logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
+# 不在这里设置全局日志级别，避免覆盖其他模块的日志配置
+# logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
 
 
 # ERROR_TYPES = ["function_error", "stream_error", "agent_error", "llm_error", "runtime_error", "other_error"]

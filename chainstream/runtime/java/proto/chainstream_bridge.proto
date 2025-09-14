@@ -1,0 +1,274 @@
+syntax = "proto3";
+
+package chainstream;
+
+// ChainStream Bridge Service - 连接Java Agent和Python Runtime
+service ChainStreamBridge {
+    // Agent生命周期管理
+    rpc StartAgent(StartAgentRequest) returns (StartAgentResponse);
+    rpc StopAgent(StopAgentRequest) returns (StopAgentResponse);
+    
+    // Stream操作
+    rpc CreateStream(CreateStreamRequest) returns (CreateStreamResponse);
+    rpc GetStream(GetStreamRequest) returns (GetStreamResponse);
+    rpc AddItem(AddItemRequest) returns (AddItemResponse);
+    rpc RegisterStreamListener(RegisterStreamListenerRequest) returns (RegisterStreamListenerResponse);
+    rpc ForEach(ForEachRequest) returns (ForEachResponse);
+    rpc Batch(BatchRequest) returns (BatchResponse);
+    rpc UnregisterAll(UnregisterAllRequest) returns (UnregisterAllResponse);
+    rpc RemoveListener(RemoveListenerRequest) returns (RemoveListenerResponse);
+    
+    // LLM操作
+    rpc QueryLLM(QueryLLMRequest) returns (QueryLLMResponse);
+    rpc GetModel(GetModelRequest) returns (GetModelResponse);
+    rpc MakePrompt(MakePromptRequest) returns (MakePromptResponse);
+    rpc GetModelInfo(GetModelInfoRequest) returns (GetModelInfoResponse);
+    
+    // Buffer操作
+    rpc CreateBuffer(CreateBufferRequest) returns (CreateBufferResponse);
+    rpc BufferAppend(BufferAppendRequest) returns (BufferAppendResponse);
+    rpc BufferPop(BufferPopRequest) returns (BufferPopResponse);
+    rpc BufferPopAll(BufferPopAllRequest) returns (BufferPopAllResponse);
+    
+    // Runtime信息
+    rpc GetRuntimeInfo(GetRuntimeInfoRequest) returns (GetRuntimeInfoResponse);
+    
+    // Agent ID报告
+    rpc ReportAgentId(ReportAgentIdRequest) returns (ReportAgentIdResponse);
+}
+
+// Agent生命周期消息
+message StartAgentRequest {
+    string agent_id = 1;
+    string agent_file_path = 2;
+}
+
+message StartAgentResponse {
+    bool success = 1;
+    string error = 2;
+    string agent_id = 3;
+}
+
+message StopAgentRequest {
+    string agent_id = 1;
+}
+
+message StopAgentResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+// Stream操作消息
+message CreateStreamRequest {
+    string stream_id = 1;
+    string description = 2;
+    string agent_id = 3;
+}
+
+message CreateStreamResponse {
+    bool success = 1;
+    string error = 2;
+    string stream_id = 3;
+}
+
+message GetStreamRequest {
+    string stream_id = 1;
+    string agent_id = 2;
+}
+
+message GetStreamResponse {
+    bool success = 1;
+    string error = 2;
+    string stream_id = 3;
+    string description = 4;
+}
+
+message AddItemRequest {
+    string stream_id = 1;
+    string item = 2;
+    string agent_id = 3;
+}
+
+message AddItemResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+message RegisterStreamListenerRequest {
+    string stream_id = 1;
+    string agent_id = 2;
+}
+
+message RegisterStreamListenerResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+message ForEachRequest {
+    string stream_id = 1;
+    string agent_id = 2;
+    string listener_function_name = 3;  // Java中监听函数的名称
+}
+
+message ForEachResponse {
+    bool success = 1;
+    string error = 2;
+    string anonymous_stream_id = 3;  // 返回的匿名流ID
+}
+
+message BatchRequest {
+    string stream_id = 1;
+    string agent_id = 2;
+    int32 by_count = 3;  // 按数量切分
+    int32 by_time = 4;   // 按时间切分（秒）
+    string by_item = 5;  // 按键值切分
+    string by_func_name = 6;  // 按函数切分（函数名称）
+}
+
+message BatchResponse {
+    bool success = 1;
+    string error = 2;
+    string batch_stream_id = 3;  // 返回的批次流ID
+}
+
+message UnregisterAllRequest {
+    string stream_id = 1;
+    string agent_id = 2;
+}
+
+message UnregisterAllResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+message RemoveListenerRequest {
+    string stream_id = 1;
+    string agent_id = 2;
+    string listener_function_name = 3;
+}
+
+message RemoveListenerResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+// LLM操作消息
+message QueryLLMRequest {
+    string query = 1;
+    repeated string model_types = 2;
+    string agent_id = 3;
+}
+
+message QueryLLMResponse {
+    bool success = 1;
+    string error = 2;
+    string response = 3;
+}
+
+message GetModelRequest {
+    repeated string model_types = 1;  // 支持多种类型：text, image, audio
+    string agent_id = 2;
+}
+
+message GetModelResponse {
+    bool success = 1;
+    string error = 2;
+    string model_id = 3;  // 返回的模型ID
+    repeated string supported_types = 4;
+}
+
+message MakePromptRequest {
+    repeated string prompt_parts = 1;  // prompt的各个部分
+    string agent_id = 2;
+}
+
+message MakePromptResponse {
+    bool success = 1;
+    string error = 2;
+    string final_prompt = 3;
+}
+
+message GetModelInfoRequest {
+    repeated string model_types = 1;
+    string agent_id = 2;
+}
+
+message GetModelInfoResponse {
+    bool success = 1;
+    string error = 2;
+    repeated ModelInfo models = 3;
+}
+
+message ModelInfo {
+    string name = 1;
+    string type = 2;
+    bool available = 3;
+}
+
+// Buffer操作消息
+message CreateBufferRequest {
+    string agent_id = 1;
+}
+
+message CreateBufferResponse {
+    bool success = 1;
+    string error = 2;
+    string buffer_id = 3;
+}
+
+message BufferAppendRequest {
+    string buffer_id = 1;
+    string data = 2;  // JSON序列化的数据
+    string agent_id = 3;
+}
+
+message BufferAppendResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+message BufferPopRequest {
+    string buffer_id = 1;
+    string agent_id = 2;
+}
+
+message BufferPopResponse {
+    bool success = 1;
+    string error = 2;
+    string data = 3;  // JSON序列化的数据
+}
+
+message BufferPopAllRequest {
+    string buffer_id = 1;
+    string agent_id = 2;
+}
+
+message BufferPopAllResponse {
+    bool success = 1;
+    string error = 2;
+    repeated string data_list = 3;  // JSON序列化的数据列表
+}
+
+// Runtime信息消息
+message GetRuntimeInfoRequest {
+    string agent_id = 1;
+}
+
+message GetRuntimeInfoResponse {
+    bool success = 1;
+    string error = 2;
+    string runtime_id = 3;
+    string status = 4;
+    repeated string active_agents = 5;
+}
+
+// Agent ID报告消息
+message ReportAgentIdRequest {
+    string agent_id = 1;
+    int64 process_id = 2;  // Java进程ID
+}
+
+message ReportAgentIdResponse {
+    bool success = 1;
+    string error = 2;
+}

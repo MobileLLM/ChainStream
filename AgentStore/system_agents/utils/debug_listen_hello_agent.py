@@ -6,7 +6,7 @@ class DebugListenHelloAgent(cs.agent.Agent):
 
     def __init__(self, agent_id='debug_listen_hello_agent'):
         super().__init__(agent_id)
-        self.stream = cs.stream.get_stream(self, "debug_not_hello_stream")
+        self.stream = cs.stream.get_stream(self, "debug_hello_stream")
         self.stream2 = cs.stream.create_stream(self, "debug_another_stream")
 
     def start(self):

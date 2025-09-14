@@ -31,38 +31,61 @@ class AgentAnalyzer:
         Returns:
             List of agent metadata dictionaries filtered by user level
         """
-        logger.debug(f"get_running_agents_info_list called with user: {user}")
-        logger.debug(f"Total agents in manager: {len(self.agents)}")
+        logger.info(f"🔍 get_running_agents_info_list called with user: {user.get_username() if user else 'None'}")
+        logger.info(f"📊 Total agents in manager: {len(self.agents)}")
         
         if user is None:
             # Return all agents
-            agents_info = [x.get_meta_data() for x in self.agents.values()]
-            logger.debug(f"Returning all agents: {len(agents_info)}")
+            agents_info = []
+            for agent in self.agents.values():
+                agent_meta = agent.get_meta_data()
+                # 检查Agent是否真的在运行
+                if hasattr(agent, 'is_running'):
+                    is_running = agent.is_running()
+                    logger.info(f"📊 Agent {agent.agent_id} running status: {is_running}")
+                    if is_running:
+                        agents_info.append(agent_meta)
+                        logger.info(f"✅ Added running agent: {agent.agent_id}")
+                    else:
+                        logger.warning(f"⚠️ Agent {agent.agent_id} is not running, excluding from list")
+                else:
+                    logger.warning(f"⚠️ Agent {agent.agent_id} doesn't have is_running method, including anyway")
+                    agents_info.append(agent_meta)
+            
+            logger.info(f"📊 Returning {len(agents_info)} running agents")
         else:
             # Filter by user level permissions
             agents_info = []
             user_level = user.get_level()
             user_uuid = user.get_uuid()
-            logger.debug(f"Filtering by user level: {user_level}, UUID: {user_uuid}")
+            logger.info(f"🔍 Filtering by user level: {user_level}, UUID: {user_uuid}")
             
             for agent in self.agents.values():
+                logger.info(f"🔍 Checking agent: {agent.agent_id}")
+                
                 if agent.user is None:
                     # Legacy agents without user assignment - only show to high level users
                     if user_level >= 10:  # Admin level
-                        agents_info.append(agent.get_meta_data())
-                        logger.debug(f"Added legacy agent to filtered list: {agent.get_meta_data()}")
+                        if hasattr(agent, 'is_running') and agent.is_running():
+                            agents_info.append(agent.get_meta_data())
+                            logger.info(f"✅ Added legacy running agent: {agent.agent_id}")
+                        else:
+                            logger.warning(f"⚠️ Legacy agent {agent.agent_id} is not running")
                 else:
                     agent_user_level = agent.user.get_level()
                     agent_user_uuid = agent.user.get_uuid()
-                    logger.debug(f"Agent user level: {agent_user_level}, UUID: {agent_user_uuid}")
+                    logger.info(f"👤 Agent user level: {agent_user_level}, UUID: {agent_user_uuid}")
                     
                     # High level users can see their own agents and lower level users' agents
                     # Same level users can only see their own agents
                     if (user_level > agent_user_level) or (user_level == agent_user_level and user_uuid == agent_user_uuid):
-                        agents_info.append(agent.get_meta_data())
-                        logger.debug(f"Added agent to filtered list: {agent.get_meta_data()}")
+                        if hasattr(agent, 'is_running') and agent.is_running():
+                            agents_info.append(agent.get_meta_data())
+                            logger.info(f"✅ Added running agent: {agent.agent_id}")
+                        else:
+                            logger.warning(f"⚠️ Agent {agent.agent_id} is not running")
         
-        logger.debug(f"Returning {len(agents_info)} agents")
+        logger.info(f"📊 Final result: {len(agents_info)} running agents")
         return agents_info
 
     def get_running_agents_name_list(self):
@@ -141,7 +164,7 @@ class AgentManager(AgentAnalyzer):
         agent_list = []
         for root, dirs, files in os.walk(self.predefined_agents_path):
             for file in files:
-                if file.endswith('.py'):
+                if file.endswith('.py') or file.endswith('.java'):
                     agent_list.append(os.path.join(root, file))
         return agent_list
 
@@ -149,7 +172,7 @@ class AgentManager(AgentAnalyzer):
         agent_list = []
         for root, dirs, files in os.walk(self.predefined_agents_path):
             for file in files:
-                if file.endswith('.py'):
+                if file.endswith('.py') or file.endswith('.java'):
                     # agent_list.append(os.path.join(root, file))
                     agent_list.append(os.path.relpath(os.path.join(root, file), start=self.predefined_agents_path))
         agent_list = self._path_to_json(agent_list)
@@ -258,8 +281,21 @@ class AgentManager(AgentAnalyzer):
         
         if not path.startswith('/'):
             path = str(self.predefined_agents_path / path)
-        if not os.path.exists(path) or not path.endswith('.py'):
+        
+        # 检查文件是否存在
+        if not os.path.exists(path):
             raise Exception(f'agent not found: {path}')
+        
+        # 根据文件扩展名选择处理方式
+        if path.endswith('.py'):
+            return self._start_python_agent(path, user)
+        elif path.endswith('.java'):
+            return self._start_java_agent(path, user)
+        else:
+            raise Exception(f'unsupported agent file type: {path}')
+    
+    def _start_python_agent(self, path, user):
+        """启动Python Agent（原有逻辑）"""
         module_name = os.path.splitext(os.path.basename(path))[0]
         spec = importlib.util.spec_from_file_location(module_name, path)
         module = importlib.util.module_from_spec(spec)
@@ -303,6 +339,57 @@ class AgentManager(AgentAnalyzer):
 
         logger.info(f'Started {success_count} out of {len(agent_list)} agents')
         return success_count > 0
+    
+    def _start_java_agent(self, path, user):
+        """启动Java Agent"""
+        try:
+            logger.info(f"🚀 Starting Java agent from file: {path}")
+            logger.info(f"👤 User: {user.get_username() if user else 'None'}")
+            
+            # 导入Java Agent执行器
+            from chainstream.runtime.java.java_agent_executor import JavaAgentExecutor
+            
+            # 创建Java Agent执行器
+            java_executor = JavaAgentExecutor()
+            
+            # 启动Java Agent
+            logger.info("📦 Creating Java agent wrapper...")
+            # 获取RuntimeCore实例
+            from chainstream.runtime.runtime_core import RuntimeCore
+            runtime_core = None
+            # 尝试从当前对象获取runtime_core
+            if hasattr(self, '_runtime_core'):
+                runtime_core = self._runtime_core
+            else:
+                # 如果没有，尝试从全局获取
+                try:
+                    from chainstream.runtime import cs_server_core
+                    runtime_core = cs_server_core
+                except:
+                    pass
+            
+            java_agent_wrapper = java_executor.start_java_agent(path, user, runtime_core)
+            
+            # 注册到AgentManager
+            logger.info("📝 Registering Java agent to AgentManager...")
+            self.register_agent(java_agent_wrapper, user)
+            
+            # 检查Agent是否真的在运行
+            logger.info("🔍 Checking if Java agent is actually running...")
+            if hasattr(java_agent_wrapper, 'is_running'):
+                is_running = java_agent_wrapper.is_running()
+                logger.info(f"📊 Java agent running status: {is_running}")
+            else:
+                logger.warning("⚠️ Java agent wrapper doesn't have is_running method")
+            
+            logger.info(f"✅ Java agent started successfully: {java_agent_wrapper.agent_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to start Java agent: {e}")
+            import traceback
+            logger.error(f"❌ Full traceback: {traceback.format_exc()}")
+            return False
 
 
 if __name__ == '__main__':

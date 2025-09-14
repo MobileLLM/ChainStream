@@ -55,10 +55,9 @@ def get_all_running_agents(current_user):
 @agents_blueprint.route('/api/monitor/agents/start/<agent_id>', methods=['POST'])
 @require_auth
 def start_agent(agent_id, current_user):
-    # Set user context before starting agent
-    with user_context_manager:
-        user_context_manager.set_current_user(current_user)
-        res = chainstream_core.start_agent_by_id(agent_id, current_user)
+    # Set user context before starting agent - don't use with statement to avoid clearing context
+    user_context_manager.set_current_user(current_user)
+    res = chainstream_core.start_agent_by_id(agent_id, current_user)
 
     return jsonify({'res': "ok"} if res else {'res': "error"})
 

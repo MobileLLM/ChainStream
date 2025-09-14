@@ -3,6 +3,7 @@ from .stream_manager import StreamManager
 from .agent_manager import AgentManager
 from .error_manager import ErrorManager
 from .device_manager import DeviceManager
+from .llm_manager import LLMManager
 from ..user import UserManager, User
 from chainstream.llm import reset_model_instances
 
@@ -19,7 +20,11 @@ class RuntimeCoreOp:
         self.stream_manager = StreamManager()
         self.error_manager = ErrorManager()
         self.device_manager = DeviceManager()
+        self.llm_manager = LLMManager()
         self.user_manager = UserManager()
+        
+        # 设置runtime_core引用
+        self.agent_manager._runtime_core = self
 
     def config(self, *args, **kwargs):
         self.verbose = kwargs.get('verbose', False)
@@ -51,8 +56,8 @@ class RuntimeCoreOp:
     def remove_agent_by_id(self, agent_id, user) -> None:
         self.agent_manager.remove_agent_by_id(agent_id, user)
 
-    def start_agent_by_path(self, agent_path, user) -> None:
-        self.agent_manager.start_agent_by_path(agent_path, user)
+    def start_agent_by_path(self, agent_path, user) -> bool:
+        return self.agent_manager.start_agent_by_path(agent_path, user)
 
     def scan_predefined_agents_tree(self) -> list:
         return self.agent_manager.scan_predefined_agents_tree()
