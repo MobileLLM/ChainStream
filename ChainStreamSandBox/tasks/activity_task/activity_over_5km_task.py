@@ -8,6 +8,7 @@ from ..task_tag import *
 class ActivityTask1(SingleAgentTaskConfigBase):
     def __init__(self):
         super().__init__()
+        self.activity_data = None
         self.output_record = None
         self.clock_stream = None
         self.output_activity_stream = None
@@ -32,7 +33,6 @@ class ActivityTask1(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.activity_data = ActivityData().get_random_activity_data()
         self.agent_example = '''
 import chainstream as cs
 
@@ -56,6 +56,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.activity_data = ActivityData().get_random_activity_data()
         self.input_activity_stream = cs.stream.create_stream(self, 'all_activities')
         self.output_activity_stream = cs.stream.create_stream(self, 'distance_over_5k')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -66,6 +67,7 @@ class ActivityDistanceAgent(cs.agent.Agent):
         self.output_activity_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.activity_data = ActivityData().get_random_activity_data()
         self.input_activity_stream = cs.stream.create_stream(self, 'all_activities')
 
     def init_output_stream(self, runtime):

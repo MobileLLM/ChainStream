@@ -28,9 +28,30 @@ public class Stream {
         // 使用监听器的类名作为函数名
         String listenerFunctionName = listener.getClass().getSimpleName();
         
-        ChainstreamBridge.ForEachResponse response = grpcClient.forEach(streamId, agentId, listenerFunctionName);
+        // 生成唯一的listener ID
+        String listenerId = agentId + "_" + streamId + "_" + listenerFunctionName + "_" + System.currentTimeMillis();
+        
+        // 获取callback地址
+        Runtime runtime = Runtime.getInstance();
+        String callbackAddress = runtime.getCallbackAddress();
+        
+        if (callbackAddress == null || callbackAddress.isEmpty()) {
+            logger.severe("No callback address available! Cannot register listener.");
+            return this;
+        }
+        
+        // 注册listener到callback server
+        com.chainstream.callback.JavaAgentCallbackServer callbackServer = runtime.getCallbackServer();
+        if (callbackServer != null) {
+            callbackServer.registerListener(listenerId, listener);
+            logger.info("Registered listener to callback server: " + listenerId);
+        } else {
+            logger.warning("Callback server not available - listener may not work");
+        }
+        
+        ChainstreamBridge.ForEachResponse response = grpcClient.forEach(streamId, agentId, listenerFunctionName, listenerId, callbackAddress);
         if (response.getSuccess()) {
-            logger.info("Stream listener registered for: " + streamId);
+            logger.info("Stream listener registered for: " + streamId + " with callback: " + callbackAddress);
             // 返回匿名流
             return new Stream(response.getAnonymousStreamId(), agentId, grpcClient);
         } else {
@@ -113,7 +134,19 @@ public class Stream {
      */
     public void addItem(Object item) {
         String itemStr = item != null ? item.toString() : "null";
-        ChainstreamBridge.AddItemResponse response = grpcClient.addItem(streamId, itemStr, agentId);
+        
+        // 获取当前正在执行的listener ID（如果有）
+        String callerListenerId = null;
+        try {
+            callerListenerId = com.chainstream.callback.JavaAgentCallbackServer.getCurrentListenerId();
+            if (callerListenerId != null) {
+                logger.fine("📍 AddItem called from listener: " + callerListenerId);
+            }
+        } catch (Exception e) {
+            logger.warning("Failed to get current listener ID: " + e.getMessage());
+        }
+        
+        ChainstreamBridge.AddItemResponse response = grpcClient.addItem(streamId, itemStr, agentId, callerListenerId);
         if (response.getSuccess()) {
             logger.info("Item added to stream " + streamId + ": " + itemStr);
         } else {
@@ -130,9 +163,11 @@ public class Stream {
     
     /**
      * Stream监听器接口
+     * 返回值将被传递到下一个stream（如果存在）
+     * 返回null表示不传递任何值
      */
     @FunctionalInterface
     public interface StreamListener {
-        void onItem(Object item);
+        Object onItem(Object item);
     }
 }

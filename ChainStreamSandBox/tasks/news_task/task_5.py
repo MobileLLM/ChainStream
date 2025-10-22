@@ -35,7 +35,8 @@ class NewsTask5(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.news_data = NewsData().get_random_articles(number)
+        self.news_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -70,6 +71,7 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.news_data = NewsData().get_random_articles(self.number)
         self.input_news_stream = cs.stream.create_stream(self, 'all_news')
         self.output_local_stream = cs.stream.create_stream(self, 'summary_output')
 
@@ -81,6 +83,7 @@ class AgentExampleForMultiTask3(cs.agent.Agent):
         self.output_local_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.news_data = NewsData().get_random_articles(self.number)
         self.input_news_stream = cs.stream.create_stream(self, 'all_news')
 
     def init_output_stream(self, runtime):

@@ -31,7 +31,7 @@ class VideoTask4(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.ego_4d_data = Ego4DData().load_for_traffic()
+        self.ego_4d_data = None
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
@@ -54,6 +54,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.ego_4d_data = Ego4DData().load_for_traffic()
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_video_frame')
         self.output_ui_stream = cs.stream.create_stream(self, 'car_safety_reminder')
 
@@ -65,6 +66,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_ui_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.ego_4d_data = Ego4DData().load_for_traffic()
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_video_frame')
 
     def init_output_stream(self, runtime):

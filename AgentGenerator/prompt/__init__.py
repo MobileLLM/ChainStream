@@ -6,8 +6,8 @@ from AgentGenerator.prompt.feedback_processor import FilterErrorFeedbackProcesso
 from typing import Literal
 
 framework_type = Literal['chainstream', 'batch_langchain', "batch_native_python", "stream_langchain", "stream_native_python", "native_gpt"]
-mission_type = Literal['batch', 'native_gpt', 'stream']
-command_type = Literal['native_gpt', 'cot', 'few_shot', 'feedback_guided_only_start', 'feedback_guided_with_running', 'feedback_guided_with_real_task']
+mission_type = Literal['batch', 'native_gpt', 'stream', 'chat']
+command_type = Literal['native_gpt', 'cot', 'few_shot', 'chat', 'feedback_guided_only_start', 'feedback_guided_with_running', 'feedback_guided_with_real_task']
 
 
 def get_base_prompt(output_stream,
@@ -16,9 +16,12 @@ def get_base_prompt(output_stream,
                     example_number=None,
                     mission_name: mission_type = None,
                     command_name: command_type = None,
-                    need_feedback_example=None, task_now=None, example_select_policy='random'):
-    tmp_framework_prompt = get_framework_doc(framework_name, example_number, task_now=task_now, example_select_policy=example_select_policy)
-    tmp_mission_prompt = get_mission_prompt(output_stream, input_stream, mission_name, framework_name)
+                    need_feedback_example=None, task_now=None, example_select_policy='random',
+                    chat_message=None,
+                    target_language=None
+                    ):
+    tmp_framework_prompt = get_framework_doc(framework_name, example_number, task_now=task_now, example_select_policy=example_select_policy, target_language=target_language)
+    tmp_mission_prompt = get_mission_prompt(output_stream, input_stream, mission_name, framework_name, chat_message=chat_message)
     tmp_command_prompt = get_command_prompt(command_name, need_feedback_example)
 
     return tmp_framework_prompt + tmp_mission_prompt + tmp_command_prompt

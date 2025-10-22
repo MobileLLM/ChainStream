@@ -52,6 +52,11 @@ class AgentFunction:
                 result = self.func(*args, **kwargs)
 
             if self.output_stream is not None and result is not None:
+                # Log if result is a list (for debugging Java listener list expansion)
+                if isinstance(result, list):
+                    import logging
+                    logger = logging.getLogger(self.agent.agent_id)
+                    logger.info(f"🔍 [LIST-EXPANSION] AgentFunction {self.func_id} returning list with {len(result)} items to stream {self.output_stream.stream_id}: {result}")
                 self.output_stream.add_item(result)
 
         except Exception as e:

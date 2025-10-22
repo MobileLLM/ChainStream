@@ -66,7 +66,7 @@ class ChainStreamSandBox(SandboxBase):
         return report
 
     def get_error_msg(self) -> dict:
-        return self.runtime.get_error_history()
+        return self.runtime.get_error_history(None)
 
     def stop_runtime(self):
         self.runtime.shutdown()

@@ -26,7 +26,7 @@ class ChainStreamFewShotGenerator(DirectAgentGenerator):
 
 
 if __name__ == "__main__":
-    agent_generator = ChainStreamFewShotGenerator(example_number=1)
+    agent_generator = ChainStreamFewShotGenerator()
     agent_code, latency, tokens = agent_generator.generate_agent(
         StreamListDescription(streams=[{
             "stream_id": "summary_by_sender",

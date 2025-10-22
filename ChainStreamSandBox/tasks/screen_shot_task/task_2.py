@@ -33,7 +33,7 @@ class ScreenshotTask2(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.screenshot_data = AndroidUIData().get_random_data()
+        self.screenshot_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -53,6 +53,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.screenshot_data = AndroidUIData().get_random_data()
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
         self.output_screenshot_stream = cs.stream.create_stream(self, 'screenshot_details')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -63,6 +64,7 @@ class testAgent(cs.agent.Agent):
         self.output_screenshot_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.screenshot_data = AndroidUIData().get_random_data()
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
 
     def init_output_stream(self, runtime):

@@ -434,11 +434,12 @@ export default {
             },
             nodeGap: this.nodeSpacing,
             nodeWidth: this.nodeWidth,
-            nodeAlign: 'justify',
+            nodeAlign: 'left',  // 改为left对齐，可以减少重叠
             // 拖拽功能控制
             draggable: this.enableDrag,
             focusNodeAdjacency: true,
             // 增加节点间距防止重叠
+            layoutIterations: 32,  // 增加布局迭代次数，改善布局质量
             left: '5%',
             right: '5%',
             top: '5%',

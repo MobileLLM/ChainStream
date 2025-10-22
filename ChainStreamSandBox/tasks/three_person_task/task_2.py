@@ -28,7 +28,7 @@ class VideoTask11(SingleAgentTaskConfigBase):
                     "analysis_result": "analyze whether there are any violent incidents, bool = True or False"}
             }
         ])
-        self.Sphar_data = SpharData().load_for_violence()
+        self.Sphar_data = None
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
@@ -55,6 +55,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.Sphar_data = SpharData().load_for_violence()
         self.input_three_person_stream = cs.stream.create_stream(self, 'third_person_perspective_video_frame')
         self.output_three_person_stream = cs.stream.create_stream(self, 'analysis_violence')
 
@@ -66,6 +67,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_three_person_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.Sphar_data = SpharData().load_for_violence()
         self.input_three_person_stream = cs.stream.create_stream(self, 'third_person_perspective_video_frame')
 
     def init_output_stream(self, runtime):

@@ -43,8 +43,9 @@ class MultiTask2(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.dialog_data = DialogData().get_dialog_batch(number)
-        self.github_data = GitHubData().get_github_data(number)
+        self.dialog_data = None
+        self.github_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -79,6 +80,8 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.dialog_data = DialogData().get_dialog_batch(self.number)
+        self.github_data = GitHubData().get_github_data(self.number)
         self.input_dialogues_stream = cs.stream.create_stream(self, 'all_dialogues')
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
         self.output_github_stream = cs.stream.create_stream(self, 'github_search')
@@ -91,6 +94,8 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.output_github_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.dialog_data = DialogData().get_dialog_batch(self.number)
+        self.github_data = GitHubData().get_github_data(self.number)
         self.input_dialogues_stream = cs.stream.create_stream(self, 'all_dialogues')
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
 

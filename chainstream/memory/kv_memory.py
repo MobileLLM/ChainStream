@@ -1,5 +1,6 @@
 import json
-from base_memory import BaseMemory, DATABASE_PATH_BASE
+import os
+from .base_memory import BaseMemory, DATABASE_PATH_BASE
 
 
 class KVMemory(BaseMemory):

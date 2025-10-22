@@ -94,5 +94,29 @@
     "password_hash": "cbf06754df2f70dd1f853bdccaec98cc6d8ba861a2a91d357540b9d561b6ceb7",
     "encryption_key": "GM1oCbt1coj2GVGOY3PUNIb1EBfWwoMc-hc_smyoAdg=",
     "create_at": "2025-09-14T09:43:40.584410"
+  },
+  {
+    "uuid": "dddc590c-51ec-46db-acc8-b43a958017d3",
+    "username": "liou",
+    "level": 1,
+    "password_hash": "a72bacd5147d0423b0c55846bd672d409b4c4d3bcbf50fdde1d200525b36303f",
+    "encryption_key": "UX85YC7A3bAXihWM8YvbPbKDIEeHEjmZOG-tai6Sw0E=",
+    "create_at": "2025-10-05T20:36:11.248968"
+  },
+  {
+    "uuid": "6fc320aa-35b4-4d6e-8ca6-94de779b1a99",
+    "username": "haha",
+    "level": 1,
+    "password_hash": "a72bacd5147d0423b0c55846bd672d409b4c4d3bcbf50fdde1d200525b36303f",
+    "encryption_key": "x6fIzUSgm0EBjBJjzWoxcQwe33f9EMtbu6uEB3vpn2U=",
+    "create_at": "2025-10-12T19:21:38.303052"
+  },
+  {
+    "uuid": "971ecb2a-fbf6-490a-8fc1-ee2037b258c4",
+    "username": "lala",
+    "level": 1,
+    "password_hash": "a72bacd5147d0423b0c55846bd672d409b4c4d3bcbf50fdde1d200525b36303f",
+    "encryption_key": "y_Q0uy1Gc13yXZ98W3zwzhZOpPA75RO6gSdrglXZ_n8=",
+    "create_at": "2025-10-13T19:23:27.810273"
   }
 ]

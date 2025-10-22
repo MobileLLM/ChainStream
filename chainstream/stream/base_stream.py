@@ -66,6 +66,9 @@ class StreamForAgent:
         if isinstance(item, dict) or isinstance(item, str):
             self.stream.add_item(self.agent, item)
         elif isinstance(item, list):
+            import logging
+            logger = logging.getLogger(self.stream.stream_id)
+            logger.info(f"🔍 StreamForAgent.add_item: Expanding list with {len(item)} items to stream {self.stream.stream_id}")
             for i in item:
                 self.stream.add_item(self.agent, i)
         else:
@@ -416,16 +419,35 @@ class BaseStream(StreamInterface):
 
         # print(call_from.filename, call_from.function)
 
-        if isinstance(caller_instance, AgentFunction):
+        # 首先检查是否在Java listener上下文中
+        java_listener_context = None
+        
+        # 检查gRPC AddItem设置的thread-local上下文
+        # 这个上下文只在Java内部调用addItem时存在
+        try:
+            import threading
+            if hasattr(threading, '_java_listener_additem_context'):
+                tls = threading._java_listener_additem_context
+                if hasattr(tls, 'value'):
+                    java_listener_context = tls.value
+                    self.logger.info(f"🔍 [CONTEXT-CHECK] Found AddItem thread-local for stream {self.metaData.stream_id}: func_id={java_listener_context['func_id']}")
+        except Exception as e:
+            self.logger.debug(f"Error checking AddItem thread-local context: {e}")
+        
+        if java_listener_context:
+            """
+            In case of data from Java listener executing (Java internal addItem call)
+            """
+            func_id = java_listener_context['func_id']
+            agent = java_listener_context['agent']
+            self.logger.info(f"✅ [ATTRIBUTION] Java listener addItem: stream={self.metaData.stream_id}, func_id={func_id}")
+            self.recorder.record_new_item(agent.metaData.agent_file_path, func_id)
+        elif isinstance(caller_instance, AgentFunction):
             """
             In case of data from return of agent function
             """
-            # print(caller_instance.agent.agent_store_base_path)
-            # agent_full_path = caller_instance.agent.metaData.agent_file_path
-            # agent_base_path = caller_instance.agent.agent_store_base_path
-            # agent_path = os.path.relpath(agent_full_path, agent_base_path)
-            # print(agent_path)
             func_id = caller_instance.func_id
+            self.logger.info(f"✅ [ATTRIBUTION] AgentFunction return: stream={self.metaData.stream_id}, func_id={func_id}, caller_type={type(caller_instance).__name__}")
             self.recorder.record_new_item(caller_instance.agent.metaData.agent_file_path, caller_instance.func_id)
         elif isinstance(current_frame.f_back.f_back.f_back.f_locals.get('self', None), threading.Thread):
             """
@@ -446,8 +468,17 @@ class BaseStream(StreamInterface):
             else:
                 if hasattr(tmp_caller_instance, "func_id"):
                     func_id = tmp_caller_instance.func_id
+                    self.logger.warning(f"⚠️ [ATTRIBUTION] Fallback to tmp_caller_instance.func_id: stream={self.metaData.stream_id}, func_id={func_id}, caller_type={tmp_caller_instance.__class__.__name__}")
                 else:
                     func_id = tmp_caller_instance.__class__.__name__ + "." + "unknown_func"
+                    # Log detailed frame information to help diagnose unknown_func cases
+                    # self.logger.warning(f"⚠️⚠️ [ATTRIBUTION] UNKNOWN_FUNC detected: stream={self.metaData.stream_id}, func_id={func_id}")
+                    # self.logger.warning(f"  - tmp_caller_instance: {tmp_caller_instance}")
+                    # self.logger.warning(f"  - tmp_caller_instance type: {type(tmp_caller_instance)}")
+                    # self.logger.warning(f"  - call_from.filename: {call_from.filename}")
+                    # self.logger.warning(f"  - call_from.function: {call_from.function}")
+                    # self.logger.warning(f"  - caller_instance (f_back.f_back): {caller_instance}")
+                    # self.logger.warning(f"  - caller_instance type: {type(caller_instance)}")
 
             self.recorder.record_new_item(call_from.filename, func_id)
 

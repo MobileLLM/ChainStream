@@ -36,7 +36,8 @@ class NewsTask3(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.news_data = NewsData().get_random_articles(news_number)
+        self.news_data = None
+        self.news_number = news_number
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForNewsTask3(cs.agent.Agent):
@@ -70,6 +71,7 @@ class AgentExampleForNewsTask3(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.news_data = NewsData().get_random_articles(self.news_number)
         self.input_news_stream = cs.stream.create_stream(self, 'all_USA_news')
         self.output_news_stream = cs.stream.create_stream(self, 'USA_news_in_July')
 
@@ -81,6 +83,7 @@ class AgentExampleForNewsTask3(cs.agent.Agent):
         self.output_news_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.news_data = NewsData().get_random_articles(self.news_number)
         self.input_news_stream = cs.stream.create_stream(self, 'all_USA_news')
 
     def init_output_stream(self, runtime):

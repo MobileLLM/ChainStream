@@ -28,11 +28,25 @@ class EdgeRecoder:
         self.tot += 1
         time_now = datetime.datetime.now()
         self.log.append(time_now)
-        if self.statistics != [] and self.statistics[-1][0] > time_now - datetime.timedelta(
+        
+        # 如果已经过了足够长的时间间隔（或首次记录），保存统计并重置gap_log
+        if self.statistics == [] or self.statistics[-1][0] < time_now - datetime.timedelta(
                 minutes=self.analysis_pre_min):
-            self.statistics.append(
-                (time_now, len(self.gap_log) / self.analysis_pre_min))
+            # 计算当前窗口的流量统计（items per minute）
+            items_in_window = len(self.gap_log)
+            if items_in_window > 0:
+                # 计算时间窗口的实际长度（秒）
+                if len(self.gap_log) > 1:
+                    window_duration_seconds = (self.gap_log[-1] - self.gap_log[0]).total_seconds()
+                else:
+                    window_duration_seconds = 60  # 如果只有1个item，假设1分钟
+                
+                # 转换为每分钟的流量
+                items_per_minute = (items_in_window / max(window_duration_seconds, 1)) * 60
+                self.statistics.append((time_now, items_per_minute))
+            
             self.gap_log = []
+        
         self.gap_log.append(time_now)
 
     def get_log(self):
@@ -41,12 +55,29 @@ class EdgeRecoder:
         return self.log
 
     def get_statistics(self):
-        if self.type != 'agent_to_queue':
-            if not self.statistics:
-                return datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min
-            return self.statistics
-        return self.statistics if self.statistics != [] else (
-            datetime.datetime.now(), len(self.gap_log) / self.analysis_pre_min)
+        """
+        Get latest traffic statistics (datetime, items_per_minute)
+        """
+        if self.statistics:
+            # 返回最后一次保存的统计
+            return self.statistics[-1]
+        else:
+            # 如果还没有保存过统计，基于当前gap_log计算
+            time_now = datetime.datetime.now()
+            items_in_window = len(self.gap_log)
+            if items_in_window == 0:
+                return (time_now, 0.0)
+            elif items_in_window == 1:
+                # 只有1个item，无法计算速率，返回一个估计值
+                return (time_now, 1.0)  # 假设每分钟1个item
+            else:
+                # 计算当前窗口的流量
+                window_duration_seconds = (self.gap_log[-1] - self.gap_log[0]).total_seconds()
+                if window_duration_seconds > 0:
+                    items_per_minute = (items_in_window / window_duration_seconds) * 60
+                else:
+                    items_per_minute = items_in_window  # 所有item在同一秒，假设是瞬时流量
+                return (time_now, items_per_minute)
 
     def get_total_count(self):
         return self.tot

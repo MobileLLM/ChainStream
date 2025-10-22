@@ -32,7 +32,7 @@ class EmailTask6(SingleAgentTaskConfigBase):
                                "'other'], string"}
             }
         ])
-        self.email_data = EmailData().get_emails(10)
+        self.email_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -56,6 +56,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.email_data = EmailData().get_emails(10)
         self.input_email_stream = cs.stream.create_stream(self, 'all_emails')
         self.output_email_stream = cs.stream.create_stream(self, 'emails_emotion')
 
@@ -67,6 +68,7 @@ class testAgent(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.email_data = EmailData().get_emails(10)
         self.input_email_stream = cs.stream.create_stream(self, 'all_emails')
 
     def init_output_stream(self, runtime):

@@ -60,8 +60,9 @@ class ReadingLightTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.gps_data = LandmarkData().get_landmarks(number)
-        self.video_data = Ego4DData().load_for_object_detection()
+        self.gps_data = None
+        self.video_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -113,6 +114,8 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.gps_data = LandmarkData().get_landmarks(self.number)
+        self.video_data = Ego4DData().load_for_object_detection()
         self.input_first_person_stream = cs.stream.create_stream(self, 'all_first_person')
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_light_stream = cs.stream.create_stream(self, 'light_intensity')
@@ -130,6 +133,8 @@ class AgentExampleForMultiTask12(cs.agent.Agent):
         self.is_reading_stream.for_each(record_output2)
 
     def init_input_stream(self, runtime):
+        self.gps_data = LandmarkData().get_landmarks(self.number)
+        self.video_data = Ego4DData().load_for_object_detection()
         self.input_first_person_stream = cs.stream.create_stream(self, 'all_first_person')
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_light_stream = cs.stream.create_stream(self, 'light_intensity')

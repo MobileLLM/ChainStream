@@ -2,7 +2,7 @@ from chainstream.interfaces import MemoryInterface
 import os
 from chainstream.runtime import cs_server_core
 
-DATABASE_PATH_BASE = os.path.join(cs_server_core.output_dir, 'database')
+DATABASE_PATH_BASE = os.path.join(cs_server_core.output_dir if cs_server_core.output_dir is not None else os.getcwd(), 'database')
 DEFAULT_SQL_PATH = os.path.join(DATABASE_PATH_BASE, cs_server_core.default_sql_name)
 
 # DATABASE_PATH_BASE = '.'

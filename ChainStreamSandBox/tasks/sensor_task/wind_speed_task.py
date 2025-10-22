@@ -33,7 +33,7 @@ class WeatherTask10(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.weather_data = WeatherData().get_weather(10)
+        self.weather_data = None
         self.agent_example = '''
 import chainstream as cs
 class testAgent(cs.agent.Agent):
@@ -55,6 +55,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.weather_data = WeatherData().get_weather(10)
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_weather_stream = cs.stream.create_stream(self, 'weather_wind_speed')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -65,6 +66,7 @@ class testAgent(cs.agent.Agent):
         self.output_weather_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.weather_data = WeatherData().get_weather(10)
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
 
     def init_output_stream(self, runtime):

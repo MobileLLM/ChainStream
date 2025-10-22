@@ -66,9 +66,10 @@ class TripMusicTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.gps_data = GPSData().get_gps(number)
-        self.screenshot_data = DesktopData().get_random_sample()
-        self.scene_data = SpharData().load_for_person_detection()
+        self.gps_data = None
+        self.screenshot_data = None
+        self.scene_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -113,6 +114,9 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.gps_data = GPSData().get_gps(self.number)
+        self.screenshot_data = DesktopData().get_random_sample()
+        self.scene_data = SpharData().load_for_person_detection()
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
         self.scene_stream = cs.stream.create_stream(self, 'all_scene')
@@ -131,6 +135,9 @@ class AgentExampleForMultiTask10(cs.agent.Agent):
         self.is_listening_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.gps_data = GPSData().get_gps(self.number)
+        self.screenshot_data = DesktopData().get_random_sample()
+        self.scene_data = SpharData().load_for_person_detection()
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
         self.scene_stream = cs.stream.create_stream(self, 'all_scene')

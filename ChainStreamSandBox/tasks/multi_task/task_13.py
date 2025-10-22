@@ -48,8 +48,8 @@ class TrafficTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.third_person_data = SpharData().load_for_traffic()
-        self.first_person_data = Ego4DData().load_for_traffic()
+        self.third_person_data = None
+        self.first_person_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -89,6 +89,8 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.third_person_data = SpharData().load_for_traffic()
+        self.first_person_data = Ego4DData().load_for_traffic()
         self.third_person_stream = cs.stream.create_stream(self, 'all_third_person')
         self.first_person_stream = cs.stream.create_stream(self, 'all_first_person')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
@@ -105,6 +107,8 @@ class AgentExampleForMultiTask13(cs.agent.Agent):
         self.driving_state.for_each(record_output2)
 
     def init_input_stream(self, runtime):
+        self.third_person_data = SpharData().load_for_traffic()
+        self.first_person_data = Ego4DData().load_for_traffic()
         self.third_person_stream = cs.stream.create_stream(self, 'all_third_person')
         self.first_person_stream = cs.stream.create_stream(self, 'all_first_person')
 

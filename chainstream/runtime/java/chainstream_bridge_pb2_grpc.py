@@ -27,6 +27,7 @@ if _version_not_supported:
 
 class ChainStreamBridgeStub(object):
     """ChainStream Bridge Service - 连接Java Agent和Python Runtime
+    Python端作为Server，Java端作为Client
     """
 
     def __init__(self, channel):
@@ -139,6 +140,7 @@ class ChainStreamBridgeStub(object):
 
 class ChainStreamBridgeServicer(object):
     """ChainStream Bridge Service - 连接Java Agent和Python Runtime
+    Python端作为Server，Java端作为Client
     """
 
     def StartAgent(self, request, context):
@@ -380,6 +382,7 @@ def add_ChainStreamBridgeServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class ChainStreamBridge(object):
     """ChainStream Bridge Service - 连接Java Agent和Python Runtime
+    Python端作为Server，Java端作为Client
     """
 
     @staticmethod
@@ -912,6 +915,85 @@ class ChainStreamBridge(object):
             '/chainstream.ChainStreamBridge/ReportAgentId',
             chainstream__bridge__pb2.ReportAgentIdRequest.SerializeToString,
             chainstream__bridge__pb2.ReportAgentIdResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class JavaAgentCallbackStub(object):
+    """Java Agent Callback Service - Java端作为Server，Python端作为Client
+    用于Python调用Java的listener函数
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.InvokeListener = channel.unary_unary(
+                '/chainstream.JavaAgentCallback/InvokeListener',
+                request_serializer=chainstream__bridge__pb2.InvokeListenerRequest.SerializeToString,
+                response_deserializer=chainstream__bridge__pb2.InvokeListenerResponse.FromString,
+                _registered_method=True)
+
+
+class JavaAgentCallbackServicer(object):
+    """Java Agent Callback Service - Java端作为Server，Python端作为Client
+    用于Python调用Java的listener函数
+    """
+
+    def InvokeListener(self, request, context):
+        """调用Java端注册的listener
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_JavaAgentCallbackServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'InvokeListener': grpc.unary_unary_rpc_method_handler(
+                    servicer.InvokeListener,
+                    request_deserializer=chainstream__bridge__pb2.InvokeListenerRequest.FromString,
+                    response_serializer=chainstream__bridge__pb2.InvokeListenerResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'chainstream.JavaAgentCallback', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('chainstream.JavaAgentCallback', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class JavaAgentCallback(object):
+    """Java Agent Callback Service - Java端作为Server，Python端作为Client
+    用于Python调用Java的listener函数
+    """
+
+    @staticmethod
+    def InvokeListener(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/chainstream.JavaAgentCallback/InvokeListener',
+            chainstream__bridge__pb2.InvokeListenerRequest.SerializeToString,
+            chainstream__bridge__pb2.InvokeListenerResponse.FromString,
             options,
             channel_credentials,
             insecure,

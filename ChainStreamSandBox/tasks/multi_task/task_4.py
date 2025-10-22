@@ -48,8 +48,9 @@ class WorkReminderTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.landmark_data = LandmarkData().get_landmarks(number)
-        self.first_person_data = Ego4DData().load_for_meeting()
+        self.landmark_data = None
+        self.first_person_data = None
+        self.number = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -91,6 +92,8 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.landmark_data = LandmarkData().get_landmarks(self.number)
+        self.first_person_data = Ego4DData().load_for_meeting()
         self.input_video_stream = cs.stream.create_stream(self, 'all_first_person')
         self.input_gps_stream = cs.stream.create_stream(self, 'all_location')
         self.output_message_stream = cs.stream.create_stream(self, 'auto_command')
@@ -108,6 +111,8 @@ class AgentExampleForMultiTask4(cs.agent.Agent):
         self.is_office_event.for_each(record_output2)
 
     def init_input_stream(self, runtime):
+        self.landmark_data = LandmarkData().get_landmarks(self.number)
+        self.first_person_data = Ego4DData().load_for_meeting()
         self.input_video_stream = cs.stream.create_stream(self, 'all_first_person')
         self.input_gps_stream = cs.stream.create_stream(self, 'all_location')
 

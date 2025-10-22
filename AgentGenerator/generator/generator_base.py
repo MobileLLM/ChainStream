@@ -32,6 +32,43 @@ class AgentGeneratorBase:
     def set_verbose(self, verbose):
         self.verbose = verbose
 
+    def generate_agent_chat(self, message, output_description, input_description=None, use_selector=False, task=None) -> (str, int):
+        self.task = task
+        self.output_description = output_description
+        self.input_description = input_description
+
+        self.stream_selector.set_all_stream_list(input_description)
+
+        # Do not specify input_description, let llm make up the input stream
+        if input_description is None:
+            output_stream, input_stream = self.stream_selector.select_stream(output_description, select_policy='none')
+            # return self.generate_agent_impl(None, output_description)
+        else:
+            if not use_selector:
+                # Specify input_description, use all input streams
+                output_stream, input_stream = self.stream_selector.select_stream(output_description,
+                                                                                 select_policy='all')
+                # return self.generate_agent_impl(input_description, output_description)
+            else:
+                # Specify input_description, use llm to select input streams
+                output_stream, input_stream = self.stream_selector.select_stream(output_description,
+                                                                                 select_policy='llm')
+
+        # basic_prompt = f"{chainstream_chinese_doc}\n{input_and_output_prompt}"
+
+        start_time = datetime.datetime.now()
+        code = self.generate_agent_impl(output_stream, input_stream, message)
+        end_time = datetime.datetime.now()
+
+        if hasattr(self, "loop_count") and hasattr(self, "history"):
+
+            if hasattr(self, "selected_example_name"):
+                return code, (end_time - start_time).total_seconds(), self.get_llm_token_count(), self.loop_count, self.history, self.selected_example_name
+            else:
+                return code, (
+                            end_time - start_time).total_seconds(), self.get_llm_token_count(), self.loop_count, self.history
+        return code, (end_time - start_time).total_seconds(), self.get_llm_token_count()
+
     def generate_agent(self, output_description, input_description=None, use_selector=False, task=None) -> (str, int):
         self.task = task
         self.output_description = output_description
@@ -100,8 +137,11 @@ class DirectAgentGenerator(AgentGeneratorBase):
     def __init__(self):
         super().__init__()
 
-    def generate_agent_impl(self, output_stream, input_stream) -> str:
-        prompt = self.get_base_prompt(output_stream, input_stream)
+    def generate_agent_impl(self, output_stream, input_stream, message=None) -> str:
+        if message is None:
+            prompt = self.get_base_prompt(output_stream, input_stream)
+        else:
+            prompt = self.get_base_prompt(output_stream, input_stream, message)
 
         if self.verbose:
             print(f"Prompt: {prompt}")

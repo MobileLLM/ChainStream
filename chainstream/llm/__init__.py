@@ -66,11 +66,13 @@ def get_model(llm_type=['text']):
         raise ValueError(f'invalid name: {llm_type}')
 
     if llm_type == ['text']:
+        inst = None
         if os.getenv('ERNIE_API_KEY') is not None:
             from chainstream.runtime.abstraction_layer.models.ernie.ernie_make_prompt import TextGPTModel
-        elif os.getenv('GPT_API_KEY') is None:
+            inst = TextGPTModel()
+        elif os.getenv('GPT_API_KEY') is not None:
             from chainstream.runtime.abstraction_layer.models.openai.python_base_openai_make_prompt import TextGPTModel
-        inst = TextGPTModel()
+            inst = TextGPTModel()
     elif 'image' in llm_type and 'audio' not in llm_type:
         from chainstream.runtime.abstraction_layer.models.openai.python_base_openai_make_prompt import ImageGPTModel
         inst = ImageGPTModel()

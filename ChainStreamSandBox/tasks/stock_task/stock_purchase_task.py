@@ -35,7 +35,7 @@ class StockTask3(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.stock_data = StockData().get_stocks(10)
+        self.stock_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -70,6 +70,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.stock_data = StockData().get_stocks(10)
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stocks')
         self.output_stock_stream = cs.stream.create_stream(self, 'recommendation_buy_stock')
 
@@ -81,6 +82,7 @@ class testAgent(cs.agent.Agent):
         self.output_stock_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.stock_data = StockData().get_stocks(10)
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stocks')
 
     def init_output_stream(self, runtime):

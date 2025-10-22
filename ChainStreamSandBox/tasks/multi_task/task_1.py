@@ -49,8 +49,9 @@ class EmailTaskTest(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.location_data = LandmarkData().get_landmarks(number)
-        self.email_data = EmailData().get_emails(number)
+        self.location_data = None
+        self.email_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -101,6 +102,8 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.location_data = LandmarkData().get_landmarks(self.number)
+        self.email_data = EmailData().get_emails(self.number)
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
         self.input_location_stream = cs.stream.create_stream(self, 'all_location')
         self.output_email_stream = cs.stream.create_stream(self, 'auto_reply_in_office')
@@ -119,6 +122,8 @@ class AgentExampleForMultiTask1(cs.agent.Agent):
         self.is_office_event.for_each(record_output_2)
 
     def init_input_stream(self, runtime):
+        self.location_data = LandmarkData().get_landmarks(self.number)
+        self.email_data = EmailData().get_emails(self.number)
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
         self.input_location_stream = cs.stream.create_stream(self, 'all_location')
 

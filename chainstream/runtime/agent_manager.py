@@ -66,11 +66,16 @@ class AgentAnalyzer:
                 if agent.user is None:
                     # Legacy agents without user assignment - only show to high level users
                     if user_level >= 10:  # Admin level
-                        if hasattr(agent, 'is_running') and agent.is_running():
-                            agents_info.append(agent.get_meta_data())
-                            logger.info(f"✅ Added legacy running agent: {agent.agent_id}")
+                        if hasattr(agent, 'is_running'):
+                            if agent.is_running():
+                                agents_info.append(agent.get_meta_data())
+                                logger.info(f"✅ Added legacy running agent: {agent.agent_id}")
+                            else:
+                                logger.warning(f"⚠️ Legacy agent {agent.agent_id} is not running")
                         else:
-                            logger.warning(f"⚠️ Legacy agent {agent.agent_id} is not running")
+                            # Python agents don't have is_running method, assume they are running if registered
+                            agents_info.append(agent.get_meta_data())
+                            logger.info(f"✅ Added legacy agent (no is_running check): {agent.agent_id}")
                 else:
                     agent_user_level = agent.user.get_level()
                     agent_user_uuid = agent.user.get_uuid()
@@ -79,11 +84,16 @@ class AgentAnalyzer:
                     # High level users can see their own agents and lower level users' agents
                     # Same level users can only see their own agents
                     if (user_level > agent_user_level) or (user_level == agent_user_level and user_uuid == agent_user_uuid):
-                        if hasattr(agent, 'is_running') and agent.is_running():
-                            agents_info.append(agent.get_meta_data())
-                            logger.info(f"✅ Added running agent: {agent.agent_id}")
+                        if hasattr(agent, 'is_running'):
+                            if agent.is_running():
+                                agents_info.append(agent.get_meta_data())
+                                logger.info(f"✅ Added running agent: {agent.agent_id}")
+                            else:
+                                logger.warning(f"⚠️ Agent {agent.agent_id} is not running")
                         else:
-                            logger.warning(f"⚠️ Agent {agent.agent_id} is not running")
+                            # Python agents don't have is_running method, assume they are running if registered
+                            agents_info.append(agent.get_meta_data())
+                            logger.info(f"✅ Added agent (no is_running check): {agent.agent_id}")
         
         logger.info(f"📊 Final result: {len(agents_info)} running agents")
         return agents_info
@@ -303,7 +313,11 @@ class AgentManager(AgentAnalyzer):
         from chainstream.agent import Agent
         agent_list = []
         for name, obj in module.__dict__.items():
-            if inspect.isclass(obj) and issubclass(obj, Agent) and obj.is_agent:
+            if (
+                    inspect.isclass(obj)
+                    and issubclass(obj, Agent)
+                    and (not hasattr(obj, "is_agent") or bool(getattr(obj, "is_agent")))
+            ):
                 print(name, obj)
                 agent_list.append((name, obj))
         success_count = 0

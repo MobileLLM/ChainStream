@@ -8,7 +8,8 @@ from AgentGenerator.prompt.agent_example_selector import AgentExampleSelector
 from ChainStreamSandBox.tasks.tmp_task_instances import get_all_task_instances
 
 
-def get_framework_doc(framework, example_num=None, task_now=None, example_select_policy='random'):
+def get_framework_doc(framework, example_num=None, task_now=None, example_select_policy='random', target_language=None):
+    # TODO: finish target language prompt here
     if example_select_policy not in ['random', 'llm']:
         raise ValueError('example_select_policy must be random or llm')
     if framework == "chainstream":

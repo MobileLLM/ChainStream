@@ -9,6 +9,7 @@ class ArxivTask4(SingleAgentTaskConfigBase):
     def __init__(self, paper_number=10):
         super().__init__()
         self.output_record = None
+        self.paper_number=paper_number
         self.clock_stream = None
         self.output_paper_stream = None
         self.input_paper_stream = None
@@ -35,7 +36,7 @@ class ArxivTask4(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.paper_data = ArxivData().get_random_papers(paper_number)
+        self.paper_data = None
         self.agent_example = '''
 import chainstream as cs
 class testAgent(cs.agent.Agent):
@@ -65,6 +66,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.paper_data = ArxivData().get_random_papers(self.paper_number)
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
         self.output_paper_stream = cs.stream.create_stream(self, 'computer_science_arxiv')
 
@@ -76,6 +78,7 @@ class testAgent(cs.agent.Agent):
         self.output_paper_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.paper_data = ArxivData().get_random_papers(self.paper_number)
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
 
     def init_output_stream(self, runtime):

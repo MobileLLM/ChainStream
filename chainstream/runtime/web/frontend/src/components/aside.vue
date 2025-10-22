@@ -69,7 +69,7 @@ const props = defineProps({
             <el-icon><Edit /></el-icon>
             <span class="menu-text">Agent Generator</span>
           </template>
-          <el-menu-item index="/generator/generator" class="sub-menu-item">Agent Generator</el-menu-item>
+          <el-menu-item index="/generator/Generator" class="sub-menu-item">Agent Generator</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="5" class="sub-menu">

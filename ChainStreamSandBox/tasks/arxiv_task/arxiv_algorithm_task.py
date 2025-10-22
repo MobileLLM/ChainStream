@@ -34,7 +34,8 @@ class ArxivTask5(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.paper_data = ArxivData().get_random_papers(paper_number)
+        self.paper_data = None
+        self.paper_number = paper_number
         self.agent_example = '''
 import chainstream as cs
 
@@ -61,6 +62,7 @@ class TestAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.paper_data = ArxivData().get_random_papers(self.paper_number)
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
         self.output_paper_stream = cs.stream.create_stream(self, 'tag_algorithm')
 
@@ -72,6 +74,7 @@ class TestAgent(cs.agent.Agent):
         self.output_paper_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.paper_data = ArxivData().get_random_papers(self.paper_number)
         self.input_paper_stream = cs.stream.create_stream(self, 'all_arxiv')
 
     def init_output_stream(self, runtime):

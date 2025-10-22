@@ -43,8 +43,9 @@ class CloseWindowTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.landmark_data = LandmarkData().get_landmarks(number)
-        self.weather_data = WeatherData().get_weather(number)
+        self.landmark_data = None
+        self.weather_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -81,6 +82,8 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.landmark_data = LandmarkData().get_landmarks(self.number)
+        self.weather_data = WeatherData().get_weather(self.number)
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_action_stream = cs.stream.create_stream(self, 'auto_close_window')
@@ -93,6 +96,8 @@ class AgentExampleForMultiTask9(cs.agent.Agent):
         self.output_action_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.landmark_data = LandmarkData().get_landmarks(self.number)
+        self.weather_data = WeatherData().get_weather(self.number)
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
 

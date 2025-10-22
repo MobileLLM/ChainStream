@@ -41,8 +41,9 @@ class KitchenSafetyTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.location_data = LandmarkData().get_landmarks(number)
-        self.video_data = SpharData().load_for_traffic()
+        self.location_data = None
+        self.video_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -80,6 +81,8 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.location_data = LandmarkData().get_landmarks(self.number)
+        self.video_data = SpharData().load_for_traffic()
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
         self.output_warning_stream = cs.stream.create_stream(self, 'alarm_message')
@@ -92,6 +95,8 @@ class AgentExampleForMultiTask8(cs.agent.Agent):
         self.output_warning_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.location_data = LandmarkData().get_landmarks(self.number)
+        self.video_data = SpharData().load_for_traffic()
         self.gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
 

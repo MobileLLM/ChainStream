@@ -47,8 +47,8 @@ class StudentInClassTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.screenshot_data = DesktopData().get_random_sample()
-        self.video_data = SpharData().load_for_traffic()
+        self.screenshot_data = None
+        self.video_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -82,6 +82,8 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.screenshot_data = DesktopData().get_random_sample()
+        self.video_data = SpharData().load_for_traffic()
         self.input_three_person_stream = cs.stream.create_stream(self, 'all_classroom')
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
         self.output_number_stream = cs.stream.create_stream(self, 'students_number')
@@ -96,6 +98,8 @@ class AgentExampleForMultiTask11(cs.agent.Agent):
         self.warning_board_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.screenshot_data = DesktopData().get_random_sample()
+        self.video_data = SpharData().load_for_traffic()
         self.input_three_person_stream = cs.stream.create_stream(self, 'all_classroom')
         self.input_screenshot_stream = cs.stream.create_stream(self, 'all_screenshot')
 

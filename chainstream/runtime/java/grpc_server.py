@@ -35,6 +35,41 @@ from .chainstream_bridge_pb2 import (
 
 logger = logging.getLogger(__name__)
 
+# 全局的Java listener执行上下文
+# key: agent_id (真实的Java agent ID), value: {'func_id': str, 'agent': JavaAgentProxy}
+_java_listener_context = {}
+_context_lock = threading.Lock()
+
+def set_java_listener_context(agent_id: str, func_id: str, agent):
+    """设置Java listener执行上下文"""
+    with _context_lock:
+        # 如果已有上下文，先清除旧的
+        if agent_id in _java_listener_context:
+            old_func_id = _java_listener_context[agent_id].get('func_id', 'unknown')
+            logger.info(f"🔄 Replacing Java listener context: agent={agent_id}, old_func_id={old_func_id}, new_func_id={func_id}")
+        else:
+            logger.info(f"🔧 Set Java listener context: agent={agent_id}, func_id={func_id}")
+        
+        _java_listener_context[agent_id] = {'func_id': func_id, 'agent': agent}
+
+def get_java_listener_context(agent_id: str):
+    """获取Java listener执行上下文"""
+    with _context_lock:
+        context = _java_listener_context.get(agent_id)
+        if context:
+            logger.debug(f"🔍 Get Java listener context: agent={agent_id}, func_id={context['func_id']}")
+        return context
+
+def clear_java_listener_context(agent_id: str):
+    """清除Java listener执行上下文"""
+    with _context_lock:
+        if agent_id in _java_listener_context:
+            func_id = _java_listener_context[agent_id].get('func_id', 'unknown')
+            del _java_listener_context[agent_id]
+            logger.info(f"🧹 Cleared Java listener context: agent={agent_id}, func_id={func_id}")
+        else:
+            logger.warning(f"⚠️ Tried to clear non-existent context: agent={agent_id}")
+
 def ensure_user_context(func):
     """装饰器：确保gRPC方法调用时有用户上下文"""
     @wraps(func)
@@ -142,6 +177,20 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
             
         except Exception as e:
             logger.error(f"Error finding JavaAgentWrapper by PID: {e}")
+            return None
+    
+    def _find_java_agent_by_agent_id(self, agent_id):
+        """通过agent_id查找对应的JavaAgentWrapper"""
+        try:
+            if self.runtime_core and hasattr(self.runtime_core, 'agent_manager'):
+                agent = self.runtime_core.agent_manager.get_agent(agent_id)
+                if agent and hasattr(agent, 'java_file_path'):
+                    logger.info(f"Found JavaAgentWrapper for agent_id {agent_id}")
+                    return agent
+            logger.warning(f"No JavaAgentWrapper found for agent_id {agent_id}")
+            return None
+        except Exception as e:
+            logger.error(f"Error finding JavaAgentWrapper by agent_id: {e}")
             return None
 
     def _ensure_user_context(self):
@@ -356,11 +405,12 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
                 # 创建或获取Agent（如果ChainStream有Agent管理API）
                 # 目前Java Agent通过代理类访问，这里只是记录日志
                 logger.info(f"Java Agent {agent_id} started via ChainStream proxy")
-                return StartAgentResponse(success=True, error="")
                 
             except Exception as e:
                 logger.error(f"Failed to start agent with ChainStream API: {e}")
                 return StartAgentResponse(success=False, error=str(e))
+            
+            return StartAgentResponse(success=True, error="")
                 
         except Exception as e:
             logger.error(f"Error starting Java Agent: {e}")
@@ -375,14 +425,14 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
             # 使用ChainStream API清理Agent资源
             try:
                 import chainstream as cs
-            
+                
                 # 清理Agent相关资源
                 if agent_id in self.agent_streams:
                     del self.agent_streams[agent_id]
                 if agent_id in self.agent_models:
                     del self.agent_models[agent_id]
-                    if agent_id in self.agent_buffers:
-                        del self.agent_buffers[agent_id]
+                if agent_id in self.agent_buffers:
+                    del self.agent_buffers[agent_id]
                 
                 logger.info(f"Java Agent {agent_id} stopped via ChainStream proxy")
             except Exception as e:
@@ -515,8 +565,12 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
             stream_id = request.stream_id
             item = request.item
             agent_id = request.agent_id
+            # 获取caller_listener_id（可能为空字符串）
+            caller_listener_id = request.caller_listener_id if request.caller_listener_id else None
             
             logger.info(f"Adding item to stream {stream_id}: {item}")
+            if caller_listener_id:
+                logger.info(f"📍 Caller listener ID from Java: {caller_listener_id}")
             
             # 使用ChainStream API添加项目到Stream
             try:
@@ -535,27 +589,106 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
                 java_agent_proxy = self._get_or_create_java_agent_proxy(current_user)
                 logger.info(f"🔍 DEBUG: AddItem - java_agent_proxy: {java_agent_proxy}")
                 
+                # 优先使用Java传递的caller_listener_id构建上下文
+                import threading
+                listener_context = None
+                
+                if caller_listener_id:
+                    # Java端显式传递了caller信息，使用它来构建上下文
+                    logger.info(f"📍 Caller listener ID from Java: {caller_listener_id}")
+                    
+                    # 从完整的listener ID中提取Lambda类名，然后在已注册的listeners中查找匹配的func_id
+                    # Java传递的格式: {agent_id}_{stream_id}_{LambdaClass}_{timestamp}
+                    # Python注册时的func_id格式: {LambdaClass}_{UUID}
+                    # 我们需要找到已注册的listener，提取其func_id
+                    
+                    import re
+                    
+                    # 匹配 Lambda$XX/0x[hexdigits] 模式
+                    # 需要匹配类似: DebugListenHelloAgent$$Lambda$73/0x0000000800283840
+                    # 从完整ID中提取: debuglistenhelloagent_[...]_DebugListenHelloAgent$$Lambda$73/0x0000000800283840_1760301119627
+                    lambda_pattern = r'([A-Z][\w]*\$\$Lambda\$\d+/0x[0-9a-f]+)'
+                    match = re.search(lambda_pattern, caller_listener_id)
+                    
+                    func_id = None
+                    if match:
+                        lambda_class = match.group(1)
+                        logger.debug(f"🔍 Extracted Lambda class: {lambda_class}")
+                        
+                        # 在stream manager中查找包含这个Lambda类的listener
+                        # 遍历所有streams，查找listeners
+                        import chainstream as cs
+                        try:
+                            all_streams = self.runtime_core.stream_manager.streams
+                            for stream in all_streams.values():
+                                # stream.listeners 是一个列表: [(agent, listener_func), ...]
+                                # listener_func.func_id 是我们要找的
+                                for agent, listener_func in stream.listeners:
+                                    # listener_func.func_id 格式: "DebugListenHelloAgent$$Lambda$73/0x..._{UUID}"
+                                    if hasattr(listener_func, 'func_id') and lambda_class in listener_func.func_id:
+                                        func_id = listener_func.func_id
+                                        logger.info(f"🔍 Found matching listener in stream {stream.metaData.stream_id}: {func_id}")
+                                        break
+                                if func_id:
+                                    break
+                        except Exception as e:
+                            logger.warning(f"⚠️ Error searching for matching listener: {e}")
+                    
+                    # 如果没有找到匹配的listener，使用完整的caller_listener_id
+                    if not func_id:
+                        func_id = caller_listener_id
+                        logger.warning(f"⚠️ Could not find matching registered listener for {caller_listener_id}, using full ID")
+                    
+                    listener_context = {
+                        'func_id': func_id,
+                        'agent': java_agent_proxy
+                    }
+                    logger.info(f"✅ Using Java-provided caller context: {func_id} (stream_id: {stream_id})")
+                else:
+                    # 没有Java传递的信息，尝试从全局上下文获取
+                    listener_context = get_java_listener_context(agent_id)
+                    if listener_context:
+                        logger.info(f"✅ Using global listener context for agent {agent_id}: {listener_context['func_id']} (stream_id: {stream_id})")
+                    else:
+                        logger.warning(f"⚠️ No Java listener context found for agent {agent_id} (stream_id: {stream_id})")
+                        logger.warning(f"   This means edges won't be recorded for this addItem call!")
+                
+                if listener_context:
+                    # 将上下文信息设置到thread-local，供BaseStream.add_item使用
+                    if not hasattr(threading, '_java_listener_additem_context'):
+                        threading._java_listener_additem_context = threading.local()
+                    threading._java_listener_additem_context.value = listener_context
+                
                 # 先尝试获取stream
                 stream = cs.get_stream(java_agent_proxy, stream_id)
                 logger.info(f"🔍 DEBUG: AddItem - get_stream returned: {stream}")
                 
-                if stream:
-                    stream.add_item(item)
-                    logger.info(f"Item added to stream {stream_id} via ChainStream API")
-                    return AddItemResponse(success=True, error="")
-                else:
-                    # 如果stream不存在，尝试创建它
-                    logger.info(f"🔍 DEBUG: Stream {stream_id} not found, attempting to create it")
-                    stream = cs.create_stream(java_agent_proxy, stream_id)
-                    logger.info(f"🔍 DEBUG: AddItem - create_stream returned: {stream}")
-                
-                if stream:
-                    stream.add_item(item)
-                    logger.info(f"Stream {stream_id} created and item added via ChainStream API")
-                    return AddItemResponse(success=True, error="")
-                else:
-                    logger.error(f"Failed to create stream {stream_id}")
-                    return AddItemResponse(success=False, error=f"stream_id {stream_id} not found in stream_manager")
+                try:
+                    if stream:
+                        stream.add_item(item)
+                        logger.info(f"Item added to stream {stream_id} via ChainStream API")
+                        return AddItemResponse(success=True, error="")
+                    else:
+                        # 如果stream不存在，尝试创建它
+                        logger.info(f"🔍 DEBUG: Stream {stream_id} not found, attempting to create it")
+                        stream = cs.create_stream(java_agent_proxy, stream_id)
+                        logger.info(f"🔍 DEBUG: AddItem - create_stream returned: {stream}")
+                    
+                    if stream:
+                        stream.add_item(item)
+                        logger.info(f"Stream {stream_id} created and item added via ChainStream API")
+                        return AddItemResponse(success=True, error="")
+                    else:
+                        logger.error(f"Failed to create stream {stream_id}")
+                        return AddItemResponse(success=False, error=f"stream_id {stream_id} not found in stream_manager")
+                finally:
+                    # 清理thread-local上下文
+                    if hasattr(threading, '_java_listener_additem_context'):
+                        tls = threading._java_listener_additem_context
+                        if hasattr(tls, 'value'):
+                            delattr(tls, 'value')
+                    # 注意：不要恢复全局context！
+                    # 全局context的清除应该由JavaListenerFunction负责
                     
             except Exception as e:
                 logger.error(f"Failed to add item: {e}")
@@ -572,29 +705,55 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
             stream_id = request.stream_id
             agent_id = request.agent_id
             listener_function_name = request.listener_function_name
+            listener_id = request.listener_id if request.listener_id else f"{agent_id}_{stream_id}_{listener_function_name}"
+            callback_address = request.callback_address
             
-            logger.info(f"Registering listener {listener_function_name} for stream {stream_id}")
+            if not callback_address:
+                logger.error(f"No callback address provided for Java listener {listener_function_name}")
+                return ForEachResponse(success=False, error="Missing callback_address", anonymous_stream_id="")
+            
+            logger.info(f"Registering Java listener {listener_function_name} (ID: {listener_id}, Callback: {callback_address}) for stream {stream_id}")
+            
+            # 根据agent_id获取对应的用户信息
+            current_user = self._get_user_for_agent(agent_id)
+            if not current_user:
+                logger.error(f"Cannot find user for agent {agent_id}")
+                return ForEachResponse(success=False, error=f"Cannot find user for agent {agent_id}", anonymous_stream_id="")
+            
+            # 设置用户上下文
+            try:
+                from chainstream.runtime.user_context import user_context_manager
+                user_context_manager.set_current_user(current_user)
+                logger.info(f"Set user context for gRPC thread: {current_user.get_username()}")
+            except Exception as e:
+                logger.warning(f"Failed to set user context: {e}")
             
             # 使用ChainStream外部API注册监听器
             try:
                 import chainstream as cs
+                from .java_listener_function import JavaListenerFunction
+                
+                # 获取或创建Java Agent代理
+                java_agent_proxy = self._get_or_create_java_agent_proxy(current_user)
                 
                 # 使用get_stream获取Stream
-                # 获取或创建Java Agent代理
-                java_agent_proxy = self._get_or_create_java_agent_proxy()
                 stream = cs.get_stream(java_agent_proxy, stream_id)
                 
                 if stream:
-                    # 创建一个Java监听器函数
-                    def java_listener(item):
-                        # 这里应该调用Java端的监听器函数
-                        # 目前返回一个匿名流ID
-                        return f"anonymous_stream_{stream_id}_{listener_function_name}"
+                    # 创建Java Listener包装器，使用callback_address
+                    # 传递真实的Java agent ID用于上下文追踪
+                    java_listener = JavaListenerFunction(
+                        agent=java_agent_proxy,
+                        listener_id=listener_id,
+                        listener_name=listener_function_name,
+                        callback_address=callback_address,
+                        real_agent_id=agent_id  # 传递真实的Java agent ID
+                    )
                     
-                    # 使用Stream的for_each方法
+                    # 将Java listener注册到stream
                     anonymous_stream = stream.for_each(java_listener)
                     
-                    logger.info(f"Listener registered for stream {stream_id} via ChainStream API")
+                    logger.info(f"Java listener {listener_function_name} registered for stream {stream_id} via ChainStream API")
                     return ForEachResponse(success=True, error="", anonymous_stream_id=anonymous_stream.stream_id)
                 else:
                     logger.error(f"Stream {stream_id} not found")
@@ -602,10 +761,14 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
                     
             except Exception as e:
                 logger.error(f"Failed to register listener with ChainStream API: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
                 return ForEachResponse(success=False, error=str(e), anonymous_stream_id="")
                 
         except Exception as e:
             logger.error(f"Error registering stream listener: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return ForEachResponse(success=False, error=str(e), anonymous_stream_id="")
     
     @ensure_user_context
@@ -838,27 +1001,25 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
             # 使用ChainStream API查询模型信息
             try:
                 import chainstream as cs
-            
+                from .chainstream_bridge_pb2 import ModelInfo
                 # 创建模型信息列表
                 models = []
                 for model_type in model_types:
-                    from .chainstream_bridge_pb2 import ModelInfo
-                    
-                    # 尝试获取模型以检查可用性
+
                     try:
                         llm = cs.llm.get_model([model_type])
                         available = llm is not None
                     except:
                         available = False
-                    
-                model_info = ModelInfo(
-                    name=f"{model_type}_model",
-                    type=model_type,
-                        available=available
-                )
-                models.append(model_info)
-            
-                logger.info(f"Model info retrieved via ChainStream API")
+
+                    model_info = ModelInfo(
+                        name=f"{model_type}_model",
+                        type=model_type,
+                            available=available
+                    )
+                    models.append(model_info)
+
+                    logger.info(f"Model info retrieved via ChainStream API")
                 return GetModelInfoResponse(success=True, error="", models=models)
                 
             except Exception as e:
@@ -1006,7 +1167,7 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
             try:
                 import chainstream as cs
                 
-                # 获取Runtime信息
+                    # 获取Runtime信息
                 runtime_id = f"ChainStream Runtime - Agent: {agent_id}"
                 status = "running"
                 
@@ -1022,8 +1183,8 @@ class ChainStreamBridgeServer(ChainStreamBridgeServicer):
                 
                 logger.info(f"Runtime info retrieved via ChainStream API")
                 return GetRuntimeInfoResponse(
-                    success=True, 
-                    error="", 
+                    success=True,
+                    error="",
                     runtime_id=runtime_id,
                     status=status,
                     active_agents=active_agents

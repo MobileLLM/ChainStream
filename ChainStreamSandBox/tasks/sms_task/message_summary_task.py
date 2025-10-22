@@ -31,7 +31,7 @@ class MessageTask4(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.sms_data = SMSData().get_random_message()
+        self.sms_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -54,6 +54,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.sms_data = SMSData().get_random_message()
         self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
         self.output_sms_stream = cs.stream.create_stream(self, 'sms_summary')
 
@@ -65,6 +66,7 @@ class testAgent(cs.agent.Agent):
         self.output_sms_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.sms_data = SMSData().get_random_message()
         self.input_sms_stream = cs.stream.create_stream(self, 'all_sms')
 
     def init_output_stream(self, runtime):

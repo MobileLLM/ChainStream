@@ -41,8 +41,9 @@ class CatFoodTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.gps_data = GPSData().get_gps(number)
-        self.video_data = SpharData().load_for_traffic()
+        self.gps_data = None
+        self.video_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -80,6 +81,8 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.gps_data = GPSData().get_gps(self.number)
+        self.video_data = SpharData().load_for_traffic()
         self.gps_stream = cs.stream.create_stream(self, 'all_location')
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
         self.output_message_stream = cs.stream.create_stream(self, 'cat_food_reminder')
@@ -92,6 +95,8 @@ class AgentExampleForMultiTask6(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.gps_data = GPSData().get_gps(self.number)
+        self.video_data = SpharData().load_for_traffic()
         self.gps_stream = cs.stream.create_stream(self, 'all_location')
         self.input_video_stream = cs.stream.create_stream(self, 'all_video')
 

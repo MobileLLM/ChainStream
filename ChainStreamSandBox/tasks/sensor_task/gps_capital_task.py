@@ -28,7 +28,7 @@ class GPSTask7(SingleAgentTaskConfigBase):
                     "country_of_the_capital": "The name of the country to which this capital city belongs, string"}
             }
         ])
-        self.gps_data = GPSData().get_gps(10)
+        self.gps_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -51,6 +51,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.gps_data = GPSData().get_gps(10)
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.output_gps_stream = cs.stream.create_stream(self, 'country_of_the_capital')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -61,6 +62,7 @@ class testAgent(cs.agent.Agent):
         self.output_gps_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.gps_data = GPSData().get_gps(10)
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
 
     def init_output_stream(self, runtime):

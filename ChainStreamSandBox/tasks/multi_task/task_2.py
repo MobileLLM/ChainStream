@@ -47,8 +47,9 @@ class MessageStockTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.stock_data = StockData().get_stocks(number)
-        self.message_data = SMSData().get_random_message('zh')
+        self.stock_data = None
+        self.message_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -97,6 +98,8 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.stock_data = StockData().get_stocks(self.number)
+        self.message_data = SMSData().get_random_message('zh')
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
         self.input_message_stream = cs.stream.create_stream(self, 'all_message')
         self.stock_message_output = cs.stream.create_stream(self, 'stock_output')
@@ -109,6 +112,8 @@ class AgentExampleForMultiTask2(cs.agent.Agent):
         self.stock_message_output.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.stock_data = StockData().get_stocks(self.number)
+        self.message_data = SMSData().get_random_message('zh')
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
         self.input_message_stream = cs.stream.create_stream(self, 'all_message')
 

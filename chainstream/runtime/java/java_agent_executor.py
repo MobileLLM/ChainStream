@@ -20,6 +20,7 @@ class JavaAgentExecutor:
         self.java_home = self._detect_java_home()
         self.javac_path = os.path.join(self.java_home, 'bin', 'javac')
         self.java_path = os.path.join(self.java_home, 'bin', 'java')
+        self.javap_path = os.path.join(self.java_home, 'bin', 'javap')
         self.bridge_server = None
     
     def _detect_java_home(self) -> str:
@@ -130,6 +131,7 @@ class JavaAgentExecutor:
     def _compile_with_maven(self, java_file_path: str, java_project_root: str) -> str:
         """使用Maven编译Java文件"""
         target_file = None
+        self._temp_source_file = None  # 初始化临时文件路径
         try:
             # 将Java文件复制到Maven项目的src/main/java目录
             target_dir = os.path.join(java_project_root, 'src', 'main', 'java', 'com', 'chainstream', 'agent')
@@ -142,13 +144,36 @@ class JavaAgentExecutor:
             self.logger.info(f"Java file copied successfully")
             
             # 在Maven项目根目录执行编译
-            result = subprocess.run(['mvn', 'compile'], 
+            # 使用两阶段编译避免protobuf生成的竞态条件：
+            # 阶段1: clean + 生成protobuf代码
+            # 阶段2: 编译Java代码
+            
+            # 阶段1: 清理并生成protobuf代码
+            mvn_cmd_proto = ['mvn', '-DskipTests=true', 'clean', 'protobuf:compile', 'protobuf:compile-custom']
+            self.logger.debug(f"🛠️ Phase 1 - Generating protobuf: {' '.join(mvn_cmd_proto)} in {java_project_root}")
+            result_proto = subprocess.run(mvn_cmd_proto, 
+                                  cwd=java_project_root,
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            
+            # 检查protobuf生成是否成功
+            if result_proto.returncode != 0:
+                error_msg = f"Protobuf generation failed (return code {result_proto.returncode}): {result_proto.stderr}"
+                self.logger.error(error_msg)
+                raise RuntimeError(error_msg)
+            
+            self.logger.debug(f"✅ Protobuf code generated successfully")
+            
+            # 阶段2: 编译Java代码
+            mvn_cmd_compile = ['mvn', '-DskipTests=true', 'compile']
+            self.logger.debug(f"🛠️ Phase 2 - Compiling Java: {' '.join(mvn_cmd_compile)} in {java_project_root}")
+            result = subprocess.run(mvn_cmd_compile, 
                                   cwd=java_project_root,
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             
             # 记录警告信息
-            if result.stderr and "WARNING" in result.stderr.upper():
-                self.logger.warning(f"Maven compilation warnings: {result.stderr}")
+            if (result.stderr and "WARNING" in result.stderr.upper()) or (result.stdout and "WARNING" in result.stdout.upper()):
+                warn_txt = (result.stderr or '') + '\n' + (result.stdout or '')
+                self.logger.warning(f"Maven compilation warnings: {warn_txt}")
             
             # 只检查返回码，Maven成功时返回码为0
             # 注意：Maven的警告不会导致返回码非0，只有真正的错误才会
@@ -170,25 +195,25 @@ class JavaAgentExecutor:
             
             self.logger.debug(f"Maven compilation successful: {class_file}")
             
-            # 在确认编译成功后再清理临时文件
-            if target_file and os.path.exists(target_file):
-                try:
-                    os.remove(target_file)
-                    self.logger.debug(f"Cleaned up temporary Java file: {target_file}")
-                except Exception as cleanup_error:
-                    self.logger.warning(f"Failed to cleanup temporary file {target_file}: {cleanup_error}")
+            # 🔴 不要立即删除临时源文件！
+            # Maven在某些情况下会触发增量编译检查，如果源文件被删除可能导致class文件也被清理
+            # 我们将在Java进程启动后再删除源文件
+            # 将临时文件路径保存到实例变量中，以便后续清理
+            self._temp_source_file = target_file
+            self.logger.debug(f"Temporary source file will be cleaned up after Java process starts: {target_file}")
             
             return class_file
             
         except Exception as e:
             self.logger.error(f"Maven compilation error: {e}")
-            # 出错时也要清理临时文件
+            # 出错时清理临时文件
             if target_file and os.path.exists(target_file):
                 try:
                     os.remove(target_file)
                     self.logger.debug(f"Cleaned up temporary Java file after error: {target_file}")
                 except Exception as cleanup_error:
                     self.logger.warning(f"Failed to cleanup temporary file {target_file}: {cleanup_error}")
+            self._temp_source_file = None  # 清空引用
             raise
     
     def _compile_with_javac(self, java_file_path: str) -> str:
@@ -259,6 +284,18 @@ class JavaAgentExecutor:
             class_name = os.path.splitext(os.path.basename(class_file))[0]
             class_dir = os.path.dirname(class_file)
             self.logger.info(f"📝 Class name: {class_name}, Class dir: {class_dir}")
+            # 额外校验：类文件与目录是否存在
+            class_exists = os.path.exists(class_file)
+            self.logger.debug(f"🧪 Verify class file exists: {class_exists} -> {class_file}")
+            if not class_exists:
+                self.logger.error(f"❌ Class file does NOT exist at expected location: {class_file}")
+            try:
+                dir_listing = os.listdir(class_dir)
+                self.logger.debug(f"🧪 Class dir listing ({len(dir_listing)} items): {dir_listing[:10]}{'...' if len(dir_listing) > 10 else ''}")
+                if not class_exists:
+                    self.logger.error(f"❌ Full directory listing: {dir_listing}")
+            except Exception as list_err:
+                self.logger.warning(f"⚠️ Failed to list class dir {class_dir}: {list_err}")
             
             # JVM参数
             jvm_options = [
@@ -275,6 +312,7 @@ class JavaAgentExecutor:
                 # 使用完整的类名
                 full_class_name = f"com.chainstream.agent.{class_name}"
                 self.logger.info(f"🏗️ Using Maven build, classpath: {classpath}")
+                self.logger.debug(f"🧪 Classpath repr: {repr(classpath)}")
                 
                 # 验证classpath是否有效
                 if not classpath or classpath.strip() == "":
@@ -285,6 +323,7 @@ class JavaAgentExecutor:
                         classpath = f"{class_dir}:{java_libs_path}"
                     full_class_name = class_name
                     self.logger.info(f"🔧 Fallback to simple build, classpath: {classpath}")
+                    self.logger.debug(f"🧪 Fallback classpath repr: {repr(classpath)}")
             else:
                 # 使用简单的classpath
                 java_libs_path = os.path.join(os.path.dirname(__file__), 'java_libraries')
@@ -293,22 +332,51 @@ class JavaAgentExecutor:
                     classpath = f"{class_dir}:{java_libs_path}"
                 full_class_name = class_name
                 self.logger.info(f"🔧 Using simple build, classpath: {classpath}")
+                self.logger.debug(f"🧪 Simple classpath repr: {repr(classpath)}")
             
             self.logger.info(f"📋 Full class name: {full_class_name}")
+
+            # 预验证：用 javap 验证主类在 classpath 可解析
+            java_project_root = os.path.dirname(__file__)
+            javap_ok = False
+            try:
+                javap_cmd = [self.javap_path, '-classpath', classpath, full_class_name]
+                self.logger.debug(f"🧪 Running javap to verify classpath: {' '.join(javap_cmd[:4])} ...")
+                javap_res = subprocess.run(javap_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=java_project_root)
+                if javap_res.returncode != 0:
+                    self.logger.warning(f"⚠️ javap failed to resolve class {full_class_name}. stderr: {javap_res.stderr.strip()}")
+                else:
+                    # 仅打印首行，避免太多输出
+                    first_line = javap_res.stdout.splitlines()[0] if javap_res.stdout else ''
+                    self.logger.debug(f"🧪 javap ok: {first_line}")
+                    javap_ok = True
+            except Exception as jp_err:
+                self.logger.warning(f"⚠️ javap validation error: {jp_err}")
+
+            if not javap_ok:
+                # 兜底：仅使用 target/classes 作为最小classpath 再试
+                target_classes_only = os.path.join(java_project_root, 'target', 'classes')
+                self.logger.warning(f"🔁 Falling back to minimal classpath for launch: {target_classes_only}")
+                classpath = target_classes_only
             
             # Java命令
             cmd = [self.java_path] + jvm_options + ['-cp', classpath, full_class_name]
             self.logger.info(f"🚀 Java command: {' '.join(cmd)}")
+            self.logger.debug(f"🧪 CWD for Java process: {os.path.dirname(__file__)}")
+            # 同时通过环境变量冗余设置CLASSPATH，避免极端情况下 -cp 解析异常
+            env = os.environ.copy()
+            env['CLASSPATH'] = classpath
+            self.logger.debug(f"🧪 Env CLASSPATH length: {len(env['CLASSPATH'])}")
             
             # 启动Java进程 - 不捕获输出，让输出直接显示到控制台
             # 工作目录应该设置为Maven项目根目录，而不是class文件目录
-            java_project_root = os.path.dirname(__file__)
             process = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,  # 捕获stdout用于日志记录
                 stderr=subprocess.STDOUT,  # 将stderr重定向到stdout
                 text=True,
-                cwd=java_project_root
+                cwd=java_project_root,
+                env=env
             )
             
             # 启动一个线程来读取Java进程的输出
@@ -325,6 +393,24 @@ class JavaAgentExecutor:
             output_thread.start()
             
             self.logger.info(f"✅ Java process started with PID: {process.pid}")
+            
+            # 在Java进程成功启动后，延迟清理临时源文件
+            # 给Java进程一些时间完全加载类
+            if hasattr(self, '_temp_source_file') and self._temp_source_file:
+                def cleanup_temp_file():
+                    import time
+                    time.sleep(2)  # 等待2秒确保Java进程完全启动
+                    if os.path.exists(self._temp_source_file):
+                        try:
+                            os.remove(self._temp_source_file)
+                            self.logger.debug(f"🧹 Cleaned up temporary source file: {self._temp_source_file}")
+                        except Exception as e:
+                            self.logger.warning(f"⚠️ Failed to cleanup temp file: {e}")
+                    self._temp_source_file = None
+                
+                cleanup_thread = threading.Thread(target=cleanup_temp_file, daemon=True)
+                cleanup_thread.start()
+            
             return process
             
         except Exception as e:
@@ -356,18 +442,20 @@ class JavaAgentExecutor:
             if result.returncode == 0:
                 # 读取classpath文件
                 with open(temp_path, 'r') as f:
-                    maven_classpath = f.read().strip()
+                    raw_classpath = f.read()
+                # 规范化：移除换行和回车，按系统路径分隔符合并
+                normalized = raw_classpath.replace('\n', '').replace('\r', '')
+                parts = [p.strip() for p in normalized.split(os.pathsep) if p.strip()]
+                maven_classpath = os.pathsep.join(parts)
                 
                 # 清理临时文件
                 os.unlink(temp_path)
                 
                 self.logger.info(f"📦 Maven classpath: {maven_classpath}")
+                self.logger.debug(f"🧪 Maven classpath entries: {len(parts)}")
                 
                 # 确保target_classes在classpath中
-                if target_classes not in maven_classpath:
-                    full_classpath = f"{target_classes}:{maven_classpath}"
-                else:
-                    full_classpath = maven_classpath
+                full_classpath = os.pathsep.join([target_classes] + parts) if parts else target_classes
                 
                 self.logger.info(f"📦 Full classpath: {full_classpath}")
                 return full_classpath

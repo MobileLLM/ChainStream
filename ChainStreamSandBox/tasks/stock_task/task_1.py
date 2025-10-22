@@ -36,7 +36,8 @@ class StockTask1(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.stock_data = StockData().get_stocks(number)
+        self.stock_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 
@@ -69,6 +70,7 @@ class AgentExampleForStockTask1(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.stock_data = StockData().get_stocks(self.number)
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
         self.output_stock_stream = cs.stream.create_stream(self, 'fallen_price_stock')
 
@@ -80,6 +82,7 @@ class AgentExampleForStockTask1(cs.agent.Agent):
         self.output_stock_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.stock_data = StockData().get_stocks(self.number)
         self.input_stock_stream = cs.stream.create_stream(self, 'all_stock')
 
     def init_output_stream(self, runtime):

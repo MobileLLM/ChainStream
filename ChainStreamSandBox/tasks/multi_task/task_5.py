@@ -43,8 +43,9 @@ class TravelTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.dialogue_data = DialogData().get_dialog_batch(number)
-        self.weather_data = WeatherData().get_weather(number)
+        self.dialogue_data = None
+        self.weather_data = None
+        self.number = number
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -90,6 +91,8 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.dialogue_data = DialogData().get_dialog_batch(self.number)
+        self.weather_data = WeatherData().get_weather(self.number)
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogue')
         self.output_message_stream = cs.stream.create_stream(self, 'weather_report')
@@ -102,6 +105,8 @@ class AgentExampleForMultiTask5(cs.agent.Agent):
         self.output_message_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.dialogue_data = DialogData().get_dialog_batch(self.number)
+        self.weather_data = WeatherData().get_weather(self.number)
         self.input_weather_stream = cs.stream.create_stream(self, 'all_weather')
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogue')
 

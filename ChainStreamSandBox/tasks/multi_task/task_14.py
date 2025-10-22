@@ -45,7 +45,7 @@ class ShopStockTask(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.video_data = SpharData().load_for_person_detection()
+        self.video_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.context import Buffer
@@ -93,6 +93,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.video_data = SpharData().load_for_person_detection()
         self.input_shop_stream = cs.stream.create_stream(self, 'all_first_person_shop')
         self.clock_stream = cs.stream.create_stream(self, 'clock')
         self.output_message_stream = cs.stream.create_stream(self, 'output_messages')
@@ -107,6 +108,7 @@ class AgentExampleForMultiTask14(cs.agent.Agent):
         self.work_trigger_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.video_data = SpharData().load_for_person_detection()
         self.input_shop_stream = cs.stream.create_stream(self, 'all_first_person_shop')
         self.clock_stream = cs.stream.create_stream(self, 'clock')
 

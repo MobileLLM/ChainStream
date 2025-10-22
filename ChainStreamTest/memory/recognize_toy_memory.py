@@ -10,25 +10,20 @@ moss_file = os.path.join(os.path.dirname(__file__), 'toy_img/moss.jpg')
 
 
 def set_toy_memory():
-    # toy_list = [('悲伤小蓝', Image.open(blue_file)),
-    #             ('小红鸭', Image.open(red_file)),
-    #             ('小猪', Image.open(pig_file)),
-    #             ('小黄鸭', Image.open(yellow_file)),
-    #             ('moss', Image.open(moss_file))]
-
-    toy_list = [('悲伤小蓝', Image.open(blue_file)),
-                ('小猪', Image.open(pig_file)),
-                ('小黄鸭', Image.open(yellow_file)),
+    # 存储图像文件路径而不是Image对象，因为Image对象无法序列化为JSON
+    toy_list = [('悲伤小蓝', blue_file),
+                ('小猪', pig_file),
+                ('小黄鸭', yellow_file),
                 ]
 
-    memory = cs.memory.create('known_toy', type='relational')
+    memory = cs.memory.create_memory('known_toy', type='kv')
     for toy in toy_list:
-        memory.add_item({'name': toy[0], 'img': toy[1]})
+        memory.add_item({'name': toy[0], 'img_path': toy[1]})
 
 
 if __name__ == '__main__':
     set_toy_memory()
 
     memory = cs.memory.fetch('known_toy')
-    print(memory.select_keys(['name', 'img']))
+    print(memory.select_keys(['name', 'img_path']))
 

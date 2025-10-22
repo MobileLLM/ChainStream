@@ -28,7 +28,7 @@ class VideoTask2(SingleAgentTaskConfigBase):
                     "cooking": "An indication of whether I am cooking in the kitchen, bool"}
             }
         ])
-        self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
+        self.ego_4d_data = None
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
@@ -55,6 +55,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_video_frame')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_kitchen_risk')
 
@@ -66,6 +67,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_ui_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.ego_4d_data = Ego4DData().load_for_indoor_and_outdoor()
         self.input_ui_stream = cs.stream.create_stream(self, 'first_person_perspective_video_frame')
 
     def init_output_stream(self, runtime):

@@ -33,7 +33,7 @@ service.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             // Token过期或无效，清除本地存储并跳转到登录页
             logout();
-            window.location.href = '/login';
+            window.location.href = '/#/login';
         }
         return Promise.reject(error);
     }

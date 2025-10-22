@@ -34,7 +34,8 @@ class EmailTask4(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.email_data = EmailData().get_emails(email_number)
+        self.email_data = None
+        self.email_number = email_number
         self.agent_example = '''
 import chainstream as cs
 
@@ -66,6 +67,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.email_data = EmailData().get_emails(self.email_number)
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
         self.output_email_stream = cs.stream.create_stream(self, 'auto_email_reply')
 
@@ -77,6 +79,7 @@ class AgentExampleForEmailTask4(cs.agent.Agent):
         self.output_email_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.email_data = EmailData().get_emails(self.email_number)
         self.input_email_stream = cs.stream.create_stream(self, 'all_email')
 
     def init_output_stream(self, runtime):

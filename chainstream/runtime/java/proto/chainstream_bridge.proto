@@ -3,6 +3,7 @@ syntax = "proto3";
 package chainstream;
 
 // ChainStream Bridge Service - 连接Java Agent和Python Runtime
+// Python端作为Server，Java端作为Client
 service ChainStreamBridge {
     // Agent生命周期管理
     rpc StartAgent(StartAgentRequest) returns (StartAgentResponse);
@@ -35,6 +36,13 @@ service ChainStreamBridge {
     
     // Agent ID报告
     rpc ReportAgentId(ReportAgentIdRequest) returns (ReportAgentIdResponse);
+}
+
+// Java Agent Callback Service - Java端作为Server，Python端作为Client
+// 用于Python调用Java的listener函数
+service JavaAgentCallback {
+    // 调用Java端注册的listener
+    rpc InvokeListener(InvokeListenerRequest) returns (InvokeListenerResponse);
 }
 
 // Agent生命周期消息
@@ -87,6 +95,7 @@ message AddItemRequest {
     string stream_id = 1;
     string item = 2;
     string agent_id = 3;
+    string caller_listener_id = 4;  // Java listener内部调用addItem时传递的调用者标识
 }
 
 message AddItemResponse {
@@ -108,12 +117,28 @@ message ForEachRequest {
     string stream_id = 1;
     string agent_id = 2;
     string listener_function_name = 3;  // Java中监听函数的名称
+    string listener_id = 4;  // 唯一的listener标识符，用于回调
+    string callback_address = 5;  // Java gRPC Server地址，格式：host:port
 }
 
 message ForEachResponse {
     bool success = 1;
     string error = 2;
     string anonymous_stream_id = 3;  // 返回的匿名流ID
+}
+
+// Java Listener回调消息
+message InvokeListenerRequest {
+    string agent_id = 1;
+    string listener_id = 2;  // listener的唯一标识
+    string item_data = 3;  // 要处理的数据项（JSON序列化）
+}
+
+message InvokeListenerResponse {
+    bool success = 1;
+    string error = 2;
+    string result_data = 3;  // 处理结果（JSON序列化），可能为空（void）
+    bool has_result = 4;  // 是否有返回值
 }
 
 message BatchRequest {

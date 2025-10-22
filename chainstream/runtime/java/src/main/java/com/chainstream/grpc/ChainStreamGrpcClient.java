@@ -165,16 +165,25 @@ public class ChainStreamGrpcClient {
     /**
      * 向Stream添加项目
      */
-    public ChainstreamBridge.AddItemResponse addItem(String streamId, String item, String agentId) {
+    public ChainstreamBridge.AddItemResponse addItem(String streamId, String item, String agentId, String callerListenerId) {
         try {
             logger.info("Adding item to stream " + streamId + ": " + item);
+            if (callerListenerId != null) {
+                logger.fine("Caller listener ID: " + callerListenerId);
+            }
             
-            ChainstreamBridge.AddItemRequest request = 
+            ChainstreamBridge.AddItemRequest.Builder requestBuilder = 
                 ChainstreamBridge.AddItemRequest.newBuilder()
                     .setStreamId(streamId)
                     .setItem(item)
-                    .setAgentId(agentId)
-                    .build();
+                    .setAgentId(agentId);
+            
+            // 如果有caller_listener_id，添加到请求中
+            if (callerListenerId != null && !callerListenerId.isEmpty()) {
+                requestBuilder.setCallerListenerId(callerListenerId);
+            }
+            
+            ChainstreamBridge.AddItemRequest request = requestBuilder.build();
             
             ChainstreamBridge.AddItemResponse response = 
                 blockingStub.addItem(request);
@@ -194,19 +203,26 @@ public class ChainStreamGrpcClient {
     /**
      * 为Stream挂载监听函数
      */
-    public ChainstreamBridge.ForEachResponse forEach(String streamId, String agentId, String listenerFunctionName) {
+    public ChainstreamBridge.ForEachResponse forEach(String streamId, String agentId, String listenerFunctionName, String listenerId, String callbackAddress) {
         try {
-            logger.info("Adding forEach listener for stream: " + streamId);
+            logger.info("Adding forEach listener for stream: " + streamId + ", callback: " + callbackAddress);
             
-            ChainstreamBridge.ForEachRequest request = 
+            ChainstreamBridge.ForEachRequest.Builder requestBuilder = 
                 ChainstreamBridge.ForEachRequest.newBuilder()
                     .setStreamId(streamId)
                     .setAgentId(agentId)
-                    .setListenerFunctionName(listenerFunctionName)
-                    .build();
+                    .setListenerFunctionName(listenerFunctionName);
+            
+            // 添加listener ID和callback地址
+            if (listenerId != null && !listenerId.isEmpty()) {
+                requestBuilder.setListenerId(listenerId);
+            }
+            if (callbackAddress != null && !callbackAddress.isEmpty()) {
+                requestBuilder.setCallbackAddress(callbackAddress);
+            }
             
             ChainstreamBridge.ForEachResponse response = 
-                blockingStub.forEach(request);
+                blockingStub.forEach(requestBuilder.build());
             
             logger.info("ForEach listener added: " + response.getSuccess());
             return response;
@@ -650,7 +666,7 @@ public class ChainStreamGrpcClient {
                         
                         // 测试添加项目
                         ChainstreamBridge.AddItemResponse itemResponse = 
-                            client.addItem("test_stream", "Test item", "test_agent");
+                            client.addItem("test_stream", "Test item", "test_agent", null);
                         if (itemResponse.getSuccess()) {
                             System.out.println("✅ Item added successfully!");
                         }

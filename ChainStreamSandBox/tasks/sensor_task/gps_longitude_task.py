@@ -28,7 +28,7 @@ class GPSTask11(SingleAgentTaskConfigBase):
                     "CapitalLongitude": "The capital longitude of the location, float"}
             }
         ])
-        self.gps_data = GPSData().get_gps(10)
+        self.gps_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -48,6 +48,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.gps_data = GPSData().get_gps(10)
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
         self.output_gps_stream = cs.stream.create_stream(self, 'gps_longitude')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -58,6 +59,7 @@ class testAgent(cs.agent.Agent):
         self.output_gps_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.gps_data = GPSData().get_gps(10)
         self.input_gps_stream = cs.stream.create_stream(self, 'all_gps')
 
     def init_output_stream(self, runtime):

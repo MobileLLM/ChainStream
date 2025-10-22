@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@monaco-editor/loader": "^1.5.0",
     "axios": "^1.6.8",
     "echarts": "^5.5.0",
     "element-plus": "^2.6.1",
+    "highlight.js": "^11.10.0",
     "jquery": "^3.7.1",
+    "monaco-editor": "^0.53.0",
+    "prismjs": "^1.30.0",
     "vue": "^3.4.15",
-    "vue-router": "^4.3.0",
-    "highlight.js": "^11.10.0"
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.3",

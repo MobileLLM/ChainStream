@@ -38,7 +38,7 @@ class HealthTask14(SingleAgentTaskConfigBase):
                                       "'Emergency Dispatcher', 'Not Sure'], string"}
             }
         ])
-        self.health_data = HealthData().get_health_data(10)
+        self.health_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -60,6 +60,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.health_data = HealthData().get_health_data(10)
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
         self.output_health_stream = cs.stream.create_stream(self, 'occupation_estimation')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -70,6 +71,7 @@ class testAgent(cs.agent.Agent):
         self.output_health_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.health_data = HealthData().get_health_data(10)
         self.input_health_stream = cs.stream.create_stream(self, 'all_health')
 
     def init_output_stream(self, runtime):

@@ -1,6 +1,7 @@
 package com.chainstream.runtime;
 
 import com.chainstream.grpc.ChainStreamGrpcClient;
+import com.chainstream.callback.JavaAgentCallbackServer;
 import chainstream.ChainstreamBridge;
 import java.util.logging.Logger;
 
@@ -13,6 +14,8 @@ public class Runtime {
     private static Runtime instance;
     private ChainStreamGrpcClient grpcClient;
     private String agentId;
+    private String callbackAddress; // Java callback server地址
+    private JavaAgentCallbackServer callbackServer; // Callback server引用
     
     private Runtime() {
         this.agentId = "default_agent";
@@ -159,6 +162,36 @@ public class Runtime {
             logger.severe("Failed to stop agent: " + response.getError());
         }
         return response.getSuccess();
+    }
+    
+    /**
+     * 设置callback地址和server
+     */
+    public void setCallbackAddress(String address) {
+        this.callbackAddress = address;
+        logger.info("Callback address set to: " + address);
+    }
+    
+    /**
+     * 设置callback server引用
+     */
+    public void setCallbackServer(JavaAgentCallbackServer server) {
+        this.callbackServer = server;
+        logger.info("Callback server reference set");
+    }
+    
+    /**
+     * 获取callback地址
+     */
+    public String getCallbackAddress() {
+        return this.callbackAddress;
+    }
+    
+    /**
+     * 获取callback server
+     */
+    public JavaAgentCallbackServer getCallbackServer() {
+        return this.callbackServer;
     }
     
     /**

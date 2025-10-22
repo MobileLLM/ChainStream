@@ -37,7 +37,8 @@ class WeatherTask2(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.sensor_data = WeatherData().get_weather(sensor_number)
+        self.sensor_data = None
+        self.sensor_number = sensor_number
         self.agent_example = '''
 import chainstream as cs
 import pandas as pd
@@ -68,6 +69,7 @@ class AgentExampleForSensorTask5(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.sensor_data = WeatherData().get_weather(self.sensor_number)
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_weather')
         self.output_sensor_stream = cs.stream.create_stream(self, 'alarm_wet')
 
@@ -79,6 +81,7 @@ class AgentExampleForSensorTask5(cs.agent.Agent):
         self.output_sensor_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.sensor_data = WeatherData().get_weather(self.sensor_number)
         self.input_sensor_stream = cs.stream.create_stream(self, 'all_weather')
 
     def init_output_stream(self, runtime):

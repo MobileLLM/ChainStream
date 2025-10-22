@@ -31,7 +31,7 @@ class ImageTask1(SingleAgentTaskConfigBase):
                 }
             }
         ])
-        self.screenshot_data = DesktopData().get_random_sample()
+        self.screenshot_data = None
         self.agent_example = '''
 import chainstream as cs
 class AgentExampleForImageTask(cs.agent.Agent):
@@ -53,6 +53,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.screenshot_data = DesktopData().get_random_sample()
         self.input_ui_stream = cs.stream.create_stream(self, 'desktop_screenshot')
         self.output_ui_stream = cs.stream.create_stream(self, 'analysis_software')
 
@@ -64,6 +65,7 @@ class AgentExampleForImageTask(cs.agent.Agent):
         self.output_ui_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.screenshot_data = DesktopData().get_random_sample()
         self.input_ui_stream = cs.stream.create_stream(self, 'desktop_screenshot')
 
     def init_output_stream(self, runtime):

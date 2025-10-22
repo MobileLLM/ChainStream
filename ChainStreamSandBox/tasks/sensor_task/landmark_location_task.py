@@ -29,7 +29,7 @@ class GPSTask13(SingleAgentTaskConfigBase):
                     "property_with_address": "The name with the street address of the landmark, string"}
             }
         ])
-        self.landmark_data = LandmarkData().get_landmarks(10)
+        self.landmark_data = None
         self.agent_example = '''
 import chainstream as cs
 from chainstream.llm import get_model
@@ -52,6 +52,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.landmark_data = LandmarkData().get_landmarks(10)
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
         self.output_landmark_stream = cs.stream.create_stream(self, 'landmarks_location')
         self.output_record = {x.stream_id: [] for x in self.output_stream_description.streams}
@@ -62,6 +63,7 @@ class testAgent(cs.agent.Agent):
         self.output_landmark_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.landmark_data = LandmarkData().get_landmarks(10)
         self.input_landmark_stream = cs.stream.create_stream(self, 'all_landmarks')
 
     def init_output_stream(self, runtime):

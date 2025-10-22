@@ -27,3 +27,10 @@ export function getRunningAgents() {
     method: 'get'
   })
 }
+
+export function getAgentCode(agentPath) {
+  return request({
+    url: '/monitor/agents/code/' + encodeURIComponent(agentPath),
+    method: 'get'
+  })
+}

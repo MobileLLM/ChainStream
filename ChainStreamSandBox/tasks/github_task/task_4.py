@@ -36,7 +36,8 @@ class GithubTask4(SingleAgentTaskConfigBase):
             }
         ])
 
-        self.github_data = GitHubData().get_github_data(github_number)
+        self.github_data = None
+        self.github_number = github_number
         self.agent_example = '''
 import chainstream as cs
 
@@ -65,6 +66,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.github_data = GitHubData().get_github_data(self.github_number)
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
         self.output_github_stream = cs.stream.create_stream(self, 'language_from_most_pr')
 
@@ -76,6 +78,7 @@ class AgentExampleForGithubTask1(cs.agent.Agent):
         self.output_github_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.github_data = GitHubData().get_github_data(self.github_number)
         self.input_github_stream = cs.stream.create_stream(self, 'all_github')
 
     def init_output_stream(self, runtime):

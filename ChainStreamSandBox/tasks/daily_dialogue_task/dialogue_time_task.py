@@ -33,7 +33,7 @@ class DialogueTask4(SingleAgentTaskConfigBase):
                             "'evening','not clear'] based on the dialog field, string"}
             }
         ])
-        self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
+        self.dialogue_data = None
         self.agent_example = '''
 import chainstream as cs
 
@@ -60,6 +60,7 @@ class testAgent(cs.agent.Agent):
         '''
 
     def init_environment(self, runtime):
+        self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
         self.output_dialogue_stream = cs.stream.create_stream(self, 'dialogues_part_of_the_day')
 
@@ -71,6 +72,7 @@ class testAgent(cs.agent.Agent):
         self.output_dialogue_stream.for_each(record_output)
 
     def init_input_stream(self, runtime):
+        self.dialogue_data = DialogData().get_dialog_batch(batch_size=10, topic=None)
         self.input_dialogue_stream = cs.stream.create_stream(self, 'all_dialogues')
 
     def init_output_stream(self, runtime):

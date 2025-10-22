@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { Refresh, VideoPlay, VideoPause } from '@element-plus/icons-vue'
+import { Refresh, VideoPlay, VideoPause, View } from '@element-plus/icons-vue'
 import $ from 'jquery'
+import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
 </script>
 
 
@@ -54,6 +55,16 @@ import $ from 'jquery'
                       <span class="node-label">{{ node.label }}</span>
                     </el-tooltip>
                     <div class="node-actions">
+                      <el-button 
+                        v-if="!data.disabled" 
+                        size="small" 
+                        type="primary" 
+                        @click="handlePreview(data)"
+                        :icon="View"
+                        class="action-btn"
+                      >
+                        Preview
+                      </el-button>
                       <el-button 
                         v-if="!data.disabled" 
                         size="small" 
@@ -197,8 +208,17 @@ import $ from 'jquery'
                 </template>
               </el-table-column>
               
-              <el-table-column label="Actions" width="120" align="center" fixed="right">
+              <el-table-column label="Actions" width="180" align="center" fixed="right">
                 <template #default="scope">
+                  <el-button 
+                    size="small" 
+                    type="primary" 
+                    @click="handlePreview(scope.row)"
+                    :icon="View"
+                    style="margin-right: 4px;"
+                  >
+                    Preview
+                  </el-button>
                   <el-button 
                     v-if="scope.row.status === 'running'"
                     size="small" 
@@ -224,12 +244,23 @@ import $ from 'jquery'
         </el-card>
       </el-col>
     </el-row>
+    
+    <!-- Code Preview Modal -->
+    <CodePreviewModal
+      v-model="previewModalVisible"
+      :title="previewTitle"
+      :file-path="previewFilePath"
+      :language="previewLanguage"
+      :code-content="previewCodeContent"
+      :loading="previewLoading"
+      @close="handlePreviewClose"
+    />
   </div>
 </template>
 
 
 <script>
-import {startAgent, stopAgent, getAgentsPath, getRunningAgents} from '@/api/monitor/agents.js'
+import {startAgent, stopAgent, getAgentsPath, getRunningAgents, getAgentCode} from '@/api/monitor/agents.js'
 import {formToJSON} from "axios";
 
 export default {
@@ -258,6 +289,13 @@ export default {
             is_running: true,
           },
       ],
+      // Code preview modal data
+      previewModalVisible: false,
+      previewTitle: 'Code Preview',
+      previewFilePath: '',
+      previewLanguage: 'text',
+      previewCodeContent: '',
+      previewLoading: false,
     }
   },
   computed: {
@@ -389,6 +427,54 @@ export default {
         return timeString;
       }
     },
+    
+    // Code preview methods
+    handlePreview(data) {
+      // 获取文件路径
+      let filePath = '';
+      if (data.agent_file_path) {
+        // 来自running agents table
+        filePath = data.agent_file_path;
+      } else if (data.label) {
+        // 来自agent tree
+        filePath = data.label;
+      } else {
+        this.$message.error('No file path available for preview');
+        return;
+      }
+      
+      this.previewFilePath = filePath;
+      this.previewTitle = `Code Preview - ${filePath.split('/').pop()}`;
+      this.previewModalVisible = true;
+      this.previewLoading = true;
+      this.previewCodeContent = '';
+      this.previewLanguage = 'text';
+      
+      // 获取代码内容
+      this.loadAgentCode(filePath);
+    },
+    
+    async loadAgentCode(filePath) {
+      try {
+        const response = await getAgentCode(filePath);
+        this.previewCodeContent = response.content;
+        this.previewLanguage = response.language;
+        this.previewFilePath = response.path;
+        this.previewLoading = false;
+      } catch (error) {
+        console.error('Error loading agent code:', error);
+        this.$message.error('Failed to load code: ' + (error.response?.data?.error || error.message));
+        this.previewLoading = false;
+      }
+    },
+    
+    handlePreviewClose() {
+      this.previewModalVisible = false;
+      this.previewCodeContent = '';
+      this.previewFilePath = '';
+      this.previewLanguage = 'text';
+      this.previewLoading = false;
+    },
   },
 
   // mounted() {
@@ -519,6 +605,7 @@ export default {
   gap: 4px;
   flex-shrink: 0;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .action-btn {
