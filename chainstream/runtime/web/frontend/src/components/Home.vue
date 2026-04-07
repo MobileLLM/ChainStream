@@ -15,8 +15,8 @@ import {
 <template>
   <div class="home-container">
     <div class="welcome-section">
-      <h1 class="welcome-title">Welcome to ChainStream!</h1>
-      <p class="welcome-subtitle">Your AI Agent Management Platform</p>
+      <h1 class="welcome-title">{{ $t('home.welcome') }}</h1>
+      <p class="welcome-subtitle">{{ $t('home.subtitle') }}</p>
     </div>
 
     <div class="config-section">
@@ -24,20 +24,20 @@ import {
         <template #header>
           <div class="card-header">
             <el-icon class="header-icon"><Setting /></el-icon>
-            <span class="card-title">System Configuration</span>
+            <span class="card-title">{{ $t('home.systemConfiguration') }}</span>
           </div>
         </template>
         
         <div class="config-content" v-loading="loading">
           <el-descriptions
-            title="Backend Connection"
+            :title="$t('home.backendConnection')"
             :column="responsiveColumns"
             size="default"
             border
             direction="vertical"
             class="connection-descriptions"
           >
-            <el-descriptions-item label="Backend URL" label-class-name="desc-label">
+            <el-descriptions-item :label="$t('home.backendUrl')" label-class-name="desc-label">
               <div class="url-display">
                 <el-text class="url-text" type="primary">{{ backendUrl }}</el-text>
                 <el-button 
@@ -50,7 +50,7 @@ import {
               </div>
             </el-descriptions-item>
             
-            <el-descriptions-item label="Connection Status" label-class-name="desc-label">
+            <el-descriptions-item :label="$t('home.connectionStatus')" label-class-name="desc-label">
               <div class="status-display">
                 <el-tag 
                   :type="connectionStatus.type" 
@@ -62,7 +62,7 @@ import {
               </div>
             </el-descriptions-item>
             
-            <el-descriptions-item label="Actions" label-class-name="desc-label">
+            <el-descriptions-item :label="$t('common.actions')" label-class-name="desc-label">
               <div class="action-buttons">
                 <el-button 
                   type="primary" 
@@ -71,7 +71,7 @@ import {
                   :loading="loading"
                   size="default"
                 >
-                  Test Connection
+                  {{ $t('home.testConnection') }}
                 </el-button>
                 <el-button 
                   type="default" 
@@ -79,7 +79,7 @@ import {
                   @click="refreshConfig"
                   size="default"
                 >
-                  Refresh
+                  {{ $t('common.refresh') }}
                 </el-button>
               </div>
             </el-descriptions-item>
@@ -98,7 +98,7 @@ import {
               </div>
               <div class="stat-info">
                 <div class="stat-number">{{ runningAgentsCount }}</div>
-                <div class="stat-label">Running Agents</div>
+                <div class="stat-label">{{ $t('home.runningAgents') }}</div>
               </div>
             </div>
           </el-card>
@@ -112,7 +112,7 @@ import {
               </div>
               <div class="stat-info">
                 <div class="stat-number">{{ activeStreamsCount }}</div>
-                <div class="stat-label">Active Streams</div>
+                <div class="stat-label">{{ $t('home.activeStreams') }}</div>
               </div>
             </div>
           </el-card>
@@ -127,10 +127,12 @@ import { reactive } from 'vue'
 import { checkConnection } from '@/api/home.js'
 import { getStatistics } from '@/api/monitor/statistics.js'
 import axios from "axios";
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'Home',
   setup() {
+    const { t } = useI18n()
     const screenWidth = ref(window.innerWidth)
     const isConnected = ref(false)
     
@@ -145,13 +147,13 @@ export default {
         return {
           type: 'success',
           icon: 'SuccessFilled',
-          text: 'Connected'
+          text: t('home.connected')
         }
       } else {
         return {
           type: 'info',
           icon: 'CircleCloseFilled',
-          text: 'Not Connected'
+          text: t('home.notConnected')
         }
       }
     })
@@ -169,7 +171,8 @@ export default {
       isConnected,
       responsiveColumns,
       connectionStatus,
-      handleResize
+      handleResize,
+      t
     }
   },
   data() {
@@ -188,21 +191,21 @@ export default {
           this.loading = false
           this.isConnected = true
           console.log(res)
-          this.$message.success('Connection successful')
+          this.$message.success(this.t('home.connectionSuccess'))
         })
         .catch(err => {
           this.loading = false
           this.isConnected = false
           console.log(err)
-          this.$message.error('Connection failed')
+          this.$message.error(this.t('home.connectionFailed'))
         })
     },
     
     copyUrl() {
       navigator.clipboard.writeText(this.backendUrl).then(() => {
-        this.$message.success('URL copied to clipboard')
+        this.$message.success(this.t('home.urlCopied'))
       }).catch(() => {
-        this.$message.error('Failed to copy URL')
+        this.$message.error(this.t('home.urlCopyFailed'))
       })
     },
     

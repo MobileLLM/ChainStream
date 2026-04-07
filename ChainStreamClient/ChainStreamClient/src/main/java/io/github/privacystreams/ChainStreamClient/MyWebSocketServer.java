@@ -65,7 +65,7 @@ public class MyWebSocketServer extends WebSocketServer {
 
     MyWebSocketServer(InetSocketAddress host){
         super(host);
-        Log.d("websocket", "启动到" + host.toString());
+        Log.d("websocket", "start to" + host.toString());
     }
 
     public void setPreView(SurfaceView view) {
@@ -554,7 +554,7 @@ public class MyWebSocketServer extends WebSocketServer {
     }
     @Override
     public void onStart() {
-        Log.d("websocket", "onStart()，WebSocket服务端启动成功");
+        Log.d("websocket", "onStart()，WebSocket is running!");
     }
 
 

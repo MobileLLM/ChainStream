@@ -35,77 +35,77 @@ const props = defineProps({
       >
         <el-menu-item index="/home" class="menu-item">
           <el-icon><House /></el-icon>
-          <span class="menu-text">Home</span>
+          <span class="menu-text">{{ $t('menu.home') }}</span>
         </el-menu-item>
         
 <!--        <el-sub-menu index="1" class="sub-menu">-->
 <!--          <template #title>-->
 <!--            <el-icon><Setting /></el-icon>-->
-<!--            <span class="menu-text">System Config</span>-->
+<!--            <span class="menu-text">{{ $t('menu.systemConfig') }}</span>-->
 <!--          </template>-->
-<!--          <el-menu-item index="/config/llms" class="sub-menu-item">LLMs</el-menu-item>-->
-<!--          <el-menu-item index="/config/tools" class="sub-menu-item">Tools</el-menu-item>-->
+<!--          <el-menu-item index="/config/llms" class="sub-menu-item">{{ $t('menu.llms') }}</el-menu-item>-->
+<!--          <el-menu-item index="/config/tools" class="sub-menu-item">{{ $t('menu.tools') }}</el-menu-item>-->
 <!--        </el-sub-menu>-->
 
 <!--        <el-sub-menu index="2" class="sub-menu">-->
 <!--          <template #title>-->
 <!--            <el-icon><Iphone /></el-icon>-->
-<!--            <span class="menu-text">Devices</span>-->
+<!--            <span class="menu-text">{{ $t('menu.devices') }}</span>-->
 <!--          </template>-->
-<!--          <el-menu-item index="/device/device" class="sub-menu-item">Devices</el-menu-item>-->
-<!--          <el-menu-item index="/device/sensor" class="sub-menu-item">Sensors</el-menu-item>-->
+<!--          <el-menu-item index="/device/device" class="sub-menu-item">{{ $t('menu.device') }}</el-menu-item>-->
+<!--          <el-menu-item index="/device/sensor" class="sub-menu-item">{{ $t('menu.sensor') }}</el-menu-item>-->
 <!--        </el-sub-menu>-->
 
 <!--        <el-sub-menu index="3" class="sub-menu">-->
 <!--          <template #title>-->
 <!--            <el-icon><ShoppingTrolley /></el-icon>-->
-<!--            <span class="menu-text">Agent Store</span>-->
+<!--            <span class="menu-text">{{ $t('menu.agentStore') }}</span>-->
 <!--          </template>-->
-<!--          <el-menu-item index="/store/store" class="sub-menu-item">Agent Store</el-menu-item>-->
+<!--          <el-menu-item index="/store/store" class="sub-menu-item">{{ $t('menu.store') }}</el-menu-item>-->
 <!--        </el-sub-menu>-->
 
         <el-sub-menu index="4" class="sub-menu">
           <template #title>
             <el-icon><Edit /></el-icon>
-            <span class="menu-text">Agent Generator</span>
+            <span class="menu-text">{{ $t('menu.agentGenerator') }}</span>
           </template>
-          <el-menu-item index="/generator/Generator" class="sub-menu-item">Agent Generator</el-menu-item>
+          <el-menu-item index="/generator/Generator" class="sub-menu-item">{{ $t('menu.generator') }}</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="5" class="sub-menu">
           <template #title>
             <el-icon><Monitor /></el-icon>
-            <span class="menu-text">Runtime Monitor</span>
+            <span class="menu-text">{{ $t('menu.runtimeMonitor') }}</span>
           </template>
-          <el-menu-item index="/monitor/Agents" class="sub-menu-item">Agents</el-menu-item>
-          <el-menu-item index="/monitor/Streams" class="sub-menu-item">Streams</el-menu-item>
-          <el-menu-item index="/monitor/StreamGraph" class="sub-menu-item">Stream Graph</el-menu-item>
+          <el-menu-item index="/monitor/Agents" class="sub-menu-item">{{ $t('menu.agents') }}</el-menu-item>
+          <el-menu-item index="/monitor/Streams" class="sub-menu-item">{{ $t('menu.streams') }}</el-menu-item>
+          <el-menu-item index="/monitor/StreamGraph" class="sub-menu-item">{{ $t('menu.streamGraph') }}</el-menu-item>
         </el-sub-menu>
 
 <!--        <el-sub-menu index="6" class="sub-menu">-->
 <!--          <template #title>-->
 <!--            <el-icon><Memo /></el-icon>-->
-<!--            <span class="menu-text">Memory</span>-->
+<!--            <span class="menu-text">{{ $t('menu.memory') }}</span>-->
 <!--          </template>-->
-<!--          <el-menu-item index="/memory/Memory" class="sub-menu-item">Memory</el-menu-item>-->
+<!--          <el-menu-item index="/memory/Memory" class="sub-menu-item">{{ $t('menu.memory') }}</el-menu-item>-->
 <!--        </el-sub-menu>-->
 
 <!--        <el-sub-menu index="7" class="sub-menu">-->
 <!--          <template #title>-->
 <!--            <el-icon><DataLine /></el-icon>-->
-<!--            <span class="menu-text">Analysis</span>-->
+<!--            <span class="menu-text">{{ $t('menu.analysis') }}</span>-->
 <!--          </template>-->
-<!--          <el-menu-item index="/analysis/analysis" class="sub-menu-item">Analysis</el-menu-item>-->
+<!--          <el-menu-item index="/analysis/analysis" class="sub-menu-item">{{ $t('menu.analysis') }}</el-menu-item>-->
 <!--        </el-sub-menu>-->
       </el-menu>
     </el-scrollbar>
     
-    <div class="aside-footer">
+    <!-- <div class="aside-footer">
       <div class="footer-content">
         <el-icon class="footer-icon"><Share /></el-icon>
         <span class="footer-text">ChainStream ©2024</span>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

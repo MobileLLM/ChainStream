@@ -107,7 +107,7 @@
         android:id="@+id/label_bottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="ChainStream Log："
+        android:text="Controller Log："
         android:textColor="#3F51B5"
         android:textSize="20sp"
         android:textStyle="bold" />

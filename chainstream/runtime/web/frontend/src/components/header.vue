@@ -8,21 +8,36 @@
         circle
         size="small"
       />
-      <h1 class="logo">ChainStream Dashboard</h1>
+      <h1 class="logo">{{ $t('header.title') }}</h1>
     </div>
     
     <div class="header-right">
+      <div class="language-switcher">
+        <el-dropdown trigger="click" @command="handleLanguageChange">
+          <el-button class="language-button" :icon="Operation" circle size="small" />
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="zh-CN" :class="{ 'is-active': currentLanguage === 'zh-CN' }">
+                {{ $t('header.chinese') }}
+              </el-dropdown-item>
+              <el-dropdown-item command="en-US" :class="{ 'is-active': currentLanguage === 'en-US' }">
+                {{ $t('header.english') }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      
       <div v-if="user" class="user-info">
         <el-avatar 
           :size="32" 
-          :src="user.avatar || '/default-avatar.png'"
           class="user-avatar"
         >
           {{ user.username?.charAt(0).toUpperCase() }}
         </el-avatar>
         <div class="user-details">
           <span class="username">{{ user.username }}</span>
-          <el-tag size="small" type="info" class="user-level">Level {{ user.level }}</el-tag>
+          <el-tag size="small" type="info" class="user-level">{{ $t('header.level') }} {{ user.level }}</el-tag>
         </div>
         <el-dropdown trigger="click" class="user-menu">
           <el-button :icon="Setting" circle size="small" class="menu-button" />
@@ -30,15 +45,15 @@
             <el-dropdown-menu>
               <el-dropdown-item @click="showUserProfile">
                 <el-icon><User /></el-icon>
-                Profile
+                {{ $t('header.profile') }}
               </el-dropdown-item>
               <el-dropdown-item @click="showSettings">
                 <el-icon><Setting /></el-icon>
-                Settings
+                {{ $t('header.settings') }}
               </el-dropdown-item>
               <el-dropdown-item divided @click="handleLogout">
                 <el-icon><SwitchButton /></el-icon>
-                Logout
+                {{ $t('header.logout') }}
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -86,6 +101,28 @@
 .header-right {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.language-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+:deep(.el-dropdown-menu__item.is-active) {
+  color: #409EFF;
+  font-weight: 600;
 }
 
 .user-info {
@@ -180,8 +217,9 @@
 }
 </style>
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-import { Fold, Setting, User, SwitchButton } from '@element-plus/icons-vue'
+import { defineProps, defineEmits, computed } from 'vue'
+import { Fold, Setting, User, SwitchButton, Operation } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   user: {
@@ -191,6 +229,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['logout', 'toggle-sidebar'])
+
+const { locale } = useI18n()
+
+const currentLanguage = computed(() => locale.value)
 
 const handleLogout = () => {
   emit('logout')
@@ -208,5 +250,12 @@ const showUserProfile = () => {
 const showSettings = () => {
   // TODO: Implement settings modal
   console.log('Show settings')
+}
+
+const handleLanguageChange = (lang) => {
+  locale.value = lang
+  localStorage.setItem('language', lang)
+  // 刷新页面以确保所有组件都更新语言
+  window.location.reload()
 }
 </script>
