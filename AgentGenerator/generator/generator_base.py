@@ -6,8 +6,8 @@ from ChainStreamSandBox.tasks.task_config_base import SingleAgentTaskConfigBase
 from chainstream.stream import create_stream, get_stream
 import datetime
 import os
-
-
+MODEL='/data2/models/Qwen/Qwen3-8B'
+# MODEL='gpt-4o'
 class AgentGeneratorBase:
     """
     Three mode of generator:
@@ -16,7 +16,8 @@ class AgentGeneratorBase:
     3. [Default] work alone without any information, need to provide input stream and agent information in the generate_dsl function manually.
     """
 
-    def __init__(self, runtime=None, model_name="gpt-4o"):
+    def __init__(self, runtime=None, model_name=MODEL):
+    # def __init__(self, runtime=None, model_name='/data2/models/Qwen/Qwen3-8B'):
         self.runtime = runtime
         self.stream_selector = StreamSelectorBase()
 

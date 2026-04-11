@@ -10,17 +10,27 @@ from pathlib import Path
 
 from io import BytesIO
 from PIL import Image
-
+# os.environ["GPT_API_URL"] = "http://localhost:8001/v1"
+# os.environ["GPT_API_KEY"] = "empty"
 logger = logging.getLogger(__name__)
 
+# GPT_CONFIG = {
+#     "url": os.getenv("GPT_API_URL"),
+#     "key": os.getenv("GPT_API_KEY")
+# }
 GPT_CONFIG = {
     "url": os.getenv("GPT_API_URL"),
     "key": os.getenv("GPT_API_KEY")
 }
 
-
+# GPT_CONFIG = {
+#     "url": "http://localhost:8001/v1",
+#     "key": "EMPTY"
+# }
+MODEL='/data2/models/Qwen/Qwen3-8B'
+# MODEL='gpt-4o'
 class BaseOpenAI:
-    def __init__(self, model='gpt-4o', model_type='text', temperature=0.7, verbose=True, retry=3,
+    def __init__(self, model=MODEL, model_type='text', temperature=0.7, verbose=True, retry=3,
                  timeout=15, identifier=""):
         self.prompt_tokens = 0
         self.completion_tokens = 0
@@ -36,8 +46,12 @@ class BaseOpenAI:
         try:
             # self.url = os.environ['GPT_API_URL']
             # self.api_key = os.environ['GPT_API_KEY']
-            self.url = GPT_CONFIG['url']
-            self.api_key = GPT_CONFIG['key']
+            if self.model=='/data2/models/Qwen/Qwen3-8B':
+                self.url = "http://localhost:8001/v1"
+                self.api_key = "EMPTY"
+            else:
+                self.url = GPT_CONFIG['url']
+                self.api_key = GPT_CONFIG['key']
             self.temperature = temperature
             self.retry = retry
             self.client = OpenAI(
@@ -62,30 +76,62 @@ class BaseOpenAI:
 
 
 class TextGPTModel(BaseOpenAI):
-    def __init__(self, model='gpt-4o', temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
+    def __init__(self, model=MODEL, temperature=0.7, verbose=True, retry=3, timeout=15, identifier=""):
         super().__init__(model=model, model_type='text', temperature=temperature, verbose=verbose, retry=retry,
                          timeout=timeout, identifier=identifier)
 
     def query(self, prompt, stop=None):
         # print(self.model)
+        if self.model=='/data2/models/Qwen/Qwen3-8B':
+            sampling_params = {
+                "temperature": self.temperature,
+                "top_p": 1,
+                "frequency_penalty": 0.0,
+                "presence_penalty": 0.0,
+                "extra_body":{
+                "chat_template_kwargs": {
+                    "enable_thinking": False  # 关键参数
+                }
+                }
+            }
+        else:
+            sampling_params = {
+                "temperature": self.temperature,
+                "top_p": 1,
+                "frequency_penalty": 0.0,
+                "presence_penalty": 0.0,
+            }   
         if stop is None:
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=prompt,
-                temperature=self.temperature,
-                top_p=1,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
+                **sampling_params
+                # temperature=self.temperature,
+                # top_p=1,
+                # frequency_penalty=0.0,
+                # presence_penalty=0.0,
+                # extra_body={
+                # "chat_template_kwargs": {
+                #     "enable_thinking": False  # 关键参数
+                # }
+                # }
+              
             )
         else:
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=prompt,
-                temperature=self.temperature,
-                top_p=1,
-                frequency_penalty=0.0,
-                presence_penalty=0.0,
+                **sampling_params,
+                # temperature=self.temperature,
+                # top_p=1,
+                # frequency_penalty=0.0,
+                # presence_penalty=0.0,
                 stop=stop
+                # extra_body={
+                # "chat_template_kwargs": {
+                #     "enable_thinking": False  # 关键参数
+                # }
+                # }
             )
         res = response.choices[0].message.content
         self.prompt_tokens += response.usage.prompt_tokens
@@ -100,8 +146,9 @@ if __name__ == '__main__':
         "role": "user",
         "content": "tell me a story"
     }]
-    model = TextGPTModel(model='gpt-4o')
-
+    model = TextGPTModel(model=MODEL)
+    # model = TextGPTModel(model='gpt-4o')
+    # model = TextGPTModel(model='qwen-plus')
     print(model.query(prompt))
 
     # prompt = "请概括这里说了什么"
