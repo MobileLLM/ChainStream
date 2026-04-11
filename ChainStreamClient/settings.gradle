@@ -1,0 +1,1 @@
+include ':ChainStreamClient', ':privacystreams-android-sdk', ':doclet'
