@@ -16,5 +16,5 @@ class StreamLangchainZeroshotBatchGenerator(SandboxBatchInterface):
 
 if __name__ == '__main__':
     task_list = get_task_with_data_batch()
-    evaluator = StreamLangchainZeroshotBatchGenerator(task_list, task_log_path="/Users/liou/project/llm/ChainStream/ChainStreamSandBox/batch_simulation_scripts/result/2024-09-05_01-45-37_langchain_oneshot/test_log.json")
+    evaluator = StreamLangchainZeroshotBatchGenerator(task_list)
     evaluator.start()
