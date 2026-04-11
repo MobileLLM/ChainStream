@@ -14,7 +14,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
         <el-card class="tree-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span class="card-title">{{ $t('agents.agentTree') }}</span>
+              <span class="card-title">Agent Tree</span>
               <el-button 
                 type="primary" 
                 size="small" 
@@ -22,14 +22,14 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                 @click="getAgentsList"
                 :loading="path_loading"
               >
-                {{ $t('common.refresh') }}
+                Refresh
               </el-button>
             </div>
           </template>
           
           <div class="tree-content">
             <div v-if="!agents_path || agents_path.length === 0" class="empty-state">
-              <el-empty :description="$t('agents.noAgentsFound')" :image-size="80" />
+              <el-empty description="No agents found" :image-size="80" />
             </div>
             <div v-else class="tree-wrapper">
               <!-- Debug info -->
@@ -63,7 +63,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                         :icon="View"
                         class="action-btn"
                       >
-                        {{ $t('common.preview') }}
+                        Preview
                       </el-button>
                       <el-button 
                         v-if="!data.disabled" 
@@ -73,7 +73,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                         :icon="VideoPlay"
                         class="action-btn"
                       >
-                        {{ $t('common.start') }}
+                        Start
                       </el-button>
                     </div>
                   </div>
@@ -89,7 +89,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
         <el-card class="table-card" shadow="hover">
           <template #header>
             <div class="card-header">
-              <span class="card-title">{{ $t('agents.runningAgents') }}</span>
+              <span class="card-title">Running Agents</span>
               <div class="header-actions">
                 <el-button 
                   type="primary" 
@@ -98,7 +98,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                   @click="getRunningAgentsList"
                   :loading="running_loading"
                 >
-                  {{ $t('common.refresh') }}
+                  Refresh
                 </el-button>
               </div>
             </div>
@@ -116,7 +116,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
             >
               <el-table-column type="index" label="#" width="60" fixed="left" />
               
-              <el-table-column prop="agent_id" :label="$t('agents.id')" width="180" fixed="left">
+              <el-table-column prop="agent_id" label="Agent ID" width="180" fixed="left">
                 <template #default="scope">
                   <el-text class="agent-id" type="primary">{{ scope.row.agent_id }}</el-text>
                 </template>
@@ -140,7 +140,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                 </template>
               </el-table-column>
               
-              <el-table-column prop="user" :label="$t('agents.user')" width="120" align="center">
+              <el-table-column prop="user" label="User" width="120" align="center">
                 <template #default="scope">
                   <el-tag 
                     v-if="scope.row.user"
@@ -165,8 +165,8 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                 width="100"
                 align="center"
                 :filters="[
-                  { text: $t('common.system'), value: 'system' },
-                  { text: $t('agents.user'), value: 'user' },
+                  { text: 'System', value: 'system' },
+                  { text: 'User', value: 'user' },
                 ]"
                 :filter-method="filterType"
               >
@@ -182,13 +182,13 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
               
               <el-table-column 
                 prop="status"
-                :label="$t('common.status')"
+                label="Status"
                 width="120"
                 align="center"
                 :filters="[
-                  { text: $t('agents.running'), value: 'running' },
-                  { text: $t('agents.stopped'), value: 'stopped' },
-                  { text: $t('agents.error'), value: 'error' }
+                  { text: 'Running', value: 'running' },
+                  { text: 'Stopped', value: 'stopped' },
+                  { text: 'Error', value: 'error' }
                 ]"
                 :filter-method="filterStatus"
               >
@@ -208,7 +208,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                 </template>
               </el-table-column>
               
-              <el-table-column :label="$t('common.actions')" width="180" align="center" fixed="right">
+              <el-table-column label="Actions" width="180" align="center" fixed="right">
                 <template #default="scope">
                   <el-button 
                     size="small" 
@@ -226,7 +226,7 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
                     @click="handleStop(scope.$index, scope.row)"
                     :icon="VideoPause"
                   >
-                    {{ $t('common.stop') }}
+                    Stop
                   </el-button>
                   <el-button 
                     v-else-if="scope.row.status === 'stopped'"
@@ -262,13 +262,8 @@ import CodePreviewModal from '@/components/common/CodePreviewModal.vue'
 <script>
 import {startAgent, stopAgent, getAgentsPath, getRunningAgents, getAgentCode} from '@/api/monitor/agents.js'
 import {formToJSON} from "axios";
-import { useI18n } from 'vue-i18n'
 
 export default {
-  setup() {
-    const { t } = useI18n()
-    return { t }
-  },
   data() {
     return {
       path_loading: true,
@@ -296,7 +291,7 @@ export default {
       ],
       // Code preview modal data
       previewModalVisible: false,
-      previewTitle: '',
+      previewTitle: 'Code Preview',
       previewFilePath: '',
       previewLanguage: 'text',
       previewCodeContent: '',
@@ -370,43 +365,43 @@ export default {
     handleTreeStart(data) {
       startAgent(data.label).then(res => {
         if (res['res'] === 'ok') {
-          this.$message.success(this.t('agents.startSuccess'))
+          this.$message.success('Agent started successfully')
           // 同时刷新agent tree和running agents表格
           this.getAgentsList()
           this.getRunningAgentsList()
         } else {
-          this.$message.error(this.t('agents.startFailed'))
+          this.$message.error('Agent start failed')
           this.getAgentsList()
         }
       }).catch(error => {
-        this.$message.error(this.t('agents.startFailed') + ': ' + error.message)
+        this.$message.error('Agent start failed: ' + error.message)
         this.getAgentsList()
       })
     },
     handleStart(index, row) {
       startAgent(row.agent_id).then(res => {
         if (res['res'] === 'ok') {
-          this.$message.success(this.t('agents.startSuccess'))
+          this.$message.success('Agent started successfully')
           // 刷新running agents表格
           this.getRunningAgentsList()
         } else {
-          this.$message.error(this.t('agents.startFailed'))
+          this.$message.error('Agent start failed')
         }
       }).catch(error => {
-        this.$message.error(this.t('agents.startFailed') + ': ' + error.message)
+        this.$message.error('Agent start failed: ' + error.message)
       })
     },
     handleStop(index, row) {
       stopAgent(row.agent_id).then(res => {
         if (res['res'] === 'ok') {
-          this.$message.success(this.t('agents.stopSuccess'))
+          this.$message.success('Agent stopped successfully')
           // 刷新running agents表格
           this.getRunningAgentsList()
         } else {
-          this.$message.error(this.t('agents.operationFailed'))
+          this.$message.error('Agent stop failed')
         }
       }).catch(error => {
-        this.$message.error(this.t('agents.operationFailed') + ': ' + error.message)
+        this.$message.error('Agent stop failed: ' + error.message)
       })
     },
     filterType(value, row) {
@@ -449,8 +444,7 @@ export default {
       }
       
       this.previewFilePath = filePath;
-      const fileName = filePath.split('/').pop();
-      this.previewTitle = `${this.t('agents.previewCode')} - ${fileName}`;
+      this.previewTitle = `Code Preview - ${filePath.split('/').pop()}`;
       this.previewModalVisible = true;
       this.previewLoading = true;
       this.previewCodeContent = '';

@@ -1,0 +1,10 @@
+[
+  {
+    "uuid": "61a09e1a-a751-4535-aa74-bb31d54cbcc9",
+    "username": "user",
+    "level": 1,
+    "password_hash": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
+    "encryption_key": "gJzgRmMtLmWVgSEOx9rSXrnTMiOgnjwPwTjjeNtOcBI=",
+    "create_at": "2026-04-09T22:04:24.178813"
+  }
+]

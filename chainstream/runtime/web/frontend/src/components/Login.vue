@@ -1,35 +1,35 @@
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h2 class="login-title">{{ $t('login.title') }}</h2>
+      <h2 class="login-title">ChainStream Login</h2>
       
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
-          <label for="username">{{ $t('login.username') }}:</label>
+          <label for="username">Username:</label>
           <input
             id="username"
             v-model="loginForm.username"
             type="text"
             required
-            :placeholder="$t('login.enterUsername')"
+            placeholder="Enter your username"
             class="form-input"
           />
         </div>
         
         <div class="form-group">
-          <label for="password">{{ $t('login.password') }}:</label>
+          <label for="password">Password:</label>
           <input
             id="password"
             v-model="loginForm.password"
             type="password"
             required
-            :placeholder="$t('login.enterPassword')"
+            placeholder="Enter your password"
             class="form-input"
           />
         </div>
         
         <button type="submit" :disabled="loading" class="login-button">
-          {{ loading ? $t('login.loggingIn') : $t('login.login') }}
+          {{ loading ? 'Logging in...' : 'Login' }}
         </button>
       </form>
       
@@ -38,55 +38,55 @@
       </div>
       
       <div class="register-link">
-        <p>{{ $t('login.noAccount') }} <a href="#" @click.prevent="showRegister = true">{{ $t('login.registerHere') }}</a></p>
+        <p>Don't have an account? <a href="#" @click.prevent="showRegister = true">Register here</a></p>
       </div>
     </div>
     
     <!-- Registration Modal -->
     <div v-if="showRegister" class="modal-overlay" @click="showRegister = false">
       <div class="modal-content" @click.stop>
-        <h3>{{ $t('login.registerTitle') }}</h3>
+        <h3>Register New User</h3>
         
         <form @submit.prevent="handleRegister" class="register-form">
           <div class="form-group">
-            <label for="reg-username">{{ $t('login.username') }}:</label>
+            <label for="reg-username">Username:</label>
             <input
               id="reg-username"
               v-model="registerForm.username"
               type="text"
               required
-              :placeholder="$t('login.enterUsername')"
+              placeholder="Enter username"
               class="form-input"
             />
           </div>
           
           <div class="form-group">
-            <label for="reg-password">{{ $t('login.password') }}:</label>
+            <label for="reg-password">Password:</label>
             <input
               id="reg-password"
               v-model="registerForm.password"
               type="password"
               required
-              :placeholder="$t('login.enterPassword')"
+              placeholder="Enter password"
               class="form-input"
             />
           </div>
           
           <div class="form-group">
-            <label for="reg-level">{{ $t('login.userLevel') }}:</label>
+            <label for="reg-level">User Level:</label>
             <select id="reg-level" v-model="registerForm.level" class="form-input">
-              <option value="1">{{ $t('login.level1') }}</option>
-              <option value="5">{{ $t('login.level5') }}</option>
-              <option value="10">{{ $t('login.level10') }}</option>
+              <option value="1">Level 1 (Basic User)</option>
+              <option value="5">Level 5 (Advanced User)</option>
+              <option value="10">Level 10 (Admin)</option>
             </select>
           </div>
           
           <div class="form-actions">
             <button type="button" @click="showRegister = false" class="cancel-button">
-              {{ $t('common.cancel') }}
+              Cancel
             </button>
             <button type="submit" :disabled="registerLoading" class="register-button">
-              {{ registerLoading ? $t('login.creating') : $t('login.createAccount') }}
+              {{ registerLoading ? 'Creating...' : 'Create Account' }}
             </button>
           </div>
         </form>
@@ -101,14 +101,9 @@
 
 <script>
 import { login, register } from '../api/auth.js'
-import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'Login',
-  setup() {
-    const { t } = useI18n()
-    return { t }
-  },
   data() {
     return {
       loginForm: {
@@ -146,10 +141,10 @@ export default {
           // Redirect to home or emit event to parent component
           this.$router.push('/')
         } else {
-          this.error = response.message || this.t('login.loginFailed')
+          this.error = response.message || 'Login failed'
         }
       } catch (error) {
-        this.error = this.t('login.networkError')
+        this.error = 'Network error. Please try again.'
         console.error('Login error:', error)
       } finally {
         this.loading = false
@@ -170,12 +165,12 @@ export default {
         if (response.success) {
           this.showRegister = false
           this.registerForm = { username: '', password: '', level: 1 }
-          alert(this.t('login.registerSuccess'))
+          alert('Account created successfully! Please login.')
         } else {
-          this.registerError = response.message || this.t('login.registerFailed')
+          this.registerError = response.message || 'Registration failed'
         }
       } catch (error) {
-        this.registerError = this.t('login.networkError')
+        this.registerError = 'Network error. Please try again.'
         console.error('Registration error:', error)
       } finally {
         this.registerLoading = false

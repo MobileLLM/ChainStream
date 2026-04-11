@@ -16,5 +16,5 @@ class ChainStreamServerWeb():
 
     def start(self):
         print(self.ip, self.port)
-        self.app.run(host=self.ip, port=self.port)
+        self.app.run(host=self.ip, port=self.port,debug=True)
         pass

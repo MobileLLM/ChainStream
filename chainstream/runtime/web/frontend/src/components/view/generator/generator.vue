@@ -1,22 +1,22 @@
 <template>
   <div class="generator-container">
     <div class="generator-header" ref="headerRef">
-      <h2>{{ $t('generator.codeGenerator') }}</h2>
+      <h2>代码生成器</h2>
       <div class="header-actions">
         <!-- <el-input v-model="currentFilePath" size="small" placeholder="文件路径（相对 AgentStore）" style="width: 320px" /> -->
         <el-button size="small" @click="openNewDialog">
           <el-icon><FolderOpened /></el-icon>
-          {{ $t('generator.new') }}
+          新建
         </el-button>
         <el-button size="small" @click="openLoadDialog">
           <el-icon><Refresh /></el-icon>
-          {{ $t('generator.load') }}
+          载入
         </el-button>
         <el-button size="small" type="primary" @click="saveFile">
           <el-icon><UploadFilled /></el-icon>
-          {{ $t('generator.save') }}
+          保存
         </el-button>
-        <el-button size="small" @click="openSaveAsDialog">{{ $t('generator.saveAs') }}</el-button>
+        <el-button size="small" @click="openSaveAsDialog">另存为</el-button>
         <!-- <el-button size="small" type="primary" @click="generateCode" :loading="isGenerating">
           <el-icon><Star /></el-icon>
           生成代码
@@ -28,18 +28,18 @@
       <!-- 左侧：代码编辑区 -->
       <div class="editor-panel">
         <div class="panel-header">
-          <h3>{{ $t('generator.codeEditor') }}</h3>
+          <h3>代码编辑器</h3>
           <div class="editor-actions">
             <el-tag :type="selectedLanguage === 'python' ? 'success' : 'primary'" size="large">
               {{ selectedLanguage === 'python' ? 'Python' : 'Java' }}
             </el-tag>
             <el-button size="small" @click="clearCode">
               <el-icon><Delete /></el-icon>
-              {{ $t('generator.clear') }}
+              清空
             </el-button>
             <el-button size="small" @click="copyCode">
               <el-icon><Document /></el-icon>
-              {{ $t('generator.copy') }}
+              复制
             </el-button>
           </div>
         </div>
@@ -59,26 +59,37 @@
       <!-- 右侧：对话区 -->
       <div class="chat-panel">
         <div class="panel-header">
-          <h3>{{ $t('generator.aiChat') }}</h3>
+          <h3>AI 对话</h3>
           <div class="chat-actions">
-            <el-select v-model="selectedGenerator" size="small" style="width: 220px" :placeholder="$t('generator.selectGenerator')">
-              <el-option :label="$t('generator.pythonSingle')" value="python_single" />
-              <el-option :label="$t('generator.javaSingle')" value="java_single" />
-              <el-option :label="$t('generator.sandboxIter')" value="sandbox_iter" disabled />
-              <el-option :label="$t('generator.exceptionHandler')" value="exception_handler" disabled />
+            <el-select v-model="selectedGenerator" size="small" style="width: 220px" placeholder="选择生成器">
+              <el-option label="单次生成器（Python）" value="python_single" />
+              <el-option label="单次生成器（Java）" value="java_single" />
+              <!--##新增加-->
+              <el-option label="反馈生成器（Python）" value="python_feedback" />
+              <el-option label="沙箱迭代生成器（占位）" value="sandbox_iter" disabled />
+              <el-option label="异常处理器（占位）" value="exception_handler" disabled />
             </el-select>
+            <!-- ✨ 反馈生成器参数面板 -->
+            <el-collapse-transition>
+              <div v-if="selectedGenerator === 'python_feedback'" class="generator-params" style="display: flex; gap: 12px; align-items: center; margin-left: 12px; padding: 8px 12px; background: #f0f2f5; border-radius: 4px;">
+                <span style="font-size: 12px; color: #606266;">迭代次数:</span>
+                <el-input-number v-model="generatorParams.maxLoop" :min="1" :max="50" size="small" style="width: 100px" />
+                <span style="font-size: 12px; color: #606266;">|</span>
+                <el-checkbox v-model="generatorParams.onlyPrintLast" size="small" label="仅打印最后" />
+              </div>
+            </el-collapse-transition>
             <el-button size="small" @click="showMemoryDialog">
               <el-icon><View /></el-icon>
-              {{ $t('generator.viewMemory') }}
+              查看记忆
             </el-button>
             <el-button size="small" type="warning" @click="performSecurityCheck" :disabled="isCheckingSecurity">
               <el-icon v-if="!isCheckingSecurity"><Lock /></el-icon>
               <el-icon v-else class="is-loading"><Loading /></el-icon>
-              {{ isCheckingSecurity ? $t('generator.checking') : $t('generator.securityCheck') }}
+              {{ isCheckingSecurity ? '检查中...' : '安全检查' }}
             </el-button>
             <el-button size="small" @click="clearChat">
               <el-icon><Delete /></el-icon>
-              {{ $t('generator.clearChat') }}
+              清空对话
             </el-button>
           </div>
         </div>
@@ -94,7 +105,7 @@
                   <div v-if="!message.loading" class="message-main" v-html="formatMessage(message.content)"></div>
                   <div v-else class="message-loading">
                     <el-icon class="is-loading"><Loading /></el-icon>
-                    {{ $t('generator.generating') }}
+                    正在生成...
                   </div>
                   <div v-if="message.stats" class="message-stats">{{ formatStats(message.stats) }}</div>
                 </div>
@@ -108,12 +119,12 @@
                   v-model="userInput"
       type="textarea"
                   :rows="3"
-                  :placeholder="$t('generator.inputPlaceholder')"
+                  placeholder="输入您的需求或问题... (Ctrl+Enter 发送)"
                   @keydown.ctrl.enter="sendMessage"
                 />
                 <el-button type="primary" @click="sendMessage" :loading="isGenerating" class="send-btn">
                   <el-icon><Coffee /></el-icon>
-                  {{ $t('generator.send') }}
+                  发送
                 </el-button>
               </div>
             </div>
@@ -127,42 +138,42 @@
       <div class="path-browser">
         <div class="breadcrumbs">
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item @click="loadDirectory('')" style="cursor:pointer">{{ $t('generator.agentStore') }}</el-breadcrumb-item>
+            <el-breadcrumb-item @click="loadDirectory('')" style="cursor:pointer">AgentStore</el-breadcrumb-item>
             <el-breadcrumb-item v-for="(seg, idx) in breadcrumbs" :key="idx">
               <span style="cursor:pointer" @click="onBreadcrumbClick(idx)">{{ seg }}</span>
             </el-breadcrumb-item>
           </el-breadcrumb>
         </div>
         <el-table :data="browserItems" v-loading="browserLoading" height="360px" @row-click="onRowClick" highlight-current-row>
-          <el-table-column :label="$t('generator.name')" min-width="320">
+          <el-table-column label="名称" min-width="320">
             <template #default="{ row }">
               <el-icon v-if="row.isDirectory" style="margin-right:6px"><Folder /></el-icon>
               <el-icon v-else style="margin-right:6px"><Document /></el-icon>
               <span>{{ row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('generator.type')" width="120">
-            <template #default="{ row }">{{ row.isDirectory ? $t('generator.directory') : $t('generator.file') }}</template>
+          <el-table-column label="类型" width="120">
+            <template #default="{ row }">{{ row.isDirectory ? '目录' : '文件' }}</template>
           </el-table-column>
-          <el-table-column :label="$t('generator.size')" width="120">
+          <el-table-column label="大小" width="120">
             <template #default="{ row }">{{ row.size || '-' }}</template>
           </el-table-column>
         </el-table>
         <div v-if="browserMode === 'new' || browserMode === 'saveAs'" class="save-as-bar">
-          <el-input v-model="browserFilename" :placeholder="`${$t('generator.enterFilename')} hello${getFileExtension(selectedLanguage)}`" />
+          <el-input v-model="browserFilename" :placeholder="`请输入文件名，如 hello${getFileExtension(selectedLanguage)}`" />
         </div>
       </div>
       <template #footer>
-        <el-button @click="showFileDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button @click="showFileDialog = false">取消</el-button>
         <el-button type="primary" @click="confirmFileSelection">{{ getBrowserButtonText() }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 查看记忆对话框 -->
-    <el-dialog v-model="showMemoryDialogVisible" :title="$t('generator.sessionMemory')" width="60%">
+    <el-dialog v-model="showMemoryDialogVisible" title="会话记忆（History）" width="60%">
       <div class="memory-content">
         <el-alert v-if="!sessionMemory" type="info" :closable="false" show-icon>
-          {{ $t('generator.noMemoryYet') }}
+          当前会话还没有记忆内容。开始对话后，AI 会自动总结和记录编辑历史。
         </el-alert>
         <el-input
           v-else
@@ -170,28 +181,28 @@
           type="textarea"
           :rows="15"
           readonly
-          :placeholder="$t('generator.sessionMemory')"
+          placeholder="会话记忆为空"
         />
       </div>
       <template #footer>
-        <el-button @click="showMemoryDialogVisible = false">{{ $t('common.close') }}</el-button>
-        <el-button v-if="sessionMemory" type="danger" @click="clearMemory">{{ $t('generator.clearMemory') }}</el-button>
+        <el-button @click="showMemoryDialogVisible = false">关闭</el-button>
+        <el-button v-if="sessionMemory" type="danger" @click="clearMemory">清空记忆</el-button>
       </template>
     </el-dialog>
 
     <!-- 安全检查结果对话框 -->
-    <el-dialog v-model="showSecurityDialog" :title="$t('generator.securityReport')" width="70%" :before-close="handleSecurityDialogClose">
+    <el-dialog v-model="showSecurityDialog" title="安全检查报告" width="70%" :before-close="handleSecurityDialogClose">
       <div class="security-report">
         <!-- 总体结果 -->
         <el-alert 
           :type="securityResult?.overall_safe ? 'success' : 'error'" 
-          :title="securityResult?.overall_safe ? $t('generator.securityPassed') : $t('generator.securityIssues')" 
+          :title="securityResult?.overall_safe ? '✓ 安全检查通过' : '⚠ 发现安全问题'" 
           :closable="false"
           show-icon
           class="security-summary">
           <template #default>
-            <div class="summary-text">{{ securityResult?.summary || $t('generator.checking') }}</div>
-            <div v-if="securityElapsedMs" class="summary-time">{{ $t('generator.checkTime') }}: {{ securityElapsedMs }}ms</div>
+            <div class="summary-text">{{ securityResult?.summary || '检查中...' }}</div>
+            <div v-if="securityElapsedMs" class="summary-time">检查耗时: {{ securityElapsedMs }}ms</div>
           </template>
         </el-alert>
 
@@ -202,15 +213,15 @@
               <span class="section-title">
                 <el-icon v-if="securityResult?.code_check?.safe" style="color: #67c23a"><CircleCheck /></el-icon>
                 <el-icon v-else style="color: #f56c6c"><CircleClose /></el-icon>
-                {{ $t('generator.codeContent') }}
+                代码内容
               </span>
               <el-tag :type="securityResult?.code_check?.safe ? 'success' : 'danger'" size="small">
-                {{ securityResult?.code_check?.safe ? $t('generator.safe') : $t('generator.hasIssues') }}
+                {{ securityResult?.code_check?.safe ? '安全' : '存在问题' }}
               </el-tag>
             </div>
           </template>
           <div class="section-content">
-            <p class="details-text">{{ securityResult?.code_check?.details || $t('generator.noDetails') }}</p>
+            <p class="details-text">{{ securityResult?.code_check?.details || '无详细信息' }}</p>
             <el-alert 
               v-if="securityResult?.code_check?.issues && securityResult.code_check.issues.length > 0"
               type="error"
@@ -230,15 +241,15 @@
               <span class="section-title">
                 <el-icon v-if="securityResult?.messages_check?.safe" style="color: #67c23a"><CircleCheck /></el-icon>
                 <el-icon v-else style="color: #f56c6c"><CircleClose /></el-icon>
-                {{ $t('generator.chatMessages') }}
+                对话消息
               </span>
               <el-tag :type="securityResult?.messages_check?.safe ? 'success' : 'danger'" size="small">
-                {{ securityResult?.messages_check?.safe ? $t('generator.safe') : $t('generator.hasIssues') }}
+                {{ securityResult?.messages_check?.safe ? '安全' : '存在问题' }}
               </el-tag>
             </div>
           </template>
           <div class="section-content">
-            <p class="details-text">{{ securityResult?.messages_check?.details || $t('generator.noDetails') }}</p>
+            <p class="details-text">{{ securityResult?.messages_check?.details || '无详细信息' }}</p>
             <el-alert 
               v-if="securityResult?.messages_check?.issues && securityResult.messages_check.issues.length > 0"
               type="error"
@@ -258,15 +269,15 @@
               <span class="section-title">
                 <el-icon v-if="securityResult?.memory_check?.safe" style="color: #67c23a"><CircleCheck /></el-icon>
                 <el-icon v-else style="color: #f56c6c"><CircleClose /></el-icon>
-                {{ $t('generator.sessionMemory') }}
+                会话记忆
               </span>
               <el-tag :type="securityResult?.memory_check?.safe ? 'success' : 'danger'" size="small">
-                {{ securityResult?.memory_check?.safe ? $t('generator.safe') : $t('generator.hasIssues') }}
+                {{ securityResult?.memory_check?.safe ? '安全' : '存在问题' }}
               </el-tag>
             </div>
           </template>
           <div class="section-content">
-            <p class="details-text">{{ securityResult?.memory_check?.details || $t('generator.noDetails') }}</p>
+            <p class="details-text">{{ securityResult?.memory_check?.details || '无详细信息' }}</p>
             <el-alert 
               v-if="securityResult?.memory_check?.issues && securityResult.memory_check.issues.length > 0"
               type="error"
@@ -280,8 +291,8 @@
         </el-card>
       </div>
       <template #footer>
-        <el-button @click="showSecurityDialog = false">{{ $t('common.close') }}</el-button>
-        <el-button v-if="!securityResult?.overall_safe" type="danger" @click="handleSecurityIssues">{{ $t('generator.handleIssues') }}</el-button>
+        <el-button @click="showSecurityDialog = false">关闭</el-button>
+        <el-button v-if="!securityResult?.overall_safe" type="danger" @click="handleSecurityIssues">处理问题</el-button>
       </template>
     </el-dialog>
     </div>
@@ -320,9 +331,6 @@ import 'prismjs/components/prism-cpp'
 import 'prismjs/components/prism-go'
 import MonacoEditor from '@/components/common/MonacoEditor.vue'
 import request from '@/utils/request.js'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 // 响应式数据
 const generatedCode = ref('')
@@ -331,6 +339,11 @@ const chatMessages = ref([])
 const isGenerating = ref(false)
 const sessionMemory = ref('')
 const selectedGenerator = ref('python_single')
+const generatorParams = ref({
+  maxLoop: 20,
+  onlyPrintLast: false,
+  sandboxType: 'chainstream'
+})
 const contentRef = ref(null)
 const headerRef = ref(null)
 const editorWidthPercent = ref(66)
@@ -597,7 +610,11 @@ const sendMessage = async () => {
       language: selectedLanguage.value,
       path: currentFilePath.value,
       memory: sessionMemory.value,
-      generator_type: selectedGenerator.value
+      generator_type: selectedGenerator.value,
+      // ✨ 新增反馈生成器参数
+      max_loop: generatorParams.value.maxLoop,
+      only_print_last: generatorParams.value.onlyPrintLast,
+      sandbox_type: generatorParams.value.sandboxType
     })
     // 期望返回：{ success, reply, new_code, stats }
     const reply = data?.reply || '（无内容）'
@@ -691,28 +708,28 @@ const startResize = (e) => {
 
 // 清空代码
 const clearCode = () => {
-  ElMessageBox.confirm(t('generator.confirmClearCode'), t('common.confirm'), {
-    confirmButtonText: t('common.confirm'),
-    cancelButtonText: t('common.cancel'),
+  ElMessageBox.confirm('确定要清空代码吗？', '确认', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     generatedCode.value = ''
-    ElMessage.success(t('generator.codeCleared'))
+    ElMessage.success('代码已清空')
   })
 }
 
 // 复制代码
 const copyCode = async () => {
   if (!generatedCode.value) {
-    ElMessage.warning(t('generator.noCodeToCopy'))
+    ElMessage.warning('没有代码可复制')
     return
   }
   
   try {
     await navigator.clipboard.writeText(generatedCode.value)
-    ElMessage.success(t('generator.codeCopied'))
+    ElMessage.success('代码已复制到剪贴板')
   } catch (error) {
-    ElMessage.error(t('generator.copyFailed'))
+    ElMessage.error('复制失败')
   }
 }
 
@@ -733,33 +750,33 @@ const showMemoryDialog = () => {
 
 // 清空记忆
 const clearMemory = () => {
-  ElMessageBox.confirm(t('generator.confirmClearMemory'), t('common.confirm'), {
-    confirmButtonText: t('common.confirm'),
-    cancelButtonText: t('common.cancel'),
+  ElMessageBox.confirm('确定要清空会话记忆吗？这将重置 AI 对历史编辑的记忆。', '确认', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     sessionMemory.value = ''
     showMemoryDialogVisible.value = false
-    ElMessage.success(t('generator.memoryCleared'))
+    ElMessage.success('记忆已清空')
   }).catch(() => {})
 }
 
 // 清空对话
 const clearChat = () => {
-  ElMessageBox.confirm(t('generator.confirmClearChat'), t('common.confirm'), {
-    confirmButtonText: t('common.confirm'),
-    cancelButtonText: t('common.cancel'),
+  ElMessageBox.confirm('确定要清空对话吗？', '确认', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     chatMessages.value = []
-    ElMessage.success(t('generator.chatCleared'))
+    ElMessage.success('对话已清空')
   })
 }
 
 // 执行安全检查
 const performSecurityCheck = async () => {
   if (!generatedCode.value && chatMessages.value.length === 0 && !sessionMemory.value) {
-    ElMessage.warning(t('generator.noContentToCheck'))
+    ElMessage.warning('当前会话没有内容可供检查')
     return
   }
 
@@ -781,15 +798,15 @@ const performSecurityCheck = async () => {
 
       // 如果有安全问题，显示警告通知
       if (!data.result?.overall_safe) {
-        ElMessage.warning(t('generator.securityWarning'))
+        ElMessage.warning('安全检查发现问题，请查看详细报告')
       } else {
-        ElMessage.success(t('generator.securityPassed'))
+        ElMessage.success('安全检查通过')
       }
     } else {
-      ElMessage.error(t('generator.securityCheckFailed') + ': ' + (data?.error || 'unknown'))
+      ElMessage.error('安全检查失败: ' + (data?.error || 'unknown'))
     }
   } catch (err) {
-    ElMessage.error(t('generator.securityCheckFailed') + ': ' + (err?.message || 'unknown'))
+    ElMessage.error('安全检查失败: ' + (err?.message || 'unknown'))
   } finally {
     isCheckingSecurity.value = false
   }
@@ -803,10 +820,10 @@ const handleSecurityDialogClose = () => {
 // 处理安全问题
 const handleSecurityIssues = () => {
   ElMessageBox.alert(
-    t('generator.securityAdvice'),
-    t('generator.securityAdviceTitle'),
+    '建议您根据报告中的提示修改代码、清理敏感信息或调整对话内容，以确保系统安全。',
+    '安全建议',
     {
-      confirmButtonText: t('generator.iKnow'),
+      confirmButtonText: '我知道了',
       type: 'warning'
     }
   )
@@ -834,7 +851,7 @@ const loadDirectory = async (path = '') => {
     breadcrumbs.value = Array.isArray(data.pathSegments) ? data.pathSegments : (browserCurrentPath.value ? browserCurrentPath.value.split('/').filter(Boolean) : [])
     browserSelectedItem.value = null
   } catch (error) {
-    ElMessage.error(t('generator.readDirFailed') + ': ' + (error?.message || 'unknown'))
+    ElMessage.error('读取目录失败: ' + (error?.message || 'unknown'))
   } finally {
     browserLoading.value = false
   }
@@ -902,27 +919,27 @@ const confirmFileSelection = async () => {
   if (browserMode.value === 'load') {
     // 载入模式：必须选择一个文件
     if (!browserSelectedItem.value || browserSelectedItem.value.isDirectory) {
-      ElMessage.warning(t('generator.selectFile'))
+      ElMessage.warning('请选择一个文件')
       return
     }
     try {
       const data = await request.get('/generator/load', { params: { path: browserSelectedItem.value.path } })
       if (!data?.success) {
-        ElMessage.error(t('generator.loadFileFailed') + ': ' + (data?.error || 'unknown'))
+        ElMessage.error('加载文件失败: ' + (data?.error || 'unknown'))
         return
       }
       generatedCode.value = data.content || ''
       selectedLanguage.value = detectLanguage(data.content || '', data.path || browserSelectedItem.value.path || '')
       currentFilePath.value = data.path || browserSelectedItem.value.path || ''
       showFileDialog.value = false
-      ElMessage.success(t('generator.loadFileSuccess'))
+      ElMessage.success('文件加载成功')
     } catch (e) {
-      ElMessage.error(t('generator.loadFileFailed') + ': ' + (e?.message || 'unknown'))
+      ElMessage.error('加载文件失败: ' + (e?.message || 'unknown'))
     }
   } else {
     // 新建/另存为模式：需要输入文件名
     if (!browserFilename.value.trim()) {
-      ElMessage.warning(t('generator.enterFilenamePrompt'))
+      ElMessage.warning('请输入文件名')
       return
     }
     
@@ -939,7 +956,7 @@ const confirmFileSelection = async () => {
       await doSaveToPath(fullPath, false) // 新建/另存为，不允许覆盖
       showFileDialog.value = false
     } catch (e) {
-      ElMessage.error(t('generator.saveFailed') + ': ' + (e?.message || 'unknown'))
+      ElMessage.error('保存失败: ' + (e?.message || 'unknown'))
     }
   }
 }
@@ -967,10 +984,7 @@ onMounted(() => {
     // 可以在这里添加更多初始化逻辑
   }
   if (chatMessages.value.length === 0) {
-    const welcomeMessage = t('generator.aiChat') === 'AI Chat' 
-      ? 'Hello, I am the generation assistant. Please describe your requirements, and I will provide suggestions and generate code based on the current code.'
-      : '你好，我是生成助手。请描述你的需求，我会基于当前代码进行建议与生成。'
-    chatMessages.value.push({ role: 'assistant', content: welcomeMessage })
+    chatMessages.value.push({ role: 'assistant', content: '你好，我是生成助手。请描述你的需求，我会基于当前代码进行建议与生成。' })
   }
   updateContentHeight()
   window.addEventListener('resize', updateContentHeight)
@@ -994,9 +1008,9 @@ const openNewDialog = async () => {
   if (generatedCode.value && currentFilePath.value) {
     try {
       await doSaveToPath(currentFilePath.value, true) // 自动保存，允许覆盖
-      ElMessage.success(t('generator.autoSaved'))
+      ElMessage.success('当前文件已自动保存')
     } catch (e) {
-      ElMessage.warning(t('generator.autoSaveFailed'))
+      ElMessage.warning('自动保存失败，请手动保存当前文件')
       return
     }
   }
@@ -1004,8 +1018,8 @@ const openNewDialog = async () => {
   // 弹出语言选择对话框
   try {
     const { value: language } = await ElMessageBox.confirm(
-      t('generator.selectLanguage'),
-      t('generator.newFile'),
+      '请选择新建文件的语言类型：',
+      '新建文件',
       {
         distinguishCancelAndClose: true,
         confirmButtonText: 'Python',
@@ -1068,16 +1082,16 @@ const doSaveToPath = async (filePath, allowOverwrite = false) => {
     
     if (data?.success) {
       currentFilePath.value = finalPath
-      ElMessage.success(t('generator.saveSuccess'))
+      ElMessage.success('保存成功')
     } else {
-      ElMessage.error(t('generator.saveFailed') + ': ' + (data?.error || 'unknown'))
+      ElMessage.error('保存失败: ' + (data?.error || 'unknown'))
     }
   } catch (e) {
     // 处理HTTP错误响应
     if (e?.response?.data?.error) {
       ElMessage.error(e.response.data.error)
     } else {
-      ElMessage.error(t('generator.saveFailed') + ': ' + (e?.message || 'unknown'))
+      ElMessage.error('保存失败: ' + (e?.message || 'unknown'))
     }
   }
 }
@@ -1097,19 +1111,19 @@ const onBreadcrumbClick = (idx) => {
 
 const getBrowserTitle = () => {
   switch (browserMode.value) {
-    case 'load': return t('generator.selectFile')
-    case 'new': return t('generator.newFile')
-    case 'saveAs': return t('generator.saveAs')
-    default: return t('generator.browserTitle')
+    case 'load': return '选择文件'
+    case 'new': return '新建文件'
+    case 'saveAs': return '另存为'
+    default: return '文件浏览器'
   }
 }
 
 const getBrowserButtonText = () => {
   switch (browserMode.value) {
-    case 'load': return t('generator.select')
-    case 'new': return t('generator.new')
-    case 'saveAs': return t('generator.save')
-    default: return t('common.confirm')
+    case 'load': return '选择'
+    case 'new': return '新建'
+    case 'saveAs': return '保存'
+    default: return '确认'
   }
 }
 
@@ -1128,10 +1142,10 @@ onBeforeRouteLeave((to, from, next) => {
   if (!sessionMemory.value || sessionMemory.value.length === 0) {
     return next()
   }
-  ElMessageBox.confirm(t('generator.leaveConfirm'), t('generator.confirmLeave'), {
+  ElMessageBox.confirm('当前版本的会话memory不支持保存，离开将丢失，请确保完成Agent代码编写并保存后再离开，是否继续？', '确认离开', {
     type: 'warning',
-    confirmButtonText: t('generator.continueLeave'),
-    cancelButtonText: t('common.cancel')
+    confirmButtonText: '继续离开',
+    cancelButtonText: '取消'
   }).then(() => next()).catch(() => next(false))
 })
 </script>
@@ -1216,12 +1230,10 @@ onBeforeRouteLeave((to, from, next) => {
 .panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* 改为顶部对齐，避免按钮组太高时被挤 */
+  align-items: center;
   padding: 16px 20px;
   background: #fafafa;
   border-bottom: 1px solid #e4e7ed;
-  gap: 12px; /* 标题和按钮组之间的间距 */
-  flex-wrap: wrap; /* 允许换行 */
 }
 
 .panel-header + .editor-container,
@@ -1235,30 +1247,12 @@ onBeforeRouteLeave((to, from, next) => {
   color: #303133;
   font-size: 16px;
   font-weight: 600;
-  flex-shrink: 0; /* 防止标题被压缩 */
-  line-height: 32px; /* 与按钮对齐 */
 }
 
 .editor-actions, .chat-actions {
   display: flex;
   gap: 8px;
   align-items: center;
-  flex-wrap: wrap; /* 允许按钮换行 */
-}
-
-.chat-actions {
-  width: 100%; /* 确保有足够的空间 */
-}
-
-.chat-actions .el-select {
-  flex-shrink: 0; /* 防止下拉框被压缩 */
-  min-width: 180px;
-  max-width: 220px;
-}
-
-.chat-actions .el-button {
-  flex-shrink: 0; /* 防止按钮被压缩 */
-  white-space: nowrap; /* 防止按钮文字换行 */
 }
 
 .editor-container {
@@ -1521,146 +1515,22 @@ onBeforeRouteLeave((to, from, next) => {
 }
 
 /* 响应式设计 */
-@media (max-width: 1400px) {
-  .panel-header {
-    padding: 12px 16px;
-  }
-  
-  .chat-actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  .chat-actions .el-select {
-    width: 100%;
-    margin-bottom: 8px;
-    order: -1; /* 让下拉框排在第一个，单独一行 */
-    flex-basis: 100%;
-  }
-  
-  .chat-actions .el-button {
-    flex: 0 1 auto; /* 按钮自适应宽度 */
-  }
-}
-
-@media (max-width: 1200px) {
-  .generator-content {
-    grid-template-columns: 50% 6px 50% !important;
-  }
-  
-  .panel-header h3 {
-    font-size: 15px;
-  }
-  
-  .chat-actions .el-button {
-    font-size: 13px;
-    padding: 8px 12px;
-  }
-}
-
 @media (max-width: 768px) {
-  .generator-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 12px 16px;
-  }
-  
-  .generator-header h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
-  
-  .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .header-actions .el-button {
-    flex: 1;
-    min-width: calc(50% - 4px);
-  }
-  
   .generator-content {
-    height: calc(100vh - 180px) !important;
-    grid-template-columns: 100% !important;
-    grid-template-rows: 50% 6px 50%;
-    overflow-y: auto;
-  }
-  
-  .splitter {
-    width: 100%;
-    height: 6px;
-    cursor: row-resize;
+    flex-direction: column;
   }
   
   .editor-panel, .chat-panel {
     margin: 4px;
-    min-height: 300px;
-  }
-  
-  .panel-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 12px 16px;
-  }
-  
-  .panel-header h3 {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .editor-actions, .chat-actions {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .chat-actions .el-button {
-    flex: 1 1 calc(50% - 4px); /* 每行两个按钮 */
-    min-width: 100px;
-    max-width: 150px;
   }
   
   .message-content {
-    max-width: 90%;
-  }
-}
-
-@media (max-width: 480px) {
-  .generator-header h2 {
-    font-size: 16px;
+    max-width: 85%;
   }
   
-  .header-actions .el-button {
-    font-size: 12px;
-  }
-  
-  .panel-header h3 {
-    font-size: 13px;
-  }
-  
-  .message-content {
-    max-width: 95%;
-    font-size: 14px;
-  }
-  
-  .input-row {
-    grid-template-columns: 1fr;
+  .header-actions {
+    flex-wrap: wrap;
     gap: 8px;
-  }
-  
-  .send-btn {
-    width: 100%;
-  }
-  
-  .chat-actions .el-button {
-    flex: 1 1 100%; /* 小屏幕上每个按钮占满一行 */
-    max-width: none;
-  }
-  
-  .editor-actions .el-button {
-    font-size: 12px;
-    padding: 6px 10px;
   }
 }
 </style>

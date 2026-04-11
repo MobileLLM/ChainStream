@@ -20,6 +20,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus)
 app.use(router)
 app.use(i18n)
-
+// app.use(router)
 app.config.globalProperties.$echarts = echarts
 app.mount('#app')

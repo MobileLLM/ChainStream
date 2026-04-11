@@ -11,7 +11,7 @@
               </div>
               <div class="stat-info">
                 <div class="stat-value">{{ statistics.active_streams_count || 0 }}</div>
-                <div class="stat-label">{{ $t('streamGraph.activeStreams') }}</div>
+                <div class="stat-label">活跃流</div>
               </div>
             </div>
           </el-card>
@@ -24,7 +24,7 @@
               </div>
               <div class="stat-info">
                 <div class="stat-value">{{ statistics.running_agents_count || 0 }}</div>
-                <div class="stat-label">{{ $t('streamGraph.runningAgents') }}</div>
+                <div class="stat-label">运行代理</div>
               </div>
             </div>
           </el-card>
@@ -37,7 +37,7 @@
               </div>
               <div class="stat-info">
                 <div class="stat-value">{{ graphStats.nodeCount || 0 }}</div>
-                <div class="stat-label">{{ $t('streamGraph.nodeCount') }}</div>
+                <div class="stat-label">节点数</div>
               </div>
             </div>
           </el-card>
@@ -50,7 +50,7 @@
               </div>
               <div class="stat-info">
                 <div class="stat-value">{{ graphStats.edgeCount || 0 }}</div>
-                <div class="stat-label">{{ $t('streamGraph.edgeCount') }}</div>
+                <div class="stat-label">连接数</div>
               </div>
             </div>
           </el-card>
@@ -59,22 +59,22 @@
     </el-header>
 
     <!-- 主要内容区域 -->
-    <el-container class="main-content-container">
+    <el-container style="height: calc(100vh - 120px);">
       <!-- 左侧控制面板 -->
-      <el-aside width="250px" style="padding: 0;" class="control-aside">
+      <el-aside width="250px" style="padding: 0;">
         <el-card shadow="never" style="height: 100%; margin: 0;">
           <template #header>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span>{{ $t('streamGraph.controlPanel') }}</span>
+              <span>控制面板</span>
               <el-switch
                 v-model="autoRefresh"
-                :active-text="$t('streamGraph.autoRefresh')"
+                active-text="自动刷新"
                 @change="toggleAutoRefresh"
                 size="small"
               />
             </div>
             <div style="font-size: 12px; color: #666; margin-top: 5px;">
-              {{ $t('streamGraph.edgeWidthHint') }}
+              💡 边的宽度反映数据流量大小
             </div>
           </template>
           
@@ -86,28 +86,28 @@
               style="width: 100%; margin-bottom: 10px;"
             >
               <el-icon><Refresh /></el-icon>
-              {{ $t('streamGraph.manualRefresh') }}
+              手动刷新
             </el-button>
             
             <el-divider />
             
             <div class="control-group">
-              <label>{{ $t('streamGraph.refreshInterval') }}</label>
+              <label>刷新间隔</label>
               <el-select v-model="refreshInterval" @change="updateRefreshInterval" size="small" style="width: 100%;">
-                <el-option :label="`5${$t('streamGraph.seconds')}`" :value="5000" />
-                <el-option :label="`10${$t('streamGraph.seconds')}`" :value="10000" />
-                <el-option :label="`30${$t('streamGraph.seconds')}`" :value="30000" />
-                <el-option :label="`1${$t('streamGraph.minute')}`" :value="60000" />
+                <el-option label="5秒" :value="5000" />
+                <el-option label="10秒" :value="10000" />
+                <el-option label="30秒" :value="30000" />
+                <el-option label="1分钟" :value="60000" />
               </el-select>
             </div>
             
             <el-divider />
             
             <div class="control-group">
-              <label>{{ $t('streamGraph.layoutAlgorithm') }}</label>
+              <label>布局算法</label>
               <el-select v-model="layoutType" @change="updateLayout" size="small" style="width: 100%;">
-                <el-option :label="$t('streamGraph.verticalLayout')" value="vertical" />
-                <el-option :label="$t('streamGraph.horizontalLayout')" value="horizontal" />
+                <el-option label="垂直布局" value="vertical" />
+                <el-option label="水平布局" value="horizontal" />
               </el-select>
             </div>
             
@@ -142,7 +142,7 @@
 <!--            <el-divider />-->
             
             <div class="control-group">
-              <label>{{ $t('streamGraph.lineCurveness') }}</label>
+              <label>连接线曲率</label>
               <el-slider
                 v-model="lineCurveness"
                 :min="0"
@@ -157,7 +157,7 @@
             <el-divider />
             
             <div class="control-group">
-              <label>{{ $t('streamGraph.lineOpacity') }}</label>
+              <label>连接线透明度</label>
               <el-slider
                 v-model="lineOpacity"
                 :min="0.1"
@@ -198,7 +198,7 @@
 <!--            <el-divider />-->
             
             <div class="control-group">
-              <label>{{ $t('streamGraph.showLabels') }}</label>
+              <label>显示标签</label>
               <el-switch
                 v-model="showLabels"
                 @change="updateChartConfig"
@@ -209,7 +209,7 @@
             <el-divider />
             
 <!--            <div class="control-group">-->
-<!--              <label>{{ $t('streamGraph.labelFontSize') }}</label>-->
+<!--              <label>标签字体大小</label>-->
 <!--              <el-slider-->
 <!--                v-model="labelFontSize"-->
 <!--                :min="8"-->
@@ -224,7 +224,7 @@
 <!--            <el-divider />-->
             
 <!--            <div class="control-group">-->
-<!--              <label>{{ $t('streamGraph.animation') }}</label>-->
+<!--              <label>动画效果</label>-->
 <!--              <el-switch-->
 <!--                v-model="enableAnimation"-->
 <!--                @change="updateChartConfig"-->
@@ -235,7 +235,7 @@
 <!--            <el-divider />-->
             
             <div class="control-group">
-              <label>{{ $t('streamGraph.fixedColors') }}</label>
+              <label>固定颜色方案</label>
               <el-switch
                 v-model="fixedColors"
                 @change="updateChartConfig"
@@ -262,10 +262,10 @@
         <el-card shadow="never" style="height: 100%; margin: 0;">
           <template #header>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span>{{ $t('streamGraph.visualization') }}</span>
+              <span>流图可视化</span>
               <div>
                 <el-tag v-if="lastUpdateTime" type="info" size="small">
-                  {{ $t('streamGraph.lastUpdate') }}: {{ lastUpdateTime }}
+                  最后更新: {{ lastUpdateTime }}
                 </el-tag>
               </div>
             </div>
@@ -285,7 +285,6 @@ import * as echarts from 'echarts';
 import { getStreamGraphData } from '@/api/monitor/streamGraph.js';
 import { getStatistics } from '@/api/monitor/statistics.js';
 import { Connection, User, CircleCheck, Link, Refresh } from '@element-plus/icons-vue';
-import { useI18n } from 'vue-i18n';
 
 export default {
   components: {
@@ -294,10 +293,6 @@ export default {
     CircleCheck,
     Link,
     Refresh
-  },
-  setup() {
-    const { t } = useI18n()
-    return { t }
   },
   data() {
     return {
@@ -384,13 +379,13 @@ export default {
               color: '#fff',
               fontSize: 12
             },
-            formatter: (params) => {
+            formatter: function(params) {
               if (params.dataType === 'node') {
-                const user = params.data.user || this.t('common.system');
-                return `${this.t('streamGraph.node')}: ${params.name}<br/>${this.t('streamGraph.user')}: ${user}`;
+                const user = params.data.user || 'System';
+                return `节点: ${params.name}<br/>用户: ${user}`;
               } else if (params.dataType === 'edge') {
                 const value = params.data.value || 0;
-                return `${this.t('streamGraph.connection')}: ${params.data.source} → ${params.data.target}<br/>${this.t('streamGraph.traffic')}: ${value}/s`;
+                return `连接: ${params.data.source} → ${params.data.target}<br/>流量: ${value}/s`;
               }
               return params.name;
             }
@@ -411,8 +406,8 @@ export default {
               position: 'top',
               show: this.showLabels,
               fontSize: this.labelFontSize,
-              formatter: (params) => {
-                const user = params.data.user || this.t('common.system');
+              formatter: function(params) {
+                const user = params.data.user || 'System';
                 const name = params.name.length > 15 ? params.name.substring(0, 15) + '...' : params.name;
                 return `${name}\n(${user})`;
               }
@@ -486,7 +481,7 @@ export default {
       }).catch(error => {
         console.error('StreamGraph API Error:', error);
         this.loading = false;
-        this.$message.error(this.t('streamGraph.getDataFailed'));
+        this.$message.error('获取流图数据失败');
       });
     },
     
@@ -616,19 +611,9 @@ export default {
   border-bottom: 1px solid #e4e7ed;
 }
 
-.main-content-container {
-  height: calc(100vh - 180px);
-  min-height: 500px;
-}
-
-.control-aside {
-  border-right: 1px solid #e4e7ed;
-}
-
 .chart-container {
   position: relative;
-  height: calc(100vh - 280px);
-  min-height: 400px;
+  height: calc(100vh - 220px);
   overflow: hidden;
   background-color: #fff;
   border-radius: 4px;
@@ -641,18 +626,10 @@ export default {
 }
 
 /* 响应式设计 */
-@media (max-width: 1200px) {
-  .el-header {
+@media (max-width: 768px) {
+  .el-aside {
+    width: 100% !important;
     height: auto !important;
-    padding: 8px !important;
-  }
-  
-  .el-row {
-    flex-wrap: wrap;
-  }
-  
-  .stat-card .stat-content {
-    padding: 8px;
   }
   
   .stat-value {
@@ -661,84 +638,6 @@ export default {
   
   .stat-label {
     font-size: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .el-header {
-    height: auto !important;
-    padding: 10px 5px !important;
-  }
-  
-  .el-row {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  
-  .el-col {
-    width: 100% !important;
-  }
-  
-  .main-content-container {
-    height: auto !important;
-    min-height: 600px;
-    flex-direction: column;
-  }
-  
-  .el-aside {
-    width: 100% !important;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  
-  .el-main {
-    padding: 10px !important;
-  }
-  
-  .chart-container {
-    height: calc(100vh - 520px) !important;
-    min-height: 400px;
-  }
-  
-  .control-panel {
-    max-height: 200px;
-  }
-  
-  .stat-value {
-    font-size: 18px;
-  }
-  
-  .stat-label {
-    font-size: 11px;
-  }
-  
-  .stat-icon {
-    width: 32px;
-    height: 32px;
-  }
-}
-
-@media (max-width: 480px) {
-  .el-row {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .stat-value {
-    font-size: 16px;
-  }
-  
-  .stat-label {
-    font-size: 10px;
-  }
-  
-  .control-group label {
-    font-size: 12px;
-  }
-  
-  .chart-container {
-    height: calc(100vh - 600px) !important;
-    min-height: 300px;
   }
 }
 

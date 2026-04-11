@@ -1,9 +1,11 @@
 from ..core import chainstream_core
 from ..auth.auth import require_auth
 from chainstream.runtime.user_context import user_context_manager
-from flask import jsonify, Blueprint
+from flask import jsonify, Blueprint, request
 import logging
 import os
+import json
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -294,19 +296,38 @@ def generator_chat(current_user):
         # 如未指定generator_type，则按language推断
         if not generator_type:
             generator_type = 'java_single' if language == 'java' else 'python_single'
-
-        if generator_type in ('python_single', 'java_single'):
+        #TODO: 后续可增加更多generator_type，如feedback
+        if generator_type in ('python_single', 'java_single', 'python_feedback'):
             try:
                 # 准备导入路径，确保项目根在sys.path
                 import sys
                 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../../'))
                 if repo_root not in sys.path:
                     sys.path.insert(0, repo_root)
+                
+                # 提取反馈相关参数
+                ## 新增加
+                max_loop = data.get('max_loop', 20)
+                only_print_last = data.get('only_print_last', False)
+                sandbox_type = data.get('sandbox_type', 'chainstream')
+                
                 if generator_type == 'python_single':
                     from AgentGenerator.generator.stream_mode.chainstream_chat_generator_python import ChainStreamChatGeneratorPython
                     from AgentGenerator.io_model import StreamListDescription
                     used_generator = 'python_single'
                     gen = ChainStreamChatGeneratorPython()
+                elif generator_type == 'python_feedback':
+                    from AgentGenerator.generator.stream_mode.chainstream_chat_generator_python_feedback import ChainStreamChatGeneratorPythonFeedback
+                    from AgentGenerator.io_model import StreamListDescription
+                    used_generator = 'python_feedback'
+                    ##新增加
+                    gen = ChainStreamChatGeneratorPythonFeedback(
+                        framework_example_number=data.get('framework_example_number', 0),
+                        base_prompt_example_select_policy=data.get('base_prompt_example_select_policy', 'random'),
+                        max_loop=max_loop,
+                        sandbox_type=sandbox_type,
+                        only_print_last=only_print_last
+                    )
                 else:
                     from AgentGenerator.generator.stream_mode.chainstream_chat_generator_java import ChainStreamChatGeneratorJava
                     from AgentGenerator.io_model import StreamListDescription
@@ -332,18 +353,40 @@ def generator_chat(current_user):
                     'message': message
                 }
                 
-                agent_code, latency, tokens = gen.generate_agent_chat(
-                    message=chat_message_dict,
-                    output_description=output_desc,
-                    input_description=input_desc
-                )
+                # 根据生成器类型调用相应的方法
+                ## 新增加
+                print(f"Calling feedback generator with max_loop={max_loop}, only_print_last={only_print_last}, sandbox_type={sandbox_type}")
+                print(generator_type)
+                print(generator_type== 'python_feedback')
+                if generator_type == 'python_feedback':
+                    print(f"Calling feedback generator with max_loop={max_loop}, only_print_last={only_print_last}, sandbox_type={sandbox_type}")
+                    result = gen.generate_agent_chat_with_feedback(
+                        message=chat_message_dict,
+                        output_description=output_desc,
+                        input_description=input_desc
+                    )
+                    agent_code, latency, tokens, loop_count, feedback_history = result
+                    feedback_info = {
+                        'loop_count': loop_count,
+                        'feedback_history': feedback_history
+                    }
+                else:
+                    agent_code, latency, tokens = gen.generate_agent_chat(
+                        message=chat_message_dict,
+                        output_description=output_desc,
+                        input_description=input_desc
+                    )
+                    feedback_info = {}
+                
                 new_code = agent_code or ''
                 
                 # 获取额外的元数据（new_history 和 message_to_user）
                 metadata = gen.get_last_response_metadata()
                 new_memory = metadata.get('new_history', '')
                 reply = metadata.get('message_to_user', '')
-                
+                print(f"Generator metadata: {metadata}")
+                print(f"Generator reply: {reply}")
+                print(f"Generator new_memory: {new_memory}")
                 # 统计来自生成器
                 elapsed_ms = int(float(latency) * 1000) if latency is not None else None
                 pt = ct = tt = None
@@ -369,14 +412,27 @@ def generator_chat(current_user):
                     'model': f'agent-generator:{used_generator}'
                 }
                 
+                # 为反馈模式添加额外信息
+                ##新增加
+                if feedback_info:
+                    gen_stats['loop_count'] = feedback_info.get('loop_count', 0)
+                
                 # 成功生成，直接返回
-                return jsonify({
+                ## 新增加
+                response_data = {
                     'success': True,
                     'reply': reply,
                     'new_code': new_code,
                     'stats': gen_stats,
                     'new_memory': new_memory
-                })
+                }
+                
+                # 为反馈模式添加反馈历史
+                ## 新增加
+                if feedback_info and 'feedback_history' in feedback_info:
+                    response_data['feedback_history'] = feedback_info['feedback_history']
+                print(response_data)
+                return jsonify(response_data)
             except Exception as gen_err:
                 logger.warning(f"Generator integration failed, fallback to mock. Error: {gen_err}")
                 raise RuntimeError(f"Generator integration failed, fallback to mock. Error: {gen_err}")
@@ -564,6 +620,264 @@ def security_check(current_user):
     except Exception as e:
         logger.error(f"security_check error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@agents_blueprint.route('/api/generator/info', methods=['GET'])
+@require_auth
+def get_generator_info(current_user):
+    """
+    Get information about available code generators and their configurations
+    """
+    try:
+        generators_info = {
+            'generators': {
+                'python_single': {
+                    'name': 'Python Single-Shot Generator',
+                    'description': 'Generate agent code in a single LLM call',
+                    'language': 'python',
+                    'parameters': [
+                        {
+                            'name': 'framework_example_number',
+                            'type': 'integer',
+                            'default': 0,
+                            'min': 0,
+                            'max': 10,
+                            'description': 'Number of framework examples to use'
+                        },
+                        {
+                            'name': 'base_prompt_example_select_policy',
+                            'type': 'string',
+                            'default': 'random',
+                            'options': ['random', 'sequential'],
+                            'description': 'Strategy for selecting prompt examples'
+                        }
+                    ],
+                    'features': ['code_generation'],
+                    'sandbox_support': False
+                },
+                'python_feedback': {
+                    'name': 'Python Feedback-Guided Generator',
+                    'description': 'Iteratively generate and refine agent code based on sandbox feedback',
+                    'language': 'python',
+                    'parameters': [
+                        {
+                            'name': 'framework_example_number',
+                            'type': 'integer',
+                            'default': 0,
+                            'min': 0,
+                            'max': 10,
+                            'description': 'Number of framework examples to use'
+                        },
+                        {
+                            'name': 'base_prompt_example_select_policy',
+                            'type': 'string',
+                            'default': 'random',
+                            'options': ['random', 'sequential'],
+                            'description': 'Strategy for selecting prompt examples'
+                        },
+                        {
+                            'name': 'max_loop',
+                            'type': 'integer',
+                            'default': 20,
+                            'min': 1,
+                            'max': 50,
+                            'description': 'Maximum number of refinement iterations'
+                        },
+                        {
+                            'name': 'sandbox_type',
+                            'type': 'string',
+                            'default': 'chainstream',
+                            'options': ['chainstream'],
+                            'description': 'Type of sandbox to use for testing'
+                        },
+                        {
+                            'name': 'only_print_last',
+                            'type': 'boolean',
+                            'default': False,
+                            'description': 'Only print the final iteration (less verbose)'
+                        }
+                    ],
+                    'features': ['code_generation', 'iterative_refinement', 'sandbox_feedback', 'history_tracking'],
+                    'sandbox_support': True
+                },
+                'java_single': {
+                    'name': 'Java Single-Shot Generator',
+                    'description': 'Generate Java agent code in a single LLM call',
+                    'language': 'java',
+                    'parameters': [],
+                    'features': ['code_generation'],
+                    'sandbox_support': False
+                }
+            }
+        }
+        
+        return jsonify(generators_info)
+    except Exception as e:
+        logger.error(f"Error getting generator info: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@agents_blueprint.route('/api/generator/feedback-history', methods=['POST'])
+@require_auth
+def save_generation_history(current_user):
+    """
+    Save generation session history for later retrieval
+    """
+    try:
+        from flask import request
+        import json
+        data = request.get_json(silent=True) or {}
+        
+        session_id = data.get('session_id')
+        feedback_history = data.get('feedback_history')
+        generator_type = data.get('generator_type', 'unknown')
+        message = data.get('message', '')
+        final_code = data.get('final_code', '')
+        stats = data.get('stats', {})
+        
+        if not session_id or not feedback_history:
+            return jsonify({'error': 'session_id and feedback_history are required'}), 400
+        
+        # Store in user's context or session storage
+        # This is a simple implementation - in production, use database
+        history_storage_path = os.path.join(
+            os.path.dirname(__file__), 
+            '../../../../.generation_history',
+            f"{current_user.get_uuid()}"
+        )
+        os.makedirs(history_storage_path, exist_ok=True)
+        
+        history_file = os.path.join(history_storage_path, f"{session_id}.json")
+        
+        history_data = {
+            'session_id': session_id,
+            'user_id': current_user.get_uuid(),
+            'generator_type': generator_type,
+            'message': message,
+            'final_code': final_code,
+            'feedback_history': feedback_history,
+            'stats': stats,
+            'timestamp': datetime.datetime.now().isoformat()
+        }
+        
+        with open(history_file, 'w', encoding='utf-8') as f:
+            json.dump(history_data, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"Saved generation history: {session_id} for user {current_user.get_uuid()}")
+        return jsonify({'success': True, 'session_id': session_id})
+        
+    except Exception as e:
+        logger.error(f"Error saving generation history: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@agents_blueprint.route('/api/generator/feedback-history/<session_id>', methods=['GET'])
+@require_auth
+def get_generation_history(session_id, current_user):
+    """
+    Retrieve saved generation session history
+    """
+    try:
+        history_storage_path = os.path.join(
+            os.path.dirname(__file__), 
+            '../../../../.generation_history',
+            f"{current_user.get_uuid()}"
+        )
+        
+        history_file = os.path.join(history_storage_path, f"{session_id}.json")
+        
+        if not os.path.exists(history_file):
+            return jsonify({'error': 'History not found'}), 404
+        
+        with open(history_file, 'r', encoding='utf-8') as f:
+            history_data = json.load(f)
+        
+        return jsonify(history_data)
+        
+    except Exception as e:
+        logger.error(f"Error retrieving generation history: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@agents_blueprint.route('/api/generator/user-histories', methods=['GET'])
+@require_auth
+def get_user_generation_histories(current_user):
+    """
+    Get user's generation history list
+    Query params:
+    - limit: max results (default: 20)
+    - offset: pagination offset (default: 0)
+    - generator_type: filter by generator type
+    """
+    try:
+        limit = int(request.args.get('limit', 20))
+        offset = int(request.args.get('offset', 0))
+        generator_type = request.args.get('generator_type')
+        
+        history_storage_path = os.path.join(
+            os.path.dirname(__file__), 
+            '../../../../.generation_history',
+            f"{current_user.get_uuid()}"
+        )
+        
+        if not os.path.exists(history_storage_path):
+            return jsonify({'total': 0, 'items': [], 'limit': limit, 'offset': offset})
+        
+        # Get all history files
+        history_files = []
+        try:
+            for filename in os.listdir(history_storage_path):
+                if filename.endswith('.json'):
+                    history_files.append(filename)
+        except Exception as e:
+            logger.warning(f"Error listing history files: {e}")
+            history_files = []
+        
+        # Sort by modification time (newest first)
+        history_files.sort(
+            key=lambda f: os.path.getmtime(os.path.join(history_storage_path, f)),
+            reverse=True
+        )
+        
+        # Load and filter histories
+        items = []
+        for filename in history_files:
+            try:
+                with open(os.path.join(history_storage_path, filename), 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                
+                # Apply filter
+                if generator_type and data.get('generator_type') != generator_type:
+                    continue
+                
+                # Extract summary info
+                items.append({
+                    'session_id': data.get('session_id'),
+                    'generator_type': data.get('generator_type'),
+                    'timestamp': data.get('timestamp'),
+                    'message_preview': (data.get('message') or '')[:100],
+                    'loop_count': data.get('stats', {}).get('loop_count'),
+                    'total_tokens': data.get('stats', {}).get('total_tokens'),
+                    'elapsed_ms': data.get('stats', {}).get('elapsed_ms')
+                })
+            except Exception as e:
+                logger.warning(f"Error loading history file {filename}: {e}")
+                continue
+        
+        # Apply pagination
+        total = len(items)
+        paginated_items = items[offset:offset + limit]
+        
+        return jsonify({
+            'total': total,
+            'items': paginated_items,
+            'limit': limit,
+            'offset': offset
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting user generation histories: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 @agents_blueprint.route('/api/generator/save', methods=['POST'])
