@@ -8,6 +8,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'highlight.js/styles/github.css'
 // import router from './router/index.js'
 import router from './router'
+import i18n from './i18n'
 
 const app = createApp(App)
 
@@ -18,6 +19,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(ElementPlus)
 app.use(router)
-
+app.use(i18n)
+// app.use(router)
 app.config.globalProperties.$echarts = echarts
 app.mount('#app')

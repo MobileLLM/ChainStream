@@ -117,8 +117,7 @@ def start_simple_server(port=50051):
             return chainstream_bridge_pb2.StartAgentResponse(
                 success=True,
                 error="",
-                agent_id=request.agent_id
-                # message=f"Agent {request.agent_id} started"
+                message=f"Agent {request.agent_id} started"
             )
         
         def StopAgent(self, request, context):
@@ -126,8 +125,7 @@ def start_simple_server(port=50051):
             return chainstream_bridge_pb2.StopAgentResponse(
                 success=True,
                 error="",
-                # message=f"Agent {request.agent_id} stopped"
-                agent_id=request.agent_id
+                message=f"Agent {request.agent_id} stopped"
             )
         
         def CreateStream(self, request, context):

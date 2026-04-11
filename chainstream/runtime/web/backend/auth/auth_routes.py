@@ -53,7 +53,7 @@ def login():
     except Exception as e:
         return jsonify({
             'success': False,
-            'message':  f'Internal server error: {str(e)}'
+            'message': 'Internal server error'
         }), 500
 
 
