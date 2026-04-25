@@ -183,3 +183,6 @@ PrivacyStream/local.gradle
 /ChainStreamSandBox/report_evaluator/result/
 
 config.yaml
+
+# Web generator debug logs (JSONL)
+chainstream/runtime/web/backend/generator_logs/

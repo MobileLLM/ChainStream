@@ -30,6 +30,10 @@
         <div class="panel-header">
           <h3>{{ $t('generator.codeEditor') }}</h3>
           <div class="editor-actions">
+            <el-radio-group v-model="editorViewTab" size="small" class="editor-tab-switch">
+              <el-radio-button label="code">{{ $t('generator.viewCode') }}</el-radio-button>
+              <el-radio-button label="pseudo">{{ $t('generator.viewPseudocode') }}</el-radio-button>
+            </el-radio-group>
             <el-tag :type="selectedLanguage === 'python' ? 'success' : 'primary'" size="large">
               {{ selectedLanguage === 'python' ? 'Python' : 'Java' }}
             </el-tag>
@@ -45,10 +49,21 @@
         </div>
         <div class="editor-container">
           <MonacoEditor
+            v-if="editorViewTab === 'code'"
+            key="monaco-generated-code"
             v-model="generatedCode"
             :language="monacoLanguage"
             height="100%"
             @change="onCodeChange"
+          />
+          <div v-else-if="!pseudoCode.trim()" class="pseudo-empty">{{ $t('generator.noPseudocodeYet') }}</div>
+          <MonacoEditor
+            v-else
+            key="monaco-pseudocode"
+            v-model="pseudoCode"
+            language="markdown"
+            :readOnly="true"
+            height="100%"
           />
         </div>
       </div>
@@ -67,6 +82,10 @@
               <el-option :label="$t('generator.sandboxIter')" value="sandbox_iter" disabled />
               <el-option :label="$t('generator.exceptionHandler')" value="exception_handler" disabled />
             </el-select>
+            <el-button size="small" @click="showKnowledgeBaseDialog = true">
+              <el-icon><Reading /></el-icon>
+              {{ $t('generator.knowledgeBase') }}
+            </el-button>
             <el-button size="small" @click="showMemoryDialog">
               <el-icon><View /></el-icon>
               {{ $t('generator.viewMemory') }}
@@ -284,6 +303,21 @@
         <el-button v-if="!securityResult?.overall_safe" type="danger" @click="handleSecurityIssues">{{ $t('generator.handleIssues') }}</el-button>
       </template>
     </el-dialog>
+
+    <!-- 知识库编辑 -->
+    <el-dialog v-model="showKnowledgeBaseDialog" :title="$t('generator.knowledgeBaseTitle')" width="65%">
+      <p class="kb-hint">{{ $t('generator.knowledgeBaseHint') }}</p>
+      <el-input
+        v-model="knowledgeBase"
+        type="textarea"
+        :rows="18"
+        :placeholder="$t('generator.knowledgeBasePlaceholder')"
+      />
+      <template #footer>
+        <el-button @click="resetKnowledgeBase">{{ $t('generator.resetKnowledgeBase') }}</el-button>
+        <el-button type="primary" @click="showKnowledgeBaseDialog = false">{{ $t('common.close') }}</el-button>
+      </template>
+    </el-dialog>
     </div>
 </template>
 
@@ -304,7 +338,8 @@ import {
   View,
   Lock,
   CircleCheck,
-  CircleClose
+  CircleClose,
+  Reading
 } from '@element-plus/icons-vue'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism-tomorrow.css'
@@ -324,12 +359,25 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
+const DEFAULT_KNOWLEDGE_BASE = `## 可用输入流（Available Input Streams）
+- stream_id: "example_input"
+  description: 在此描述该流的数据含义与典型字段
+  fields: { "field_a": "string", "field_b": "number" }
+
+## 示例与约定（Examples）
+（在此添加可用 stream 列表、字段说明、示例片段或业务规则，生成器会优先参考本节。）
+`
+
 // 响应式数据
 const generatedCode = ref('')
 const userInput = ref('')
 const chatMessages = ref([])
 const isGenerating = ref(false)
 const sessionMemory = ref('')
+const knowledgeBase = ref(DEFAULT_KNOWLEDGE_BASE)
+const showKnowledgeBaseDialog = ref(false)
+const pseudoCode = ref('')
+const editorViewTab = ref('code')
 const selectedGenerator = ref('python_single')
 const contentRef = ref(null)
 const headerRef = ref(null)
@@ -597,6 +645,7 @@ const sendMessage = async () => {
       language: selectedLanguage.value,
       path: currentFilePath.value,
       memory: sessionMemory.value,
+      knowledge_base: knowledgeBase.value || '',
       generator_type: selectedGenerator.value
     })
     // 期望返回：{ success, reply, new_code, stats }
@@ -604,11 +653,15 @@ const sendMessage = async () => {
     const newCode = data?.new_code
     const stats = data?.stats
     const newMemory = data?.new_memory
+    const newPseudo = data?.pseudocode
     // 替换loading消息（使用数组赋值确保视图更新）
     const prev = chatMessages.value[loadingIndex] || { role: 'assistant' }
     chatMessages.value[loadingIndex] = { ...prev, loading: false, content: reply, stats }
     if (typeof newCode === 'string') {
       generatedCode.value = newCode
+    }
+    if (typeof newPseudo === 'string') {
+      pseudoCode.value = newPseudo
     }
     if (typeof newMemory === 'string') {
       sessionMemory.value = newMemory
@@ -701,15 +754,16 @@ const clearCode = () => {
   })
 }
 
-// 复制代码
+// 复制代码（在伪代码视图下复制伪代码）
 const copyCode = async () => {
-  if (!generatedCode.value) {
+  const text = editorViewTab.value === 'pseudo' ? pseudoCode.value : generatedCode.value
+  if (!text) {
     ElMessage.warning(t('generator.noCodeToCopy'))
     return
   }
   
   try {
-    await navigator.clipboard.writeText(generatedCode.value)
+    await navigator.clipboard.writeText(text)
     ElMessage.success(t('generator.codeCopied'))
   } catch (error) {
     ElMessage.error(t('generator.copyFailed'))
@@ -744,16 +798,34 @@ const clearMemory = () => {
   }).catch(() => {})
 }
 
-// 清空对话
+const startGeneratorLogSession = async () => {
+  try {
+    await request.post('/generator/new-session', {})
+  } catch (e) {
+    console.warn('generator new-session failed', e)
+  }
+}
+
+// 清空对话（会开启新的服务端日志会话）
 const clearChat = () => {
   ElMessageBox.confirm(t('generator.confirmClearChat'), t('common.confirm'), {
     confirmButtonText: t('common.confirm'),
     cancelButtonText: t('common.cancel'),
     type: 'warning'
-  }).then(() => {
+  }).then(async () => {
+    await startGeneratorLogSession()
     chatMessages.value = []
+    const welcomeMessage = t('generator.aiChat') === 'AI Chat'
+      ? 'Hello, I am the generation assistant. Please describe your requirements, and I will provide suggestions and generate code based on the current code.'
+      : '你好，我是生成助手。请描述你的需求，我会基于当前代码进行建议与生成。'
+    chatMessages.value.push({ role: 'assistant', content: welcomeMessage })
     ElMessage.success(t('generator.chatCleared'))
   })
+}
+
+const resetKnowledgeBase = () => {
+  knowledgeBase.value = DEFAULT_KNOWLEDGE_BASE
+  ElMessage.success(t('generator.knowledgeBaseReset'))
 }
 
 // 执行安全检查
@@ -961,7 +1033,8 @@ watch(selectedLanguage, () => {
 })
 
 // 组件挂载
-onMounted(() => {
+onMounted(async () => {
+  await startGeneratorLogSession()
   // 初始化代码编辑器
   if (codeEditorRef.value) {
     // 可以在这里添加更多初始化逻辑
@@ -1266,6 +1339,25 @@ onBeforeRouteLeave((to, from, next) => {
   padding: 16px;
   overflow: hidden;
   min-height: 0; /* 关键：使Monaco容器可撑满并允许内部滚动 */
+}
+
+.editor-tab-switch {
+  margin-right: 8px;
+}
+
+.pseudo-empty {
+  padding: 24px;
+  color: #909399;
+  font-size: 14px;
+  line-height: 1.6;
+  height: 100%;
+  overflow: auto;
+}
+
+.kb-hint {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #606266;
 }
 
 .code-editor {

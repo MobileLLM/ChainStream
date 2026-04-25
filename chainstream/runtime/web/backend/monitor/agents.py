@@ -1,5 +1,6 @@
 from ..core import chainstream_core
 from ..auth.auth import require_auth
+from ..generator_logger import generator_new_session, generator_log_turn
 from chainstream.runtime.user_context import user_context_manager
 from flask import jsonify, Blueprint
 import logging
@@ -268,6 +269,18 @@ def get_agentstore_directory(current_user):
         return jsonify({'error': str(e)}), 500
 
 
+@agents_blueprint.route('/api/generator/new-session', methods=['POST'])
+@require_auth
+def generator_new_session_endpoint(current_user):
+    """Start a new generator JSONL log file for this user (call on page load and after Clear Chat)."""
+    try:
+        info = generator_new_session(str(current_user.get_uuid()))
+        return jsonify({'success': True, **info})
+    except Exception as e:
+        logger.error(f"generator_new_session error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @agents_blueprint.route('/api/generator/chat', methods=['POST'])
 @require_auth
 def generator_chat(current_user):
@@ -283,7 +296,13 @@ def generator_chat(current_user):
         language = (data.get('language') or 'python').lower()
         path = data.get('path') or ''
         memory = data.get('memory') or ''
+        knowledge_base = data.get('knowledge_base')
+        if knowledge_base is None:
+            knowledge_base = ''
+        else:
+            knowledge_base = str(knowledge_base)
         generator_type = (data.get('generator_type') or '').strip()  # 'python_single' | 'java_single' | others
+        user_uuid = str(current_user.get_uuid())
 
         if not message:
             return jsonify({'success': False, 'error': 'Message is required'}), 400
@@ -325,11 +344,12 @@ def generator_chat(current_user):
                     "fields": {"text": "string"}
                 }])
                 
-                # 构造 chat_message 字典，包含 history、code、message
+                # 构造 chat_message 字典，包含 history、code、message、knowledge_base
                 chat_message_dict = {
                     'history': memory,
                     'code': code,
-                    'message': message
+                    'message': message,
+                    'knowledge_base': knowledge_base,
                 }
                 
                 agent_code, latency, tokens = gen.generate_agent_chat(
@@ -339,10 +359,11 @@ def generator_chat(current_user):
                 )
                 new_code = agent_code or ''
                 
-                # 获取额外的元数据（new_history 和 message_to_user）
+                # 获取额外的元数据（new_history、message_to_user、pseudocode）
                 metadata = gen.get_last_response_metadata()
                 new_memory = metadata.get('new_history', '')
                 reply = metadata.get('message_to_user', '')
+                pseudocode = metadata.get('pseudocode', '') or ''
                 
                 # 统计来自生成器
                 elapsed_ms = int(float(latency) * 1000) if latency is not None else None
@@ -368,12 +389,35 @@ def generator_chat(current_user):
                     'elapsed_ms': elapsed_ms,
                     'model': f'agent-generator:{used_generator}'
                 }
+
+                audit = {}
+                if hasattr(gen, 'get_last_llm_audit'):
+                    audit = gen.get_last_llm_audit() or {}
+                try:
+                    generator_log_turn(user_uuid, {
+                        'user_message': message,
+                        'memory_before': memory,
+                        'knowledge_base': knowledge_base,
+                        'generator_type': used_generator,
+                        'language': language,
+                        'file_path': path,
+                        'llm_prompt': audit.get('llm_prompt', ''),
+                        'llm_raw_response': audit.get('llm_raw_response', ''),
+                        'parsed_code': new_code,
+                        'parsed_pseudocode': pseudocode,
+                        'reply_to_user': reply,
+                        'new_memory': new_memory,
+                        'stats': gen_stats,
+                    })
+                except Exception as log_err:
+                    logger.warning(f"generator_log_turn failed: {log_err}")
                 
                 # 成功生成，直接返回
                 return jsonify({
                     'success': True,
                     'reply': reply,
                     'new_code': new_code,
+                    'pseudocode': pseudocode,
                     'stats': gen_stats,
                     'new_memory': new_memory
                 })
@@ -425,10 +469,30 @@ def generator_chat(current_user):
                 'model': 'mock-generator-v1'
             }
 
+        try:
+            generator_log_turn(user_uuid, {
+                'user_message': message,
+                'memory_before': memory,
+                'knowledge_base': knowledge_base,
+                'generator_type': used_generator or 'mock',
+                'language': language,
+                'file_path': path,
+                'llm_prompt': '(mock generator — no LLM call)',
+                'llm_raw_response': '',
+                'parsed_code': new_code,
+                'parsed_pseudocode': '',
+                'reply_to_user': reply,
+                'new_memory': new_memory,
+                'stats': stats,
+            })
+        except Exception as log_err:
+            logger.warning(f"generator_log_turn (mock) failed: {log_err}")
+
         return jsonify({
             'success': True,
             'reply': reply,
             'new_code': new_code,
+            'pseudocode': '',
             'stats': stats,
             'new_memory': new_memory
         })

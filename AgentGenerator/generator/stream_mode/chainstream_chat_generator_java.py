@@ -31,6 +31,7 @@ class ChainStreamChatGeneratorJava(DirectAgentGenerator):
         Expected JSON structure:
         {
             "new_code": "...",
+            "pseudocode": "...",
             "new_history": "...",
             "message_to_user": "..."
         }
@@ -50,19 +51,22 @@ class ChainStreamChatGeneratorJava(DirectAgentGenerator):
             # Store the additional fields for backend to use
             self._last_new_history = result.get('new_history', '')
             self._last_message_to_user = result.get('message_to_user', '')
+            self._last_pseudocode = result.get('pseudocode', '')
             # Return the new_code as the main output
             return result.get('new_code', '')
         except json.JSONDecodeError as e:
             # Fallback: if JSON parsing fails, return the response as-is (but cleaned)
             self._last_new_history = ''
             self._last_message_to_user = f'Warning: Failed to parse JSON response. Error: {e}'
+            self._last_pseudocode = ''
             return response.replace("'''", " ").replace("```", " ").replace("java", "").strip()
     
     def get_last_response_metadata(self):
-        """Return the last new_history and message_to_user from process_response"""
+        """Return the last new_history, message_to_user, and pseudocode from process_response"""
         return {
             'new_history': getattr(self, '_last_new_history', ''),
-            'message_to_user': getattr(self, '_last_message_to_user', '')
+            'message_to_user': getattr(self, '_last_message_to_user', ''),
+            'pseudocode': getattr(self, '_last_pseudocode', ''),
         }
 
 

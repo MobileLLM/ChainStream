@@ -139,26 +139,38 @@ class DirectAgentGenerator(AgentGeneratorBase):
 
     def generate_agent_impl(self, output_stream, input_stream, message=None) -> str:
         if message is None:
-            prompt = self.get_base_prompt(output_stream, input_stream)
+            prompt_text = self.get_base_prompt(output_stream, input_stream)
         else:
-            prompt = self.get_base_prompt(output_stream, input_stream, message)
+            prompt_text = self.get_base_prompt(output_stream, input_stream, message)
 
         if self.verbose:
-            print(f"Prompt: {prompt}")
+            print(f"Prompt: {prompt_text}")
+
+        # Full system prompt and raw LLM output (for auditing / generator logs)
+        self._last_llm_prompt = prompt_text
+        self._last_llm_raw_response = None
 
         prompt = [
             {
                 "role": "system",
-                "content": prompt
+                "content": prompt_text
             }
         ]
 
         response = self.llm.query(prompt)
+        self._last_llm_raw_response = response
 
         if self.verbose:
             print(f"Response: {response}", end="\n****************\n")
 
         return self.process_response(response)
+
+    def get_last_llm_audit(self):
+        """Return the last full system prompt and raw model response (if any)."""
+        return {
+            'llm_prompt': getattr(self, '_last_llm_prompt', '') or '',
+            'llm_raw_response': getattr(self, '_last_llm_raw_response', '') or '',
+        }
 
     def get_base_prompt(self, output_stream, input_stream) -> str:
         raise NotImplementedError("Agent generator must implement get_base_prompt function.")

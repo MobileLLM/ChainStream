@@ -89,6 +89,12 @@ watch(() => props.theme, (newTheme) => {
   }
 })
 
+watch(() => props.readOnly, (ro) => {
+  if (editor) {
+    editor.updateOptions({ readOnly: ro })
+  }
+})
+
 onMounted(async () => {
   await nextTick()
   initEditor()

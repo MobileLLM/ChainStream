@@ -25,11 +25,21 @@ def get_mission_prompt(output_stream, input_stream, mission_type, framework_type
         if chat_message is None:
             raise ValueError("chat_message is required for chat mission type")
         if not isinstance(chat_message, dict):
-            raise ValueError("chat_message must be a dict with keys: 'history', 'code', 'message'")
+            raise ValueError("chat_message must be a dict with keys including 'history', 'code', 'message' (optional: 'knowledge_base')")
         
         history = chat_message.get('history', '')
         code = chat_message.get('code', '')
         message = chat_message.get('message', '')
+        knowledge_base_raw = chat_message.get('knowledge_base')
+        if knowledge_base_raw is None:
+            knowledge_base_raw = ''
+        knowledge_base = str(knowledge_base_raw).strip()
+        if not knowledge_base:
+            knowledge_base = (
+                "(The user did not provide extra knowledge base text in this session. "
+                "Use the Target Output Streams and Available Input Streams sections above, "
+                "and the framework documentation, as the primary reference.)"
+            )
         
         # Format chat context
         chat_context = ""
@@ -42,6 +52,7 @@ def get_mission_prompt(output_stream, input_stream, mission_type, framework_type
             return CHAT_BASED_MISSION_PROMPT_FOR_CHAINSTREAM.format(
                 output_stream=output_stream, 
                 input_stream=input_stream,
+                knowledge_base=knowledge_base,
                 chat_context=chat_context,
                 user_message=message
             )
